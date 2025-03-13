@@ -69,6 +69,11 @@ app:
       - http://localhost:3000
   frontend:
     url: http://localhost:3000
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0
+    
 
 api:
   naver:
