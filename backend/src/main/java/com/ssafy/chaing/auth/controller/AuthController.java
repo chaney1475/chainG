@@ -6,6 +6,7 @@ import com.ssafy.chaing.auth.controller.response.UserInfoResponse;
 import com.ssafy.chaing.auth.service.AuthService;
 import com.ssafy.chaing.auth.service.command.SignupCommand;
 import com.ssafy.chaing.auth.service.dto.AuthDTO;
+import com.ssafy.chaing.common.schema.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +27,7 @@ public class AuthController {
 
     @Operation(summary = "회원가입", description = "사용자가 회원가입을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/signup")
-    public ResponseEntity<UserInfoResponse> signup(@RequestBody SignupRequest body, HttpServletResponse response) {
+    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@RequestBody SignupRequest body, HttpServletResponse response) {
         AuthDTO authDTO = authService.signup(
                 new SignupCommand(body.getEmailAddress(), body.getPassword(), body.getName(), body.getNickname()),
                 response
@@ -36,28 +37,28 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + authDTO.getAccessToken())
-                .body(result);
+                .body(BaseResponse.success(result));
     }
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/login")
-    public ResponseEntity<UserInfoResponse> login(@RequestBody LoginRequest body, HttpServletResponse response) {
+    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@RequestBody LoginRequest body, HttpServletResponse response) {
         AuthDTO authDTO = authService.login(body.getEmailAddress(), body.getPassword(), response);
         UserInfoResponse result = UserInfoResponse.from(authDTO.getUserInfo());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + authDTO.getAccessToken())
-                .body(result);
+                .body(BaseResponse.success(result));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<UserInfoResponse> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<BaseResponse<UserInfoResponse>> reissue(HttpServletRequest request, HttpServletResponse response) {
         AuthDTO authDTO = authService.reissueTokens(request, response);
         UserInfoResponse result = UserInfoResponse.from(authDTO.getUserInfo());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + authDTO.getAccessToken())
-                .body(result);
+                .body(BaseResponse.success(result));
     }
 
 }
