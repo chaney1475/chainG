@@ -1,5 +1,7 @@
 package com.ssafy.chaing.auth.jwt;
 
+import com.ssafy.chaing.common.exception.AuthenticationException;
+import com.ssafy.chaing.common.exception.ExceptionCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -127,7 +129,7 @@ public class JwtUtil {
             return new AuthClaims(Long.valueOf(claims.get("subject").toString()));
         } catch (JwtException e) {
             log.error("토큰 검증 실패: {}", e.getMessage());
-            throw new RuntimeException("유효하지 않은 토큰입니다.", e);
+            throw new AuthenticationException(ExceptionCode.INVALID_TOKEN);
         }
     }
 
