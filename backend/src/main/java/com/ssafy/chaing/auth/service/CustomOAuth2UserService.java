@@ -3,6 +3,8 @@ package com.ssafy.chaing.auth.service;
 import com.ssafy.chaing.auth.domain.CustomOAuth2User;
 import com.ssafy.chaing.auth.service.dto.GoogleDTO;
 import com.ssafy.chaing.auth.service.dto.OAuth2DTO;
+import com.ssafy.chaing.common.exception.AuthenticationException;
+import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.user.domain.RoleType;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
@@ -28,7 +30,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2DTO oAuth2DTO = switch (registrationId) {
             case "google" -> new GoogleDTO(oAuth2User.getAttributes());
-            default -> throw new OAuth2AuthenticationException("Unsupported OAuth provider: " + registrationId);
+
+            default -> throw new AuthenticationException(ExceptionCode.SOCIAL_NOT_FOUND);
         };
 
         return handleUser(oAuth2DTO);
