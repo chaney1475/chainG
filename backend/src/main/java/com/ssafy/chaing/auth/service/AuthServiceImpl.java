@@ -4,7 +4,7 @@ import com.ssafy.chaing.auth.jwt.AuthClaims;
 import com.ssafy.chaing.auth.jwt.JwtService;
 import com.ssafy.chaing.auth.service.command.SignupCommand;
 import com.ssafy.chaing.auth.service.dto.AuthDTO;
-import com.ssafy.chaing.auth.service.dto.UserInfoDTO;
+import com.ssafy.chaing.user.service.dto.UserInfoDTO;
 import com.ssafy.chaing.common.exception.AuthenticationException;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
@@ -36,7 +36,6 @@ public class AuthServiceImpl implements AuthService {
         UserEntity user = UserEntity.builder()
                 .emailAddress(command.getEmailAddress())
                 .password(passwordEncoder.encode(command.getPassword()))
-                .nickname(command.getNickname())
                 .name(command.getName())
                 .roleType(RoleType.USER)
                 .build();

@@ -29,7 +29,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@RequestBody SignupRequest body, HttpServletResponse response) {
         AuthDTO authDTO = authService.signup(
-                new SignupCommand(body.getEmailAddress(), body.getPassword(), body.getName(), body.getNickname()),
+                new SignupCommand(body.getEmailAddress(), body.getPassword(), body.getName()),
                 response
         );
 
