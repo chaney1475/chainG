@@ -26,4 +26,5 @@ public class GroupUserEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private GroupEntity group;
 
+
 }
