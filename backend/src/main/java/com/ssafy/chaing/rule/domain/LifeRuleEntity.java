@@ -2,6 +2,7 @@ package com.ssafy.chaing.rule.domain;
 
 import com.ssafy.chaing.group.domain.GroupEntity;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,5 +34,9 @@ public class LifeRuleEntity {
 
     @OneToMany(mappedBy = "lifeRule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LifeRuleItemEntity> items;
-    
+
+    @Column(name = "change_request_id")
+    private Long changeRequestId;  // 현재 적용되지 않은 변경 요청의 ID (승인 대기 상태)
+
+
 }
