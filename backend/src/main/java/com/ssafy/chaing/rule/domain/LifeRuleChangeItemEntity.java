@@ -38,10 +38,7 @@ public class LifeRuleChangeItemEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "action_type", nullable = false)
-    private ActionType actionType;  // update, delete, insert 구분
+    private ActionType actionType;  // update, delete, create 구분
 
-    public enum ActionType {
-        UPDATE, DELETE, CREATE
-    }
 
 }

@@ -52,9 +52,6 @@ public class LifeRuleChangeRequestEntity {
     @Column(name = "status", nullable = false)
     private ChangeRequestStatus status = ChangeRequestStatus.PENDING;  // 초기값은 PENDING
 
-    public enum ChangeRequestStatus {
-        PENDING, APPROVED, REJECTED
-    }
 
     public void approve(int totalGroupMembers) {
         this.approvalCount++;
