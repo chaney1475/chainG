@@ -20,11 +20,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity(name = "life_rule_change_request")
 public class LifeRuleChangeRequestEntity {
 
     @Id

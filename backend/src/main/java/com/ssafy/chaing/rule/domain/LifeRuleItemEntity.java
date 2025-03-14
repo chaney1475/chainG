@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Builder
+@Entity(name = "life_rule_item")
 public class LifeRuleItemEntity {
 
     @Id

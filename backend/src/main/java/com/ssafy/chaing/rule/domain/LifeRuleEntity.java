@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @Builder
-@Entity
+@Entity(name = "life_rule")
 public class LifeRuleEntity {
 
     @Id
