@@ -1,5 +1,6 @@
 package com.ssafy.chaing.group.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.user.domain.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,10 +10,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
+@Getter
+@AllArgsConstructor
+@Builder
 @Entity
-public class GroupEntity {
+@Table(name = "`groups`")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class GroupEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,4 +42,6 @@ public class GroupEntity {
     @Column(name = "isActive", nullable = false)
     private boolean isActive;
 
+    @Column(name = "max_participants", nullable = false)
+    private Integer maxParticipants;
 }
