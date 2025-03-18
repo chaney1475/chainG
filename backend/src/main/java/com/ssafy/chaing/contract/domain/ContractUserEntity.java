@@ -31,37 +31,39 @@ public class ContractUserEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "contract_id")
+    @JoinColumn(name = "contract_id", nullable = false)
     private ContractEntity contract;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @Getter
     @Enumerated(EnumType.STRING)
+    @Column(name = "contract_status", nullable = false)
     private ContractStatus contractStatus;
 
-    @Column(nullable = false)
-    private boolean isSurplusUser; // 자투리 유저 여부
+    @Column(name = "is_surplus_user", nullable = false) // 자투리 유저 여부
+    private boolean isSurplusUser;
 
-    @Column
+    @Column(name = "confirmed_at", nullable = true) // 확인된 시간
     private ZonedDateTime confirmedAt;
 
-    @Column
+    @Column(name = "account_no", nullable = true) // 계좌 번호
     private String accountNo;
 
-    @Column
-    private Integer rentRatio; // 1
+    @Column(name = "rent_ratio", nullable = false) // 월세 비율 (예: 1)
+    private Integer rentRatio;
 
-    @Column
-    private Integer rentAmount; // 3333원
+    @Column(name = "rent_amount", nullable = false) // 월세 금액 (예: 3333원)
+    private Integer rentAmount;
 
-    @Column
-    private Double utilityRatio; // 1
+    @Column(name = "utility_ratio", nullable = false) // 공과금 비율 (예: 1)
+    private Double utilityRatio;
 
     public void updateContractStatus(ContractStatus status) {
         this.contractStatus = status;

@@ -41,7 +41,7 @@ public class LifeRuleEntity extends BaseEntity {
     @OneToMany(mappedBy = "lifeRule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LifeRuleItemEntity> items;
 
-    @Column(name = "change_request_id")
+    @Column(name = "change_request_id", nullable = true)
     private Long changeRequestId;  // 현재 적용되지 않은 변경 요청의 ID (승인 대기 상태)
 
 

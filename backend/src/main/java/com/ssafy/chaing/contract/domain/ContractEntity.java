@@ -31,46 +31,48 @@ public class ContractEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "group_id", nullable = true)
     private GroupEntity group;
 
-    @Column
+    @Column(name = "start_date", nullable = true)
     private ZonedDateTime startDate;
 
-    @Column
+    @Column(name = "end_date", nullable = true)
     private ZonedDateTime endDate;
 
-    @Column
-    private Integer dueDate; // 매월 며칠에 납부할지 (ex. 10일)
+    @Column(name = "due_date", nullable = true) // 매월 며칠에 납부할지 (ex. 10일)
+    private Integer dueDate;
 
-    @Column // 집주인 계좌
+    @Column(name = "owner_account_no", nullable = true) // 집주인 계좌
     private String ownerAccountNo;
 
-    @Column // 월세 필수
+    @Column(name = "rent_account_no", nullable = true) // 월세 필수 계좌
     private String rentAccountNo;
 
-    @Column // 생활비 계좌
+    @Column(name = "live_account_no", nullable = true) // 생활비 계좌
     private String liveAccountNo;
 
-    @JoinColumn(name = "utility_card_id")
+    @JoinColumn(name = "utility_card_id", nullable = true)
     @OneToOne
     private UtilityCardEntity utilityCard;
 
-    @Column
-    private Integer totalRentRatio; // 3
+    @Column(name = "total_rent_ratio", nullable = true) // 3
+    private Integer totalRentRatio;
 
-    @Column
-    private Integer utilityRatio; // 2
+    @Column(name = "utility_ratio", nullable = true) // 2
+    private Integer utilityRatio;
 
-    @Column
-    private Integer rentTotalAmount; // 월세 총액
+    @Column(name = "rent_total_amount", nullable = true) // 월세 총액
+    private Integer rentTotalAmount;
 
     @OneToMany(mappedBy = "contract")
     private List<ContractUserEntity> contractUsers;
 
-    @Column
+    @Column(name = "completed", nullable = false)
     private boolean completed;
 
     public void updateCompletedStatus() {
@@ -80,3 +82,4 @@ public class ContractEntity extends BaseEntity {
         this.completed = allConfirmed;
     }
 }
+

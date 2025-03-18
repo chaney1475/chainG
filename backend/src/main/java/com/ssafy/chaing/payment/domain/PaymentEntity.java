@@ -37,33 +37,33 @@ public class PaymentEntity extends BaseEntity {
     @JoinColumn(name = "contract_id", nullable = false)
     private ContractEntity contract;
 
-    @Column(nullable = false)
+    @Column(name = "month", nullable = false)
     private int month; // YYYYMM 형식 (예: 202503)
 
-    @Column
+    @Column(name = "week", nullable = true)
     private Integer week; // 공과금인 경우 주차 값 저장
 
-    @Column(nullable = false)
+    @Column(name = "fee_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private FeeType feeType; // RENT 또는 UTILITY 구분
 
-    @Column(nullable = false)
+    @Column(name = "payment_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    @Column
+    @Column(name = "last_attempt_date")
     private ZonedDateTime lastAttemptDate;
 
-    @Column
+    @Column(name = "payment_date")
     private ZonedDateTime paymentDate; // 납부한 날짜
 
-    @Column(nullable = false)
+    @Column(name = "total_amount", nullable = false)
     private Integer totalAmount; // 총 금액 추가
 
-    @Column(nullable = false)
+    @Column(name = "paid_amount", nullable = false)
     private Integer paidAmount = 0; // 현재까지 납부된 금액
 
-    @Column(nullable = false)
+    @Column(name = "all_paid", nullable = false)
     private boolean allPaid;
 
     // 상태 업데이트 메서드
