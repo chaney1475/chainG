@@ -5,6 +5,7 @@ import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.common.exception.NotFoundException;
 import com.ssafy.chaing.common.util.RandomCodeGenerator;
 import com.ssafy.chaing.group.domain.GroupEntity;
+import com.ssafy.chaing.group.domain.GroupInviteCode;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
@@ -111,8 +112,12 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public GroupDTO getGroupByInviteCode(String inviteCode) {
-        GroupEntity group = groupRepository.findByGroupCode(inviteCode)
+        System.out.println("inviteCode = " + inviteCode);
+        GroupInviteCode paredCode = new GroupInviteCode(inviteCode);
+
+        GroupEntity group = groupRepository.findByIdAndGroupCode(paredCode.getGroupId(), paredCode.getGroupCode())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND));
+
         return GroupDTO.from(group);
     }
 

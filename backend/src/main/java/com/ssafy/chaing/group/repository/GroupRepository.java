@@ -10,4 +10,5 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long> {
 
     Optional<GroupEntity> findByGroupCode(String groupCode);
 
+    Optional<GroupEntity> findByIdAndGroupCode(Long id, String groupCode);
 }
