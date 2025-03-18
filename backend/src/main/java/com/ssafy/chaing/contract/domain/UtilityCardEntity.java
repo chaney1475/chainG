@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
 @Entity
-@Table(name = "utility_card")
+@Table(name = "utility_cards")
 public class UtilityCardEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

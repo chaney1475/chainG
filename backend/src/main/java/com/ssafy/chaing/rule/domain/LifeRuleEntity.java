@@ -26,7 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
-@Table(name = "life_rule")
+@Table(name = "life_rules")
 @Entity
 public class LifeRuleEntity extends BaseEntity {
 

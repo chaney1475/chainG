@@ -30,7 +30,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
-@Table(name = "life_rule_change_request")
+@Table(name = "life_rule_change_requests")
 @Entity
 public class LifeRuleChangeRequestEntity extends BaseEntity {
 

@@ -30,7 +30,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
 @Entity
-@Table(name = "duty")
+@Table(name = "duties")
 public class DutyEntity extends BaseEntity {
 
     @Id

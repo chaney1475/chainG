@@ -24,7 +24,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
 @Entity
-@Table(name = "user_payment")
+@Table(name = "user_payments")
 public class UserPaymentEntity extends BaseEntity {
 
     @Id
