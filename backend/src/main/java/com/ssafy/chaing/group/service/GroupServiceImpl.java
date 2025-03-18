@@ -112,7 +112,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public GroupDTO getGroupByInviteCode(String inviteCode) {
-        System.out.println("inviteCode = " + inviteCode);
         GroupInviteCode paredCode = new GroupInviteCode(inviteCode);
 
         GroupEntity group = groupRepository.findByIdAndGroupCode(paredCode.getGroupId(), paredCode.getGroupCode())
