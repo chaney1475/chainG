@@ -143,8 +143,8 @@ public class ContractHandler {
         );
     }
 
-    public String addLiveAccount(BigInteger contractId, LiveAccountInput body) throws Exception {
-        TransactionReceipt receipt = contractManager.updateLiveAccountNo(contractId, body.getLiveAccountNo())
+    public String addLiveAccount(BigInteger contractId, LiveAccountInput input) throws Exception {
+        TransactionReceipt receipt = contractManager.updateLiveAccountNo(contractId, input.getLiveAccountNo())
                 .send();
         if (receipt.isStatusOK()) {
             return "addLiveAccount success";

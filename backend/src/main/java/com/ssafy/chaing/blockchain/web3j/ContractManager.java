@@ -196,16 +196,13 @@ public class ContractManager extends Contract {
                 }, new TypeReference<Uint256>() {
                 }, new TypeReference<Uint256>() {
                 }));
-        return new RemoteFunctionCall<Tuple3<BigInteger, BigInteger, BigInteger>>(function,
-                new Callable<Tuple3<BigInteger, BigInteger, BigInteger>>() {
-                    @Override
-                    public Tuple3<BigInteger, BigInteger, BigInteger> call() throws Exception {
-                        List<Type> results = executeCallMultipleValueReturn(function);
-                        return new Tuple3<BigInteger, BigInteger, BigInteger>(
-                                (BigInteger) results.get(0).getValue(),
-                                (BigInteger) results.get(1).getValue(),
-                                (BigInteger) results.get(2).getValue());
-                    }
+        return new RemoteFunctionCall<>(function,
+                () -> {
+                    List<Type> results = executeCallMultipleValueReturn(function);
+                    return new Tuple3<>(
+                            (BigInteger) results.get(0).getValue(),
+                            (BigInteger) results.get(1).getValue(),
+                            (BigInteger) results.get(2).getValue());
                 });
     }
 
@@ -228,20 +225,16 @@ public class ContractManager extends Contract {
                 }, new TypeReference<Uint256>() {
                 }, new TypeReference<Uint256>() {
                 }));
-        return new RemoteFunctionCall<Tuple6<BigInteger, BigInteger, String, String, BigInteger, BigInteger>>(function,
-                new Callable<Tuple6<BigInteger, BigInteger, String, String, BigInteger, BigInteger>>() {
-                    @Override
-                    public Tuple6<BigInteger, BigInteger, String, String, BigInteger, BigInteger> call(
-                    ) throws Exception {
-                        List<Type> results = executeCallMultipleValueReturn(function);
-                        return new Tuple6<BigInteger, BigInteger, String, String, BigInteger, BigInteger>(
-                                (BigInteger) results.get(0).getValue(),
-                                (BigInteger) results.get(1).getValue(),
-                                (String) results.get(2).getValue(),
-                                (String) results.get(3).getValue(),
-                                (BigInteger) results.get(4).getValue(),
-                                (BigInteger) results.get(5).getValue());
-                    }
+        return new RemoteFunctionCall<>(function,
+                () -> {
+                    List<Type> results = executeCallMultipleValueReturn(function);
+                    return new Tuple6<>(
+                            (BigInteger) results.get(0).getValue(),
+                            (BigInteger) results.get(1).getValue(),
+                            (String) results.get(2).getValue(),
+                            (String) results.get(3).getValue(),
+                            (BigInteger) results.get(4).getValue(),
+                            (BigInteger) results.get(5).getValue());
                 });
     }
 
