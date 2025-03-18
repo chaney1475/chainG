@@ -1,5 +1,6 @@
 package com.ssafy.chaing.group.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.user.domain.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,10 +10,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table
 @Entity(name = "group_user")
-public class GroupUserEntity {
+public class GroupUserEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +35,5 @@ public class GroupUserEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     private GroupEntity group;
-
 
 }
