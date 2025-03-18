@@ -1,6 +1,7 @@
 package com.ssafy.chaing.duty.domain;
 
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,18 +17,21 @@ import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
-@Entity
-@Table(name = "duty")
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DutyEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction(value = "is_deleted = false")
+@Entity
+@Table(name = "duty")
+public class DutyEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

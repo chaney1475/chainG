@@ -1,5 +1,6 @@
 package com.ssafy.chaing.rule.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,18 +12,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
-@NoArgsConstructor
 @Getter
 @AllArgsConstructor
 @Builder
-@Entity(name = "life_rule")
-public class LifeRuleEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction(value = "is_deleted = false")
+@Table(name = "life_rule")
+@Entity
+public class LifeRuleEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

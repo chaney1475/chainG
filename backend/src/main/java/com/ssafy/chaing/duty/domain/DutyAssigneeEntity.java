@@ -1,5 +1,6 @@
 package com.ssafy.chaing.duty.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,18 +10,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
-@Entity
-@Table(name = "duty_assignee")
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DutyAssigneeEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction(value = "is_deleted = false")
+@Entity
+@Table(name = "duty_assignee")
+public class DutyAssigneeEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

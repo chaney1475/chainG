@@ -16,11 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 
 @Getter
 @AllArgsConstructor
 @Builder
+@SQLRestriction(value = "is_deleted = false")
 @Entity
 @Table(name = "`groups`")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

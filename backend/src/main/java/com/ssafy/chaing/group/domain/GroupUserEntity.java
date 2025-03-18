@@ -15,13 +15,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 @AllArgsConstructor
 @Builder
 @Getter
+@SQLRestriction(value = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table
-@Entity(name = "group_user")
+@Table(name = "group_user")
+@Entity
 public class GroupUserEntity extends BaseEntity {
 
     @Id
