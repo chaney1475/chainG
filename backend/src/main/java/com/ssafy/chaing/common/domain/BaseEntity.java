@@ -1,44 +1,37 @@
 package com.ssafy.chaing.common.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
+@Setter
+@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {
-    @Column(updatable = false)
-    private ZonedDateTime createdAt;
 
-    @Column
-    private ZonedDateTime updatedAt;
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private Instant createdAt;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isDeleted = false;
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
 
-    @Column(columnDefinition = "datetime(6)")
-    private ZonedDateTime deletedAt;
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
-    @PrePersist
-    public void PrePersist() {
-        this.createdAt = ZonedDateTime.now();
-        this.updatedAt = ZonedDateTime.now();
-    }
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
-    @PreUpdate
-    public void PreUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    public boolean isDeleted() {
-        return this.isDeleted;
-    }
-
-    public void softDelete(){
+    public void softDelete() {
+        this.deletedAt = Instant.now();
         this.isDeleted = true;
-        this.deletedAt = ZonedDateTime.now();
     }
 }

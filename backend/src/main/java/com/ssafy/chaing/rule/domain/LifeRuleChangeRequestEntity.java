@@ -59,7 +59,6 @@ public class LifeRuleChangeRequestEntity extends BaseEntity {
     @Column(name = "status", nullable = false)
     private ChangeRequestStatus status = ChangeRequestStatus.PENDING;  // 초기값은 PENDING
 
-
     public void approve(int totalGroupMembers) {
         this.approvalCount++;
         if (this.approvalCount >= totalGroupMembers) {

@@ -29,6 +29,7 @@ public class UserPaymentEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne
@@ -39,14 +40,14 @@ public class UserPaymentEntity extends BaseEntity {
     @JoinColumn(name = "contract_member_id", nullable = false)
     private ContractUserEntity contractMember;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    @Column
+    @Column(name = "amount", nullable = true)
     private Integer amount;
 
-    @Column
+    @Column(name = "payment_date", nullable = true)
     private ZonedDateTime paymentDate; // 납부 날짜
 
     // 상태 업데이트 메서드

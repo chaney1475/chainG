@@ -20,10 +20,10 @@ public class UtilityCardEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 16)
+    @Column(name = "card_no", nullable = false, length = 16)
     private String cardNo; // 카드번호
 
-    @Column(nullable = false, length = 3)
+    @Column(name = "cvc", nullable = false, length = 3)
     private String cvc; // 카드 보안코드
 
 }

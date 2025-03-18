@@ -12,18 +12,21 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
 
     boolean existsByGroupIdAndUserId(Long groupId, Long userId);
 
-    @Query("SELECT gu FROM group_user gu " +
-            "JOIN FETCH gu.user u " +
-            "JOIN FETCH gu.group g " +
-            "WHERE gu.group.id = :groupId")
+    @Query("""
+             SELECT gu
+             FROM GroupUserEntity gu
+             JOIN FETCH gu.user u
+             JOIN FETCH gu.group g
+             WHERE gu.group.id = :groupId
+            """)
     List<GroupUserEntity> findByGroupId(Long groupId);
 
-    @Query("SELECT COUNT(gu) FROM group_user gu WHERE gu.group.id = :groupId")
+    @Query("SELECT COUNT(gu) FROM GroupUserEntity gu WHERE gu.group.id = :groupId")
     int countByGroupId(Long groupId);
 
     @Query("""
             SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END
-            FROM group_user u
+            FROM GroupUserEntity u
             WHERE u.group.id = :groupId
             AND u.user.nickname = :nickname
             """)
@@ -31,7 +34,7 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
 
     @Query("""
             SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END
-            FROM group_user u
+            FROM GroupUserEntity u
             WHERE u.group.id = :groupId
             AND u.user.profileImage = :profileImage
             """)
