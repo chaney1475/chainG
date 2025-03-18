@@ -3,6 +3,7 @@ package com.ssafy.chaing.common.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,13 @@ public abstract class BaseEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @PrePersist
+    protected void onCreate() {
+        if (isDeleted == null) {
+            this.isDeleted = false;
+        }
+    }
 
     public void softDelete() {
         this.deletedAt = Instant.now();
