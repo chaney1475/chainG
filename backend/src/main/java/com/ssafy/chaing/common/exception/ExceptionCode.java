@@ -14,6 +14,8 @@ public enum ExceptionCode {
     DUPLICATE_PROFILE_IMAGE("DUPLICATE_PROFILE_IMAGE", "그룹 내에 이미 존재하는 프로필 이미지입니다."),
     GROUP_FULL("GROUP_FULL", "그룹의 인원이 가득 찼습니다."),
     GROUP_NOT_FOUND("GROUP_NOT_FOUND", "그룹이 존재하지 않습니다."),
+    GROUP_INVITE_CODE_INVALID("GROUP_INVITE_CODE_INVALID", "유효하지 않은 그룹 초대 코드입니다."),
+
 
     INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 틀렸습니다."),
     INVALID_TOKEN("EXPIRED_ACCESS_TOKEN", "로그인에 실패하였습니다."),

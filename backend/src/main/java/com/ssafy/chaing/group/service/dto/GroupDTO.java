@@ -15,7 +15,7 @@ public class GroupDTO {
     public static GroupDTO from(GroupEntity entity) {
         return new GroupDTO(entity.getId(),
                 entity.getName(),
-                entity.getGroupCode(),
+                entity.getId() + "#" + entity.getGroupCode(),
                 entity.getMaxParticipants()
         );
     }
