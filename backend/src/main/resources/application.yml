@@ -18,6 +18,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        naming:
+          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+          implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
 
   security:
     oauth2:
@@ -73,7 +76,7 @@ springdoc:
   api-docs:
     path: /v3/api-docs
     version: openapi_3_0
-    
+
 
 api:
   naver:
