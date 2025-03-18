@@ -19,10 +19,10 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
              JOIN FETCH gu.group g
              WHERE gu.group.id = :groupId
             """)
-    List<GroupUserEntity> findByGroupId(Long groupId);
+    List<GroupUserEntity> findByGroupId(@Param("groupId") Long groupId);
 
     @Query("SELECT COUNT(gu) FROM GroupUserEntity gu WHERE gu.group.id = :groupId")
-    int countByGroupId(Long groupId);
+    int countByGroupId(@Param("groupId")Long groupId);
 
     @Query("""
             SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END
