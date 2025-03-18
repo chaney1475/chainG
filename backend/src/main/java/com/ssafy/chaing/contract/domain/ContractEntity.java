@@ -1,5 +1,6 @@
 package com.ssafy.chaing.contract.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,10 +13,21 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
+@Getter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction(value = "is_deleted = false")
 @Entity
-@Table
-public class ContractEntity {
+@Table(name = "contracts")
+public class ContractEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,13 +46,13 @@ public class ContractEntity {
     private Integer dueDate; // 매월 며칠에 납부할지 (ex. 10일)
 
     @Column // 집주인 계좌
-    private String ownerAccountAddress;
+    private String ownerAccountNo;
 
     @Column // 월세 필수
-    private String rentAccountAddress;
+    private String rentAccountNo;
 
     @Column // 생활비 계좌
-    private String liveAccountAddress;
+    private String liveAccountNo;
 
     @JoinColumn(name = "utility_card_id")
     @OneToOne

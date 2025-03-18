@@ -1,5 +1,6 @@
 package com.ssafy.chaing.payment.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,10 +13,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction(value = "is_deleted = false")
 @Entity
-@Table(name = "user_payment")
-public class UserPaymentEntity {
+@Table(name = "user_payments")
+public class UserPaymentEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,13 +1,21 @@
 package com.ssafy.chaing.contract.domain;
 
+import com.ssafy.chaing.common.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction(value = "is_deleted = false")
 @Entity
-public class UtilityCardEntity {
+@Table(name = "utility_cards")
+public class UtilityCardEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
