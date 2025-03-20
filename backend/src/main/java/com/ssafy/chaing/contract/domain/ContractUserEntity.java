@@ -63,7 +63,7 @@ public class ContractUserEntity extends BaseEntity {
     private Integer rentAmount;
 
     @Column(name = "utility_ratio", nullable = false) // 공과금 비율 (예: 1)
-    private Double utilityRatio;
+    private Integer utilityRatio;
 
     public void updateContractStatus(ContractStatus status) {
         this.contractStatus = status;
