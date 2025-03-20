@@ -31,6 +31,8 @@ dependencyManagement {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch' // Batch
+    implementation 'org.springframework.batch:spring-batch-test' // Batch Test
+    testImplementation 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
