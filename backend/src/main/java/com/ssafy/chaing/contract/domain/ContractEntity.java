@@ -39,9 +39,6 @@ public class ContractEntity extends BaseEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    // DRAFT -> 최종 제출 (PENDING) -> 3명이 합의를 해 -> COMPLETE
-    //                            -> 거절 -> 결정을 유예
-
     @OneToOne
     @JoinColumn(name = "group_id", nullable = true)
     private GroupEntity group;
@@ -78,7 +75,10 @@ public class ContractEntity extends BaseEntity {
     private Integer rentTotalAmount;
 
     @OneToMany(mappedBy = "contract", cascade = CascadeType.PERSIST)
-    private List<ContractUserEntity> contractUsers = new ArrayList<>();
+    private List<ContractUserEntity> members = new ArrayList<>();
+
+    @Column(name = "status", nullable = false)
+    private ContractStatus status;
 
     @Column(name = "completed", nullable = false)
     private boolean completed;
@@ -87,27 +87,32 @@ public class ContractEntity extends BaseEntity {
     private ZonedDateTime completedAt;
 
     public void updateCompletedStatus() {
-        boolean allConfirmed = contractUsers.stream()
-                .allMatch(user -> user.getContractStatus() == ContractStatus.CONFIRMED);
+        boolean allConfirmed = members.stream()
+                .filter(user -> !user.isSurplusUser())
+                .allMatch(user -> user.getContractStatus() == ContractUserStatus.CONFIRMED);
 
         this.completed = allConfirmed;
-        this.completedAt = ZonedDateTime.now(ZoneId.of("UTC"));
+
+        if (allConfirmed) {
+            this.completedAt = ZonedDateTime.now(ZoneId.of("UTC"));
+            this.status = ContractStatus.CONFIRMED;
+        }
     }
 
     public void add(ContractUserEntity contractUser) {
-        contractUsers.add(contractUser);
+        members.add(contractUser);
     }
 
     public void remove(ContractUserEntity contractUser) {
-        contractUsers.remove(contractUser);
+        members.remove(contractUser);
     }
 
     public void addAll(List<ContractUserEntity> contractUsers) {
-        this.contractUsers.addAll(contractUsers);
+        this.members.addAll(contractUsers);
     }
 
     public void removeAll(List<ContractUserEntity> contractUsers) {
-        this.contractUsers.removeAll(contractUsers);
+        this.members.removeAll(contractUsers);
     }
 }
 

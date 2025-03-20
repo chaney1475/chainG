@@ -46,4 +46,7 @@ public class GroupEntity extends BaseEntity {
 
     @Column(name = "max_participants", nullable = false)
     private Integer maxParticipants;
+
+    @Column(name = "contract_id", nullable = true)
+    private Long contractId;
 }

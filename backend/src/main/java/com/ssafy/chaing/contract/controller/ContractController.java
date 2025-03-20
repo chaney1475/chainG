@@ -2,14 +2,20 @@ package com.ssafy.chaing.contract.controller;
 
 import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
+import com.ssafy.chaing.contract.controller.request.ApproveContractRequest;
+import com.ssafy.chaing.contract.controller.request.ConfirmContractRequest;
 import com.ssafy.chaing.contract.controller.request.EmptyContractRequest;
 import com.ssafy.chaing.contract.controller.request.UpdateDraftContractRequest;
+import com.ssafy.chaing.contract.controller.response.ContractDetailResponse;
+import com.ssafy.chaing.contract.controller.response.ContractMemberResponse;
 import com.ssafy.chaing.contract.controller.response.DraftContractResponse;
 import com.ssafy.chaing.contract.service.ContractService;
 import com.ssafy.chaing.contract.service.dto.ContractDTO;
 import com.ssafy.chaing.contract.service.dto.ContractDetailDTO;
+import com.ssafy.chaing.contract.service.dto.ContractUserDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,9 +41,10 @@ public class ContractController {
     private final ContractService contractService;
 
     @GetMapping("/{contractId}")
-    public ResponseEntity<BaseResponse<ContractDetailDTO>> getContract(@PathVariable Long contractId) {
+    public ResponseEntity<BaseResponse<ContractDetailResponse>> getContract(@PathVariable Long contractId) {
         ContractDetailDTO contract = contractService.getContract(contractId);
-        return ResponseEntity.ok(BaseResponse.success(contract));
+        ContractDetailResponse response = ContractDetailResponse.fromDTO(contract);
+        return ResponseEntity.ok(BaseResponse.success(response));
     }
 
     @PostMapping
@@ -53,30 +60,73 @@ public class ContractController {
     }
 
     @PutMapping("/{contractId}")
-    public ResponseEntity<BaseResponse<DraftContractResponse>> updateContract(
+    public ResponseEntity<BaseResponse<ContractDetailResponse>> updateContract(
             @PathVariable Long contractId,
             @RequestBody UpdateDraftContractRequest body,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        ContractDTO contractDTO = contractService.updateContract(
+        ContractDetailDTO contractDTO = contractService.updateContract(
                 contractId,
                 body.toCommand(principal.getId())
         );
 
         return ResponseEntity.ok(
                 BaseResponse.success(
-                        DraftContractResponse.from(contractDTO)
+                        ContractDetailResponse.fromDTO(contractDTO)
                 )
         );
     }
-//
-//    @PutMapping("/finalize")
-//    public ResponseEntity<String> finalizeContract(
-//            @PathVariable Long id,
-//            @RequestBody @Valid ContractFinalizeRequest request
-//    ) {
-//        contractService.finalizeContract(id, request);
-//        return ResponseEntity.ok("Contract finalized");
-//    }
+
+    @PutMapping("/{contractId}/pending")
+    public ResponseEntity<BaseResponse<ContractDetailResponse>> confirmContract(
+            @PathVariable Long contractId,
+            @RequestBody ConfirmContractRequest body,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        // 계약을 확정하는 서비스 메서드 호출
+        ContractDetailDTO contractDTO = contractService.confirmContract(
+                contractId,
+                body.toCommand(principal.getId())
+        );
+
+        return ResponseEntity.ok(
+                BaseResponse.success(
+                        ContractDetailResponse.fromDTO(contractDTO)
+                )
+        );
+    }
+
+    @PostMapping("/{contractId}/approve")
+    public ResponseEntity<BaseResponse<Void>> approveContract(
+            @PathVariable Long contractId,
+            @RequestBody ApproveContractRequest body,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        contractService.approveContract(
+                contractId,
+                body.toCommand(principal.getId())
+        );
+
+        // 응답으로 변환
+        return ResponseEntity.ok(
+                BaseResponse.success(
+                        null
+                )
+        );
+    }
+
+    @GetMapping("/{contractId}/members")
+    public ResponseEntity<BaseResponse<List<ContractMemberResponse>>> getContractMembers(
+            @PathVariable Long contractId
+    ) {
+        List<ContractUserDTO> dto = contractService.getContractMembers(contractId);
+        List<ContractMemberResponse> response = dto.stream()
+                .map(ContractMemberResponse::from).toList();
+
+        return ResponseEntity.ok(
+                BaseResponse.success(response)
+        );
+    }
+
 
 }
