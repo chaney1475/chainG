@@ -15,7 +15,9 @@ public class CardDTO {
 
     public CardDTO from(UtilityCardEntity entity) {
         return new CardDTO(
-                entity.get
-        )
+                entity.getId(),
+                entity.getCardNo(),
+                entity.getCvc()
+        );
     }
 }
