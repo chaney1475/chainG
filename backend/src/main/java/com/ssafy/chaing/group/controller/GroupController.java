@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(
         name = "Group Controller",
-        description = "그룹 정보 관리"
+        description = "그룹 생성 및 정보 관리"
 )
 @Controller
 @RequiredArgsConstructor
