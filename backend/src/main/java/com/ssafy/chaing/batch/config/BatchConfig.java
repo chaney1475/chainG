@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -35,6 +36,7 @@ public class BatchConfig {
     private final UtilityHandler utilityHandler;
 
     @Bean
+    @Primary
     @Qualifier("rentAddContractJob")
     public Job rentAddContractJob(@Qualifier("rentAddContractStep") Step rentAddContractStep) {
         // JobBuilder를 사용하여 배치 작업(job)을 생성합니다.
