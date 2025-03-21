@@ -7,11 +7,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.chaing.batch.config.BatchConfig;
-import com.ssafy.chaing.batch.scheduler.BatchScheduler;
-import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
+import com.ssafy.chaing.batch.scheduler.RentBatchScheduler;
+import com.ssafy.chaing.batch.scheduler.UtilityBatchScheduler;
 import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
-import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import java.math.BigInteger;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +37,10 @@ public class BatchConfigTest {
     private Job utilityAddContractJob;
 
     @InjectMocks
-    private BatchScheduler batchScheduler;
+    private RentBatchScheduler rentBatchScheduler;
+
+    @InjectMocks
+    private UtilityBatchScheduler utilityBatchScheduler;
 
     @BeforeEach
     public void setUp() {
@@ -49,7 +50,7 @@ public class BatchConfigTest {
     @Test
     public void testRunRentAddContractJob() throws Exception {
         // Act: 예약 실행 메서드를 수동으로 호출
-        batchScheduler.runRentAddContractJob();
+        rentBatchScheduler.runRentAddContractJob();
 
         // Assert: jobLauncher.run 메서드가 rentAddContractJob과 함께 호출되었는지 확인
         ArgumentCaptor<JobParameters> jobParametersCaptor = ArgumentCaptor.forClass(JobParameters.class);
@@ -81,7 +82,7 @@ public class BatchConfigTest {
     @Test
     public void testRunUtilityAddContractJob() throws Exception {
         // Act: 예약 실행 메서드를 수동으로 호출
-        batchScheduler.runUtilityAddContractJob();
+        utilityBatchScheduler.runUtilityAddContractJob();
 
         // Assert: jobLauncher.run 메서드가 rentAddContractJob과 함께 호출되었는지 확인
         ArgumentCaptor<JobParameters> jobParametersCaptor = ArgumentCaptor.forClass(JobParameters.class);
