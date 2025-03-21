@@ -55,9 +55,7 @@ public class ContractServiceImpl implements ContractService {
 
         List<GroupUserEntity> members = groupUserRepository.findByGroupId(groupId);
 
-        Long contractId = group.getContractId();
-
-        if (contractId != null) {
+        if (group.getContractId() != null) {
             throw new BadRequestException(CONTRACT_ALREADY_EXIST);
         }
 
@@ -93,6 +91,7 @@ public class ContractServiceImpl implements ContractService {
 
         contract.add(remainUser);
         contractRepository.save(contract);
+        group.setContractId(contract.getId());
 
         return ContractDTO.from(contract);
     }
