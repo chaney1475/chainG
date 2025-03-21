@@ -19,3 +19,10 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+
+application:
+  security:
+    jwt:
+      secret-key: aEVSS1kwanBWVUVSMTVUeVVQbFdsTVFpd2x1UG9lY1I=
+      access-token-expiration: 86400000
+      refresh-token-expiration: 86400000
