@@ -2,6 +2,7 @@ package com.ssafy.chaing.contract.domain;
 
 import com.ssafy.chaing.common.domain.BaseEntity;
 import com.ssafy.chaing.group.domain.GroupEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,15 +12,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
+@Setter
 @Getter
 @AllArgsConstructor
 @Builder
@@ -69,17 +74,45 @@ public class ContractEntity extends BaseEntity {
     @Column(name = "rent_total_amount", nullable = true) // 월세 총액
     private Integer rentTotalAmount;
 
-    @OneToMany(mappedBy = "contract")
-    private List<ContractUserEntity> contractUsers;
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.PERSIST)
+    private List<ContractUserEntity> members = new ArrayList<>();
+
+    @Column(name = "status", nullable = false)
+    private ContractStatus status;
 
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
+    @Column(name = "completed_at")
+    private ZonedDateTime completedAt;
+
     public void updateCompletedStatus() {
-        boolean allConfirmed = contractUsers.stream()
-                .allMatch(user -> user.getContractStatus() == ContractStatus.CONFIRMED);
+        boolean allConfirmed = members.stream()
+                .filter(user -> !user.isSurplusUser())
+                .allMatch(user -> user.getContractStatus() == ContractUserStatus.CONFIRMED);
 
         this.completed = allConfirmed;
+
+        if (allConfirmed) {
+            this.completedAt = ZonedDateTime.now(ZoneId.of("UTC"));
+            this.status = ContractStatus.CONFIRMED;
+        }
+    }
+
+    public void add(ContractUserEntity contractUser) {
+        members.add(contractUser);
+    }
+
+    public void remove(ContractUserEntity contractUser) {
+        members.remove(contractUser);
+    }
+
+    public void addAll(List<ContractUserEntity> contractUsers) {
+        this.members.addAll(contractUsers);
+    }
+
+    public void removeAll(List<ContractUserEntity> contractUsers) {
+        this.members.removeAll(contractUsers);
     }
 }
 
