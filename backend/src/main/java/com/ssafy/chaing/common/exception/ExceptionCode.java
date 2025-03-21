@@ -17,6 +17,11 @@ public enum ExceptionCode {
     GROUP_INVITE_CODE_INVALID("GROUP_INVITE_CODE_INVALID", "유효하지 않은 그룹 초대 코드입니다."),
 
 
+    CONTRACT_ALREADY_CONFIRMED("CONTRACT_ALREADY_CONFIRMED", "수정이 불가능합니다. 계약서가 이미 확정 되었습니다."),
+    CONTRACT_ALREADY_EXIST("CONTRACT_ALREADY_EXIST", "이미 계약서가 존재합니다."),
+    CONTRACT_NOT_FOUND("CONTRACT_NOT_FOUND", "계약서가 존재하지 않습니다."),
+    CARD_NOT_FOUND("CARD_NOT_FOUND", "카드가 존재하지 않습니다."),
+
     INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 틀렸습니다."),
     INVALID_TOKEN("EXPIRED_ACCESS_TOKEN", "로그인에 실패하였습니다."),
     SOCIAL_NOT_FOUND("SOCIAL_NOT_FOUND", "지원하지 않는 로그인 방식입니다."),

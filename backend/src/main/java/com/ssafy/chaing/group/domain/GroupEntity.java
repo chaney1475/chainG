@@ -16,9 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 
+@Setter
 @Getter
 @AllArgsConstructor
 @Builder
@@ -46,4 +48,7 @@ public class GroupEntity extends BaseEntity {
 
     @Column(name = "max_participants", nullable = false)
     private Integer maxParticipants;
+
+    @Column(name = "contract_id", nullable = true)
+    private Long contractId;
 }
