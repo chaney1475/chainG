@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateDutyRequest {
+public class DutyFormRequest {
     private String title;
     private String content;
     private ZonedDateTime dutyTime;
