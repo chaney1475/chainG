@@ -59,5 +59,23 @@ public class DutyEntity extends BaseEntity {
     @OneToMany(mappedBy = "duty", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DutyAssigneeEntity> assignees = new HashSet<>(); // 할당된 사용자 목록
 
+    // 도메인 메서드: duty 기본 정보 업데이트
+    public void update(String title, String content, ZonedDateTime dutyTime, String dayOfWeek, boolean useTime) {
+        this.title = title;
+        this.content = content;
+        this.dutyTime = dutyTime;
+        this.dayOfWeek = dayOfWeek;
+        this.useTime = useTime;
+    }
+
+    // 도메인 메서드: 기존 할당자 모두 제거
+    public void clearAssignees() {
+        this.assignees.clear();
+    }
+
+    // 도메인 메서드: 할당자 추가
+    public void addAssignee(DutyAssigneeEntity assignee) {
+        this.assignees.add(assignee);
+    }
 
 }
