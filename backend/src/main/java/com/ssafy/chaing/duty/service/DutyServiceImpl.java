@@ -40,16 +40,28 @@ public class DutyServiceImpl implements DutyService {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
         List<DutyEntity> duties = dutyRepository.findByGroup_Id(groupId);
 
-        // 각 요일별 DutyDetailResponse 목록으로 그룹화 (요일 정보는 모두 소문자로 되어 있다고 가정)
-        Map<String, List<DutyDetailResponse>> groupedDuties = duties.stream()
+        List<DutyEntity> filteredDuties = duties.stream()
+                .filter(duty -> {
+                    // todo : 이부분 수정해야됨...
+                    // 1. dutyTime이 null?? => 무조건 보내야됨.
+                    // 2. LocalTime 이 아닌거 같은데
+                    if (duty.getDutyTime() == null) {
+                        return true;
+                    }
+                    LocalDate dutyDate = duty.getDutyTime().toLocalDate();
+                    return !dutyDate.isBefore(startOfWeek) && !dutyDate.isAfter(endOfWeek);
+                })
+                .collect(Collectors.toList());
+
+        Map<String, List<DutyDetailResponse>> groupedDuties = filteredDuties.stream()
                 .collect(Collectors.groupingBy(
-                        DutyEntity::getDayOfWeek,
+                        duty -> duty.getDayOfWeek().toLowerCase(),
                         Collectors.mapping(DutyDetailResponse::from, Collectors.toList())
                 ));
 
-        // 각 요일별로 값이 없으면 빈 리스트로 초기화
         List<DutyDetailResponse> sunday = groupedDuties.getOrDefault("sunday", new ArrayList<>());
         List<DutyDetailResponse> monday = groupedDuties.getOrDefault("monday", new ArrayList<>());
         List<DutyDetailResponse> tuesday = groupedDuties.getOrDefault("tuesday", new ArrayList<>());
