@@ -14,6 +14,14 @@ import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
 import jakarta.transaction.Transactional;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,18 +35,38 @@ public class DutyServiceImpl implements DutyService {
 
     @Override
     public DutyListResponse getDuties(Long groupId) {
-        // TODO: Duty 목록 조회 로직 구현
-        return null;
+        // TODO: Duty 목록 조회 로직 구현 -> 요청한 날짜에 대해서 그 주를 확인하고 그 주에 있는 모든 당번 목록들을 조회
+        // todo : 날짜와 관련해서 질문 해봐야겠당...
+        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+        List<DutyEntity> duties = dutyRepository.findByGroup_Id(groupId);
+
+        // 각 요일별 DutyDetailResponse 목록으로 그룹화 (요일 정보는 모두 소문자로 되어 있다고 가정)
+        Map<String, List<DutyDetailResponse>> groupedDuties = duties.stream()
+                .collect(Collectors.groupingBy(
+                        DutyEntity::getDayOfWeek,
+                        Collectors.mapping(DutyDetailResponse::from, Collectors.toList())
+                ));
+
+        // 각 요일별로 값이 없으면 빈 리스트로 초기화
+        List<DutyDetailResponse> sunday = groupedDuties.getOrDefault("sunday", new ArrayList<>());
+        List<DutyDetailResponse> monday = groupedDuties.getOrDefault("monday", new ArrayList<>());
+        List<DutyDetailResponse> tuesday = groupedDuties.getOrDefault("tuesday", new ArrayList<>());
+        List<DutyDetailResponse> wednesday = groupedDuties.getOrDefault("wednesday", new ArrayList<>());
+        List<DutyDetailResponse> thursday = groupedDuties.getOrDefault("thursday", new ArrayList<>());
+        List<DutyDetailResponse> friday = groupedDuties.getOrDefault("friday", new ArrayList<>());
+        List<DutyDetailResponse> saturday = groupedDuties.getOrDefault("saturday", new ArrayList<>());
+
+        return new DutyListResponse(sunday, monday, tuesday, wednesday, thursday, friday, saturday);
     }
 
     @Override
     @Transactional
     public DutyDetailResponse creatDuty(Long groupId, DutyFormRequest request) {
-        // 그룹 존재 여부 확인
         GroupEntity group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
-        // DutyEntity 생성 (빌더를 통해 초기값 세팅)
         DutyEntity dutyEntity = DutyEntity.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
