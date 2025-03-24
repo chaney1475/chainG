@@ -1,13 +1,21 @@
 package com.ssafy.chaing.fintech.service.common;
 
-public record HeaderDTO(
-        String apiName,
-        String transmissionDate,
-        String transmissionTime,
-        String institutionCode,
-        String fintechAppNo,
-        String apiServiceCode,
-        String institutionTransactionUniqueNo,
-        String apiKey,
-        String userKey
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@AllArgsConstructor
+@ToString
+public class HeaderDTO {
+    private final String apiName;
+    private final String transmissionDate;
+    private final String transmissionTime;
+    private final String institutionCode;
+    private final String fintechAppNo;
+    private final String apiServiceCode;
+    private final String institutionTransactionUniqueNo;
+    private final String apiKey;
+    private final String userKey;
+}
+

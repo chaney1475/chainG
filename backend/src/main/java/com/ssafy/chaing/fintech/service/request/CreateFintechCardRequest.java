@@ -1,5 +1,6 @@
 package com.ssafy.chaing.fintech.service.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.service.common.HeaderDTO;
 import com.ssafy.chaing.fintech.util.HeaderUtil;
@@ -14,22 +15,17 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class CreateFintechCardRequest {
 
+    @JsonProperty("Header")
     private HeaderDTO Header;
     private String cardUniqueNo;
     private String withdrawalAccountNo;
     private String withdrawalDate;
 
-    public CreateFintechCardRequest from(String cardUniqueNo, CreateCardCommand command){
-        HeaderUtil headerUtil = new HeaderUtil();
-        HeaderDTO header = headerUtil.createFintechCardHeader();
-        log.info("header.apiKey = {}", header.apiKey());
-        log.info("header.userKey = {}", header.userKey());
-        return new CreateFintechCardRequest(
-                headerUtil.createFintechCardHeader(),
-                cardUniqueNo,
-                command.accountNo(),
-                "5"
-        );
+    public CreateFintechCardRequest(HeaderDTO header, String cardUniqueNo, CreateCardCommand command){
+        this.Header = header;
+        this.cardUniqueNo = cardUniqueNo;
+        this.withdrawalAccountNo = command.accountNo();
+        this.withdrawalDate = "5";
     }
 
     public String toString() {
