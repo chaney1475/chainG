@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// import { handleDefaultError } from '@/utils/error/handleDefaultError'
+import { handleDefaultError } from '@/utils/error/handleDefaultError'
 
 interface Login {
   accessToken: string
