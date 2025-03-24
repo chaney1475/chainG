@@ -9,6 +9,13 @@ import org.springframework.data.repository.query.Param;
 public interface DutyRepository extends JpaRepository<DutyEntity, Long> {
     List<DutyEntity> findByGroup_Id(Long groupId);
 
-    @Query("SELECT d FROM DutyEntity d LEFT JOIN FETCH d.assignees a LEFT JOIN FETCH a.groupUser gu LEFT JOIN FETCH gu.user WHERE d.group.id = :groupId")
-    List<DutyEntity> findAllWithAssigneesByGroupId(@Param("groupId") Long groupId);
+    @Query("""
+        SELECT d 
+        FROM DutyEntity d 
+        LEFT JOIN FETCH d.assignees a 
+        LEFT JOIN FETCH a.groupUser gu 
+        LEFT JOIN FETCH gu.user 
+        WHERE d.group.id = :groupId
+    """)
+    List<DutyEntity> findWithAssigneesByGroupId(@Param("groupId") Long groupId);
 }
