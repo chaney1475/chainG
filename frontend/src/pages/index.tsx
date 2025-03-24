@@ -1,15 +1,18 @@
-'use client'
-
 import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 
-import { getFcmToken, onForegroundMessage } from './firebase'
-import styles from './page.module.css'
+import { getFcmToken, onForegroundMessage } from '@/app/firebase'
+import styles from '@/app/page.module.css'
+import { RootState } from '@/store/store'
 
 export default function Home() {
   const router = useRouter()
   const testValue = process.env.NEXT_PUBLIC_TEST_VALUE
+  const accessToken = useSelector(
+    (state: RootState) => state.auth.loginToken.accessToken,
+  )
 
   useEffect(() => {
     const initFirebase = async () => {
@@ -21,12 +24,10 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // TODO: 실제 로그인 상태 체크 로직 구현
-    const isLoggedIn = false // 임시로 false로 설정
-    if (!isLoggedIn) {
+    if (!accessToken) {
       router.push('/login')
     }
-  }, [router])
+  }, [accessToken, router])
 
   return (
     <div className={styles.page}>
