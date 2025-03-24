@@ -35,22 +35,13 @@ public class DutyServiceImpl implements DutyService {
 
     @Override
     public DutyListResponse getDuties(Long groupId) {
-        // TODO: Duty 목록 조회 로직 구현 -> 요청한 날짜에 대해서 그 주를 확인하고 그 주에 있는 모든 당번 목록들을 조회
-        // todo : 날짜와 관련해서 질문 해봐야겠당...
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 
         List<DutyEntity> duties = dutyRepository.findByGroup_Id(groupId);
-
         List<DutyEntity> filteredDuties = duties.stream()
                 .filter(duty -> {
-                    // todo : 이부분 수정해야됨...
-                    // 1. dutyTime이 null?? => 무조건 보내야됨.
-                    // 2. LocalTime 이 아닌거 같은데
-//                    if (duty.getDutyTime() == null) {
-//                        return true;
-//                    }
                     LocalDate dutyDate = duty.getDutyTime().toLocalDate();
                     return !dutyDate.isBefore(startOfWeek) && !dutyDate.isAfter(endOfWeek);
                 })

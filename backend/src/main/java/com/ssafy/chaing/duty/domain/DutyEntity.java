@@ -56,6 +56,7 @@ public class DutyEntity extends BaseEntity {
     @JoinColumn(name = "group_id", nullable = false)
     private GroupEntity group; // 해당 당번이 속한 그룹
 
+    @Builder.Default
     @OneToMany(mappedBy = "duty", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DutyAssigneeEntity> assignees = new HashSet<>(); // 할당된 사용자 목록
 
