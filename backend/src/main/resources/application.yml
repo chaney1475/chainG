@@ -110,6 +110,13 @@ web3j:
   rent-contract-address: ${rent-contract-address}
   utility-contract-address: ${utility-contract-address}
   chain-id: ${chain-id}
+
+ssafy:
+  fintech:
+    api-key: a57e58879de94373856c981706ca1056
+    user-key: ed638cf5-675b-4e37-91c5-1ea6f5a92f67
+    card-unique-no: 1002-4b4764d264c3460
+    base-url: https://finopenapi.ssafy.io/ssafy/api/v1/edu
 #
 #logging:
 #  level:
