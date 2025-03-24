@@ -64,6 +64,10 @@ spring:
             enable: true
             required: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+
 application:
   security:
     jwt:

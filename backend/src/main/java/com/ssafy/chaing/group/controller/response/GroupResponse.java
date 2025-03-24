@@ -12,6 +12,7 @@ public class GroupResponse {
     private Long id;
     private String name;
     private String inviteCode;
+    private Long leaderId;
     private Integer maxParticipants;
 
     public static GroupResponse from(GroupDTO dto) {
@@ -19,6 +20,7 @@ public class GroupResponse {
                 dto.getId(),
                 dto.getName(),
                 dto.getInviteCode(),
+                dto.getLeaderId(),
                 dto.getMaxParticipant()
         );
     }
