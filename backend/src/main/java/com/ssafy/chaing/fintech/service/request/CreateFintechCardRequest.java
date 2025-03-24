@@ -3,7 +3,6 @@ package com.ssafy.chaing.fintech.service.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.service.common.HeaderDTO;
-import com.ssafy.chaing.fintech.util.HeaderUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,14 +20,10 @@ public class CreateFintechCardRequest {
     private String withdrawalAccountNo;
     private String withdrawalDate;
 
-    public CreateFintechCardRequest(HeaderDTO header, String cardUniqueNo, CreateCardCommand command){
+    public CreateFintechCardRequest(HeaderDTO header, String cardUniqueNo, CreateCardCommand command) {
         this.Header = header;
         this.cardUniqueNo = cardUniqueNo;
         this.withdrawalAccountNo = command.accountNo();
         this.withdrawalDate = "5";
-    }
-
-    public String toString() {
-        return "CreateFintechCardRequest [Header=" + Header + ", cardUniqueNo=" + cardUniqueNo + ", withdrawalAccountNo=" + withdrawalAccountNo + ", withdrawalDate=" + withdrawalDate + "]";
     }
 }

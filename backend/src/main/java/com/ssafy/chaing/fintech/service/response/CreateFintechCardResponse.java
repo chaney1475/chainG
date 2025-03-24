@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 
 public record CreateFintechCardResponse(
-        @JsonProperty("REC") CreateFintechCardRec rec
+        @JsonProperty("REC")
+        CreateFintechCardRec rec
 ) {
 }
