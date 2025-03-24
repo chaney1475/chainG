@@ -32,7 +32,7 @@ public class DutyController {
     private final DutyService dutyService;
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<BaseResponse<DutyListResponse>> getDuties(@PathVariable Long groupId) {
+    public ResponseEntity<BaseResponse<DutyListResponse>> getDuties(@PathVariable("groupId") Long groupId) {
         DutyListResponse duties = dutyService.getDuties(groupId);
         return ResponseEntity.ok(BaseResponse.success(duties));
     }
