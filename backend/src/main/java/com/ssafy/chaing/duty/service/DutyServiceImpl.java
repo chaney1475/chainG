@@ -48,9 +48,9 @@ public class DutyServiceImpl implements DutyService {
                     // todo : 이부분 수정해야됨...
                     // 1. dutyTime이 null?? => 무조건 보내야됨.
                     // 2. LocalTime 이 아닌거 같은데
-                    if (duty.getDutyTime() == null) {
-                        return true;
-                    }
+//                    if (duty.getDutyTime() == null) {
+//                        return true;
+//                    }
                     LocalDate dutyDate = duty.getDutyTime().toLocalDate();
                     return !dutyDate.isBefore(startOfWeek) && !dutyDate.isAfter(endOfWeek);
                 })
@@ -112,7 +112,8 @@ public class DutyServiceImpl implements DutyService {
         DutyEntity dutyEntity = dutyRepository.findById(dutyId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.DUTY_NOT_FOUND));
 
-        dutyEntity.update(request.getTitle(), request.getContent(), request.getDutyTime(), request.getDayOfWeek(), request.isUseTime());
+        dutyEntity.update(request.getTitle(), request.getContent(), request.getDutyTime(), request.getDayOfWeek(),
+                request.isUseTime());
 
         dutyEntity.clearAssignees();
         if (request.getAssignees() != null) {
