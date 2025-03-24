@@ -26,6 +26,9 @@ public enum ExceptionCode {
     INVALID_TOKEN("EXPIRED_ACCESS_TOKEN", "로그인에 실패하였습니다."),
     SOCIAL_NOT_FOUND("SOCIAL_NOT_FOUND", "지원하지 않는 로그인 방식입니다."),
 
+    DUTY_NOT_FOUND("DUTY_NOT_FOUND", "당번이 존재하지 않습니다."),
+    USER_NOT_IN_GROUP("USER_NOT_IN_GROUP", "해당 유저가 그룹에 속해 있지 않습니다.");
+
     ;
 
     private final String code;
