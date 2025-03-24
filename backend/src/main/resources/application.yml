@@ -62,6 +62,10 @@ application:
       access-token-expiration: ${APPLICATION_SECURITY_JWT_ACCESS_TOKEN_EXPIRATION}
       refresh-token-expiration: ${APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION}
 
+firebase:
+  project-name: ${FIREBASE_PROJECT_NAME}
+  service-account-base64: ${FIREBASE_SERVICE_ACCOUNT}
+
 app:
   cors:
     allow-hosts:

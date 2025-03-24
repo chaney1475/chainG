@@ -2,9 +2,9 @@ package com.ssafy.chaing.auth.service;
 
 import com.ssafy.chaing.auth.jwt.AuthClaims;
 import com.ssafy.chaing.auth.jwt.JwtService;
+import com.ssafy.chaing.auth.service.command.FcmCommand;
 import com.ssafy.chaing.auth.service.command.SignupCommand;
 import com.ssafy.chaing.auth.service.dto.AuthDTO;
-import com.ssafy.chaing.user.service.dto.UserInfoDTO;
 import com.ssafy.chaing.common.exception.AuthenticationException;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
@@ -12,11 +12,13 @@ import com.ssafy.chaing.common.exception.NotFoundException;
 import com.ssafy.chaing.user.domain.RoleType;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
+import com.ssafy.chaing.user.service.dto.UserInfoDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,6 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     @Override
+    @Transactional
     public AuthDTO signup(SignupCommand command, HttpServletResponse response) {
         userRepository.findByEmailAddress(command.getEmailAddress()).ifPresent(user -> {
             throw new BadRequestException(ExceptionCode.DUPLICATE_EMAIL);
@@ -86,5 +89,14 @@ public class AuthServiceImpl implements AuthService {
         jwtService.setRefreshTokenCookie(response, newRefreshToken);
 
         return new AuthDTO(accessToken, new UserInfoDTO(user.getId(), user.getName(), user.getNickname()));
+    }
+
+    @Override
+    @Transactional
+    public void updateFcmToken(FcmCommand command) {
+        UserEntity user = userRepository.findById(command.getUserId())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
+
+        user.setFcmToken(command.getFcmToken());
     }
 }

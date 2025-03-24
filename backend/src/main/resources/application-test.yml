@@ -20,6 +20,10 @@ spring:
         format_sql: true
         show_sql: true
 
+firebase:
+  project-name: chain-g
+  service-account-base64: dGVzdC1zZXJ2aWNlLWFjY291bnQ=
+
 application:
   security:
     jwt:
