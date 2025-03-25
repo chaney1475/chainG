@@ -12,6 +12,9 @@ export type CustomTheme = {
       distructive: string
       confirm: string
     }
+    background: {
+      white: string
+    }
     border: string
   }
   typography: {
@@ -87,6 +90,9 @@ const theme: CustomTheme = {
       distructive: '#c84620',
       confirm: '#3bce6e',
     },
+    background: {
+      white: '#ffffff',
+    },
     border: '#d9d9d9',
   },
   typography: {
@@ -100,7 +106,7 @@ const theme: CustomTheme = {
         fontSize: '1.125rem',
       },
       title: {
-        fontFamily: 'var(--font-paperlogy-semibold)',
+        fontFamily: 'var(--font-paperlogy-semi-bold)',
         fontSize: '22px',
       },
       default: {
@@ -124,7 +130,7 @@ const theme: CustomTheme = {
         fontSize: '1.25rem',
       },
       heading: {
-        fontFamily: 'var(--font-paperlogy-semibold)',
+        fontFamily: 'var(--font-paperlogy-semi-bold)',
         fontSize: '1.875rem',
       },
       navigator: {
@@ -136,7 +142,7 @@ const theme: CustomTheme = {
         fontSize: '0.5rem',
       },
       descriptionBold: {
-        fontFamily: 'var(--font-paperlogy-semibold)',
+        fontFamily: 'var(--font-paperlogy-semi-bold)',
         fontSize: '0.875rem',
       },
       defaultHighlight: {
