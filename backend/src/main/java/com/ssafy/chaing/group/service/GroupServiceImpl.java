@@ -35,7 +35,6 @@ public class GroupServiceImpl implements GroupService {
 
         owner.setNickname(command.getOwnerNickname());
         owner.setProfileImage(command.getOwnerProfileImage());
-
         GroupEntity group = GroupEntity.builder()
                 .owner(owner)
                 .groupCode(RandomCodeGenerator.generate(6))
@@ -44,8 +43,11 @@ public class GroupServiceImpl implements GroupService {
                 .isActive(true)
                 .build();
 
-        userRepository.save(owner);
         groupRepository.save(group);
+        
+        owner.setGroupId(group.getId());
+
+        userRepository.save(owner);
 
         GroupUserEntity groupUser = GroupUserEntity.builder()
                 .group(group)
@@ -98,6 +100,7 @@ public class GroupServiceImpl implements GroupService {
 
         user.setNickname(command.getNickname());
         user.setProfileImage(command.getProfileImage());
+        user.setGroupId(group.getId());
 
         GroupUserEntity groupUser = GroupUserEntity.builder()
                 .group(group)

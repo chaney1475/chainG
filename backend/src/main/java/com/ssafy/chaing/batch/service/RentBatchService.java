@@ -30,6 +30,11 @@ public class RentBatchService {
     private final UserPaymentRepository userPaymentRepository;
     private final TaskScheduler taskScheduler;
 
+    private int executionHour = 18; // 기본값 오후 6시
+    private int executionMinute = 0; // 기본값 0분
+    private int retryDays = 1; // 기본값 1일 후 재시도
+    private int retryMinutes = 0; // 기본값 30분 후 재시도
+
     /**
      * ✅ 다음 달 Payment 생성 및 배치 등록
      */
@@ -73,16 +78,16 @@ public class RentBatchService {
         // ✅ 같은 달의 dueDate로 설정
         ZonedDateTime nextExecution = now
                 .withDayOfMonth(dueDate)
-                .withHour(18)
-                .withMinute(0)
+                .withHour(executionHour)
+                .withMinute(executionMinute)
                 .withSecond(0);
 
         // ✅ 현재 날짜보다 이전이면 다음 달로 넘김
         if (nextExecution.isBefore(now)) {
             nextExecution = nextExecution.plusMonths(1)
                     .withDayOfMonth(dueDate)
-                    .withHour(18)
-                    .withMinute(0)
+                    .withHour(executionHour)
+                    .withMinute(executionMinute)
                     .withSecond(0);
         }
 
@@ -189,12 +194,46 @@ public class RentBatchService {
 
         payment.increaseRetryCount();
 
-        ZonedDateTime retryExecution = ZonedDateTime.now().plusDays(1);
+        // ✅ 외부에서 주입된 값으로 재시도 시간 계산
+        ZonedDateTime retryExecution = ZonedDateTime.now()
+                .plusDays(retryDays)
+                .plusMinutes(retryMinutes);
 
         taskScheduler.schedule(() -> payToOwner(payment),
                 Date.from(retryExecution.toInstant()));
 
-        log.info("🔁 30분 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
-                payment.getId(), payment.getRetryCount());
+        log.info("🔁 {}일 {}분 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
+                retryDays, retryMinutes, payment.getId(), payment.getRetryCount());
     }
+
+    /**
+     * 실행 시간을 외부에서 주입받아 테스트 가능하도록 설정합니다. 실제 배포에서는 기본값(18:00)으로 설정합니다.
+     *
+     * @param hour   - 실행 시간
+     * @param minute - 실행 분
+     */
+    public void setExecutionTime(int hour, int minute) {
+        if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            throw new IllegalArgumentException("Invalid execution time");
+        }
+        this.executionHour = hour;
+        this.executionMinute = minute;
+        log.info("✅ 실행 시간 설정 완료 → 시간 = {}시 {}분", hour, minute);
+    }
+
+    /**
+     * 재시도 시간을 외부에서 주입받아 테스트 가능하도록 설정합니다.
+     *
+     * @param days    - 재시도까지 대기 일 수
+     * @param minutes - 재시도까지 대기 분 수
+     */
+    public void setRetryInterval(int days, int minutes) {
+        if (days < 0 || minutes < 0 || minutes > 59) {
+            throw new IllegalArgumentException("Invalid retry interval");
+        }
+        this.retryDays = days;
+        this.retryMinutes = minutes;
+        log.info("✅ 재시도 간격 설정 완료 → {}일 {}분 후", days, minutes);
+    }
+
 }
