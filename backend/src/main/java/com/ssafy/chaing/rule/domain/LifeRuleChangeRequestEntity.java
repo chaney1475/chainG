@@ -1,7 +1,6 @@
 package com.ssafy.chaing.rule.domain;
 
 import com.ssafy.chaing.common.domain.BaseEntity;
-import com.ssafy.chaing.group.domain.GroupUserEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,9 +44,9 @@ public class LifeRuleChangeRequestEntity extends BaseEntity {
     @OneToMany(mappedBy = "changeRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LifeRuleChangeItemEntity> changeItems;  // 변경된 항목들
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requested_by", nullable = false)
-    private GroupUserEntity requestedBy;  // 변경 요청한 사용자
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "requested_by", nullable = false)
+//    private GroupUserEntity requestedBy;  // 변경 요청한 사용자
 
     @Column(name = "requested_at", nullable = false)
     private ZonedDateTime requestedAt;  // 변경 요청 시간
@@ -55,9 +54,13 @@ public class LifeRuleChangeRequestEntity extends BaseEntity {
     @Column(name = "approval_count", nullable = false)
     private int approvalCount = 1;  // 처음 생성 시 요청자가 포함되어 있으므로 기본값 1
 
+    @Column(name = "total_group_member", nullable = false)
+    private int totalGroupMember;
+
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ChangeRequestStatus status = ChangeRequestStatus.PENDING;  // 초기값은 PENDING
+    private ChangeRequestStatus status = ChangeRequestStatus.PROGRESS;  // 초기값은 PENDING
 
     public void approve(int totalGroupMembers) {
         this.approvalCount++;

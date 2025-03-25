@@ -37,4 +37,15 @@ public class LifeRuleItemEntity extends BaseEntity {
     @Column(name = "content", nullable = false, length = 500)
     private String content;  // 생활룰 요소 내용
 
+    @Column(name = "content", nullable = false)
+    private String category;
+
+    public void assignToLifeRule(LifeRuleEntity lifeRule) {
+        this.lifeRule = lifeRule;
+    }
+
+    public void update(String newValue, String category) {
+        this.content = newValue;
+        this.category = category;
+    }
 }

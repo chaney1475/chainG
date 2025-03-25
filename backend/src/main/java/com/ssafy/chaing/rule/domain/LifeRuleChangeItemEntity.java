@@ -43,6 +43,9 @@ public class LifeRuleChangeItemEntity extends BaseEntity {
     @Column(name = "new_value")
     private String newValue;  // 변경된 내용 (update/insert 시 사용)
 
+    @Column(name = "category")
+    private String category;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "action_type", nullable = false)
     private ActionType actionType;  // update, delete, create 구분

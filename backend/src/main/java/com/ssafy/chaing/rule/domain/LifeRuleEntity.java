@@ -44,5 +44,11 @@ public class LifeRuleEntity extends BaseEntity {
     @Column(name = "change_request_id", nullable = true)
     private Long changeRequestId;  // 현재 적용되지 않은 변경 요청의 ID (승인 대기 상태)
 
+    public void setItems(List<LifeRuleItemEntity> items) {
+        this.items = items;
+        for (LifeRuleItemEntity item : items) {
+            item.assignToLifeRule(this);  // 양방향 연관관계 설정
+        }
+    }
 
 }
