@@ -45,8 +45,8 @@ public class RuleController {
 
     // 생활룰 전체 페이지 조회
     @GetMapping
-    public ResponseEntity<BaseResponse<LifeRuleResponse>> getLifeRule(@RequestBody LifeRuleFormRequest body,
-                                                                      @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<BaseResponse<LifeRuleResponse>> getLifeRule(
+            @AuthenticationPrincipal UserPrincipal principal) {
         LifeRuleResponse lifeRules = ruleService.getLifeRules(principal.getId());
         return ResponseEntity.ok(BaseResponse.success(lifeRules));
     }
@@ -62,7 +62,6 @@ public class RuleController {
     //생활룰 수정 사항 조회
     @GetMapping("/update-temp")
     public ResponseEntity<BaseResponse<List<LifeRuleUpdateDto>>> getUpdateLifeRule(
-            @RequestBody LifeRuleFormRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
         List<LifeRuleUpdateDto> updateLifeRule = ruleService.getUpdateLifeRule(principal.getId());
         return ResponseEntity.ok(BaseResponse.success(updateLifeRule));
