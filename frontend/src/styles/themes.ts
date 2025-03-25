@@ -20,6 +20,18 @@ export type CustomTheme = {
       paperlogyMedium: string
     }
     styles: {
+      topHeader: {
+        fontFamily: string
+        fontSize: string
+      }
+      title: {
+        fontFamily: string
+        fontSize: string
+      }
+      default: {
+        fontFamily: string
+        fontSize: string
+      }
       name: {
         fontFamily: string
         fontSize: string
@@ -28,7 +40,31 @@ export type CustomTheme = {
         fontFamily: string
         fontSize: string
       }
-      default: {
+      description: {
+        fontFamily: string
+        fontSize: string
+      }
+      button: {
+        fontFamily: string
+        fontSize: string
+      }
+      heading: {
+        fontFamily: string
+        fontSize: string
+      }
+      navigator: {
+        fontFamily: string
+        fontSize: string
+      }
+      tiny: {
+        fontFamily: string
+        fontSize: string
+      }
+      descriptionBold: {
+        fontFamily: string
+        fontSize: string
+      }
+      defaultHighlight: {
         fontFamily: string
         fontSize: string
       }
@@ -59,17 +95,53 @@ const theme: CustomTheme = {
       paperlogyMedium: 'var(--font-paperlogy-medium)',
     },
     styles: {
-      name: {
-        fontFamily: 'var(--font-paperlogy-regular)',
-        fontSize: '0.875rem', // 14px를 rem으로 변환 (14/16)
-      },
-      inputBoxTitle: {
+      topHeader: {
         fontFamily: 'var(--font-paperlogy-medium)',
-        fontSize: '0.875rem', // 14px를 rem으로 변환 (14/16)
+        fontSize: '1.125rem',
+      },
+      title: {
+        fontFamily: 'var(--font-paperlogy-semibold)',
+        fontSize: '22px',
       },
       default: {
         fontFamily: 'var(--font-paperlogy-regular)',
-        fontSize: '1.125 rem',
+        fontSize: '1.125rem',
+      },
+      name: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.875rem',
+      },
+      inputBoxTitle: {
+        fontFamily: 'var(--font-paperlogy-medium)',
+        fontSize: '0.875rem',
+      },
+      description: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.875rem',
+      },
+      button: {
+        fontFamily: 'var(--font-paperlogy-medium)',
+        fontSize: '1.25rem',
+      },
+      heading: {
+        fontFamily: 'var(--font-paperlogy-semibold)',
+        fontSize: '1.875rem',
+      },
+      navigator: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.625rem',
+      },
+      tiny: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.5rem',
+      },
+      descriptionBold: {
+        fontFamily: 'var(--font-paperlogy-semibold)',
+        fontSize: '0.875rem',
+      },
+      defaultHighlight: {
+        fontFamily: 'var(--font-paperlogy-bold)',
+        fontSize: '1.125rem',
       },
     },
   },
