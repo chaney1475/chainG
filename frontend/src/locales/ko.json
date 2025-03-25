@@ -1,0 +1,97 @@
+{
+  "login": {
+    "title": "로그인",
+    "description": "이메일과 비밀번호를 입력해주세요",
+    "email": {
+      "label": "이메일",
+      "placeholder": "이메일을 입력해주세요",
+      "error": [
+        {
+          "code": "REQUIRED",
+          "message": "이메일을 입력해주세요"
+        },
+        {
+          "code": "INVALID_EMAIL",
+          "message": "유효하지 않은 이메일입니다"
+        }
+      ]
+    },
+    "password": {
+      "label": "비밀번호",
+      "placeholder": "비밀번호를 입력해주세요",
+      "error": [
+        {
+          "code": "REQUIRED",
+          "message": "비밀번호를 입력해주세요"
+        }
+      ]
+    }
+  },
+  "signUp": {
+    "title": "회원가입",
+    "description": "이메일과 비밀번호를 입력해주세요",
+    "email": {
+      "label": "이메일",
+      "placeholder": "이메일을 입력해주세요",
+      "error": [
+        {
+          "code": "REQUIRED",
+          "message": "이메일을 입력해주세요"
+        },
+        {
+          "code": "INVALID_EMAIL",
+          "message": "유효하지 않은 이메일입니다"
+        }
+      ]
+    },
+    "password": {
+      "label": "비밀번호",
+      "placeholder": "비밀번호를 입력해주세요",
+      "error": [
+        {
+          "code": "REQUIRED",
+          "message": "비밀번호를 입력해주세요"
+        },
+        {
+          "code": "REQUIRED_ALPHABET",
+          "message": "영문 포함"
+        },
+        {
+          "code": "REQUIRED_NUMBER",
+          "message": "숫자 포함"
+        },
+        {
+          "code": "LENGTH",
+          "message": "8 ~ 20자 이내"
+        }
+      ]
+    }
+  },
+  "inviteCode": {
+    "title": "초대 코드 입력",
+    "description": "초대 코드를 입력해주세요",
+    "inviteCode": {
+      "label": "초대 코드",
+      "placeholder": "초대 코드를 입력해주세요",
+      "error": [
+        {
+          "code": "REQUIRED",
+          "message": "초대 코드를 입력해주세요"
+        },
+        {
+          "code": "INVITE_CODE_NOT_FOUND",
+          "message": "유효하지 않은 초대 코드입니다"
+        }
+      ]
+    }
+  },
+  "createProfile": {
+    "title": "프로필 설정",
+    "description": "원하는 프로필 이미지를 선택해주세요",
+    "nickname": {
+      "label": "닉네임",
+      "placeholder": "닉네임을 입력해주세요"
+    },
+    "confirm": "입주하기"
+  }
+}
