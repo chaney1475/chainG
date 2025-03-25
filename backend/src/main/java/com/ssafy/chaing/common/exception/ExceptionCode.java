@@ -29,7 +29,8 @@ public enum ExceptionCode {
     DUTY_NOT_FOUND("DUTY_NOT_FOUND", "당번이 존재하지 않습니다."),
     USER_NOT_IN_GROUP("USER_NOT_IN_GROUP", "해당 유저가 그룹에 속해 있지 않습니다."),
 
-    LIFE_RULE_NOT_FOUND("LIFE_RULE_NOT_FOUND", "라이프 룰이 존재하지 않습니다."),
+    LIFE_RULE_NOT_FOUND("LIFE_RULE_NOT_FOUND", "생활 룰이 존재하지 않습니다."),
+    LIFE_RULE_ITEM_NOT_FOUND("LIFE_RULE_ITEM_NOT_FOUND" , "생활 룰 변경 사항이 존재하지 않습니다."),
     LIFE_RULE_CHANGE_REQUEST_NOT_FOUND("LIFE_RULE_CHANGE_REQUEST_NOT_FOUND", "변경 요청이 존재하지 않습니다.");
 
     private final String code;
