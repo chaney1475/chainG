@@ -22,7 +22,7 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
     List<GroupUserEntity> findByGroupId(@Param("groupId") Long groupId);
 
     @Query("SELECT COUNT(gu) FROM GroupUserEntity gu WHERE gu.group.id = :groupId")
-    int countByGroupId(@Param("groupId")Long groupId);
+    int countByGroupId(@Param("groupId") Long groupId);
 
     @Query("""
             SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END
@@ -40,5 +40,7 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
             """)
     boolean existsByGroupIdAndUserProfileImage(@Param("groupId") Long groupId,
                                                @Param("profileImage") String profileImage);
+    
+    long countByGroup_Id(Long groupId);
 
 }
