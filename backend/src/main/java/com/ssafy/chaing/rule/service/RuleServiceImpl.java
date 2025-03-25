@@ -4,6 +4,7 @@ package com.ssafy.chaing.rule.service;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.group.domain.GroupEntity;
+import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
@@ -28,11 +29,13 @@ import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 // TODO : FCM 알림 서비스 추가...
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RuleServiceImpl implements RuleService {
 
     private final UserRepository userRepository;
@@ -87,7 +90,10 @@ public class RuleServiceImpl implements RuleService {
 
         List<LifeRuleItemEntity> items = lifeRuleItemRepository.findAllByLifeRule(lifeRule);
 
-        return LifeRuleResponse.fromDTO(convertToDtoList(items));
+//        return LifeRuleResponse.fromDTO(convertToDtoList(items));
+        LifeRuleResponse lifeRuleResponse = LifeRuleResponse.fromDTO(convertToDtoList(items));
+        log.info(" result is = {}", lifeRuleResponse);
+        return lifeRuleResponse;
     }
 
     @Override
@@ -213,12 +219,17 @@ public class RuleServiceImpl implements RuleService {
 
     private GroupEntity findGroupOrThrow(UserEntity user) {
         Long groupId = user.getGroupId();
-        if (groupId == null) {
-            throw new BadRequestException(ExceptionCode.USER_NOT_IN_GROUP);
-        }
+        log.info("user id is = {}", user.getId());
+        log.info("group id is = {}", groupId);
+//        if (groupId == null) {
+//            throw new BadRequestException(ExceptionCode.USER_NOT_IN_GROUP);
+//        }
 
-        return groupRepository.findById(groupId)
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+//        return groupRepository.findById(groupId)
+//                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+        return groupUserRepository.findByUser_Id(user.getId())
+                .map(GroupUserEntity::getGroup)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_IN_GROUP));
     }
 
     private LifeRuleEntity findLifeRuleOrThrow(GroupEntity group) {
