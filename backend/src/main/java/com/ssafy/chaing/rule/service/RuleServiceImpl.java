@@ -20,6 +20,7 @@ import com.ssafy.chaing.rule.domain.LifeRuleEntity;
 import com.ssafy.chaing.rule.domain.LifeRuleItemEntity;
 import com.ssafy.chaing.rule.dto.LifeRuleDto;
 import com.ssafy.chaing.rule.dto.LifeRuleUpdateDto;
+import com.ssafy.chaing.rule.repository.LifeRuleChangeItemRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleChangeRequestRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleItemRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleRepository;
@@ -44,6 +45,7 @@ public class RuleServiceImpl implements RuleService {
     private final LifeRuleRepository lifeRuleRepository;
     private final LifeRuleItemRepository lifeRuleItemRepository;
     private final LifeRuleChangeRequestRepository lifeRuleChangeRequestRepository;
+    private final LifeRuleChangeItemRepository lifeRuleChangeItemRepository;
 
     @Override
     @Transactional
@@ -104,7 +106,7 @@ public class RuleServiceImpl implements RuleService {
         LifeRuleEntity lifeRule = findLifeRuleOrThrow(group);
 
         LifeRuleChangeRequestEntity changeRequest = lifeRuleChangeRequestRepository
-                .findByLifeRuleAndStatus(lifeRule, ChangeRequestStatus.PROGRESS)
+                .findByLifeRule(lifeRule)
                 .orElseGet(() -> {
                     LifeRuleChangeRequestEntity newRequest = LifeRuleChangeRequestEntity.builder()
                             .lifeRule(lifeRule)
@@ -120,6 +122,7 @@ public class RuleServiceImpl implements RuleService {
                         .changeRequest(changeRequest)
                         .ruleItemId(update.getId()) // create는 null일 수 있음
                         .newValue(update.getContent())
+                        .category(update.getCategory())
                         .actionType(update.getActionType())
                         .build())
                 .toList();
@@ -147,13 +150,15 @@ public class RuleServiceImpl implements RuleService {
                 .findByLifeRuleAndStatus(lifeRule, ChangeRequestStatus.PROGRESS)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.LIFE_RULE_CHANGE_REQUEST_NOT_FOUND));
 
-        List<LifeRuleChangeItemEntity> changeItems = changeRequest.getChangeItems();
+        List<LifeRuleChangeItemEntity> changeItems =
+                lifeRuleChangeItemRepository.findNotDeletedByChangeRequest(changeRequest);
 
         return changeItems.stream().map(item -> {
             LifeRuleUpdateDto dto = new LifeRuleUpdateDto();
             dto.setId(item.getRuleItemId());
             dto.setContent(item.getNewValue());
             dto.setCategory(item.getCategory());
+            dto.setActionType(item.getActionType());
             return dto;
         }).toList();
     }
@@ -171,11 +176,9 @@ public class RuleServiceImpl implements RuleService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.LIFE_RULE_CHANGE_REQUEST_NOT_FOUND));
 
         if (request.isApproved()) {
-            // 1-1: 승인 카운트 증가
             changeRequest.approve(changeRequest.getTotalGroupMember());
 
             if (changeRequest.getStatus() == ChangeRequestStatus.APPROVED) {
-                // 1-2: 만장일치 승인 → 룰 항목 업데이트 처리
                 for (LifeRuleChangeItemEntity changeItem : changeRequest.getChangeItems()) {
                     switch (changeItem.getActionType()) {
                         case CREATE -> {
@@ -188,20 +191,27 @@ public class RuleServiceImpl implements RuleService {
                         }
                         case UPDATE -> {
                             LifeRuleItemEntity target = lifeRuleItemRepository.findById(changeItem.getRuleItemId())
-                                    .orElseThrow(() -> new BadRequestException(ExceptionCode.LIFE_RULE_NOT_FOUND));
+                                    .orElseThrow(() -> new BadRequestException(ExceptionCode.LIFE_RULE_ITEM_NOT_FOUND));
                             target.update(changeItem.getNewValue(), changeItem.getCategory());
                         }
                         case DELETE -> {
                             LifeRuleItemEntity toDelete = lifeRuleItemRepository.findById(changeItem.getRuleItemId())
-                                    .orElseThrow(() -> new BadRequestException(ExceptionCode.LIFE_RULE_NOT_FOUND));
-                            lifeRuleItemRepository.delete(toDelete); // 또는 소프트 삭제
+                                    .orElseThrow(() -> new BadRequestException(ExceptionCode.LIFE_RULE_ITEM_NOT_FOUND));
+                            lifeRuleItemRepository.delete(toDelete); // or soft delete
                         }
                     }
                 }
+                changeRequest.clear();
+                List<LifeRuleChangeItemEntity> itemsToDelete = changeRequest.getChangeItems();
+                for (LifeRuleChangeItemEntity item : itemsToDelete) {
+                    item.clear();
+                }
             }
-
-        } else {
-            changeRequest.reject();
+        }else{
+            List<LifeRuleChangeItemEntity> itemsToDelete = changeRequest.getChangeItems();
+            for (LifeRuleChangeItemEntity item : itemsToDelete) {
+                item.clear();
+            }
         }
     }
 
