@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/vi/life-rule")
+@RequestMapping("/api/v1/life-rule")
 public class RuleController {
 
     private final RuleService ruleService;
