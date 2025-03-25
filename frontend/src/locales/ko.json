@@ -5,66 +5,60 @@
     "email": {
       "label": "이메일",
       "placeholder": "이메일을 입력해주세요",
-      "error": [
-        {
-          "code": "REQUIRED",
-          "message": "이메일을 입력해주세요"
-        },
-        {
-          "code": "INVALID_EMAIL",
-          "message": "유효하지 않은 이메일입니다"
-        }
-      ]
+      "error": {
+        "required": "이메일을 입력해주세요",
+        "invalidEmail": "유효하지 않은 이메일입니다"
+      }
     },
     "password": {
       "label": "비밀번호",
       "placeholder": "비밀번호를 입력해주세요",
-      "error": [
-        {
-          "code": "REQUIRED",
-          "message": "비밀번호를 입력해주세요"
-        }
-      ]
+      "error": {
+        "required": "비밀번호를 입력해주세요",
+        "length": "8 ~ 20자 이내"
+      }
     }
   },
   "signUp": {
-    "title": "회원가입",
-    "description": "이메일과 비밀번호를 입력해주세요",
     "email": {
+      "title": "이메일을\n입력해주세요",
       "label": "이메일",
       "placeholder": "이메일을 입력해주세요",
-      "error": [
-        {
-          "code": "REQUIRED",
-          "message": "이메일을 입력해주세요"
-        },
-        {
-          "code": "INVALID_EMAIL",
-          "message": "유효하지 않은 이메일입니다"
-        }
-      ]
+      "error": {
+        "required": "이메일을 입력해주세요",
+        "invalidEmail": "유효하지 않은 이메일입니다"
+      }
+    },
+    "name": {
+      "title": "이름을\n입력해주세요",
+      "label": "이름",
+      "placeholder": "이름을 입력해주세요",
+      "error": {
+        "required": "이름을 입력해주세요",
+        "minLength": "최소 2자 이상이어야 합니다"
+      }
     },
     "password": {
+      "title": "비밀번호를\n입력해주세요",
       "label": "비밀번호",
       "placeholder": "비밀번호를 입력해주세요",
-      "error": [
-        {
-          "code": "REQUIRED",
-          "message": "비밀번호를 입력해주세요"
-        },
-        {
-          "code": "REQUIRED_ALPHABET",
-          "message": "영문 포함"
-        },
-        {
-          "code": "REQUIRED_NUMBER",
-          "message": "숫자 포함"
-        },
-        {
-          "code": "LENGTH",
-          "message": "8 ~ 20자 이내"
-        }
-      ]
+      "error": {
+        "required": "비밀번호를 입력해주세요",
+        "requiredAlphabet": "영문 포함",
+        "requiredNumber": "숫자 포함",
+        "length": "8 ~ 20자 이내"
+      }
+    },
+    "confirmPassword": {
+      "label": "비밀번호 확인",
+      "placeholder": "비밀번호를 입력해주세요",
+      "error": {
+        "required": "비밀번호를 입력해주세요",
+        "requiredAlphabet": "영문 포함",
+        "requiredNumber": "숫자 포함",
+        "length": "8 ~ 20자 이내",
+        "match": "비밀번호가 일치하지 않습니다"
+      }
     }
   },
   "inviteCode": {
@@ -73,16 +67,10 @@
     "inviteCode": {
       "label": "초대 코드",
       "placeholder": "초대 코드를 입력해주세요",
-      "error": [
-        {
-          "code": "REQUIRED",
-          "message": "초대 코드를 입력해주세요"
-        },
-        {
-          "code": "INVITE_CODE_NOT_FOUND",
-          "message": "유효하지 않은 초대 코드입니다"
-        }
-      ]
+      "error": {
+        "required": "초대 코드를 입력해주세요",
+        "invalidInviteCode": "유효하지 않은 초대 코드입니다"
+      }
     }
   },
   "createProfile": {
@@ -93,5 +81,7 @@
       "placeholder": "닉네임을 입력해주세요"
     },
     "confirm": "입주하기"
-  }
+  },
+  "next": "다음",
+  "prev": "이전"
 }
