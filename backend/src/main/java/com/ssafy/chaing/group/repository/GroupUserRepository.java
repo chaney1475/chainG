@@ -2,6 +2,7 @@ package com.ssafy.chaing.group.repository;
 
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,7 +41,11 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
             """)
     boolean existsByGroupIdAndUserProfileImage(@Param("groupId") Long groupId,
                                                @Param("profileImage") String profileImage);
-    
+
     long countByGroup_Id(Long groupId);
+
+    Optional<GroupUserEntity> findByUserId(Long userId);
+
+    Optional<GroupUserEntity> findByUser_Id(Long userId);
 
 }
