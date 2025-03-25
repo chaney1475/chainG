@@ -1,0 +1,113 @@
+spring:
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+  application:
+    name: chaing
+  config:
+    import:
+      - aws-parameterstore:/chaing/
+
+  datasource:
+    url: ${datasource.url}
+    username: ${datasource.username}
+    password: ${datasource.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: google
+            client-id: ${google.client-id}
+            client-secret: ${google.client-secret}
+            redirect-uri: ${google.redirect-url}
+            authorization-grant-type: authorization_code
+            scope:
+              - email
+              - profile
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+      enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GOOGLE_MAIL_USERNAME}
+    password: ${GOOGLE_MAIL_PASSWORD}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+application:
+  security:
+    jwt:
+      secret-key: ${jwt.secret-key}
+      access-token-expiration: ${jwt.access-token.expiration}
+      refresh-token-expiration: ${jwt.refresh-token.expiration}
+
+app:
+  cors:
+    allow-hosts:
+      - ${allow-host.front}
+      - ${allow-host.local}
+  frontend:
+    url: ${allow-host.front}
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0
+
+
+api:
+  naver:
+    client-id: ${API_NAVER_CLIENT_ID}
+    client-secret: ${API_NAVER_CLIENT_SECRET}
+
+cloud:
+  aws:
+    s3:
+      bucket: sample
+    stack.auto: false
+    region.static: sample
+    credentials:
+      accessKey: sample
+      secretKey: sample
+
+ssafy:
+  fintech:
+    api-key: ${ssafy.fintech.api-key}
+    user-key: ${ssafy.fintech.user-key}
+    card-unique-no: ${ssafy.fintech.card-unique-no}
+    base-url: ${ssafy.fintech.base-url}
+
+#
+#logging:
+#  level:
+#    org.springframework.messaging.simp: DEBUG
+
+#decorator:
+#  datasource:
+#    p6spy:
+#      enable-logging: false
