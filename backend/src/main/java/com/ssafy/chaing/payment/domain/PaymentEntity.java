@@ -9,24 +9,33 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
+@Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
 @Entity
-@Table(name = "payments")
+@Table(
+        name = "payments",
+        indexes = {
+                @Index(name = "idx_payment_status", columnList = "payment_status")
+        }
+)
 public class PaymentEntity extends BaseEntity {
 
     @Id
@@ -66,6 +75,12 @@ public class PaymentEntity extends BaseEntity {
     @Column(name = "all_paid", nullable = false)
     private boolean allPaid;
 
+    @Column(name = "next_execution_date")
+    private ZonedDateTime nextExecutionDate;
+
+    @Column(name = "retry_count")
+    private Integer retryCount;
+
     // 상태 업데이트 메서드
     public void updateStatus(PaymentStatus status) {
         this.status = status;
@@ -83,6 +98,10 @@ public class PaymentEntity extends BaseEntity {
         }
     }
 
+    public void increaseRetryCount() {
+        this.retryCount += 1;
+        this.lastAttemptDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+    }
 
 }
 

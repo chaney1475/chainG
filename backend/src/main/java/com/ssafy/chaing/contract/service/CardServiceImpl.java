@@ -6,7 +6,6 @@ import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.contract.service.dto.UtilityCardDTO;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 import com.ssafy.chaing.fintech.service.FintechService;
-import com.ssafy.chaing.fintech.service.response.CreateFintechCardResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

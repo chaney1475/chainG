@@ -1,23 +1,200 @@
 package com.ssafy.chaing.batch.service;
 
+import com.ssafy.chaing.contract.domain.ContractEntity;
+import com.ssafy.chaing.contract.domain.ContractUserEntity;
+import com.ssafy.chaing.fintech.controller.request.TransferCommand;
+import com.ssafy.chaing.fintech.service.FintechService;
+import com.ssafy.chaing.fintech.service.dto.TransferDTO;
+import com.ssafy.chaing.payment.domain.FeeType;
+import com.ssafy.chaing.payment.domain.PaymentEntity;
+import com.ssafy.chaing.payment.domain.PaymentStatus;
+import com.ssafy.chaing.payment.domain.UserPaymentEntity;
+import com.ssafy.chaing.payment.repository.PaymentRepository;
+import com.ssafy.chaing.payment.repository.UserPaymentRepository;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RentBatchService {
 
-    // ContractRepository에서 dueDate가 Today + 1인 Contract 조회
-    // ContractEntity를 가지고 ContractUserEntity 가져오기
-    // SSAFY 이체 API를 써서 이체 성공하면 컨트랙트로 올리기 + 성공 알림
-    // 실패하면 실패한 내용 만들어서 올리기 + 실패 알림
-    // 모두 이체가 끝나면 납부 여부에 따라서 Contract Status 값 설정.
+    private final FintechService fintechService;
+    private final PaymentRepository paymentRepository;
+    private final UserPaymentRepository userPaymentRepository;
+    private final TaskScheduler taskScheduler;
 
+    /**
+     * ✅ 다음 달 Payment 생성 및 배치 등록
+     */
+    @Transactional
+    public void registerNextMonthPayment(ContractEntity contract) {
+        log.info("📅 Payment 생성 시작 → Contract ID = {}", contract.getId());
 
+        // 다음 실행일 계산 (14일: 공동 계좌 송금, 15일: 집주인 송금)
+        ZonedDateTime collectExecution = computeNextExecutionTime(contract.getDueDate() - 1);
+        ZonedDateTime ownerExecution = computeNextExecutionTime(contract.getDueDate());
 
-    // 오늘이 납부일인 ContraectEntity 조회
-    // status가 true라면 owner 계좌로 이체
-    // false 라면 알림 요청
+        PaymentEntity payment = PaymentEntity.builder()
+                .contract(contract)
+                .month(ownerExecution.getYear() * 100 + ownerExecution.getMonthValue())
+                .feeType(FeeType.RENT)
+                .totalAmount(contract.getRentTotalAmount())
+                .status(PaymentStatus.STARTED)
+                .build();
+
+        payment.setNextExecutionDate(ownerExecution);
+        paymentRepository.save(payment);
+
+        // 14일 배치 등록 → 공동 계좌 모으기
+        taskScheduler.schedule(() -> collectToJointAccount(payment),
+                Date.from(collectExecution.toInstant()));
+
+        // ✅ 15일 배치 등록 → 집주인 송금
+        taskScheduler.schedule(() -> payToOwner(payment),
+                Date.from(ownerExecution.toInstant()));
+
+        log.info("💡 Payment 등록 완료 → Payment ID = {}, Next Execution = {}",
+                payment.getId(), ownerExecution);
+    }
+
+    /**
+     * ✅ 실행일 계산 (현재 날짜 기준으로 결정)
+     */
+    private ZonedDateTime computeNextExecutionTime(Integer dueDate) {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        // ✅ 같은 달의 dueDate로 설정
+        ZonedDateTime nextExecution = now
+                .withDayOfMonth(dueDate)
+                .withHour(18)
+                .withMinute(0)
+                .withSecond(0);
+
+        // ✅ 현재 날짜보다 이전이면 다음 달로 넘김
+        if (nextExecution.isBefore(now)) {
+            nextExecution = nextExecution.plusMonths(1)
+                    .withDayOfMonth(dueDate)
+                    .withHour(18)
+                    .withMinute(0)
+                    .withSecond(0);
+        }
+
+        return nextExecution;
+    }
+
+    /**
+     * ✅ 14일 → 공동 계좌로 송금 처리
+     */
+    @Transactional
+    public void collectToJointAccount(PaymentEntity payment) {
+        log.info("💰 공동 계좌로 송금 시작 → Payment ID = {}", payment.getId());
+
+        boolean allSuccess = true;
+
+        for (ContractUserEntity member : payment.getContract().getMembers()) {
+            UserPaymentEntity userPayment = UserPaymentEntity.builder()
+                    .payment(payment)
+                    .contractMember(member)
+                    .amount(member.getRentAmount())
+                    .status(PaymentStatus.PENDING)
+                    .build();
+
+            userPaymentRepository.save(userPayment);
+
+            // ✅ 송금 처리
+            TransferDTO result = fintechService.transfer(
+                    new TransferCommand(
+                            member.getAccountNo(),
+                            payment.getContract().getRentAccountNo(),
+                            member.getRentAmount()
+                    )
+            );
+
+            if (result.isSuccess()) {
+                userPayment.updateStatus(PaymentStatus.COLLECTED);
+                payment.addPaidAmount(member.getRentAmount());
+            } else {
+                userPayment.updateStatus(PaymentStatus.FAILED);
+                allSuccess = false;
+            }
+
+            userPaymentRepository.save(userPayment);
+        }
+
+        if (allSuccess) {
+            payment.updateStatus(PaymentStatus.COLLECTED);
+            log.info("✅ 공동 계좌로 송금 성공 → Payment ID = {}", payment.getId());
+        } else {
+            payment.updateStatus(PaymentStatus.PARTIALLY_PAID);
+            log.warn("❌ 공동 계좌로 송금 일부 실패 → Payment ID = {}", payment.getId());
+        }
+
+        paymentRepository.save(payment);
+    }
+
+    /**
+     * ✅ 15일 → 집주인에게 송금 처리
+     */
+    @Transactional
+    public void payToOwner(PaymentEntity payment) {
+        if (payment.getStatus() == PaymentStatus.PARTIALLY_PAID) {
+            log.warn("⚠️ 공동 계좌 모으기 실패 상태. 재시도 수행 → Payment ID = {}", payment.getId());
+            collectToJointAccount(payment);
+        }
+
+        if (payment.getStatus() != PaymentStatus.COLLECTED) {
+            log.warn("⚠️ Payment ID {} 상태가 COLLECTED가 아님. 송금 불가", payment.getId());
+            return;
+        }
+
+        log.info("💰 집주인에게 송금 시작 → Payment ID = {}", payment.getId());
+
+        TransferDTO result = fintechService.transfer(
+                new TransferCommand(
+                        payment.getContract().getRentAccountNo(),
+                        payment.getContract().getOwnerAccountNo(),
+                        payment.getTotalAmount()
+                )
+        );
+
+        if (result.isSuccess()) {
+            payment.updateStatus(PaymentStatus.PAID);
+            log.info("✅ 집주인 송금 성공 → Payment ID = {}", payment.getId());
+        } else {
+            payment.updateStatus(PaymentStatus.RETRY_PENDING);
+            log.error("🚨 집주인 송금 실패 → Payment ID = {}", payment.getId());
+            registerRetryPayment(payment);
+        }
+
+        paymentRepository.save(payment);
+    }
+
+    /**
+     * 실패한 송금 재시도 처리
+     */
+    private void registerRetryPayment(PaymentEntity payment) {
+        if (payment.getRetryCount() >= 20) {
+            payment.updateStatus(PaymentStatus.FAILED);
+            paymentRepository.save(payment);
+            log.warn("❌ Payment ID {} → 최대 재시도 횟수 도달", payment.getId());
+            return;
+        }
+
+        payment.increaseRetryCount();
+
+        ZonedDateTime retryExecution = ZonedDateTime.now().plusDays(1);
+
+        taskScheduler.schedule(() -> payToOwner(payment),
+                Date.from(retryExecution.toInstant()));
+
+        log.info("🔁 30분 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
+                payment.getId(), payment.getRetryCount());
+    }
 }

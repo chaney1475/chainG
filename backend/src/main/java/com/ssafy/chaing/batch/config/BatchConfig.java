@@ -1,27 +1,24 @@
 package com.ssafy.chaing.batch.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
-import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
-import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
-import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
+import com.ssafy.chaing.batch.service.RentBatchService;
+import com.ssafy.chaing.payment.domain.PaymentEntity;
+import com.ssafy.chaing.payment.domain.PaymentStatus;
+import com.ssafy.chaing.payment.repository.PaymentRepository;
+import java.sql.Date;
+import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -32,85 +29,96 @@ public class BatchConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final RentHandler rentHandler;
-    private final UtilityHandler utilityHandler;
+    private final RentBatchService rentBatchService;
+    private final PaymentRepository paymentRepository;
+    private final TaskScheduler taskScheduler;
 
-    @Bean
-    @Primary
-    @Qualifier("rentAddContractJob")
-    public Job rentAddContractJob(@Qualifier("rentAddContractStep") Step rentAddContractStep) {
-        // JobBuilder를 사용하여 배치 작업(job)을 생성합니다.
-        return new JobBuilder("rentAddContractJob", jobRepository)
-                .start(rentAddContractStep)
-                .build();
-    }
+    /**
+     * ✅ 초기 설정 - 기존 계약서에 대해 배치 등록 → 서버 시작 시 실행 보장
+     */
+    public void registerExistingPayments() {
+        // ✅ STARTED, COLLECTED, PARTIALLY_PAID, RETRY_PENDING 상태 모두 포함
+        List<PaymentEntity> pendingPayments = paymentRepository.findByStatusIn(
+                List.of(PaymentStatus.STARTED, PaymentStatus.COLLECTED, PaymentStatus.PARTIALLY_PAID,
+                        PaymentStatus.RETRY_PENDING)
+        );
 
-    @Bean
-    @Qualifier("utilityAddContractJob")
-    public Job utilityAddContractJob(@Qualifier("utilityAddContractStep") Step utilityAddContractStep) {
-        // JobBuilder를 사용하여 배치 작업(job)을 생성합니다.
-        return new JobBuilder("utilityAddContractJob", jobRepository)
-                .start(utilityAddContractStep)
-                .build();
-    }
+        for (PaymentEntity payment : pendingPayments) {
+            ZonedDateTime collectExecution = payment.getNextExecutionDate().minusDays(1);
+            ZonedDateTime ownerExecution = payment.getNextExecutionDate();
 
-    @Bean
-    public Step rentAddContractStep(@Qualifier("rentAddContractTasklet") Tasklet rentAddContractTasklet) {
-        return new StepBuilder("rentAddContractStep", jobRepository)
-                .tasklet(rentAddContractTasklet, transactionManager)
-                .build();
-    }
-
-    @Bean
-    public Step utilityAddContractStep(@Qualifier("utilityAddContractTasklet") Tasklet utilityAddContractTasklet) {
-        return new StepBuilder("utilityAddContractStep", jobRepository)
-                .tasklet(utilityAddContractTasklet, transactionManager)
-                .build();
-    }
-
-    // StepScope를 사용하여 JobParameter를 주입받습니다.
-    @Bean
-    @StepScope
-    public Tasklet rentAddContractTasklet(
-            @Value("#{jobParameters['rentInputJson']}") String rentInputJson
-    ) {
-        return (contribution, chunkContext) -> {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                // JSON 문자열을 RentInput 객체로 역직렬화
-                RentInput rentInput = objectMapper.readValue(rentInputJson, RentInput.class);
-                // rentHandler의 addContract 메서드를 호출하는 로직
-//                String result = rentHandler.addContract(rentInput);
-                String result = "success";
-                log.info("add rent contract result: {}", result);
-            } catch (JsonProcessingException e) {
-                System.err.println("JSON 역직렬화 실패: " + e.getMessage());
-                throw e;
+            // ✅ 14일 → 공동 계좌 모으기만 수행
+            if (payment.getStatus() == PaymentStatus.STARTED) {
+                taskScheduler.schedule(() -> rentBatchService.collectToJointAccount(payment),
+                        Date.from(collectExecution.toInstant()));
             }
-            return RepeatStatus.FINISHED;
+
+            // ✅ 15일 → 송금 수행 (PARTIALLY_PAID 상태 포함)
+            taskScheduler.schedule(() -> rentBatchService.payToOwner(payment),
+                    Date.from(ownerExecution.toInstant()));
+
+            log.info("✅ 기존 배치 등록 완료 → Payment ID = {}, CollectExecution = {}, OwnerExecution = {}",
+                    payment.getId(), collectExecution, ownerExecution);
+        }
+    }
+
+
+    /**
+     * ✅ 14일 배치 설정 → 공동 계좌로 송금 처리
+     */
+    @Bean
+    public Step collectToJointAccountStep() {
+        return new StepBuilder("collectToJointAccountStep", jobRepository)
+                .tasklet(collectToJointAccountTasklet(), transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Tasklet collectToJointAccountTasklet() {
+        return (contribution, chunkContext) -> {
+            log.info("💰 공동 계좌 송금 배치 시작");
+
+            List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.STARTED);
+            for (PaymentEntity payment : payments) {
+                rentBatchService.collectToJointAccount(payment);
+            }
+
+            return org.springframework.batch.repeat.RepeatStatus.FINISHED;
         };
     }
 
+    /**
+     * ✅ 15일 배치 설정 → 집주인 송금 처리
+     */
     @Bean
-    @StepScope
-    public Tasklet utilityAddContractTasklet(
-            @Value("#{jobParameters['utilityInputJson']}") String utilityInputJson
-    ) {
+    public Step payToOwnerStep() {
+        return new StepBuilder("payToOwnerStep", jobRepository)
+                .tasklet(payToOwnerTasklet(), transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Tasklet payToOwnerTasklet() {
         return (contribution, chunkContext) -> {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                // JSON 문자열을 RentInput 객체로 역직렬화
-                UtilityInput utilityInput = objectMapper.readValue(utilityInputJson, UtilityInput.class);
-                // rentHandler의 addContract 메서드를 호출하는 로직
-//                String result = utilityHandler.addContract(utilityInput);
-                String result = "success";
-                log.info("add utility contract result: {}", result);
-            } catch (JsonProcessingException e) {
-                log.info("JSON 역직렬화 실패: {}", e.getMessage());
-                throw e;
+            log.info("💰 집주인 송금 배치 시작");
+
+            List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.COLLECTED);
+            for (PaymentEntity payment : payments) {
+                rentBatchService.payToOwner(payment);
             }
-            return RepeatStatus.FINISHED;
+
+            return org.springframework.batch.repeat.RepeatStatus.FINISHED;
         };
     }
 
+    /**
+     * ✅ Job 설정 - 14일 공동 계좌 송금 배치 + 15일 집주인 송금 배치 등록
+     */
+    @Bean
+    public Job rentPaymentJob(Step collectToJointAccountStep, Step payToOwnerStep) {
+        return new JobBuilder("rentPaymentJob", jobRepository)
+                .start(collectToJointAccountStep)
+                .next(payToOwnerStep)
+                .build();
+    }
 }

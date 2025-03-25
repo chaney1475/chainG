@@ -2,6 +2,7 @@ package com.ssafy.chaing.contract.service;
 
 import static com.ssafy.chaing.common.exception.ExceptionCode.CONTRACT_ALREADY_EXIST;
 
+import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.contract.domain.ContractEntity;
@@ -24,6 +25,7 @@ import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
+import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZonedDateTime;
@@ -45,6 +47,8 @@ public class ContractServiceImpl implements ContractService {
     private final UtilityCardRepository utilityCardRepository;
     private final GroupUserRepository groupUserRepository;
     private final UserRepository userRepository;
+    private final RentBatchService rentBatchService;
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     @Override
@@ -130,8 +134,11 @@ public class ContractServiceImpl implements ContractService {
         contractUser.setConfirmedAt(ZonedDateTime.now());
 
         contractUserRepository.save(contractUser);
-    }
 
+        if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
+            rentBatchService.registerNextMonthPayment(contractEntity);
+        }
+    }
 
     @Transactional(readOnly = true)
     @Override
