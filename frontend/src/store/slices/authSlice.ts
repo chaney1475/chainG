@@ -1,10 +1,14 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { ISocialLogin } from '@/types/auth'
+import { signUp } from '@/apis/auth'
+import { SocialLogin, signUpRequest } from '@/types/auth'
 
 interface AuthState {
   FCMToken: string | null
-  loginToken: ISocialLogin
+  loginToken: SocialLogin
+  signUpRequest: signUpRequest
+  isLoading: boolean
+  error: string | null
 }
 
 const initialState: AuthState = {
@@ -14,7 +18,26 @@ const initialState: AuthState = {
     expiresIn: null,
     refreshToken: null,
   },
+  signUpRequest: {
+    emailAddress: null,
+    password: null,
+    name: null,
+  },
+  isLoading: false,
+  error: null,
 }
+
+export const signUpAsync = createAsyncThunk(
+  'auth/signUp',
+  async (signUpData: signUpRequest, { rejectWithValue }) => {
+    try {
+      const response = await signUp(signUpData)
+      return response
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  },
+)
 
 const authSlice = createSlice({
   name: 'auth',
@@ -35,6 +58,38 @@ const authSlice = createSlice({
     setFCMToken: (state, action: PayloadAction<string>) => {
       state.FCMToken = action.payload
     },
+    setSignUpEmail: (state, action: PayloadAction<string>) => {
+      state.signUpRequest.emailAddress = action.payload
+    },
+    setSignUpPassword: (state, action: PayloadAction<string>) => {
+      state.signUpRequest.password = action.payload
+    },
+    setSignUpName: (state, action: PayloadAction<string>) => {
+      state.signUpRequest.name = action.payload
+    },
+    clearSignUp: (state) => {
+      Object.assign(state, initialState)
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(signUpAsync.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(signUpAsync.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.loginToken = action.payload
+        state.signUpRequest = {
+          emailAddress: null,
+          password: null,
+          name: null,
+        }
+      })
+      .addCase(signUpAsync.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload as string
+      })
   },
 })
 
@@ -44,5 +99,10 @@ export const {
   setExpiresIn,
   setFCMToken,
   clearTokens,
+  setSignUpEmail,
+  setSignUpPassword,
+  setSignUpName,
+  clearSignUp,
 } = authSlice.actions
+
 export default authSlice.reducer
