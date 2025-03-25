@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -70,6 +71,10 @@ public class LifeRuleChangeRequestEntity extends BaseEntity {
     }
 
     public void reject() {
-        this.status = ChangeRequestStatus.REJECTED;
+        this.status = ChangeRequestStatus.PROGRESS;
+    }
+    public void clear() {
+        this.approvalCount =1;
+        this.status = ChangeRequestStatus.PROGRESS;
     }
 }
