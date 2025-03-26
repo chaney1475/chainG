@@ -23,5 +23,4 @@ public interface ContractUserRepository extends JpaRepository<ContractUserEntity
                 AND cu.isSurplusUser = false
             """)
     List<ContractUserEntity> findNonSurplusUsersByContractId(Long contractId);
-
 }

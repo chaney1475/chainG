@@ -25,7 +25,6 @@ import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
-import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZonedDateTime;
@@ -48,7 +47,6 @@ public class ContractServiceImpl implements ContractService {
     private final GroupUserRepository groupUserRepository;
     private final UserRepository userRepository;
     private final RentBatchService rentBatchService;
-    private final PaymentRepository paymentRepository;
 
     @Transactional
     @Override
@@ -89,7 +87,7 @@ public class ContractServiceImpl implements ContractService {
                 .user(admin)
                 .contract(contract)
                 .contractStatus(ContractUserStatus.CONFIRMED)
-                .accountNo("admin 계정의 계좌 주소")
+                .accountNo("0015613262817258")
                 .isSurplusUser(true)
                 .build();
 
@@ -143,7 +141,7 @@ public class ContractServiceImpl implements ContractService {
     @Transactional(readOnly = true)
     @Override
     public ContractDetailDTO getContract(Long contractId) {
-        ContractEntity contract = contractRepository.findById(contractId)
+        ContractEntity contract = contractRepository.findByIdWithMembers(contractId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
         return ContractDetailDTO.from(contract);

@@ -52,6 +52,7 @@ public class RentBatchService {
                 .feeType(FeeType.RENT)
                 .totalAmount(contract.getRentTotalAmount())
                 .status(PaymentStatus.STARTED)
+                .paidAmount(0)
                 .build();
 
         payment.setNextExecutionDate(ownerExecution);
