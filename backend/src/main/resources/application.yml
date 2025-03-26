@@ -1,11 +1,4 @@
 spring:
-  application:
-    name:
-  config:
-    import:
-      - optional:file:.env[.properties] #ENV ?? ??
-      - aws-parameterstore:/chaing/web3j/
-
   cloud:
     aws:
       region:
@@ -13,6 +6,12 @@ spring:
       credentials:
         access-key: ${AWS_ACCESS_KEY_ID}
         secret-key: ${AWS_SECRET_ACCESS_KEY}
+  application:
+    name:
+  config:
+    import:
+      - optional:file:.env[.properties] #ENV ?? ??
+      - aws-parameterstore:/chaing/web3j/
 
   datasource:
     url: ${DATASOURCE_URL}
@@ -97,11 +96,6 @@ cloud:
   aws:
     s3:
       bucket: ${AWS_BUCKET_NAME}
-    stack.auto: false
-    region.static: ap-northeast-2
-    credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
 
 web3j:
   client-address: ${client-address}

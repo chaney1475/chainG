@@ -88,12 +88,7 @@ api:
 cloud:
   aws:
     s3:
-      bucket: sample
-    stack.auto: false
-    region.static: sample
-    credentials:
-      accessKey: sample
-      secretKey: sample
+      bucket: ${aws.bucket}
 
 ssafy:
   fintech:
