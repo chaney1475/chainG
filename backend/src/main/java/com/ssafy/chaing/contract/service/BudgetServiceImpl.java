@@ -24,7 +24,6 @@ public class BudgetServiceImpl implements BudgetService {
         // 생활비 계좌 조회
         if (contractUser.getContract().getLiveAccountNo() == null) {
             // TODO 1. 방장을 찾는다 2. 방장에게 알림 쏜다(FCM)
-            System.err.println("이거 안했다 해야된다 얘들아.");
         } else {
             throw new BadRequestException(ExceptionCode.LIVING_ACCOUNT_ALREADY_EXIST);
         }
@@ -44,19 +43,16 @@ public class BudgetServiceImpl implements BudgetService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
         contractUser.getContract().setLiveAccountNo(accountInfo.getAccountNo());
         // TODO 모두에게 알림 쏜다(FCM)
-        System.err.println("이거 안했다 해야된다 얘들아.");
     }
 
 
     @Override
     public void notifyLivingDeposit(Long userId) {
         // TODO 모두에게 알림 쏜다(FCM)
-        System.err.println("이거 안했다 해야된다 얘들아.");
     }
 
     @Override
     public void notifyLivingWithdraw(Long userId) {
         // TODO 모두에게 알림 쏜다(FCM)
-        System.err.println("이거 안했다 해야된다 얘들아.");
     }
 }
