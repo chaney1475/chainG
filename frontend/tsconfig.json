@@ -23,6 +23,12 @@
     }
   },
   "jsxImportSource": "@emotion/react",
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/features/auth/SignUpPage/password/page2tsx"
+  ],
   "exclude": ["node_modules"]
 }
