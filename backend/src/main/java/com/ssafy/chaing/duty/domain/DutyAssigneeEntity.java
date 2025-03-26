@@ -37,4 +37,12 @@ public class DutyAssigneeEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_user_id", nullable = false)
     private GroupUserEntity groupUser; // 그룹 내 사용자 (GroupUserEntity 사용)
+
+    // 정적 팩토리 메서드를 통해 인스턴스 생성
+    public static DutyAssigneeEntity create(DutyEntity duty, GroupUserEntity groupUser) {
+        return DutyAssigneeEntity.builder()
+                .duty(duty)
+                .groupUser(groupUser)
+                .build();
+    }
 }
