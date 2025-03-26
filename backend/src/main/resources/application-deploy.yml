@@ -70,10 +70,12 @@ application:
 app:
   cors:
     allow-hosts:
-      - ${allow-host.front}
-      - ${allow-host.local}
-      - http://localhost:3001
       - http://localhost:3000
+      - http://localhost:3001
+      - http://127.0.0.1:3000
+      - http://127.0.0.1:3001
+      - https://chaing.site
+      - http://chaing.site
   frontend:
     url: ${allow-host.front}
 springdoc:
