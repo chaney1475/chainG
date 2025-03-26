@@ -62,14 +62,14 @@
     }
   },
   "inviteCode": {
-    "title": "초대 코드 입력",
-    "description": "초대 코드를 입력해주세요",
+    "title": "방 참여하기",
+    "description": "초대 코드를\n입력해주세요",
     "inviteCode": {
       "label": "초대 코드",
       "placeholder": "초대 코드를 입력해주세요",
       "error": {
         "required": "초대 코드를 입력해주세요",
-        "invalidInviteCode": "유효하지 않은 초대 코드입니다"
+        "invalid": "유효하지 않은 초대 코드입니다"
       }
     }
   },

@@ -6,15 +6,21 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { ConfirmButton, InputBox, TitleHeader, TopHeader } from '@/components'
+import {
+  ConfirmButton,
+  InputBox,
+  TitleHeader,
+  TitleHeaderLayout,
+  TopHeader,
+} from '@/components'
 import { setInviteCode } from '@/store/slices/groupSlice'
-import { containerStyle, mainStyle } from '@/styles/styles'
+import { Container, Main, containerStyle, mainStyle } from '@/styles/styles'
 
 interface FormValues {
-  code: string
+  inviteCode: string
 }
 
-const fakeServerValidation = async (code: string) => code === '1234'
+const fakeServerValidation = async (inviteCode: string) => inviteCode === '1234'
 
 export function InviteCodePage() {
   const { t } = useTranslation()
@@ -30,37 +36,36 @@ export function InviteCodePage() {
   } = useForm<FormValues>()
 
   const onSubmit = async (data: FormValues) => {
-    const isValid = await fakeServerValidation(data.code)
+    const isValid = await fakeServerValidation(data.inviteCode)
 
     if (!isValid) {
-      setError('code', {
+      setError('inviteCode', {
         type: 'server',
-        message: t('inviteCode.error.invalid'),
+        message: t('inviteCode.inviteCode.error.invalid'),
       })
       return
     }
 
-    clearErrors('code')
-    dispatch(setInviteCode(data.code))
+    clearErrors('inviteCode')
+    dispatch(setInviteCode(data.inviteCode))
     router.push('/group/create/createProfile')
   }
 
   return (
-    <div css={containerStyle}>
-      <TopHeader title={t('inviteCode.title')} />
-      <main css={mainStyle}>
-        <TitleHeader title={t('inviteCode.description')} />
+    <TitleHeaderLayout
+      title={t('inviteCode.title')}
+      header={t('inviteCode.description')}
+      onClick={handleSubmit(onSubmit)}
+      label={t('next')}>
+      <Main>
         <InputBox
-          {...register('code')}
-          placeholder={t('inviteCode.placeholder')}
-          error={errors.code?.message}
+          {...register('inviteCode')}
+          id="inviteCode"
+          label={t('inviteCode.inviteCode.label')}
+          placeholder={t('inviteCode.inviteCode.placeholder')}
+          error={errors.inviteCode}
         />
-      </main>
-      <ConfirmButton
-        label={t('common.next')}
-        onClick={handleSubmit(onSubmit)}
-        variant="next"
-      />
-    </div>
+      </Main>
+    </TitleHeaderLayout>
   )
 }

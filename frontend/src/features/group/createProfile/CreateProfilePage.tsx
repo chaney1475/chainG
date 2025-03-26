@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { ConfirmButton, InputBox, TitleHeader, TopHeader } from '@/components'
 import { profileList } from '@/constants/profileList'
 import { setNickname, setProfileImage } from '@/store/slices/groupSlice'
-import { containerStyle, mainStyle } from '@/styles/styles'
+import { Container, Main, containerStyle, mainStyle } from '@/styles/styles'
 
 import ProfileSelector from './components/ProfileSelector'
 
@@ -43,9 +43,9 @@ export function CreateProfilePage() {
   }
 
   return (
-    <div css={containerStyle}>
+    <Container>
       <TopHeader title={t('createProfile.title')} />
-      <main css={mainStyle}>
+      <Main>
         <TitleHeader
           title={t('createProfile.title')}
           description={t('createProfile.description')}
@@ -56,14 +56,15 @@ export function CreateProfilePage() {
         />
         <InputBox
           {...register('nickname')}
+          id="nickname"
           placeholder={t('createProfile.nickname.placeholder')}
         />
-      </main>
+      </Main>
       <ConfirmButton
         label={t('createProfile.confirm')}
         onClick={handleComplete}
         variant={nickname ? 'next' : 'disabled'}
       />
-    </div>
+    </Container>
   )
 }
