@@ -24,9 +24,11 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
+
+    private static final String DATE_FORMAT = "yyyyMM";
+    private static final String TIMEZONE = "Asia/Seoul";
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
@@ -44,98 +49,133 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public RetrieveRentDTO retrieveRent(RetrieveRentCommand command) {
-        UserEntity user = userRepository.findById(command.getUserId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+        Objects.requireNonNull(command, "Command cannot be null");
+        Long userId = command.getUserId();
 
-        GroupEntity group = groupRepository.findById(user.getGroupId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+        // 관련 엔티티 조회
+        UserEntity user = getUserEntity(userId);
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
 
-        ContractEntity contract = contractRepository.findById(group.getContractId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND));
-
-        ContractUserEntity contractUser = contractUserRepository.findByContractIdAndUserId(contract.getId(),
-                        user.getId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
-
+        // 결제 데이터 처리
         List<PaymentEntity> payments = paymentRepository.findALlByContractIdAndFeeType(contract.getId(), FeeType.RENT);
+        int currentMonth = getCurrentMonth();
 
-        int totalAmount = contract.getRentTotalAmount();
-        int myAmount = contractUser.getRentAmount();
+        // 결제 정보 처리
+        Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMM");
-        int currentMonth = Integer.parseInt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter));
+        // 현재 월 결제 정보
+        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
 
-        // 현재 월에 해당하는 결제 내역을 PaymentInfoDTO 리스트로 변환 (userId는 command에서 받는 것으로 시뮬레이션)
-        List<CurrentPaymentDTO> currentMonthPayments = new ArrayList<>();
-        for (PaymentEntity payment : payments) {
-            if (payment.getMonth() == currentMonth) {
-                List<UserPaymentEntity> userPayments = userPaymentRepository.findAllByPaymentId(payment.getId());
-                if (userPayments.isEmpty()) {
-                    throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
-                }
+        // 월별 결제 요약
+        List<MonthPaymentIDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
 
-                for (UserPaymentEntity userPayment : userPayments) {
-                    CurrentPaymentDTO current = new CurrentPaymentDTO(
-                            userPayment.getContractMember().getUser().getId(),
-                            userPayment.getAmount(),
-                            userPayment.getStatus() == PaymentStatus.PAID
-                    );
-                    currentMonthPayments.add(current);
-                }
-            }
-        }
-
-        // 월별로 결제 내역을 그룹화하여, 각 월의 납부/미납 사용자 ID 리스트를 생성합니다.
-        // (PaymentEntity에 개별 사용자 정보가 없기 때문에 command.getUserId()로 단순 시뮬레이션 처리합니다)
-        Map<Integer, List<PaymentEntity>> paymentsByMonth = payments.stream()
-                .collect(Collectors.groupingBy(PaymentEntity::getMonth));
-
-        List<MonthPaymentIDTO> monthList = paymentsByMonth.entrySet().stream()
-                .map(entry -> {
-                    MonthPaymentIDTO summary = new MonthPaymentIDTO();
-
-                    // 월 정보: 예) "2025-3" 형식으로 변환 (간단히 연도-월로 표시)
-                    int monthInt = entry.getKey();
-                    String monthStr = monthIntToString(monthInt);
-                    summary.setMonth(monthStr);
-
-                    List<Long> paidUserIds = new ArrayList<>();
-                    List<Long> debtUserIds = new ArrayList<>();
-
-                    // 각 결제 내역에 대해 상태에 따라 사용자 ID를 분류합니다.
-                    // (실제 사용자 정보가 있다면 각 PaymentEntity에서 사용자 ID를 가져와야 합니다)
-                    for (PaymentEntity payment : entry.getValue()) {
-                        List<UserPaymentEntity> userPayments = userPaymentRepository.findAllByPaymentId(
-                                payment.getId());
-
-                        for (UserPaymentEntity userPayment : userPayments) {
-                            if(!Objects.equals(payment.getId(),
-                                    userPayment.getPayment().getId())) continue;
-
-                            if (payment.getStatus() == PaymentStatus.PAID) {
-                                paidUserIds.add(command.getUserId());
-                            } else {
-                                debtUserIds.add(command.getUserId());
-                            }
-
-                        }
-
-                    }
-                    summary.setPaidUserIds(paidUserIds);
-                    summary.setDebtUserIds(debtUserIds);
-                    return summary;
-                })
-                .collect(Collectors.toList());
-
-        // DTO에 결과 세팅
         return new RetrieveRentDTO(
-                totalAmount,
-                myAmount,
+                contract.getRentTotalAmount(),
+                contractUser.getRentAmount(),
                 contract.getDueDate(),
                 currentMonthPayments,
                 monthList
         );
+    }
 
+    private UserEntity getUserEntity(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    private GroupEntity getGroupEntity(UserEntity user) {
+        return groupRepository.findById(user.getGroupId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+    }
+
+    private ContractEntity getContractEntity(GroupEntity group) {
+        return contractRepository.findById(group.getContractId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND));
+    }
+
+    private ContractUserEntity getContractUserEntity(Long contractId, Long userId) {
+        return contractUserRepository.findByContractIdAndUserId(contractId, userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    private int getCurrentMonth() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        return Integer.parseInt(ZonedDateTime.now(ZoneId.of(TIMEZONE)).format(formatter));
+    }
+
+    private Map<Long, List<UserPaymentEntity>> getUserPaymentsByPaymentId(List<PaymentEntity> payments) {
+        List<Long> allPaymentIds = payments.stream()
+                .map(PaymentEntity::getId)
+                .collect(Collectors.toList());
+
+        List<UserPaymentEntity> allUserPayments = userPaymentRepository.findAllByPaymentIdIn(allPaymentIds);
+
+        return allUserPayments.stream()
+                .collect(Collectors.groupingBy(up -> up.getPayment().getId()));
+    }
+
+    private List<CurrentPaymentDTO> getCurrentMonthPayments(
+            final List<PaymentEntity> payments,
+            final int currentMonth,
+            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
+
+        return payments.stream()
+                .filter(payment -> payment.getMonth() == currentMonth)
+                .flatMap(payment -> {
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    if (userPayments.isEmpty()) {
+                        throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
+                    }
+
+                    return userPayments.stream()
+                            .map(up -> new CurrentPaymentDTO(
+                                    up.getContractMember().getUser().getId(),
+                                    up.getAmount(),
+                                    up.getStatus() == PaymentStatus.PAID
+                            ));
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<MonthPaymentIDTO> getMonthPaymentSummaries(
+            final List<PaymentEntity> payments,
+            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
+
+        Map<Integer, List<PaymentEntity>> paymentsByMonth = payments.stream()
+                .collect(Collectors.groupingBy(PaymentEntity::getMonth));
+
+        return paymentsByMonth.entrySet().stream()
+                .map(entry -> {
+                    int month = entry.getKey();
+                    List<PaymentEntity> monthPayments = entry.getValue();
+
+                    MonthPaymentIDTO summary = new MonthPaymentIDTO();
+                    summary.setMonth(monthIntToString(month));
+
+                    // 중복 ID 제거를 위해 Set 사용
+                    Set<Long> paidUserIds = new HashSet<>();
+                    Set<Long> debtUserIds = new HashSet<>();
+
+                    for (PaymentEntity payment : monthPayments) {
+                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+
+                        for (UserPaymentEntity userPayment : userPayments) {
+                            Long userEntityId = userPayment.getContractMember().getUser().getId();
+                            if (userPayment.getStatus() == PaymentStatus.PAID) {
+                                paidUserIds.add(userEntityId);
+                            } else {
+                                debtUserIds.add(userEntityId);
+                            }
+                        }
+                    }
+
+                    summary.setPaidUserIds(new ArrayList<>(paidUserIds));
+                    summary.setDebtUserIds(new ArrayList<>(debtUserIds));
+                    return summary;
+                })
+                .collect(Collectors.toList());
     }
 
     private String monthIntToString(int monthInt) {
@@ -149,5 +189,4 @@ public class PaymentServiceImpl implements PaymentService {
         month = String.valueOf(Integer.parseInt(month));
         return year + "-" + month;
     }
-
 }
