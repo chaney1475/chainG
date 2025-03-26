@@ -4,6 +4,7 @@ import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
@@ -12,5 +13,7 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
     List<PaymentEntity> findByStatus(PaymentStatus paymentStatus);
 
-    List<PaymentEntity> findALlByContractIdAndFeeType(Long contract_id, FeeType feeType);
+
+    List<PaymentEntity> findAllByContractIdAndFeeType(Long contractId, FeeType feeType);
+
 }
