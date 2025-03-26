@@ -1,6 +1,6 @@
 package com.ssafy.chaing.auth.service.dto;
 
-import com.ssafy.chaing.user.service.dto.UserInfoDTO;
+import com.ssafy.chaing.user.service.dto.UserDetailInfoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,5 +8,5 @@ import lombok.Getter;
 @Getter
 public class AuthDTO {
     private String accessToken;
-    private UserInfoDTO userInfo;
+    private UserDetailInfoDTO userInfo;
 }
