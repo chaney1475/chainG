@@ -6,6 +6,7 @@ import com.ssafy.chaing.contract.controller.request.CreateLivingBudgetRequest;
 import com.ssafy.chaing.contract.controller.response.budget.LivingBudgetAccountResponse;
 import com.ssafy.chaing.contract.service.BudgetService;
 import com.ssafy.chaing.contract.service.dto.CreateLivingBudgetDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,27 +16,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(
+        name = "Budget Controller",
+        description = "생활비 계좌 관리"
+)
 @RestController
 @RequestMapping("/api/v1/budget/living")
 @RequiredArgsConstructor
 public class BudgetController {
     private final BudgetService budgetService;
 
-    @PostMapping
+    @GetMapping("/notice/create")
     public ResponseEntity<BaseResponse<Void>> notifyLeaderLivingAccountCreated(
             @AuthenticationPrincipal UserPrincipal principal) {
         budgetService.notifyLeaderToRegisterLivingAccount(principal.getId());
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
-    @GetMapping
+    @GetMapping("/account")
     public ResponseEntity<BaseResponse<LivingBudgetAccountResponse>> getLivingAccount(
             @AuthenticationPrincipal UserPrincipal principal) {
         LivingBudgetAccountResponse livingAccount = budgetService.getLivingAccount(principal.getId());
         return ResponseEntity.ok(BaseResponse.success(livingAccount));
     }
 
-    @PostMapping
+    @PostMapping("/account")
     public ResponseEntity<BaseResponse<Void>> saveAccountAndNotify(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody CreateLivingBudgetRequest body) {
@@ -45,14 +50,14 @@ public class BudgetController {
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
-    @PostMapping
+    @GetMapping("/notice/deposit")
     public ResponseEntity<BaseResponse<Void>> notifyLivingDeposit(
             @AuthenticationPrincipal UserPrincipal principal) {
 
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
-    @PostMapping
+    @PostMapping("/notice/withdraw")
     public ResponseEntity<BaseResponse<Void>> notifyLivingWithdraw(
             @AuthenticationPrincipal UserPrincipal principal) {
 
