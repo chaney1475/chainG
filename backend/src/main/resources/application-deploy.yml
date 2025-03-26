@@ -72,8 +72,8 @@ app:
     allow-hosts:
       - ${allow-host.front}
       - ${allow-host.local}
-      - ${allow-host.local.front1}
-      - ${allow-host.local.front2}
+      - http://localhost:3001
+      - http://localhost:3000
   frontend:
     url: ${allow-host.front}
 springdoc:
