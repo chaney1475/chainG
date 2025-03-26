@@ -31,8 +31,8 @@ public enum ExceptionCode {
     USER_NOT_IN_GROUP("USER_NOT_IN_GROUP", "해당 유저가 그룹에 속해 있지 않습니다."),
 
     INVALID_DUEDATE("INVALID_DUEDATE", "유효하지 않은 납부일입니다. 납부일은 2일 이상 28일 이하여야 합니다."),
-
-    ;
+    
+    LIVING_ACCOUNT_ALREADY_EXIST("LIVING_ACCOUNT_ALREADY_EXIST", "이미 계좌가 존재합니다.");
 
     private final String code;
     private final String message;
