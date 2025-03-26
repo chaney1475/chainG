@@ -21,6 +21,7 @@ public enum ExceptionCode {
     CONTRACT_ALREADY_EXIST("CONTRACT_ALREADY_EXIST", "이미 계약서가 존재합니다."),
     CONTRACT_NOT_FOUND("CONTRACT_NOT_FOUND", "계약서가 존재하지 않습니다."),
     CARD_NOT_FOUND("CARD_NOT_FOUND", "카드가 존재하지 않습니다."),
+    CONTRACT_USER_NOT_FOUND("CONTRACT_USER_NOT_FOUND", "사용자의 계약 정보가 존재하지 않습니다."),
 
     INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 틀렸습니다."),
     INVALID_TOKEN("EXPIRED_ACCESS_TOKEN", "로그인에 실패하였습니다."),
