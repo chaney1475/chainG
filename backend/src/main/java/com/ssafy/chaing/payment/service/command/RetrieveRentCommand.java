@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RetrieveRentCommand {
     private Long userId;
+    private String year;
     private String month;
-    private String day;
 }
