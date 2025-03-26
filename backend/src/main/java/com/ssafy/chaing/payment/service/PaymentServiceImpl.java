@@ -38,7 +38,7 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceImpl implements PaymentService {
 
     private static final String DATE_FORMAT = "yyyyMM";
-    private static final String TIMEZONE = "Asia/Seoul";
+    private static final String TIMEZONE = "UTC";
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
@@ -59,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
         ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
 
         // 결제 데이터 처리
-        List<PaymentEntity> payments = paymentRepository.findALlByContractIdAndFeeType(contract.getId(), FeeType.RENT);
+        List<PaymentEntity> payments = paymentRepository.findAllByContractIdAndFeeType(contract.getId(), FeeType.RENT);
         int currentMonth = getCurrentMonth();
 
         // 결제 정보 처리
