@@ -1,22 +1,14 @@
 import styled from '@emotion/styled'
+import Link from 'next/link'
 
 export const Container = styled.div`
-  padding: 20px 16px;
-  border: 1px solid blue;
   display: flex;
-  justify-content: space-between;
+  flex: 1;
+  flex-direction: column;
+  justify-content: start;
   align-items: center;
-  border: 1px solid red;
-`
-
-export const HeaderButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  ${({ theme }) => theme.typography.styles.title};
-  color: ${({ theme }) => theme.color.text.regular};
-  display: flex;
-  align-items: center;
+  min-height: 100vh;
+  width: 100%;
   gap: 8px;
+  background-color: ${({ theme }) => theme.color.background.white};
 `

@@ -7,13 +7,17 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import { ConfirmButton, InputBox, TitleHeader } from '@/components'
-import { Form, Main, Container } from '@/styles/styles'
-import {TopHeader} from '@/features/lifeRule/components/TopHeader'  
+import { lifeRuleList } from '@/constants/lifeRuleList'
+import { TopHeader } from '@/features/lifeRule/components/TopHeader'
+import { Container, Form, Main } from '@/styles/styles'
+
+import { LifeRuleList } from './components/LifeRuleList'
 import {
+  FullMain,
+  NavigatorBar,
   SignupLinkContainer,
   StyledLink,
-  SubmitButton,FullMain,
-  NavigatorBar,
+  SubmitButton,
 } from './styles'
 
 interface LoginForm {
@@ -44,7 +48,7 @@ export function LifeRulePage() {
     <Container>
       <TopHeader title={t('lifeRule.title')} />
       <FullMain>
-        
+        <LifeRuleList lifeRuleList={lifeRuleList} />
       </FullMain>
       <NavigatorBar></NavigatorBar>
     </Container>

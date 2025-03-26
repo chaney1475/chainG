@@ -1,37 +1,25 @@
 'use client'
 
-import { memo } from 'react'
+import React from 'react'
 
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { LifeRule } from '@/types/lifeRule'
 
-import { Container, HeaderButton } from './styles'
+import { LifeRuleListItem } from '../LifeRuleListItem'
+import { Container } from './styles'
 
-interface TopHeaderProps {
-  title: string
+interface LifeRuleListProps {
+  lifeRuleList: LifeRule[]
 }
 
-export const LifeRuleList = memo(function LifeRuleList({
-  title,
-}: TopHeaderProps) {
-  const router = useRouter()
+export function LifeRuleList({ lifeRuleList }: LifeRuleListProps) {
   return (
     <Container>
-      <HeaderButton onClick={() => router.back()}>
-        <Image
-          src="/icons/arrow-left.svg"
-          alt="뒤로 가기"
-          width={24}
-          height={24}
+      {lifeRuleList.map((lifeRule) => (
+        <LifeRuleListItem
+          key={lifeRule.id}
+          lifeRule={lifeRule}
         />
-      </HeaderButton>
-      <div>{title}</div>
-      <Image
-        src="/icons/edit.svg"
-        alt="수정"
-        width={24}
-        height={24}
-      />
+      ))}
     </Container>
   )
-})
+}
