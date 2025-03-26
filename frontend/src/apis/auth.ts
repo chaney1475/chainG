@@ -8,7 +8,7 @@ import { handleDefaultError } from '@/utils/error/handleDefaultError'
 import api from './api'
 
 const signUpApi = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_FRONTEND_SCHEME}://${process.env.NEXT_PUBLIC_FRONTEND_HOST}${process.env.NEXT_PUBLIC_FRONTEND_PATH}`,
+  baseURL: `https://chaing.site/api/v1`,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
