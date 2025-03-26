@@ -8,6 +8,7 @@ export const Container = styled.div`
   justify-content: space-between;
   height: 100vh;
 `
+
 export const BottomContainer = styled.div`
   margin: 0 20px;
   display: flex;

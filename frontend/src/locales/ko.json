@@ -1,4 +1,22 @@
 {
+  "duty": {
+    "title": "당번 일정",
+    "category": {
+      "clean": "청소"
+    },
+    "schedule": {
+      "title": "이번주 당번",
+      "week": {
+        "first": "첫째주",
+        "second": "둘째주",
+        "third": "셋째주",
+        "fourth": "넷째주",
+        "fifth": "다섯째주"
+      }
+    },
+    "create": {}
+  },
+
   "login": {
     "title": "로그인",
     "description": "이메일과 비밀번호를 입력해주세요",
