@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { dutyList } from '@/constants/dutyList'
 
 import { DutyListItem } from '../DutyListItem'
-import { Container, FullMain } from './styles'
+import { Container } from './styles'
 
 // 내 하위에 있는 style을 쓰겠다
 
