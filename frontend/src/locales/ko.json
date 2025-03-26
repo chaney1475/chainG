@@ -101,5 +101,8 @@
     "confirm": "입주하기"
   },
   "next": "다음",
-  "prev": "이전"
+  "prev": "이전",
+  "lifeRule": {
+    "title": "생활 규칙"
+  }
 }
