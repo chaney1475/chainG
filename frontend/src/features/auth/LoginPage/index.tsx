@@ -73,13 +73,10 @@ export function LoginPage() {
             })}
             error={errors.password}
           />
-
-          <SubmitButton type="submit">로그인</SubmitButton>
           <ConfirmButton
             onClick={handleSubmit(onSubmit)}
             label={t('login.title')}
           />
-
           <SignupLinkContainer>
             <StyledLink href="/group/create/createProfile">
               createProfile
