@@ -95,10 +95,10 @@ cloud:
 
 ssafy:
   fintech:
-    api-key: ${ssafy.fintech.api-key}
-    user-key: ${ssafy.fintech.user-key}
-    card-unique-no: ${ssafy.fintech.card-unique-no}
-    base-url: ${ssafy.fintech.base-url}
+    api-key: ${ssafy.fintech.apiKey}
+    user-key: ${ssafy.fintech.userKey}
+    card-unique-no: ${ssafy.fintech.cardUniqueNo}
+    base-url: ${ssafy.fintech.baseUrl}
 
 #
 #logging:
