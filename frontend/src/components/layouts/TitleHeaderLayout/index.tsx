@@ -1,5 +1,5 @@
 import { ConfirmButton, TitleHeader, TopHeader } from '@/components'
-import { Container, Main } from '@/styles/styles'
+import { BottomContainer, Container, Main } from '@/styles/styles'
 
 export function TitleHeaderLayout({
   title = '',
@@ -22,10 +22,12 @@ export function TitleHeaderLayout({
           <TitleHeader title={header} />
           {children}
         </Main>
-        <ConfirmButton
-          label={label}
-          onClick={onClick}
-        />
+        <BottomContainer>
+          <ConfirmButton
+            label={label}
+            onClick={onClick}
+          />
+        </BottomContainer>
       </Container>
     </>
   )

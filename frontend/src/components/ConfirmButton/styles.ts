@@ -9,12 +9,11 @@ interface StyledButtonProps {
 
 export const StyledButton = styled.button<StyledButtonProps>`
   padding: 20px;
-  margin: 20px;
-  font-weight: 600;
+  margin: 20px 0;
   border-radius: 12px;
   border: none;
-  font-size: 16px;
   text-align: center;
+  ${({ theme }) => theme.typography.styles.button};
 
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
     switch (variant) {

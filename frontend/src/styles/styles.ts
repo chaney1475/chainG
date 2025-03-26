@@ -8,6 +8,11 @@ export const Container = styled.div`
   justify-content: space-between;
   height: 100vh;
 `
+export const BottomContainer = styled.div`
+  margin: 0 20px;
+  display: flex;
+  flex-direction: column;
+`
 
 export const Main = styled.main`
   padding: 1.25rem;
@@ -21,6 +26,8 @@ export const Main = styled.main`
 export const Form = styled.form`
   width: 100%;
   gap: 1rem;
+  display: flex;
+  flex-direction: column;
 `
 
 export const containerStyle = css`
