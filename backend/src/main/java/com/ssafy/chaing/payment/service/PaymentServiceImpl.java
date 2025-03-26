@@ -15,9 +15,11 @@ import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
+import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
 import com.ssafy.chaing.payment.service.dto.CurrentPaymentDTO;
-import com.ssafy.chaing.payment.service.dto.MonthPaymentIDTO;
+import com.ssafy.chaing.payment.service.dto.MonthPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
+import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZoneId;
@@ -69,7 +71,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
 
         // 월별 결제 요약
-        List<MonthPaymentIDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
+        List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
 
         return new RetrieveRentDTO(
                 contract.getRentTotalAmount(),
@@ -78,6 +80,27 @@ public class PaymentServiceImpl implements PaymentService {
                 currentMonthPayments,
                 monthList
         );
+    }
+
+    @Override
+    public RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command) {
+        Objects.requireNonNull(command, "Command cannot be null");
+        Long userId = command.getUserId();
+
+        // 관련 엔티티 조회
+        UserEntity user = getUserEntity(userId);
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
+
+        // 결제 데이터 처리
+        List<PaymentEntity> payments = paymentRepository.findAllByContractIdAndFeeType(contract.getId(), FeeType.UTILITY);
+        int currentMonth = getCurrentMonth();
+
+        // 결제 정보 처리
+        Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
+
+        return new RetrieveUtilityDTO();
     }
 
     private UserEntity getUserEntity(Long userId) {
@@ -139,7 +162,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
     }
 
-    private List<MonthPaymentIDTO> getMonthPaymentSummaries(
+    private List<MonthPaymentDTO> getMonthPaymentSummaries(
             final List<PaymentEntity> payments,
             final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
 
@@ -151,7 +174,7 @@ public class PaymentServiceImpl implements PaymentService {
                     int month = entry.getKey();
                     List<PaymentEntity> monthPayments = entry.getValue();
 
-                    MonthPaymentIDTO summary = new MonthPaymentIDTO();
+                    MonthPaymentDTO summary = new MonthPaymentDTO();
                     summary.setMonth(monthIntToString(month));
 
                     // 중복 ID 제거를 위해 Set 사용
