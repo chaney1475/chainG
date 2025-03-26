@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @ToString
-public class HeaderDTO {
+public class HeaderWithoutUserKeyDTO {
     private final String apiName;
     private final String transmissionDate;
     private final String transmissionTime;
@@ -16,6 +16,5 @@ public class HeaderDTO {
     private final String apiServiceCode;
     private final String institutionTransactionUniqueNo;
     private final String apiKey;
-    private final String userKey;
 }
 

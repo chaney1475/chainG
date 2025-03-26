@@ -4,6 +4,15 @@ spring:
   config:
     import:
       - optional:file:.env[.properties] #ENV ?? ??
+      - aws-parameterstore:/chaing/web3j/
+
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
 
   datasource:
     url: ${DATASOURCE_URL}
@@ -55,6 +64,10 @@ spring:
             enable: true
             required: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+
 application:
   security:
     jwt:
@@ -89,6 +102,14 @@ cloud:
     credentials:
       accessKey: ${AWS_ACCESS_KEY}
       secretKey: ${AWS_SECRET_KEY}
+
+web3j:
+  client-address: ${client-address}
+  wallet-private-key: ${wallet-private-key}
+  contract-address: ${contract-address} # DB 에 넣어야 함.
+  rent-contract-address: ${rent-contract-address}
+  utility-contract-address: ${utility-contract-address}
+  chain-id: ${chain-id}
 
 ssafy:
   fintech:
