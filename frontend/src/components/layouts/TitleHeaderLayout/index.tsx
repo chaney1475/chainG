@@ -14,7 +14,7 @@ export function TitleHeaderLayout({
   children: React.ReactNode
   onClick: () => void
 }) {
-  return (
+  return ( 
     <>
       <Container>
         <TopHeader title={title} />
