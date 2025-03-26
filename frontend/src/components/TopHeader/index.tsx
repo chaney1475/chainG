@@ -22,8 +22,9 @@ export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
           width={24}
           height={24}
         />
-        {title}
       </HeaderButton>
+      {title}
+      <HeaderButton />
     </Container>
   )
 })
