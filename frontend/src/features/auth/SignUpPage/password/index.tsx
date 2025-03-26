@@ -57,10 +57,11 @@ export function SignUpPasswordPage() {
     if (signUpRequest?.password) {
       const handleSignUp = async () => {
         try {
+          console.log('signUpRequest', signUpRequest)
           const response = await signUp(signUpRequest)
           console.log('회원가입 성공:', response)
+          dispatch(clearSignUp())
           if (response) {
-            dispatch(clearSignUp())
             router.push('/')
           }
         } catch (error) {
@@ -70,7 +71,7 @@ export function SignUpPasswordPage() {
 
       handleSignUp()
     }
-  }, [signUpRequest?.password, dispatch, router])
+  }, [signUpRequest?.password, dispatch])
 
   const onSubmit = async (data: SignupForm) => {
     dispatch(setSignUpPassword(data.password))
