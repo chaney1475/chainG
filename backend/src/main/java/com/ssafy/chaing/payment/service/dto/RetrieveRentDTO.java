@@ -13,5 +13,5 @@ public class RetrieveRentDTO {
     private Integer myAmount;
     private Integer dueDate;
     private List<CurrentPaymentDTO> currentMonth;
-    private List<MonthPaymentIDTO> monthList;
+    private List<MonthPaymentDTO> monthList;
 }
