@@ -12,6 +12,14 @@ public class RetrieveUtilityDTO {
     private Integer totalAmount;
     private Integer myAmount;
     private String dueDayOfWeek;
-    private List<CurrentPaymentDTO> currentMonth;
+    private List<CurrentPaymentDTO> currentWeek;
     private List<WeekPaymentDTO> weekList;
+
+    public RetrieveUtilityDTO(Integer totalAmount, Integer myAmount, List<CurrentPaymentDTO> currentWeek, List<WeekPaymentDTO> weekList) {
+        this.totalAmount = totalAmount;
+        this.myAmount = myAmount;
+        this.dueDayOfWeek = "friday";
+        this.currentWeek = currentWeek;
+        this.weekList = weekList;
+    }
 }

@@ -25,7 +25,7 @@ public class RetrieveUtilityResponse {
                 dto.getTotalAmount(),
                 dto.getMyAmount(),
                 dto.getDueDayOfWeek(),
-                dto.getCurrentMonth(),
+                dto.getCurrentWeek(),
                 dto.getWeekList()
         );
     }
