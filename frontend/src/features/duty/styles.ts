@@ -15,6 +15,7 @@ export const Container = styled.div`
 export const FullMain = styled.div`
   padding: 1.25rem;
   display: flex;
+  border: 1px solid red;
   flex: 1;
   flex-direction: column;
   align-items: flex-start;

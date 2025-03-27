@@ -1,4 +1,4 @@
-import { dutyCategoryList } from "@/constants/dutyList"
+import { dutyCategoryList } from '@/constants/dutyList'
 
 export interface Duty {
   id: number
@@ -25,3 +25,11 @@ export interface DutyCategory {
   src: string
 }
 
+export type DayKey =
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+  | 'sunday'

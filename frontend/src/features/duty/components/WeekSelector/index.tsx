@@ -6,20 +6,37 @@ import { useTranslation } from 'react-i18next'
 
 import { useRouter } from 'next/navigation'
 
-import { Container, Form, Main } from '@/styles/styles'
+import { dutyList } from '@/constants/dutyList'
+import '@/styles/styles'
+import { DayKey } from '@/types/duty'
 
-// 공용 컴포넌트 쓰겠다. -> from ~~
+import { WeekSelectorItem } from '../WeekSelectorItem'
+import { Container } from './styles'
 
-import { FullMain, Navigator } from './styles'
-
-// 내 하위에 있는 style을 쓰겠다
 export function WeekSelector() {
   const { t } = useTranslation()
   const router = useRouter()
 
+  const week: DayKey[] = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ]
+
   return (
     <Container>
-      <div> 요일 선택 컴포넌트다 </div>
+      {week.map((item) => (
+        <WeekSelectorItem
+          key={item}
+          day={item}
+          date={1}
+          duty={dutyList[item]}
+        />
+      ))}
     </Container>
   )
 }

@@ -10,7 +10,7 @@ import { TopHeader } from '@/components'
 import { Container } from '@/styles/styles'
 
 import { DutyList } from './components/DutyList'
-import { WeekSelector } from './components/WeekSelector'
+import { WeekList } from './components/WeekList'
 import { FullMain, Navigator } from './styles'
 
 export function DutyPage() {
@@ -21,7 +21,7 @@ export function DutyPage() {
     <Container>
       <TopHeader title={t('duty.title')} />
       <FullMain>
-        <WeekSelector />
+        <WeekList />
         <DutyList />
       </FullMain>
       <Navigator></Navigator>
