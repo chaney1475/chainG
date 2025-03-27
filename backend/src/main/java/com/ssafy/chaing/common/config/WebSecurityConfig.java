@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                                 "/webjars/**"
                         ).permitAll()  // Swagger 관련 경로 먼저 허용
                         .requestMatchers("/oauth2/authorization/**", "/login/oauth2/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/api/ws/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
@@ -78,6 +78,7 @@ public class WebSecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization", "X-Custom-Header"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

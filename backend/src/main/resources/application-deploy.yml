@@ -72,6 +72,9 @@ app:
     allow-hosts:
       - ${allow-host.front}
       - ${allow-host.local}
+      - ${allow-host.local.front1}
+      - ${allow-host.local.front2}
+
   frontend:
     url: ${allow-host.front}
 springdoc:
@@ -88,19 +91,14 @@ api:
 cloud:
   aws:
     s3:
-      bucket: sample
-    stack.auto: false
-    region.static: sample
-    credentials:
-      accessKey: sample
-      secretKey: sample
+      bucket: ${aws.bucket}
 
 ssafy:
   fintech:
-    api-key: ${ssafy.fintech.api-key}
-    user-key: ${ssafy.fintech.user-key}
-    card-unique-no: ${ssafy.fintech.card-unique-no}
-    base-url: ${ssafy.fintech.base-url}
+    api-key: ${ssafy.fintech.apiKey}
+    user-key: ${ssafy.fintech.userKey}
+    card-unique-no: ${ssafy.fintech.cardUniqueNo}
+    base-url: ${ssafy.fintech.baseUrl}
 
 #
 #logging:
