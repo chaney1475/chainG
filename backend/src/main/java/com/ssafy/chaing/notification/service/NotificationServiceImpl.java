@@ -42,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .user(user)
                 .title(command.getTitle())
                 .content(command.getContent())
-                .read(false)
+                .isRead(false)
                 .createdAt(ZonedDateTime.now())
                 .category(command.getCategory())
                 .build();
