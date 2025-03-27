@@ -8,6 +8,7 @@ export const Container = styled.div`
   min-height: 100vh;
   width: 100%;
   background-color: ${({ theme }) => theme.color.background.white};
+  padding: 1.25rem;
 `
 export const FullMain = styled.main`
   padding: 1.25rem;
