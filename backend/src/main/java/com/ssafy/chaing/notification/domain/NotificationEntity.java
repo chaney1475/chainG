@@ -50,11 +50,11 @@ public class NotificationEntity {
     @Column(nullable = false)
     private ZonedDateTime createdAt;
 
-    @Column(nullable = false)
-    private boolean read;
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead;
 
     // 읽음 처리
     public void markAsRead() {
-        this.read = true;
+        this.isRead = true;
     }
 }
