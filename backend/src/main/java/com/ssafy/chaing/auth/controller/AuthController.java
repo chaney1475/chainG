@@ -1,8 +1,10 @@
 package com.ssafy.chaing.auth.controller;
 
+import com.ssafy.chaing.auth.controller.request.FcmRequest;
 import com.ssafy.chaing.auth.controller.request.LoginRequest;
 import com.ssafy.chaing.auth.controller.request.SignupRequest;
 import com.ssafy.chaing.auth.controller.response.UserInfoResponse;
+import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.auth.service.AuthService;
 import com.ssafy.chaing.auth.service.command.SignupCommand;
 import com.ssafy.chaing.auth.service.dto.AuthDTO;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,5 +66,14 @@ public class AuthController {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + authDTO.getAccessToken())
                 .body(BaseResponse.success(result));
     }
+
+    @PostMapping("/fcm")
+    public ResponseEntity<BaseResponse<Void>> registerFcmToken(@RequestBody FcmRequest request,
+                                                               @AuthenticationPrincipal UserPrincipal user) {
+        authService.updateFcmToken(request.toCommand(user.getId()));
+
+        return ResponseEntity.ok().body(BaseResponse.success(null));
+    }
+
 
 }
