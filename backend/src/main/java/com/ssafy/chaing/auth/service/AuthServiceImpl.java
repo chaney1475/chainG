@@ -98,6 +98,5 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         user.setFcmToken(command.getFcmToken());
-        
     }
 }
