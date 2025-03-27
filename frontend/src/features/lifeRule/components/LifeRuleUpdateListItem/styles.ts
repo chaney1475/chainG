@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 
-import { CustomTheme } from '@/styles/theme'
+import { CustomTheme } from '@/styles/themes'
 import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 export const Container = styled.div`
