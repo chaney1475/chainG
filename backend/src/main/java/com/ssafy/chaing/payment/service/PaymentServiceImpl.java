@@ -8,6 +8,7 @@ import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.service.FintechService;
+import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
@@ -55,7 +56,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public RetrieveRentDTO retrieveRent(RetrieveRentCommand command) {
-        Objects.requireNonNull(command, "Command cannot be null");
         Long userId = command.getUserId();
 
         // 관련 엔티티 조회
@@ -99,27 +99,44 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void transferToOwner(TransferDto transferInfo) {
-        Long userId = transferInfo.getUserId();
-        ContractUserEntity contractUser =  contractUserRepository.findByUser_Id(userId)
+        ContractUserEntity contractUser = contractUserRepository.findWithContractByUserId(transferInfo.getUserId())
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_USER_NOT_FOUND));
         ContractEntity contract = contractUser.getContract();
-        // 월세/공과금 계좌 -> 집 주인 계좌
-        TransferCommand command = new TransferCommand(contract.getRentAccountNo(),transferInfo.getAccountNo(),transferInfo.getBalance());
-        fintechService.transfer(command);
+
+        TransferCommand command = new TransferCommand(
+                contract.getRentAccountNo(),
+                transferInfo.getAccountNo(),
+                transferInfo.getBalance()
+        );
+
+        TransferDTO result = fintechService.transfer(command);
+
+        if (!result.isSuccess()) {
+            throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
+        }
     }
 
     @Override
     public void depositToLifeAccount(TransferDto transferInfo) {
-        Long userId = transferInfo.getUserId();
-        ContractUserEntity contractUser =  contractUserRepository.findByUser_Id(userId)
+        ContractUserEntity contractUser = contractUserRepository.findWithContractByUserId(transferInfo.getUserId())
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
-        // 사용자 개인 계좌 -> 월세/공과금 계좌
         ContractEntity contract = contractUser.getContract();
+
         if (contract == null){
             throw new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND);
         }
-        TransferCommand command = new TransferCommand(transferInfo.getAccountNo(),contract.getRentAccountNo(),transferInfo.getBalance());
-        fintechService.transfer(command);
+
+        TransferCommand command = new TransferCommand(
+                transferInfo.getAccountNo(),
+                contract.getRentAccountNo(),
+                transferInfo.getBalance()
+        );
+
+        TransferDTO result = fintechService.transfer(command);
+
+        if (!result.isSuccess()) {
+            throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
+        }
     }
 
     private UserEntity getUserEntity(Long userId) {
@@ -231,7 +248,5 @@ public class PaymentServiceImpl implements PaymentService {
         month = String.valueOf(Integer.parseInt(month));
         return year + "-" + month;
     }
-
-
 
 }
