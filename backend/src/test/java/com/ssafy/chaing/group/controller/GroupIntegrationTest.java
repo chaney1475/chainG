@@ -13,7 +13,6 @@ import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.group.controller.request.JoinGroupRequest;
 import com.ssafy.chaing.group.controller.response.GroupResponse;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
-import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.group.service.GroupService;
 import com.ssafy.chaing.group.service.command.CreateGroupCommand;
@@ -21,15 +20,12 @@ import com.ssafy.chaing.group.service.dto.GroupDTO;
 import com.ssafy.chaing.user.domain.RoleType;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
-import com.ssafy.chaing.user.service.UserService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,37 +46,18 @@ import org.springframework.test.web.servlet.MvcResult;
 @Transactional
 class GroupIntegrationTest {
 
-    private final MockMvc mockMvc;
-    private final UserService userService;
-    private final GroupService groupService;
-    private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final GroupUserRepository groupUserRepository;
-
-    private final ObjectMapper objectMapper;
-
     @Autowired
-    GroupIntegrationTest(
-            MockMvc mockMvc,
-            UserService userService,
-            GroupService groupService,
-            UserRepository userRepository,
-            GroupRepository groupRepository,
-            GroupUserRepository groupUserRepository,
-            PasswordEncoder passwordEncoder,
-            ObjectMapper objectMapper
-
-    ) {
-        this.mockMvc = mockMvc;
-        this.userService = userService;
-        this.groupService = groupService;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.groupUserRepository = groupUserRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.objectMapper = objectMapper;
-    }
+    private MockMvc mockMvc;
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private GroupUserRepository groupUserRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private UserEntity user0;
     private UserEntity user1;
