@@ -1,0 +1,164 @@
+// theme.ts
+import '@emotion/react'
+
+export type CustomTheme = {
+  color: {
+    primary: string
+    secondary: string
+    text: {
+      regular: string
+      low: string
+      disabled: string
+      distructive: string
+      confirm: string
+      sunday: string
+    }
+    background: {
+      update: string
+      delete: string
+      create: string
+      white: string
+    }
+    border: string
+  }
+  typography: {
+    fonts: {
+      paperlogyRegular: string
+      paperlogyMedium: string
+    }
+    styles: {
+      topHeader: {
+        fontFamily: string
+        fontSize: string
+      }
+      title: {
+        fontFamily: string
+        fontSize: string
+      }
+      default: {
+        fontFamily: string
+        fontSize: string
+      }
+      name: {
+        fontFamily: string
+        fontSize: string
+      }
+      inputBoxTitle: {
+        fontFamily: string
+        fontSize: string
+      }
+      description: {
+        fontFamily: string
+        fontSize: string
+      }
+      button: {
+        fontFamily: string
+        fontSize: string
+      }
+      heading: {
+        fontFamily: string
+        fontSize: string
+      }
+      navigator: {
+        fontFamily: string
+        fontSize: string
+      }
+      tiny: {
+        fontFamily: string
+        fontSize: string
+      }
+      descriptionBold: {
+        fontFamily: string
+        fontSize: string
+      }
+      defaultHighlight: {
+        fontFamily: string
+        fontSize: string
+      }
+    }
+  }
+}
+
+declare module '@emotion/react' {
+  export interface Theme extends CustomTheme {}
+}
+
+const theme: CustomTheme = {
+  color: {
+    primary: '#5583e7',
+    secondary: '#f1f3f6',
+    text: {
+      regular: '#1f1f1f',
+      low: '#4f4f4f',
+      disabled: '#8c8c8c',
+      distructive: '#c84620',
+      confirm: '#3bce6e',
+      sunday: '#ff9494',
+    },
+    background: {
+      update: '#fffcc4',
+      delete: '#ffe6e6',
+      create: '#ddffd4',
+      white: '#ffffff',
+    },
+    border: '#d9d9d9',
+  },
+  typography: {
+    fonts: {
+      paperlogyRegular: 'var(--font-paperlogy-regular)',
+      paperlogyMedium: 'var(--font-paperlogy-medium)',
+    },
+    styles: {
+      topHeader: {
+        fontFamily: 'var(--font-paperlogy-medium)',
+        fontSize: '1.125rem',
+      },
+      title: {
+        fontFamily: 'var(--font-paperlogy-semi-bold)',
+        fontSize: '22px',
+      },
+      default: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '1.125rem',
+      },
+      name: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.875rem',
+      },
+      inputBoxTitle: {
+        fontFamily: 'var(--font-paperlogy-medium)',
+        fontSize: '0.875rem',
+      },
+      description: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.875rem',
+      },
+      button: {
+        fontFamily: 'var(--font-paperlogy-medium)',
+        fontSize: '1.25rem',
+      },
+      heading: {
+        fontFamily: 'var(--font-paperlogy-semi-bold)',
+        fontSize: '1.875rem',
+      },
+      navigator: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.625rem',
+      },
+      tiny: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.5rem',
+      },
+      descriptionBold: {
+        fontFamily: 'var(--font-paperlogy-semi-bold)',
+        fontSize: '0.875rem',
+      },
+      defaultHighlight: {
+        fontFamily: 'var(--font-paperlogy-bold)',
+        fontSize: '1.125rem',
+      },
+    },
+  },
+}
+
+export default theme
