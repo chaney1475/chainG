@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                                 "/webjars/**"
                         ).permitAll()  // Swagger 관련 경로 먼저 허용
                         .requestMatchers("/oauth2/authorization/**", "/login/oauth2/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/api/ws/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
