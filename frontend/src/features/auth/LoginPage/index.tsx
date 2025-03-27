@@ -6,15 +6,11 @@ import { useTranslation } from 'react-i18next'
 
 import { useRouter } from 'next/navigation'
 
+import { login } from '@/apis/auth'
 import { ConfirmButton, InputBox } from '@/components'
 import { Form, Main } from '@/styles/styles'
 
-import {
-  Container,
-  SignupLinkContainer,
-  StyledLink,
-  SubmitButton,
-} from './styles'
+import { Container, SignupLinkContainer, StyledLink } from './styles'
 
 interface LoginForm {
   emailAddress: string
@@ -32,9 +28,10 @@ export function LoginPage() {
 
   const onSubmit = async (data: LoginForm): Promise<void> => {
     try {
-      // TODO: 실제 로그인 API 호출 구현
-      console.log('로그인 데이터:', data)
-      router.push('/')
+      const response = await login(data)
+      if (response.success) {
+        router.push('/')
+      }
     } catch (error) {
       console.error('로그인 실패:', error)
     }

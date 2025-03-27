@@ -1,29 +1,33 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { IconButton } from '../IconButton'
 import { Container, HeaderButton } from './styles'
 
 interface TopHeaderProps {
   title: string
+  headerRightButton?: React.ReactNode
 }
 
-export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
+export const TopHeader = memo(function TopHeader({
+  title,
+  headerRightButton,
+}: TopHeaderProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   return (
     <Container>
-      <HeaderButton onClick={() => router.back()}>
-        <Image
-          src="/icons/arrow-left.svg"
-          alt="뒤로 가기"
-          width={24}
-          height={24}
-        />
-        {title}
-      </HeaderButton>
+      <IconButton
+        src="/icons/arrow-left.svg"
+        alt={t('icon.back')}
+        onClick={() => router.back()}
+      />
+      {title}
+      {headerRightButton ?? <HeaderButton />}
     </Container>
   )
 })

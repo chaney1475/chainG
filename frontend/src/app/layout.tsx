@@ -11,6 +11,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head />
       <body className={fontVariables}>
         <ClientProvider>{children}</ClientProvider>
       </body>

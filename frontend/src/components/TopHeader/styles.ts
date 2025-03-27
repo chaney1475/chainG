@@ -2,6 +2,11 @@ import styled from '@emotion/styled'
 
 export const Container = styled.div`
   padding: 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  ${({ theme }) => theme.typography.styles.title};
+  color: ${({ theme }) => theme.color.text.regular};
 `
 
 export const HeaderButton = styled.button`
@@ -9,9 +14,10 @@ export const HeaderButton = styled.button`
   border: none;
   padding: 0;
   cursor: pointer;
-  ${({ theme }) => theme.typography.styles.title};
-  color: ${({ theme }) => theme.color.text.regular};
   display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.color.text.regular};
   gap: 8px;
+  width: 24px;
+  height: 24px;
 `

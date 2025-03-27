@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { ConfirmButton, InputBox, TitleHeader, TopHeader } from '@/components'
 import { profileList } from '@/constants/profileList'
 import { setNickname, setProfileImage } from '@/store/slices/groupSlice'
-import { Container, Main, containerStyle, mainStyle } from '@/styles/styles'
+import { Container, Main } from '@/styles/styles'
 
 import ProfileSelector from './components/ProfileSelector'
 
