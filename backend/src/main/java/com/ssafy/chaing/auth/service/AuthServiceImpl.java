@@ -123,8 +123,7 @@ public class AuthServiceImpl implements AuthService {
     public void updateFcmToken(FcmCommand command) {
         UserEntity user = userRepository.findById(command.getUserId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
-
         user.setFcmToken(command.getFcmToken());
     }
-    
+
 }
