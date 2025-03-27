@@ -101,7 +101,7 @@ ssafy:
     base-url: ${ssafy.fintech.baseUrl}
 firebase:
   project-name: ${firebase.projectName}
-  service-account-base64: ${firebase.serviceAccountBase64}
+  service-account-base64: ${firebase.serviceAccount}
 #
 #logging:
 #  level:
