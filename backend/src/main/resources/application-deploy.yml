@@ -99,7 +99,9 @@ ssafy:
     user-key: ${ssafy.fintech.userKey}
     card-unique-no: ${ssafy.fintech.cardUniqueNo}
     base-url: ${ssafy.fintech.baseUrl}
-
+firebase:
+  project-name: ${firebase.projectName}
+  service-account-base64: ${firebase.serviceAccountBase64}
 #
 #logging:
 #  level:

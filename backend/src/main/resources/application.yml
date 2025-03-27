@@ -11,7 +11,7 @@ spring:
   config:
     import:
       - optional:file:.env[.properties] #ENV ?? ??
-      - aws-parameterstore:/chaing/web3j/
+      - aws-parameterstore:/chaing/
 
   datasource:
     url: ${DATASOURCE_URL}
