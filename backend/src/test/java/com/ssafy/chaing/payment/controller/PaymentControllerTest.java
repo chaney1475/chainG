@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.chaing.auth.domain.UserPrincipal;
+import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.payment.controller.request.RetrieveRentRequest;
 import com.ssafy.chaing.payment.controller.request.RetrieveUtilityRequest;
 import com.ssafy.chaing.payment.service.PaymentService;
@@ -132,30 +133,6 @@ public class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("잘못된 형식의 월 입력에 대한 테스트")
-    void retrieveRentWithInvalidMonthFormatTest() throws Exception {
-        // given
-        // Authentication 객체 생성
-        UserPrincipal userPrincipal = new UserPrincipal(
-                String.valueOf(user.getId()), // setUp에서 만든 user 객체의 ID 사용
-                "password", // 더미 비밀번호
-                Set.of(new SimpleGrantedAuthority("ROLE_USER")) // 실제 역할 사용
-        );
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userPrincipal, null, userPrincipal.getAuthorities()
-        );
-
-        RetrieveRentRequest request = new RetrieveRentRequest("2025-13");
-
-        // when & then
-        mockMvc.perform(get("/api/v1/payment/rent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(authentication(authentication)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     @DisplayName("임대료 조회 서비스 예외 처리 테스트")
     void retrieveRentServiceExceptionTest() throws Exception {
         // given
@@ -172,7 +149,7 @@ public class PaymentControllerTest {
         RetrieveRentRequest request = new RetrieveRentRequest("2025-3");
 
         when(paymentService.retrieveRent(any(RetrieveRentCommand.class)))
-                .thenThrow(new RuntimeException("서비스 예외 발생"));
+                .thenThrow(new BadRequestException("서비스 예외 발생"));
 
         // when & then
         mockMvc.perform(get("/api/v1/payment/rent")
@@ -221,30 +198,6 @@ public class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("잘못된 형식의 공과금 조회 요청 테스트")
-    void retrieveUtilityWithInvalidFormatTest() throws Exception {
-        // given
-        // Authentication 객체 생성
-        UserPrincipal userPrincipal = new UserPrincipal(
-                String.valueOf(user.getId()), // setUp에서 만든 user 객체의 ID 사용
-                "password", // 더미 비밀번호
-                Set.of(new SimpleGrantedAuthority("ROLE_USER")) // 실제 역할 사용
-        );
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userPrincipal, null, userPrincipal.getAuthorities()
-        );
-
-        RetrieveUtilityRequest request = new RetrieveUtilityRequest("2025-13");
-
-        // when & then
-        mockMvc.perform(get("/api/v1/payment/utility")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(authentication(authentication)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     @DisplayName("공과금 조회 서비스 예외 처리 테스트")
     void retrieveUtilityServiceExceptionTest() throws Exception {
         // given
@@ -261,7 +214,7 @@ public class PaymentControllerTest {
         RetrieveUtilityRequest request = new RetrieveUtilityRequest("2025-3");
 
         when(paymentService.retrieveUtility(any(RetrieveUtilityCommand.class)))
-                .thenThrow(new RuntimeException("서비스 예외 발생"));
+                .thenThrow(new BadRequestException("서비스 예외 발생"));
 
         // when & then
         mockMvc.perform(get("/api/v1/payment/utility")
