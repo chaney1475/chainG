@@ -37,5 +37,6 @@ export const handleDefaultError = (error: any) => {
     default:
       break
   }
+
   return Promise.reject(error)
 }

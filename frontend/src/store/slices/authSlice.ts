@@ -1,6 +1,5 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { signUp } from '@/apis/auth'
 import { SocialLogin, signUpRequest } from '@/types/auth'
 
 interface AuthState {
@@ -26,18 +25,6 @@ const initialState: AuthState = {
   isLoading: false,
   error: null,
 }
-
-export const signUpAsync = createAsyncThunk(
-  'auth/signUp',
-  async (signUpData: signUpRequest, { rejectWithValue }) => {
-    try {
-      const response = await signUp(signUpData)
-      return response
-    } catch (error) {
-      return rejectWithValue(error)
-    }
-  },
-)
 
 const authSlice = createSlice({
   name: 'auth',
@@ -70,26 +57,6 @@ const authSlice = createSlice({
     clearSignUp: (state) => {
       Object.assign(state, initialState)
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(signUpAsync.pending, (state) => {
-        state.isLoading = true
-        state.error = null
-      })
-      .addCase(signUpAsync.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.loginToken = action.payload
-        state.signUpRequest = {
-          emailAddress: null,
-          password: null,
-          name: null,
-        }
-      })
-      .addCase(signUpAsync.rejected, (state, action) => {
-        state.isLoading = false
-        state.error = action.payload as string
-      })
   },
 })
 

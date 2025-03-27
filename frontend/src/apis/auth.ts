@@ -1,11 +1,14 @@
 import axios from 'axios'
 
-import store from '@/store/store'
-import { RootState } from '@/store/store'
+import { setAccessToken } from '@/store/slices/authSlice'
+import { store } from '@/store/store'
 import { signUpRequest } from '@/types/auth'
 import { handleDefaultError } from '@/utils/error/handleDefaultError'
 
-import api from './api'
+interface LoginForm {
+  emailAddress: string
+  password: string
+}
 
 const signUpApi = axios.create({
   baseURL: `https://chaing.site/api/v1`,
@@ -36,6 +39,17 @@ export const signUp = async (params: signUpRequest) => {
   try {
     const response = await signUpApi.post('/auth/signup', params)
     console.log('response', response)
+    return response.data
+  } catch (error) {
+    return null
+  }
+}
+
+export const login = async (params: LoginForm) => {
+  try {
+    const response = await signUpApi.post('/auth/login', params)
+    const token = response.headers['authorization'] // 소문자 주의
+    store.dispatch(setAccessToken(token))
     return response.data
   } catch (error) {
     return null
