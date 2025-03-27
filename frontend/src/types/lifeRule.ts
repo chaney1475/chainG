@@ -1,11 +1,12 @@
 export interface LifeRule {
-  id: number;
-  content: string;
-  category: string;
+  id: number
+  content: string
+  category: string
 }
-
 
 export interface LifeRuleCategory {
-  id: string;
-  src: string;
+  id: string
+  src: string
 }
+
+export type LifeRuleUpdateVariant = 'DEFAULT' | 'UPDATE' | 'DELETE' | 'CREATE'

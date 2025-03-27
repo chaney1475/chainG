@@ -7,8 +7,7 @@ export const lifeRuleCategoryList: LifeRuleCategory[] = [
 export const lifeRuleList: LifeRule[] = [
   {
     id: 1,
-    content:
-      '토요일은 대청소의 날토요일은 대청소의 날토요일은 대청소의 날토요일은 대청소의 날토요일은 대청소의 날토요일은 대청소의 날',
+    content: '안보여',
     category: 'clean',
   },
   {

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
@@ -14,6 +15,8 @@ interface LifeRuleListItemProps {
 }
 
 export const LifeRuleListItem = ({ lifeRule }: LifeRuleListItemProps) => {
+  //const [showButton, setShowButton] = useState(false)
+
   const { t } = useTranslation()
   return (
     <Container>
@@ -31,5 +34,6 @@ export const LifeRuleListItem = ({ lifeRule }: LifeRuleListItemProps) => {
       </CatrgoryIcon>
       <Content>{lifeRule.content}</Content>
     </Container>
+    //{showButton && <div>테스트용</div>}
   )
 }

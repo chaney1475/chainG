@@ -13,6 +13,11 @@ interface TopHeaderProps {
 
 export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
   const router = useRouter()
+
+  const handleUpdateClick = () => {
+    router.push('/lifeRule/update') // "생활규칙 수정" 페이지로 이동
+  }
+
   return (
     <Container>
       <HeaderButton onClick={() => router.back()}>
@@ -22,17 +27,15 @@ export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
           width={24}
           height={24}
         />
-        
       </HeaderButton>
-      <div>
-        {title}
-      </div>
-        <Image
-          src="/icons/edit.svg"
-          alt="수정"
-          width={24}
-          height={24}
-        />
+      <div>{title}</div>
+      <Image
+        onClick={handleUpdateClick}
+        src="/icons/update.svg"
+        alt="수정"
+        width={24}
+        height={24}
+      />
     </Container>
   )
 })
