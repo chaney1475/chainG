@@ -10,7 +10,7 @@ interface StyledButtonProps {
 export const StyledButton = styled.button<StyledButtonProps>`
   padding: 20px;
   margin: 20px 0;
-  border-radius: 12px;
+  border-radius: 16px;
   border: none;
   text-align: center;
   ${({ theme }) => theme.typography.styles.button};
