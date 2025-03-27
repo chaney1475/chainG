@@ -14,7 +14,7 @@ import {
   TopHeader,
 } from '@/components'
 import { setInviteCode } from '@/store/slices/groupSlice'
-import { Container, Main, containerStyle, mainStyle } from '@/styles/styles'
+import { Container, Main } from '@/styles/styles'
 
 interface FormValues {
   inviteCode: string
