@@ -29,9 +29,13 @@ public class PaymentController {
             @RequestBody RetrieveRentRequest body,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        RetrieveRentCommand command = body.toCommand(principal);
-        RetrieveRentResponse response = RetrieveRentResponse.from(paymentService.retrieveRent(command));
-        return ResponseEntity.ok(BaseResponse.success(response));
+        try {
+            RetrieveRentCommand command = body.toCommand(principal);
+            RetrieveRentResponse response = RetrieveRentResponse.from(paymentService.retrieveRent(command));
+            return ResponseEntity.ok(BaseResponse.success(response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(BaseResponse.error(e.getMessage()));
+        }
     }
 
     @GetMapping("/utility")
@@ -39,8 +43,12 @@ public class PaymentController {
             @RequestBody RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
             ) {
-        RetrieveUtilityCommand command = body.toCommand(principal);
-        RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
-        return ResponseEntity.ok(BaseResponse.success(null));
+        try{
+            RetrieveUtilityCommand command = body.toCommand(principal);
+            RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
+            return ResponseEntity.ok(BaseResponse.success(response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(BaseResponse.error(e.getMessage()));
+        }
     }
 }

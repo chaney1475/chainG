@@ -74,7 +74,8 @@ public class PaymentServiceImpl implements PaymentService {
         Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
 
         // 현재 월 결제 정보
-        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
+        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth,
+                userPaymentsByPaymentId);
 
         // 월별 결제 요약
         List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
@@ -168,6 +169,14 @@ public class PaymentServiceImpl implements PaymentService {
             return getCurrentMonth(); // 기존 메서드 활용
         }
 
+        if(year < 1000 || year > 9999) {
+            throw new BadRequestException(ExceptionCode.INVALID_YEAR);
+        }
+
+        if (month < 1 || month > 12) {
+            throw new BadRequestException(ExceptionCode.INVALID_MONTH);
+        }
+
         // 월이 1~9인 경우 앞에 0을 붙임
         String monthStr = month < 10 ? "0" + month : String.valueOf(month);
         return Integer.parseInt(year + monthStr);
@@ -192,7 +201,8 @@ public class PaymentServiceImpl implements PaymentService {
         return payments.stream()
                 .filter(payment -> payment.getMonth() == currentMonth)
                 .flatMap(payment -> {
-                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                            List.of());
                     if (userPayments.isEmpty()) {
                         throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
                     }
@@ -221,7 +231,8 @@ public class PaymentServiceImpl implements PaymentService {
         return payments.stream()
                 .filter(payment -> payment.getWeek() == latestWeek) // 현재 주 데이터만 필터링
                 .flatMap(payment -> {
-                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                            List.of());
                     if (userPayments.isEmpty()) {
                         throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
                     }
@@ -256,7 +267,8 @@ public class PaymentServiceImpl implements PaymentService {
                     Set<Long> debtUserIds = new HashSet<>();
 
                     for (PaymentEntity payment : monthPayments) {
-                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                                List.of());
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
@@ -297,7 +309,8 @@ public class PaymentServiceImpl implements PaymentService {
                     Set<Long> debtUserIds = new HashSet<>();
 
                     for (PaymentEntity payment : weekPayments) {
-                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                                List.of());
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
