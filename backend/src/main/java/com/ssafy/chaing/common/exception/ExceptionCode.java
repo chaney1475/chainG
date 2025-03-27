@@ -34,8 +34,9 @@ public enum ExceptionCode {
 
     USER_PAYMENT_NOT_FOUND("USER_PAYMENT_NOT_FOUND", "결제 정보에 해당하는 사용자가 없습니다."),
     LIVING_ACCOUNT_ALREADY_EXIST("LIVING_ACCOUNT_ALREADY_EXIST", "이미 계좌가 존재합니다."),
-    RENT_ACCOUNT_ALREADY_EXIST("RENT_ACCOUNT_ALREADY_EXIST", "공과금/월세 계좌번호가 존재하지 않습니다.");
+    RENT_ACCOUNT_ALREADY_EXIST("RENT_ACCOUNT_ALREADY_EXIST", "공과금/월세 계좌번호가 존재하지 않습니다."),
 
+    FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다.");
     private final String code;
     private final String message;
 }
