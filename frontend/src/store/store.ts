@@ -8,6 +8,7 @@ import appReducer from './slices/appSlice'
 import authReducer from './slices/authSlice'
 import errorModalReducer from './slices/errorModalSlice'
 import groupReducer from './slices/groupSlice'
+import uiReducer from './slices/uiSlice'
 
 export const RESET_STORE = 'RESET_STORE'
 
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   app: appReducer,
   group: groupReducer,
+  ui: uiReducer,
 })
 
 const reducer = (state: any, action: any) => {
