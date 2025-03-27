@@ -25,7 +25,7 @@ import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.dto.CurrentPaymentDTO;
-import com.ssafy.chaing.payment.service.dto.MonthPaymentIDTO;
+import com.ssafy.chaing.payment.service.dto.MonthPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
@@ -44,7 +44,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentServiceImplTest {
+public class RentPaymentServiceTest {
 
     @Mock
     private PaymentRepository paymentRepository;
@@ -245,7 +245,7 @@ public class PaymentServiceImplTest {
         assertTrue(foundUser1 && foundUser2 && foundUser3);
 
         // 월별 결제 요약 검증
-        List<MonthPaymentIDTO> monthList = result.getMonthList();
+        List<MonthPaymentDTO> monthList = result.getMonthList();
         assertNotNull(monthList);
         assertEquals(3, monthList.size()); // 3개월치 데이터
 
@@ -255,7 +255,7 @@ public class PaymentServiceImplTest {
         assertEquals("2025-3", monthList.get(0).getMonth());
 
         // 이번 달 납부 정보
-        MonthPaymentIDTO currentMonthSummary = monthList.stream().filter(m -> m.getMonth().equals("2025-3"))
+        MonthPaymentDTO currentMonthSummary = monthList.stream().filter(m -> m.getMonth().equals("2025-3"))
                 .findFirst().orElse(null);
         assertNotNull(currentMonthSummary);
         assertEquals(3, currentMonthSummary.getPaidUserIds().size());

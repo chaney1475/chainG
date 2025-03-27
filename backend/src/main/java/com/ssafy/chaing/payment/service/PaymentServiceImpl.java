@@ -6,12 +6,8 @@ import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
-import com.ssafy.chaing.fintech.controller.request.TransferCommand;
-import com.ssafy.chaing.fintech.service.FintechService;
-import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
-import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
@@ -55,8 +51,11 @@ public class PaymentServiceImpl implements PaymentService {
     private final FintechService fintechService;
 
     @Override
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public RetrieveRentDTO retrieveRent(RetrieveRentCommand command) {
         Long userId = command.getUserId();
+        Integer year = Integer.valueOf(command.getYear());
+        Integer month = Integer.valueOf(command.getMonth());
 
         // 관련 엔티티 조회
         UserEntity user = getUserEntity(userId);
@@ -139,6 +138,54 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command) {
+        Objects.requireNonNull(command, "Command cannot be null");
+        Long userId = command.getUserId();
+        Integer year = Integer.valueOf(command.getYear());
+        Integer month = Integer.valueOf(command.getMonth());
+
+        // 관련 엔티티 조회
+        UserEntity user = getUserEntity(userId);
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
+
+        // 현재 월과 주 가져오기
+        int currentMonth = formatToYearMonth(year, month);
+
+        // 현재 달의 모든 공과금 결제 정보 조회 (주 별로 내림차순 정렬)
+        List<PaymentEntity> currentMonthPayments = paymentRepository.findAllByContractIdAndFeeTypeAndMonthOrderByWeekDesc(
+                contract.getId(),
+                FeeType.UTILITY,
+                currentMonth);
+
+        // 결제 정보 처리
+        Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(currentMonthPayments);
+
+        // 현재 주(가장 최신 주) 결제 정보
+        List<CurrentPaymentDTO> currentWeekPayments = getCurrentWeekUtilityPayments(
+                currentMonthPayments, userPaymentsByPaymentId);
+
+        // 내 금액 계산 (현재 주에 대해)
+        int myAmount = currentWeekPayments.stream()
+                .filter(payment -> payment.getUserId().equals(userId))
+                .mapToInt(CurrentPaymentDTO::getAmount)
+                .sum();
+
+        // 주별 결제 요약 (현재 달만)
+        List<WeekPaymentDTO> weekList = getWeekPaymentSummaries(currentMonthPayments, userPaymentsByPaymentId);
+
+        return new RetrieveUtilityDTO(
+                contract.getRentTotalAmount(),
+                myAmount,
+                currentWeekPayments,
+                weekList
+        );
+    }
+
+
     private UserEntity getUserEntity(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
@@ -164,6 +211,26 @@ public class PaymentServiceImpl implements PaymentService {
         return Integer.parseInt(ZonedDateTime.now(ZoneId.of(TIMEZONE)).format(formatter));
     }
 
+    // year와 month를 yyyyMM 형식으로 변환하는 메서드 추가
+    private int formatToYearMonth(Integer year, Integer month) {
+        // year나 month가 null이면 현재 시간 정보로 대체
+        if (year == null || month == null) {
+            return getCurrentMonth(); // 기존 메서드 활용
+        }
+
+        if(year < 1000 || year > 9999) {
+            throw new BadRequestException(ExceptionCode.INVALID_YEAR);
+        }
+
+        if (month < 1 || month > 12) {
+            throw new BadRequestException(ExceptionCode.INVALID_MONTH);
+        }
+
+        // 월이 1~9인 경우 앞에 0을 붙임
+        String monthStr = month < 10 ? "0" + month : String.valueOf(month);
+        return Integer.parseInt(year + monthStr);
+    }
+
     private Map<Long, List<UserPaymentEntity>> getUserPaymentsByPaymentId(List<PaymentEntity> payments) {
         List<Long> allPaymentIds = payments.stream()
                 .map(PaymentEntity::getId)
@@ -183,7 +250,8 @@ public class PaymentServiceImpl implements PaymentService {
         return payments.stream()
                 .filter(payment -> payment.getMonth() == currentMonth)
                 .flatMap(payment -> {
-                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                            List.of());
                     if (userPayments.isEmpty()) {
                         throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
                     }
@@ -198,7 +266,37 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
     }
 
-    private List<MonthPaymentIDTO> getMonthPaymentSummaries(
+    private List<CurrentPaymentDTO> getCurrentWeekUtilityPayments(
+            final List<PaymentEntity> payments,
+            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
+
+        // 가장 최신 주 찾기 (정렬된 리스트에서 첫 번째 항목의 주)
+        if (payments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        int latestWeek = payments.get(0).getWeek();
+
+        return payments.stream()
+                .filter(payment -> payment.getWeek() == latestWeek) // 현재 주 데이터만 필터링
+                .flatMap(payment -> {
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                            List.of());
+                    if (userPayments.isEmpty()) {
+                        throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
+                    }
+
+                    return userPayments.stream()
+                            .map(up -> new CurrentPaymentDTO(
+                                    up.getContractMember().getUser().getId(),
+                                    up.getAmount(),
+                                    up.getStatus() == PaymentStatus.PAID
+                            ));
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<MonthPaymentDTO> getMonthPaymentSummaries(
             final List<PaymentEntity> payments,
             final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
 
@@ -218,7 +316,8 @@ public class PaymentServiceImpl implements PaymentService {
                     Set<Long> debtUserIds = new HashSet<>();
 
                     for (PaymentEntity payment : monthPayments) {
-                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                                List.of());
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
@@ -236,6 +335,54 @@ public class PaymentServiceImpl implements PaymentService {
                 })
                 .collect(Collectors.toList());
     }
+
+    private List<WeekPaymentDTO> getWeekPaymentSummaries(
+            final List<PaymentEntity> currentMonthPayments,
+            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
+
+        // 주별로 결제 데이터 그룹화
+        Map<Integer, List<PaymentEntity>> paymentsByWeek = currentMonthPayments.stream()
+                .collect(Collectors.groupingBy(PaymentEntity::getWeek));
+
+        // 월 문자열 계산 (모든 결제가 같은 달이므로 첫 번째 항목에서 추출)
+        String month = currentMonthPayments.isEmpty() ? "" :
+                monthIntToString(currentMonthPayments.get(0).getMonth());
+
+        return paymentsByWeek.entrySet().stream()
+                .map(entry -> {
+                    Integer week = entry.getKey();
+                    List<PaymentEntity> weekPayments = entry.getValue();
+
+                    // 중복 ID 제거를 위해 Set 사용
+                    Set<Long> paidUserIds = new HashSet<>();
+                    Set<Long> debtUserIds = new HashSet<>();
+
+                    for (PaymentEntity payment : weekPayments) {
+                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                                List.of());
+
+                        for (UserPaymentEntity userPayment : userPayments) {
+                            Long userEntityId = userPayment.getContractMember().getUser().getId();
+                            if (userPayment.getStatus() == PaymentStatus.PAID) {
+                                paidUserIds.add(userEntityId);
+                            } else {
+                                debtUserIds.add(userEntityId);
+                            }
+                        }
+                    }
+
+                    return new WeekPaymentDTO(
+                            month,
+                            week,
+                            new ArrayList<>(paidUserIds),
+                            new ArrayList<>(debtUserIds)
+                    );
+                })
+                // 주 내림차순으로 정렬
+                .sorted(Comparator.comparing(WeekPaymentDTO::getWeek, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+    }
+
 
     private String monthIntToString(int monthInt) {
         String s = String.valueOf(monthInt);

@@ -3,9 +3,15 @@ package com.ssafy.chaing.payment.repository;
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface UserPaymentRepository extends JpaRepository<UserPaymentEntity, Long> {
 
-    List<UserPaymentEntity> findAllByPaymentIdIn(List<Long> paymentIds);
+    @Query("SELECT up FROM UserPaymentEntity up " +
+            "JOIN FETCH up.contractMember cm " +    // contractMember를 즉시 로딩
+            "JOIN FETCH cm.user u " +               // contractMember의 user를 즉시 로딩
+            "WHERE up.payment.id IN :paymentIds")
+    List<UserPaymentEntity> findAllByPaymentIdIn(@Param("paymentIds") List<Long> paymentIds);
 
 }
