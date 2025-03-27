@@ -1,9 +1,14 @@
 package com.ssafy.chaing.payment.controller;
 
 import com.ssafy.chaing.auth.domain.UserPrincipal;
+import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.payment.controller.request.RetrieveRentRequest;
+import com.ssafy.chaing.payment.controller.request.RetrieveUtilityRequest;
+import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
+import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
 import com.ssafy.chaing.payment.service.PaymentService;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
+import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +30,17 @@ public class PaymentController {
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         RetrieveRentCommand command = body.toCommand(principal);
+        RetrieveRentResponse response = RetrieveRentResponse.from(paymentService.retrieveRent(command));
+        return ResponseEntity.ok(BaseResponse.success(response));
+    }
 
-        return ResponseEntity.ok().build();
+    @GetMapping("/utility")
+    public ResponseEntity<?> retrieveUtility(
+            @RequestBody RetrieveUtilityRequest body,
+            @AuthenticationPrincipal UserPrincipal principal
+            ) {
+        RetrieveUtilityCommand command = body.toCommand(principal);
+        RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 }
