@@ -19,8 +19,9 @@ FROM openjdk:21-slim AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.war app.war
+COPY --from=builder /app/build/libs/*.jar app.jar
+COPY src/main/resources/application-deploy.yml /app/application-deploy.yml
 
-EXPOSE 8081
+EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.war", "--spring.config.location=/app/application-deploy.yml"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.config.location=/app/application-deploy.yml"]

@@ -1,9 +1,17 @@
 spring:
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
   application:
     name:
   config:
     import:
       - optional:file:.env[.properties] #ENV ?? ??
+      - aws-parameterstore:/chaing/web3j/
 
   datasource:
     url: ${DATASOURCE_URL}
@@ -55,6 +63,10 @@ spring:
             enable: true
             required: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+
 application:
   security:
     jwt:
@@ -88,12 +100,21 @@ cloud:
   aws:
     s3:
       bucket: ${AWS_BUCKET_NAME}
-    stack.auto: false
-    region.static: ap-northeast-2
-    credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
 
+web3j:
+  client-address: ${client-address}
+  wallet-private-key: ${wallet-private-key}
+  contract-address: ${contract-address} # DB 에 넣어야 함.
+  rent-contract-address: ${rent-contract-address}
+  utility-contract-address: ${utility-contract-address}
+  chain-id: ${chain-id}
+
+ssafy:
+  fintech:
+    api-key: ${FINTECH_API_KEY}
+    user-key: ${FINTECH_USER_KEY}
+    card-unique-no: ${FINTECH_CARD_UNIQUE_NO}
+    base-url: ${FINTECH_BASEURL}
 #
 #logging:
 #  level:

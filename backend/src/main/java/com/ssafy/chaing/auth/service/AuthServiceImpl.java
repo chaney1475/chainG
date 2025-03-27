@@ -9,10 +9,12 @@ import com.ssafy.chaing.common.exception.AuthenticationException;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.common.exception.NotFoundException;
+import com.ssafy.chaing.group.domain.GroupEntity;
+import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.user.domain.RoleType;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
-import com.ssafy.chaing.user.service.dto.UserInfoDTO;
+import com.ssafy.chaing.user.service.dto.UserDetailInfoDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final GroupRepository groupRepository;
 
     @Override
     @Transactional
@@ -50,7 +53,11 @@ public class AuthServiceImpl implements AuthService {
 
         jwtService.setRefreshTokenCookie(response, refreshToken);
 
-        return new AuthDTO(accessToken, new UserInfoDTO(user.getId(), user.getName(), user.getNickname()));
+        UserDetailInfoDTO dto = new UserDetailInfoDTO(
+                user.getId(), user.getName(), user.getNickname(),
+                null, null, null);
+
+        return new AuthDTO(accessToken, dto);
     }
 
     @Override
@@ -67,7 +74,17 @@ public class AuthServiceImpl implements AuthService {
 
         jwtService.setRefreshTokenCookie(response, refreshToken);
 
-        return new AuthDTO(accessToken, new UserInfoDTO(user.getId(), user.getName(), user.getNickname()));
+        Long contractId = null;
+        if (user.getGroupId() != null) {
+            contractId = groupRepository.findById(user.getGroupId())
+                    .map(GroupEntity::getContractId)
+                    .orElse(null);
+        }
+
+        UserDetailInfoDTO dto = new UserDetailInfoDTO(user.getId(), user.getName(), user.getNickname(),
+                user.getProfileImage(), user.getGroupId(), contractId);
+
+        return new AuthDTO(accessToken, dto);
     }
 
     @Override
@@ -88,7 +105,17 @@ public class AuthServiceImpl implements AuthService {
 
         jwtService.setRefreshTokenCookie(response, newRefreshToken);
 
-        return new AuthDTO(accessToken, new UserInfoDTO(user.getId(), user.getName(), user.getNickname()));
+        Long contractId = null;
+        if (user.getGroupId() != null) {
+            contractId = groupRepository.findById(user.getGroupId())
+                    .map(GroupEntity::getContractId)
+                    .orElse(null);
+        }
+
+        UserDetailInfoDTO dto = new UserDetailInfoDTO(user.getId(), user.getName(), user.getNickname(),
+                user.getProfileImage(), user.getGroupId(), contractId);
+
+        return new AuthDTO(accessToken, dto);
     }
 
     @Override

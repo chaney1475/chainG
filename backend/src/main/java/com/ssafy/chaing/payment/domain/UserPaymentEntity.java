@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -24,6 +25,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction(value = "is_deleted = false")
 @Entity
+@Getter
 @Table(name = "user_payments")
 public class UserPaymentEntity extends BaseEntity {
 
