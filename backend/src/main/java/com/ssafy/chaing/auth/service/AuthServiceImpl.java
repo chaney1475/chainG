@@ -126,4 +126,5 @@ public class AuthServiceImpl implements AuthService {
 
         user.setFcmToken(command.getFcmToken());
     }
+    
 }
