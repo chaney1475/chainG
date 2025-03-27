@@ -20,6 +20,7 @@ FROM openjdk:21-slim AS runner
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
+COPY src/main/resources/application-deploy.yml /app/application-deploy.yml
 
 EXPOSE 8080
 

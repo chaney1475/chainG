@@ -133,9 +133,10 @@ public class ContractServiceImpl implements ContractService {
 
         contractUserRepository.save(contractUser);
 
-        if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
-            rentBatchService.registerNextMonthPayment(contractEntity);
-        }
+        // TODO: 계약 완료시 월세 이체 잡 생성
+//        if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
+//            rentBatchService.registerNextMonthPayment(contractEntity);
+//        }
     }
 
     @Transactional(readOnly = true)

@@ -20,14 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
 
     @Operation(summary = "회원가입", description = "사용자가 회원가입을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/signup")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@RequestBody SignupRequest body, HttpServletResponse response) {
+    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@RequestBody SignupRequest body,
+                                                                 HttpServletResponse response) {
         AuthDTO authDTO = authService.signup(
                 new SignupCommand(body.getEmailAddress(), body.getPassword(), body.getName()),
                 response
@@ -42,7 +43,8 @@ public class AuthController {
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@RequestBody LoginRequest body, HttpServletResponse response) {
+    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@RequestBody LoginRequest body,
+                                                                HttpServletResponse response) {
         AuthDTO authDTO = authService.login(body.getEmailAddress(), body.getPassword(), response);
         UserInfoResponse result = UserInfoResponse.from(authDTO.getUserInfo());
 
@@ -52,7 +54,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<BaseResponse<UserInfoResponse>> reissue(HttpServletRequest request,
+                                                                  HttpServletResponse response) {
         AuthDTO authDTO = authService.reissueTokens(request, response);
         UserInfoResponse result = UserInfoResponse.from(authDTO.getUserInfo());
 
