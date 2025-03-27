@@ -72,4 +72,4 @@ export type AppDispatch = ReturnType<typeof makeStore>['dispatch']
 
 export const resetStore = () => ({ type: RESET_STORE })
 
-export default makeStore
+export const store = makeStore()
