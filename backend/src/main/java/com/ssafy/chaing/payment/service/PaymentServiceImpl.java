@@ -6,8 +6,12 @@ import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
+import com.ssafy.chaing.fintech.controller.request.TransferCommand;
+import com.ssafy.chaing.fintech.service.FintechService;
+import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
+import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
@@ -15,16 +19,21 @@ import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
+import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
 import com.ssafy.chaing.payment.service.dto.CurrentPaymentDTO;
-import com.ssafy.chaing.payment.service.dto.MonthPaymentIDTO;
+import com.ssafy.chaing.payment.service.dto.MonthPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
+import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
 import com.ssafy.chaing.payment.service.dto.TransferDto;
+import com.ssafy.chaing.payment.service.dto.WeekPaymentDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +43,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
 
         // 월별 결제 요약
-        List<MonthPaymentIDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
+        List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
 
         return new RetrieveRentDTO(
                 contract.getRentTotalAmount(),
@@ -308,7 +318,7 @@ public class PaymentServiceImpl implements PaymentService {
                     int month = entry.getKey();
                     List<PaymentEntity> monthPayments = entry.getValue();
 
-                    MonthPaymentIDTO summary = new MonthPaymentIDTO();
+                    MonthPaymentDTO summary = new MonthPaymentDTO();
                     summary.setMonth(monthIntToString(month));
 
                     // 중복 ID 제거를 위해 Set 사용
