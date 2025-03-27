@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
 
-    long countByUserIdAndReadFalse(Long userId);
+    long countByUserIdAndIsReadFalse(Long userId);
 
     // 최신 순으로 정렬된 알림 목록 조회
     List<NotificationEntity> findByUserIdOrderByCreatedAtDesc(Long userId);
@@ -25,7 +25,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
     @Modifying
     @Query("""
               UPDATE NotificationEntity n
-              SET n.read = true
+              SET n.isRead = true
               WHERE n.user.id = :userId
               AND n.id IN :notificationIds
             """)

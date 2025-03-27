@@ -67,7 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(readOnly = true)
     public UnreadNotificationDTO getUnreadCount(Long userId) {
 
-        long count = notificationRepository.countByUserIdAndReadFalse(userId);
+        long count = notificationRepository.countByUserIdAndIsReadFalse(userId);
 
         return new UnreadNotificationDTO(count);
     }
