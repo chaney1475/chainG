@@ -21,6 +21,7 @@ public enum ExceptionCode {
     CONTRACT_ALREADY_EXIST("CONTRACT_ALREADY_EXIST", "이미 계약서가 존재합니다."),
     CONTRACT_NOT_FOUND("CONTRACT_NOT_FOUND", "계약서가 존재하지 않습니다."),
     CARD_NOT_FOUND("CARD_NOT_FOUND", "카드가 존재하지 않습니다."),
+    CONTRACT_USER_NOT_FOUND("CONTRACT_USER_NOT_FOUND", "사용자의 계약 정보가 존재하지 않습니다."),
 
     INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 틀렸습니다."),
     INVALID_TOKEN("EXPIRED_ACCESS_TOKEN", "로그인에 실패하였습니다."),
@@ -31,7 +32,8 @@ public enum ExceptionCode {
     DUTY_NOT_FOUND("DUTY_NOT_FOUND", "당번이 존재하지 않습니다."),
     USER_NOT_IN_GROUP("USER_NOT_IN_GROUP", "해당 유저가 그룹에 속해 있지 않습니다."),
 
-    USER_PAYMENT_NOT_FOUND("USER_PAYMENT_NOT_FOUND", "결제 정보에 해당하는 사용자가 없습니다.");
+    USER_PAYMENT_NOT_FOUND("USER_PAYMENT_NOT_FOUND", "결제 정보에 해당하는 사용자가 없습니다."),
+    LIVING_ACCOUNT_ALREADY_EXIST("LIVING_ACCOUNT_ALREADY_EXIST", "이미 계좌가 존재합니다.");
 
     private final String code;
     private final String message;
