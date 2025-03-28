@@ -64,11 +64,8 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
             addTransferDetails(document, portfolioList.getTransferPortfolioList());
 
             document.close(); // Finalize document
-            log.info("Successfully generated PDF for Contract ID: {}", contractIdStr);
             return byteStream.toByteArray();
 
-        } catch (IOException e) {
-            throw new BadRequestException(ExceptionCode.PDF_GENERATION_FAILED);
         } catch (Exception e) {
             throw new BadRequestException(ExceptionCode.PDF_GENERATION_FAILED);
         }
@@ -76,7 +73,7 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
 
     private void validateInput(TransferPortfolioList portfolioList) {
         if (portfolioList == null || portfolioList.getTransferPortfolioList() == null) {
-            throw new IllegalArgumentException("Portfolio list data cannot be null or empty");
+            throw new BadRequestException(ExceptionCode.TRANSFER_PORTFOLIO_IS_NULL);
         }
     }
 
@@ -102,7 +99,6 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
     private void setFallbackFont(Document document) throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         document.setFont(font);
-        log.warn("Using default HELVETICA font. Non-Latin characters (like Korean) may not display correctly.");
     }
 
 
@@ -197,7 +193,6 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
             status = utility.getStatus();
             time = utility.getTime();
         } else {
-            log.warn("Unknown transfer type encountered: {}", transferOutput.getClass().getName());
             return new Paragraph(MSG_UNKNOWN_TRANSFER_TYPE).setFontSize(FONT_SIZE_DEFAULT).setItalic();
         }
 

@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransferPortfolio {
-    List<RentOutput> rentOutputList;
-    List<UtilityOutput> utilityOutputList;
+    private Long id;
+    private String name;
+    private List<RentOutput> rentOutputList;
+    private List<UtilityOutput> utilityOutputList;
 }
