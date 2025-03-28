@@ -33,3 +33,4 @@ export type DayKey =
   | 'friday'
   | 'saturday'
   | 'sunday'
+// 요일 타입 정의
