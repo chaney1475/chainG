@@ -3,13 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
 import { ConfirmButton, InputBox, TitleHeader, TopHeader } from '@/components'
 import { profileList } from '@/constants/profileList'
-import { setNickname, setProfileImage } from '@/store/slices/groupSlice'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import {
+  setGroupName,
+  setOwnerNickname,
+  setOwnerProfileImage,
+} from '@/store/slices/groupSlice'
 import { Container, Main } from '@/styles/styles'
 
 import ProfileSelector from './components/ProfileSelector'
@@ -20,8 +25,8 @@ export function CreateProfilePage() {
   const nickname = watch('nickname')
   const dispatch = useDispatch()
   const router = useRouter()
-  const existingNickname = useSelector(
-    (state: any) => state.group.create.nickname,
+  const existingNickname = useAppSelector(
+    (state) => state.group.create.ownerNickname,
   )
 
   const [selected, setSelected] = useState(() => {
@@ -37,8 +42,8 @@ export function CreateProfilePage() {
   }, [existingNickname, setValue])
 
   const handleComplete = () => {
-    dispatch(setNickname(nickname))
-    dispatch(setProfileImage(selected))
+    dispatch(setOwnerNickname(nickname))
+    dispatch(setOwnerProfileImage(selected))
     router.push('/')
   }
 

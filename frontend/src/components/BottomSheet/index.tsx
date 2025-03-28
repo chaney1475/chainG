@@ -4,7 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ConfirmButton } from '../ConfirmButton'
 import {
   ButtonWrapper,
-  contentStyle,
+  bottomSheetStyle,
   descStyle,
   overlayStyle,
   titleStyle,
@@ -33,7 +33,7 @@ export default function Modal({
       onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay css={overlayStyle} />
-        <Dialog.Content css={contentStyle}>
+        <Dialog.Content css={bottomSheetStyle}>
           <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
           <Dialog.Description css={descStyle}>
             {description.split('\n').map((line, idx) => (

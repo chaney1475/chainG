@@ -24,11 +24,14 @@ export default function ErrorModal() {
     modalContent,
     primaryButtonType,
     secondaryButtonType,
+    useI18n,
   } = useSelector((state: RootState) => state.errorModal)
   const dispatch = useDispatch()
 
   if (!isVisible) return null
 
+  const title = useI18n && modalTitle ? t(modalTitle) : modalTitle
+  const content = useI18n && modalContent ? t(modalContent) : modalContent
   return (
     <Dialog.Root
       open={isVisible}
@@ -36,25 +39,21 @@ export default function ErrorModal() {
       <Dialog.Portal>
         <Dialog.Overlay css={overlayStyle} />
         <Dialog.Content css={contentStyle}>
-          <Dialog.Title css={titleStyle}>
-            {t(modalTitle?.toString() ?? '')}
-          </Dialog.Title>
+          <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
           {modalContent && (
-            <Dialog.Description css={descStyle}>
-              {t(modalContent?.toString() ?? '')}
-            </Dialog.Description>
+            <Dialog.Description css={descStyle}>{content}</Dialog.Description>
           )}
           <ButtonWrapper>
             {secondaryButtonType && (
               <ConfirmButton
-                label={t(secondaryButtonType)}
+                label={secondaryButtonType}
                 variant={'prev'}
                 onClick={() => dispatch(setErrorModalVisible(false))}
               />
             )}
             {primaryButtonType && (
               <ConfirmButton
-                label={t(primaryButtonType)}
+                label={primaryButtonType}
                 variant={'next'}
                 onClick={() => dispatch(setErrorModalVisible(false))}
               />

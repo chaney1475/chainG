@@ -6,15 +6,9 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import {
-  ConfirmButton,
-  InputBox,
-  TitleHeader,
-  TitleHeaderLayout,
-  TopHeader,
-} from '@/components'
+import { InputBox, TitleHeaderLayout } from '@/components'
 import { setInviteCode } from '@/store/slices/groupSlice'
-import { Container, Main } from '@/styles/styles'
+import { Main } from '@/styles/styles'
 
 interface FormValues {
   inviteCode: string

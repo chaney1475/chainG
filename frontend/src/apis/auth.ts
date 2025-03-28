@@ -1,24 +1,19 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
+import { stringify } from 'qs'
 
-import { setAccessToken } from '@/store/slices/authSlice'
-import { store } from '@/store/store'
-import { signUpRequest } from '@/types/auth'
+import { ApiResponse, ApiSuccessResponse } from '@/types/api'
+import { LoginRequest, SignUpRequest } from '@/types/auth'
+import { LoginUser } from '@/types/user'
 import { handleDefaultError } from '@/utils/error/handleDefaultError'
 
-interface LoginForm {
-  emailAddress: string
-  password: string
-}
+import { postBooleanRequest, postRequest } from './api'
 
-const signUpApi = axios.create({
+const authApi = axios.create({
   baseURL: `https://chaing.site/api/v1`,
   timeout: 5000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
-signUpApi.interceptors.request.use(
+authApi.interceptors.request.use(
   (config) => {
     return config
   },
@@ -28,39 +23,35 @@ signUpApi.interceptors.request.use(
   },
 )
 
-signUpApi.interceptors.response.use(
+authApi.interceptors.response.use(
   (response) => response,
   (error) => {
     return handleDefaultError(error)
   },
 )
 
-export const signUp = async (params: signUpRequest) => {
+const postForm = async <T>(url: string, data: object) => {
   try {
-    const response = await signUpApi.post('/auth/signup', params)
-    console.log('response', response)
-    return response.data
-  } catch (error) {
+    const response = await authApi.post<ApiResponse<T>>(url, stringify(data), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+    if (response?.data?.success) {
+      return response as AxiosResponse<ApiSuccessResponse<T>>
+    }
+    return null
+  } catch {
     return null
   }
 }
 
-export const login = async (params: LoginForm) => {
-  try {
-    const response = await signUpApi.post('/auth/login', params)
-    const token = response.headers['authorization'] // 소문자 주의
-    store.dispatch(setAccessToken(token))
-    return response.data
-  } catch (error) {
-    return null
-  }
-}
+export const signUp = (params: SignUpRequest) =>
+  postForm<LoginUser>('/auth/signup', params)
 
-// export const insertFCMToken = async (params: { token: string }) => {
-//   try {
-//     const response = await api.post('/fcm', params)
-//     return response
-//   } catch (error) {
-//     return null
-//   }
-// }
+export const login = (params: LoginRequest) =>
+  postForm<LoginUser>('/auth/login', params)
+
+export const getRefreshToken = async () =>
+  await postRequest<LoginUser | null>('/auth/refresh-token')
+
+export const registerFCMToken = async (params: { FCMToken: string }) =>
+  await postBooleanRequest('/auth/fcm', params)

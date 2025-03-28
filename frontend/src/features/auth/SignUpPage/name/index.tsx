@@ -3,15 +3,16 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
 import { TitleHeaderLayout } from '@/components'
 import { InputBox } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
 import { setSignUpName } from '@/store/slices/authSlice'
-import { RootState } from '@/store/store'
 import { Form } from '@/styles/styles'
+import { ButtonVariant } from '@/types/ui'
 
 interface SignupForm {
   name: string
@@ -21,15 +22,26 @@ export function SignUpNamePage() {
   const { t } = useTranslation()
   const router = useRouter()
   const dispatch = useDispatch()
-  const signUp = useSelector((state: RootState) => state.auth.signUpRequest)
-  const emailAddress = signUp?.emailAddress
-  const name = signUp?.name
+  const signUp = useAppSelector((state) => state.auth.signUpRequest)
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm<SignupForm>()
+  } = useForm<SignupForm>({
+    defaultValues: {
+      name: signUp.name || '',
+    },
+  })
+
+  const currentName = watch('name')
+
+  useEffect(() => {
+    return () => {
+      dispatch(setSignUpName(currentName))
+    }
+  }, [])
 
   const onSubmit = async (data: SignupForm) => {
     try {
@@ -43,18 +55,15 @@ export function SignUpNamePage() {
   return (
     <TitleHeaderLayout
       header={t('signUp.name.title')}
-      onClick={() => {
-        const form = document.querySelector('form')
-        if (form) {
-          form.requestSubmit()
-        }
-      }}>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      onClick={handleSubmit(onSubmit)}
+      buttonVariant={currentName ? ButtonVariant.next : ButtonVariant.disabled}>
+      <Form>
         <InputBox
           label={t('signUp.name.label')}
           id="name"
           type="text"
           error={errors.name}
+          placeholder={t('signUp.name.placeholder')}
           {...register('name', {
             required: t('signUp.name.error.required'),
             minLength: {

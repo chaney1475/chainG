@@ -1,10 +1,8 @@
-import { BottomNavigation, TopHeader } from '@/components'
-import { Container, HeaderContainer, Main } from '@/styles/styles'
+import { BottomNavigation } from '@/components'
+import { Container, FullMain, HeaderContainer } from '@/styles/styles'
 
 export function HomeLayout({
-  title = '',
   header,
-  label,
   children,
   headerRightButton,
 }: {
@@ -21,7 +19,7 @@ export function HomeLayout({
           {header}
           {headerRightButton}
         </HeaderContainer>
-        <Main>{children}</Main>
+        <FullMain>{children}</FullMain>
         <BottomNavigation />
       </Container>
     </>
