@@ -6,8 +6,12 @@ import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
+import com.ssafy.chaing.fintech.controller.request.TransferCommand;
+import com.ssafy.chaing.fintech.service.FintechService;
+import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
+import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
@@ -20,6 +24,7 @@ import com.ssafy.chaing.payment.service.dto.CurrentPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.MonthPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
+import com.ssafy.chaing.payment.service.dto.TransferDto;
 import com.ssafy.chaing.payment.service.dto.WeekPaymentDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
@@ -33,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ContractRepository contractRepository;
     private final ContractUserRepository contractUserRepository;
     private final UserPaymentRepository userPaymentRepository;
+    private final FintechService fintechService;
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -68,14 +75,13 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 결제 데이터 처리
         List<PaymentEntity> payments = paymentRepository.findAllByContractIdAndFeeType(contract.getId(), FeeType.RENT);
-        int currentMonth = formatToYearMonth(year, month);
+        int currentMonth = getCurrentMonth();
 
         // 결제 정보 처리
         Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
 
         // 현재 월 결제 정보
-        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth,
-                userPaymentsByPaymentId);
+        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
 
         // 월별 결제 요약
         List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
@@ -87,6 +93,59 @@ public class PaymentServiceImpl implements PaymentService {
                 currentMonthPayments,
                 monthList
         );
+    }
+
+    @Override
+    public AccountInfoResponse getRentAccountNo(Long userId) {
+        ContractUserEntity contractUser = contractUserRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_USER_NOT_FOUND));
+        String rentAccountNo = contractUser.getContract().getRentAccountNo();
+        if (rentAccountNo == null) {
+            throw new BadRequestException(ExceptionCode.RENT_ACCOUNT_ALREADY_EXIST);
+        }
+        return AccountInfoResponse.from(rentAccountNo);
+    }
+
+    @Override
+    public void transferToOwner(TransferDto transferInfo) {
+        ContractUserEntity contractUser = contractUserRepository.findWithContractByUserId(transferInfo.getUserId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_USER_NOT_FOUND));
+        ContractEntity contract = contractUser.getContract();
+
+        TransferCommand command = new TransferCommand(
+                contract.getRentAccountNo(),
+                transferInfo.getAccountNo(),
+                transferInfo.getBalance()
+        );
+
+        TransferDTO result = fintechService.transfer(command);
+
+        if (!result.isSuccess()) {
+            throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
+        }
+    }
+
+    @Override
+    public void depositToLifeAccount(TransferDto transferInfo) {
+        ContractUserEntity contractUser = contractUserRepository.findWithContractByUserId(transferInfo.getUserId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+        ContractEntity contract = contractUser.getContract();
+
+        if (contract == null){
+            throw new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND);
+        }
+
+        TransferCommand command = new TransferCommand(
+                transferInfo.getAccountNo(),
+                contract.getRentAccountNo(),
+                transferInfo.getBalance()
+        );
+
+        TransferDTO result = fintechService.transfer(command);
+
+        if (!result.isSuccess()) {
+            throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
+        }
     }
 
     @Override
@@ -346,4 +405,5 @@ public class PaymentServiceImpl implements PaymentService {
         month = String.valueOf(Integer.parseInt(month));
         return year + "-" + month;
     }
+
 }

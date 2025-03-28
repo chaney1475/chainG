@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ContractUserRepository extends JpaRepository<ContractUserEntity, Long> {
     List<ContractUserEntity> findByContractIdAndUserIdIn(Long contractId, List<Long> userIds);
@@ -25,5 +26,8 @@ public interface ContractUserRepository extends JpaRepository<ContractUserEntity
     List<ContractUserEntity> findNonSurplusUsersByContractId(Long contractId);
 
     Optional<ContractUserEntity> findByUser_Id(Long userId);
+
+    @Query("SELECT cu FROM ContractUserEntity cu JOIN FETCH cu.contract WHERE cu.user.id = :userId")
+    Optional<ContractUserEntity> findWithContractByUserId(@Param("userId") Long userId);
 
 }
