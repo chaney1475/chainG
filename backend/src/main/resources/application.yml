@@ -115,6 +115,13 @@ ssafy:
     user-key: ${FINTECH_USER_KEY}
     card-unique-no: ${FINTECH_CARD_UNIQUE_NO}
     base-url: ${FINTECH_BASEURL}
+
+openai:
+  api:
+    key: ${GPT_API_KEY}
+    url: ${GPT_URL}
+  model: ${GPT_MODEL}
+
 #
 #logging:
 #  level:

@@ -102,6 +102,12 @@ ssafy:
 firebase:
   project-name: ${firebase.projectName}
   service-account-base64: ${firebase.serviceAccount}
+
+openai:
+  api:
+    key: ${gpt.apiKey}
+    url: ${gpt.apiUrl}
+  model: ${gpt.model}
 #
 #logging:
 #  level:
