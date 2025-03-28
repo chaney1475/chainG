@@ -15,9 +15,6 @@ interface AssigneesProps {
 }
 
 export const Assignees = ({ assignees }: AssigneesProps) => {
-  const router = useRouter()
-  const { t } = useTranslation()
-
   const profileList = [
     {
       src: '/images/profile/user1.png',

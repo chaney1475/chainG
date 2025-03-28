@@ -4,22 +4,23 @@ import Link from 'next/link'
 export const Container = styled.div`
   display: flex;
   flex: 1;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  border: 1px solid red;
   width: 100%;
+  gap: 50px;
   background-color: ${({ theme }) => theme.color.background.white};
 `
 
 export const FullMain = styled.div`
-  padding: 1.25rem;
   display: flex;
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  gap: 60px;
+  gap: 8px;
   width: 100%;
+  background-color: ${({ theme }) => theme.color.secondary};
 `
 
 export const Navigator = styled.div`

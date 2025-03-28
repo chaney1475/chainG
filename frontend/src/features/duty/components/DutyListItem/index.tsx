@@ -16,15 +16,15 @@ interface DutyListItemProps {
 }
 
 export const DutyListItem = ({ duty }: DutyListItemProps) => {
-  const router = useRouter()
   const { t } = useTranslation()
+
   return (
     <Container>
       <CatrgoryIcon>
         <Image
           src={
             dutyCategoryList.find((category) => category.id === duty.category)
-              ?.src ?? '/images/duty/duty-category-clean.png'
+              ?.src ?? '/images/duty/duty-category-clean.png' // 이미지 없을때 기본값 지정
           }
           alt={duty.category}
           width={32}

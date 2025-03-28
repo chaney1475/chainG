@@ -67,6 +67,10 @@ export type CustomTheme = {
         fontFamily: string
         fontSize: string
       }
+      tinyBold: {
+        fontFamily: string
+        fontSize: string
+      }
       descriptionBold: {
         fontFamily: string
         fontSize: string
@@ -147,6 +151,10 @@ const theme: CustomTheme = {
       },
       tiny: {
         fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.5rem',
+      },
+      tinyBold: {
+        fontFamily: 'var(--font-paperlogy-bold)',
         fontSize: '0.5rem',
       },
       descriptionBold: {
