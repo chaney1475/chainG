@@ -8,6 +8,10 @@ export const Container = styled.div`
   align-items: flex-start;
   width: 100%;
   gap: 16px;
+  background-color: ${({ theme }) => theme.color.background.white};
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 20px;
 `
 
 export const TopContainer = styled.div`
