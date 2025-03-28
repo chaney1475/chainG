@@ -34,3 +34,5 @@ export type DayKey =
   | 'saturday'
   | 'sunday'
 // 요일 타입 정의
+
+export type SelectorVariant = 'select' | 'sunday' | 'saturday' | 'default'

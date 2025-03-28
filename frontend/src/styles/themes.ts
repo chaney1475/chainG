@@ -11,6 +11,7 @@ export type CustomTheme = {
       disabled: string
       distructive: string
       confirm: string
+      saturday: string
       sunday: string
     }
     background: {
@@ -97,6 +98,7 @@ const theme: CustomTheme = {
       disabled: '#8c8c8c',
       distructive: '#c84620',
       confirm: '#3bce6e',
+      saturday: '#74bcff',
       sunday: '#ff9494',
     },
     background: {
