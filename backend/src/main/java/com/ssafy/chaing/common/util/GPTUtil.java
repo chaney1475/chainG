@@ -82,9 +82,9 @@ public class GPTUtil {
     // 생활룰 분류 프롬프트
     private String lifeRulePrompt(String content) {
         return "다음 내용을 아래 10개 카테고리 중 하나로 분류해 주세요.\n" +
-                "[SPORTS, TECHNOLOGY, HEALTH, FINANCE, ENTERTAINMENT, EDUCATION, TRAVEL, FOOD, POLITICS, ENVIRONMENT]\n\n" +
+                "[수면습관, 방온도, 청소, 생활용품, 타 사생출입, 음식 섭취, 기타 사항, 생활 규칙, 소음 관리, 반려동물 관리]\n\n" +
                 "내용: \"" + content + "\"\n\n" +
-                "카테고리만 정확히 응답해주세요.";
+                "카테고리만 정확히 응답해 영어로 주세요.";
     }
 
     // 당번 분류 프롬프트
@@ -92,6 +92,6 @@ public class GPTUtil {
         return "다음 내용을 아래 10개 카테고리 중 하나로 분류해 주세요.\n" +
                 "[SPORTS, TECHNOLOGY, HEALTH, FINANCE, ENTERTAINMENT, EDUCATION, TRAVEL, FOOD, POLITICS, ENVIRONMENT]\n\n" +
                 "내용: \"" + content + "\"\n\n" +
-                "카테고리만 정확히 응답해주세요.";
+                "카테고리만 정확히 영어로 응답해주세요.";
     }
 }
