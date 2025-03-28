@@ -7,6 +7,9 @@ import com.ssafy.chaing.duty.controller.response.DutyDetailResponse;
 import com.ssafy.chaing.duty.controller.response.DutyListResponse;
 import com.ssafy.chaing.duty.controller.response.RemovedDutyResponse;
 import com.ssafy.chaing.duty.service.DutyService;
+import com.ssafy.chaing.recommend.Request.RecommendRequest;
+import com.ssafy.chaing.recommend.response.RecommendResponse;
+import com.ssafy.chaing.recommend.service.RecommendService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DutyController {
 
     private final DutyService dutyService;
+    private final RecommendService recommendService;
 
     @GetMapping("/{groupId}")
     public ResponseEntity<BaseResponse<DutyListResponse>> getDuties(@PathVariable("groupId") Long groupId) {
@@ -61,5 +65,13 @@ public class DutyController {
                                                                         @AuthenticationPrincipal UserPrincipal principal) {
         RemovedDutyResponse removedDutyResponse = dutyService.removeDuty(dutyId);
         return ResponseEntity.ok(BaseResponse.success(removedDutyResponse));
+    }
+
+    @PostMapping("/category")
+    public ResponseEntity<BaseResponse<RecommendResponse>> deleteDuty(
+            @RequestBody RecommendRequest body,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        RecommendResponse response = recommendService.recommendDutyCategory(body);
+        return ResponseEntity.ok(BaseResponse.success(response));
     }
 }
