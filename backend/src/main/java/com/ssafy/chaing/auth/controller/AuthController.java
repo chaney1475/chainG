@@ -31,7 +31,7 @@ public class AuthController {
 
     @Operation(summary = "회원가입", description = "사용자가 회원가입을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/signup")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@RequestBody SignupRequest body,
+    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@ModelAttribute SignupRequest body,
                                                                  HttpServletResponse response) {
         AuthDTO authDTO = authService.signup(
                 new SignupCommand(body.getEmailAddress(), body.getPassword(), body.getName()),
