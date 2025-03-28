@@ -1,4 +1,4 @@
-package com.ssafy.chaing.blockchain;
+package com.ssafy.chaing.blockchain.service;
 
 import com.ssafy.chaing.blockchain.handler.contract.ContractHandler;
 import com.ssafy.chaing.blockchain.handler.contract.output.ContractOutput;
@@ -14,20 +14,35 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class BlockchainService {
+public class BlockchainServiceImpl implements BlockchainService {
 
     private final ContractHandler contractHandler;
     private final RentHandler rentHandler;
     private final UtilityHandler utilityHandler;
 
-    public ContractPortfolio getContractPortfolio(Long contractId, Long accountId) throws Exception {
+    @Override
+    public ContractPortfolio getContractPortfolio(
+            Long contractId
+    ) throws Exception {
         BigInteger cid = BigInteger.valueOf(contractId);
-        BigInteger aid = BigInteger.valueOf(accountId);
-
         ContractOutput contract = contractHandler.getContract(cid);
-        List<RentOutput> rent = rentHandler.getTransactionsByAccountId(aid);
-        List<UtilityOutput> utility = utilityHandler.getTransactionsByAccountId(aid);
+        return new ContractPortfolio(contract);
+    }
 
-        return new ContractPortfolio(contract, rent, utility);
+    @Override
+    public String createContractPDF(
+            ContractPortfolio portfolio
+    ) throws Exception {
+        return "";
+    }
+
+    @Override
+    public String createRentPDF(List<RentOutput> rent) throws Exception {
+        return "";
+    }
+
+    @Override
+    public String createUtilityPDF(List<UtilityOutput> utility) throws Exception {
+        return "";
     }
 }
