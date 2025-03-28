@@ -42,6 +42,15 @@ public enum ExceptionCode {
     S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
     S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다."),
 
+    CONTRACT_TRANSACTION_REGISTRATION_FAILED("CONTRACT_TRANSACTION_REGISTRATION_FAILED", "서약서 스마트 컨트랙트 등록 중 오류가 발생하였습니다."),
+    CONTRACT_TRANSACTION_RETRIEVE_FAILED("CONTRACT_TRANSACTION_RETRIEVE_FAILED", "서약서 스마트 컨트랙트 조회 중 오류가 발생하였습니다."),
+    LIVE_ACCOUNT_REGISTRATION_FAILED("LIVE_ACCOUNT_REGISTRATION_FAILED", "스마트 컨트랙트에 생활비 계좌 등록 중 오류가 발생하였습니다."),
+    LIVE_ACCOUNT_RETRIEVE_FAILED("LIVE_ACCOUNT_RETRIEVE_FAILED", "스마트 컨트랙트에 생활비 계좌 조회 중 오류가 발생하였습니다."),
+    TRANSFER_TRANSACTION_REGISTRATION_FAILED("TRANSFER_TRANSACTION_REGISTRATION_FAILED", "이체 내역 스마트 컨트랙트 등록 중 오류가 발생하였습니다."),
+    TRANSFER_TRANSACTION_RETRIEVE_FAILED("TRANSFER_TRANSACTION_RETRIEVE_FAILED", "이체 내역 스마트 컨트랙트 조회 중 오류가 발생하였습니다."),
+
+    PDF_GENERATION_FAILED("PDF_GENERATION_FAILED", "PDF 생성 중 오류가 발생하였습니다."),
+
     FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다.");
     private final String code;
     private final String message;
