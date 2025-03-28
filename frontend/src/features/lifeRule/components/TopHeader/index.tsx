@@ -9,13 +9,23 @@ import { Container, HeaderButton } from './styles'
 
 interface TopHeaderProps {
   title: string
+  isUpdated: boolean
+  handleOpenModal: () => void
 }
 
-export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
+export const TopHeader = memo(function TopHeader({
+  title,
+  isUpdated,
+  handleOpenModal,
+}: TopHeaderProps) {
   const router = useRouter()
 
   const handleUpdateClick = () => {
-    router.push('/lifeRule/update') // "생활규칙 수정" 페이지로 이동
+    if (isUpdated) {
+      handleOpenModal()
+    } else {
+      router.push('/lifeRule/update')
+    }
   }
 
   return (
@@ -35,6 +45,7 @@ export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
         alt="수정"
         width={24}
         height={24}
+        style={{ cursor: isUpdated ? 'not-allowed' : 'pointer' }}
       />
     </Container>
   )
