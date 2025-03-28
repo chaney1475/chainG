@@ -34,13 +34,15 @@ public enum ExceptionCode {
 
     USER_PAYMENT_NOT_FOUND("USER_PAYMENT_NOT_FOUND", "결제 정보에 해당하는 사용자가 없습니다."),
     LIVING_ACCOUNT_ALREADY_EXIST("LIVING_ACCOUNT_ALREADY_EXIST", "이미 계좌가 존재합니다."),
+    RENT_ACCOUNT_ALREADY_EXIST("RENT_ACCOUNT_ALREADY_EXIST", "공과금/월세 계좌번호가 존재하지 않습니다."),
 
     INVALID_YEAR("INVALID_YEAR", "입력된 '년도'가 범위를 초과하였습니다."),
     INVALID_MONTH("INVALID_MONTH", "입력된 '월'이 범위를 초과하였습니다."),
 
     S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
-    S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다.");
+    S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다."),
 
+    FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다.");
     private final String code;
     private final String message;
 }
