@@ -76,5 +76,14 @@ public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(BaseResponse.error(error));
     }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<BaseResponse<ErrorResponse>> handleFileStorageException(FileStorageException e) {
+        log.error("S3 처리 실패: {}", e.getMessage());
+        ErrorResponse error = ErrorResponse.of(e.getCode(), e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(BaseResponse.error(error));
+    }
 }
 
