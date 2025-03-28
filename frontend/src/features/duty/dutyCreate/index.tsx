@@ -7,9 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import { ConfirmButton, InputBox, TopHeader } from '@/components'
-import { Form, Main } from '@/styles/styles'
 
-// 공용 컴포넌트 쓰겠다. -> from ~~
 import { Container, FullMain, Navigator } from './styles'
 
 // 내 하위에 있는 style을 쓰겠다
