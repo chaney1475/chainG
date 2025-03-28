@@ -33,7 +33,7 @@
     <tr>
     <td align="center"><a href="https://lab.ssafy.com/ehfql6363">김동열</a>👑BE</td>
     <td align="center"><a href="https://lab.ssafy.com/jemilykoo">구정은</a>FE</td>
-    <td align="center"><a href="https://lab.ssafy.com/lll123kong">이미림</a>BE</td>
+    <td align="center"><a href="https://lab.ssafy.com/lll123kong">이미림</a>FE</td>
     <td align="center"><a href="https://lab.ssafy.com/gusto917">김현래</a>FE</td>
     <td align="center"><a href="https://lab.ssafy.com/chaney11">서채연</a>BE</td>
     <td align="center"><a href="https://lab.ssafy.com/skydh507">이동현</a>BE</td>
