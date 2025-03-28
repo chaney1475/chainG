@@ -9,10 +9,10 @@
 <img src="https://i.imgur.com/TPeMtOf.jpeg" />
 
 ## 🔗 특화 기술 - 블록체인
-<img src="https://i.imgur.com/I9m2Cjv.jpeg" />
+<img src="https://i.imgur.com/2a15mbG.jpeg" />
 
 ## 🔗🫙 ERD
-<img src="https://i.imgur.com/TlJkuIp.jpeg"/>
+<img src="https://i.imgur.com/w01C82W.png"/>
 
 
 ## 🧑‍💻Members
