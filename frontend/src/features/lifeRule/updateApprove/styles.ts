@@ -19,6 +19,8 @@ export const FullMain = styled.main`
   width: 100%;
   flex: 1;
   border: 1px solid green;
+  padding-bottom: 100px;
+  overflow: hidden;
 `
 
 export const LifeRuleUpdateList = styled.div`

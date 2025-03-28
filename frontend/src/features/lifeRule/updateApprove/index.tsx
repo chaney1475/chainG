@@ -28,21 +28,6 @@ export function LifeRuleUpdateApprovePage() {
             variant="DEFAULT"
             setVariant={setVariant}
           />
-          <LifeRuleUpdateListItem
-            lifeRule={lifeRuleList[0]}
-            variant="UPDATE"
-            setVariant={setVariant}
-          />
-          <LifeRuleUpdateListItem
-            lifeRule={lifeRuleList[0]}
-            variant={variant}
-            setVariant={setVariant}
-          />
-          <LifeRuleUpdateListItem
-            lifeRule={lifeRuleList[0]}
-            variant="CREATE"
-            setVariant={setVariant}
-          />
         </LifeRuleUpdateList>
       </FullMain>
       <div>승인페이지</div>
