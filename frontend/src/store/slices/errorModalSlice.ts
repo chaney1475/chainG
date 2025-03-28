@@ -9,6 +9,7 @@ const initialState: ErrorModalProps = {
   primaryButtonType: ErrorModalButtonTypes.confirm,
   secondaryButtonType: ErrorModalButtonTypes.goToHome,
   isVisible: false,
+  useI18n: false,
 }
 
 const errorModalSlice = createSlice({
@@ -24,6 +25,7 @@ const errorModalSlice = createSlice({
       state.primaryButtonType = action.payload.primaryButtonType
       state.secondaryButtonType = action.payload.secondaryButtonType
       state.isVisible = action.payload.isVisible
+      state.useI18n = action.payload.useI18n
     },
     setErrorModalVisible(state, action) {
       state.isVisible = action.payload

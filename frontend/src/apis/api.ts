@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import { store } from '@/store/store'
 import { RootState } from '@/store/store'
+import { ApiResponse } from '@/types/api'
 import { handleDefaultError } from '@/utils/error/handleDefaultError'
 
 const api = axios.create({
@@ -33,10 +34,75 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => response,
   (error) => {
     return handleDefaultError(error)
   },
 )
 
 export default api
+
+export const getRequest = async <T>(url: string): Promise<ApiResponse<T>> => {
+  try {
+    const response = await api.get<ApiResponse<T>>(url)
+    return response.data
+  } catch {
+    return {
+      success: false,
+      error: {
+        code: '500',
+        message: '네트워크 오류가 발생했습니다.',
+      },
+    }
+  }
+}
+
+export const postRequest = async <T>(
+  url: string,
+  data?: object,
+): Promise<ApiResponse<T>> => {
+  try {
+    const response = await api.post<ApiResponse<T>>(url, data)
+    console.log('response🔥', response.data)
+    return response.data
+  } catch {
+    return {
+      success: false,
+      error: {
+        code: '500',
+        message: '네트워크 오류가 발생했습니다.',
+      },
+    }
+  }
+}
+
+export const postBooleanRequest = async (
+  url: string,
+  data?: object,
+): Promise<boolean> => {
+  const response = await postRequest<unknown>(url, data)
+  return response.success
+}
+
+export const putRequest = async <T>(
+  url: string,
+  data: object,
+): Promise<ApiResponse<T>> => {
+  const response = await api.put<ApiResponse<T>>(url, data)
+  return response.data
+}
+
+export const patchRequest = async <T>(
+  url: string,
+  data: object,
+): Promise<ApiResponse<T>> => {
+  const response = await api.patch<ApiResponse<T>>(url, data)
+  return response.data
+}
+
+export const deleteRequest = async <T>(
+  url: string,
+): Promise<ApiResponse<T>> => {
+  const response = await api.delete<ApiResponse<T>>(url)
+  return response.data
+}

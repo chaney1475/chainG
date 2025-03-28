@@ -1,13 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { SocialLogin, signUpRequest } from '@/types/auth'
+import { SignUpRequest, SocialLogin } from '@/types/auth'
 
 interface AuthState {
   FCMToken: string | null
   loginToken: SocialLogin
-  signUpRequest: signUpRequest
-  isLoading: boolean
-  error: string | null
+  signUpRequest: SignUpRequest
 }
 
 const initialState: AuthState = {
@@ -22,8 +20,6 @@ const initialState: AuthState = {
     password: null,
     name: null,
   },
-  isLoading: false,
-  error: null,
 }
 
 const authSlice = createSlice({
