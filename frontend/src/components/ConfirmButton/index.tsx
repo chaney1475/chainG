@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next'
 
-import { ButtonVariant } from '@/types/button'
+import { ButtonVariant } from '@/types/ui'
 
 import { StyledButton } from './styles'
 
