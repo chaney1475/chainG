@@ -1,6 +1,9 @@
 import styled from '@emotion/styled'
 import Link from 'next/link'
 
+import { CustomTheme } from '@/styles/themes'
+import { DayKey, SelectorVariant } from '@/types/duty'
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,7 +17,7 @@ export const Container = styled.div`
   }
 `
 
-export const DateSelection = styled.div`
+export const DateSelection = styled.div<{ variant: SelectorVariant }>`
   display: flex;
   width: 100%;
   aspect-ratio: 1/1;
@@ -23,9 +26,29 @@ export const DateSelection = styled.div`
   border-radius: 16px;
   background-color: ${({ theme }) => theme.color.secondary};
 
-  // TODO: 상태관리에 따른 색상 변경경
+  ${({ variant, theme }) => {
+    switch (variant) {
+      case 'select':
+        return `
+          background-color: ${theme.color.primary};
+          color: ${theme.color.background.white};
+        `
+      case 'sunday':
+        return `
+          background-color: ${theme.color.secondary};
+          color: ${theme.color.text.sunday};`
+      case 'saturday':
+        return `
+          background-color: ${theme.color.secondary};
+          color: ${theme.color.text.saturday};`
+      default:
+        return `
+          background-color: ${theme.color.secondary};
+          color: ${theme.color.text.low};`
+    }
+  }}
+
   ${({ theme }) => theme.typography.styles.topHeader};
-  color: ${({ theme }) => theme.color.text.low};
 `
 export const DutyContainer = styled.div`
   display: flex;

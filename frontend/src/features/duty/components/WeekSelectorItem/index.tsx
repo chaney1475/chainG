@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import '@/styles/styles'
-import { Duty } from '@/types/duty'
+import { Duty, SelectorVariant } from '@/types/duty'
 
 import { Container, DateSelection, DutyContainer, DutyItem } from './styles'
 
@@ -20,16 +20,21 @@ interface WeekSelectorItemProps {
 
 export function WeekSelectorItem({ day, date, duty }: WeekSelectorItemProps) {
   const { t } = useTranslation()
-  const router = useRouter()
-  const [isSelected, setIsSelected] = useState(false)
-  const onClick = () => {
-    setIsSelected(!isSelected)
+  const [selected, setSelected] = useState(false)
+  function checkSelect(select: boolean, day: string): SelectorVariant {
+    if (select === true) {
+      return 'select'
+    }
+    return day === 'sunday' || day === 'saturday' ? day : 'default'
   }
 
   return (
     <Container>
-      <div>{day}</div>
-      <DateSelection onClick={onClick}>{date}</DateSelection>
+      <div>{`${t(`duty.week.${day}`)}`}</div>
+      <DateSelection variant={checkSelect(selected, day)}>
+        {' '}
+        {date}
+      </DateSelection>
       <DutyContainer>
         {duty.map((item) => (
           <DutyItem key={item.id}>
