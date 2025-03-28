@@ -51,6 +51,8 @@ public enum ExceptionCode {
 
     PDF_GENERATION_FAILED("PDF_GENERATION_FAILED", "PDF 생성 중 오류가 발생하였습니다."),
 
+    TRANSFER_PORTFOLIO_IS_NULL("TRANSFER_PORTFOLIO_IS_NULL", "이체에 대한 정보가 비어있습니다."),
+
     FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다.");
     private final String code;
     private final String message;
