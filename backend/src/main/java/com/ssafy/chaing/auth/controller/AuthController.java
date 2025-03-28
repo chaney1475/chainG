@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +47,7 @@ public class AuthController {
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@RequestBody LoginRequest body,
+    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@ModelAttribute LoginRequest body,
                                                                 HttpServletResponse response) {
         AuthDTO authDTO = authService.login(body.getEmailAddress(), body.getPassword(), response);
         UserInfoResponse result = UserInfoResponse.from(authDTO.getUserInfo());

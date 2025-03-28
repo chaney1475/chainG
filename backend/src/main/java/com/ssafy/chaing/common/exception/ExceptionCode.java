@@ -39,6 +39,9 @@ public enum ExceptionCode {
     INVALID_YEAR("INVALID_YEAR", "입력된 '년도'가 범위를 초과하였습니다."),
     INVALID_MONTH("INVALID_MONTH", "입력된 '월'이 범위를 초과하였습니다."),
 
+    S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
+    S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다."),
+
     FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다.");
     private final String code;
     private final String message;
