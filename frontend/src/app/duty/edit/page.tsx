@@ -1,5 +1,5 @@
 'use client'
 
-import { DutyPage } from '@/features/duty'
+import { DutyEdit } from '@/features/duty/dutyEdit'
 
-export default DutyPage
+export default DutyEdit
