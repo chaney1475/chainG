@@ -111,7 +111,7 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public void approveContract(Long contractId, ApproveContractCommand command) {
 
-        ContractEntity contractEntity = contractRepository.findById(contractId)
+        ContractEntity contractEntity = contractRepository.findByIdWithMembers(contractId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
         if (contractEntity.isCompleted()) {
@@ -134,9 +134,9 @@ public class ContractServiceImpl implements ContractService {
         contractUserRepository.save(contractUser);
 
         // TODO: 계약 완료시 월세 이체 잡 생성
-//        if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
-//            rentBatchService.registerNextMonthPayment(contractEntity);
-//        }
+        if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
+            rentBatchService.registerNextMonthPayment(contractEntity);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -155,7 +155,7 @@ public class ContractServiceImpl implements ContractService {
 
         validateUpdateCommand(command);
 
-        ContractEntity contractEntity = contractRepository.findById(contractId)
+        ContractEntity contractEntity = contractRepository.findByIdWithMembers(contractId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
         if (contractEntity.isCompleted()) {

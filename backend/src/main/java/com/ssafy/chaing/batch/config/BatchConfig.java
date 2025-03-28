@@ -4,7 +4,6 @@ import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
-import java.sql.Date;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -49,13 +48,13 @@ public class BatchConfig {
 
             // ✅ 14일 → 공동 계좌 모으기만 수행
             if (payment.getStatus() == PaymentStatus.STARTED) {
-                taskScheduler.schedule(() -> rentBatchService.collectToJointAccount(payment),
-                        Date.from(collectExecution.toInstant()));
+                taskScheduler.schedule(() -> rentBatchService.collectToJointAccount(payment.getId()),
+                        collectExecution.toInstant());
             }
 
             // ✅ 15일 → 송금 수행 (PARTIALLY_PAID 상태 포함)
-            taskScheduler.schedule(() -> rentBatchService.payToOwner(payment),
-                    Date.from(ownerExecution.toInstant()));
+            taskScheduler.schedule(() -> rentBatchService.payToOwner(payment.getId()),
+                    ownerExecution.toInstant());
 
             log.info("✅ 기존 배치 등록 완료 → Payment ID = {}, CollectExecution = {}, OwnerExecution = {}",
                     payment.getId(), collectExecution, ownerExecution);
@@ -80,7 +79,7 @@ public class BatchConfig {
 
             List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.STARTED);
             for (PaymentEntity payment : payments) {
-                rentBatchService.collectToJointAccount(payment);
+                rentBatchService.collectToJointAccount(payment.getId());
             }
 
             return org.springframework.batch.repeat.RepeatStatus.FINISHED;
@@ -104,7 +103,7 @@ public class BatchConfig {
 
             List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.COLLECTED);
             for (PaymentEntity payment : payments) {
-                rentBatchService.payToOwner(payment);
+                rentBatchService.payToOwner(payment.getId());
             }
 
             return org.springframework.batch.repeat.RepeatStatus.FINISHED;

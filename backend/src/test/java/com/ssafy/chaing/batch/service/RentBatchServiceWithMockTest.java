@@ -1,13 +1,14 @@
 package com.ssafy.chaing.batch.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.ssafy.chaing.batch.config.BatchConfig;
-import com.ssafy.chaing.batch.config.BatchInitializer;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
@@ -15,6 +16,9 @@ import com.ssafy.chaing.contract.service.ContractService;
 import com.ssafy.chaing.contract.service.command.ApproveContractCommand;
 import com.ssafy.chaing.contract.service.command.ConfirmContractCommand;
 import com.ssafy.chaing.contract.service.dto.ContractDTO;
+import com.ssafy.chaing.fintech.controller.request.TransferCommand;
+import com.ssafy.chaing.fintech.service.FintechService;
+import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.service.GroupService;
 import com.ssafy.chaing.group.service.command.CreateGroupCommand;
 import com.ssafy.chaing.group.service.command.JoinGroupCommand;
@@ -22,33 +26,59 @@ import com.ssafy.chaing.group.service.dto.GroupDTO;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
-import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
-import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.user.domain.RoleType;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-@ActiveProfiles("test")
+
 @SpringBootTest
-public class RentBatchServiceTest {
+@ActiveProfiles("test")
+public class RentBatchServiceWithMockTest {
+
+    @TestConfiguration
+    static class LocalMockConfig {
+        @Primary
+        @Bean
+        public FintechService fintechService() {
+            return mock(FintechService.class);
+        }
+
+        @Primary
+        @Bean
+        public TaskScheduler taskScheduler() {
+            return mock(TaskScheduler.class);
+        }
+    }
 
     @Autowired
-    private UserRepository userRepository;
+    private EntityManager em;
+
+    @Autowired
+    private FintechService fintechService;
+
+    @Autowired
+    private TaskScheduler taskScheduler;
+
+    @Autowired
+    private RentBatchService rentBatchService;
 
     @Autowired
     private ContractRepository contractRepository;
@@ -57,134 +87,140 @@ public class RentBatchServiceTest {
     private ContractService contractService;
 
     @Autowired
-    private GroupService groupService;
+    private PaymentRepository paymentRepository;
 
     @Autowired
-    private RentBatchService rentBatchService;
-
-    @Autowired
-    private UserPaymentRepository userPaymentRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PaymentRepository paymentRepository;
-
-    @Autowired
     private BatchConfig batchConfig;
 
-    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
-    private ContractEntity contract;
-
-    @MockitoSpyBean
-    private TaskScheduler taskScheduler;
+    @Autowired
+    private GroupService groupService;
 
     private List<UserEntity> users;
+
+    private ContractEntity contract;
 
     @BeforeEach
     void setUp() {
         // 기존에 작성한 계약 설정 메서드를 호출
         contract = setUpContract();
-
-        // TaskScheduler Mock 처리
-        doAnswer(invocation -> {
-            Runnable task = invocation.getArgument(0);
-            task.run(); // 스케줄된 작업 즉시 실행
-            return null;
-        }).when(taskScheduler).schedule(any(Runnable.class), any(Instant.class));
     }
 
     @Test
-    void testRegisterNextMonthPayment() {
+    void testRecoveryWithManualExecutionOfTasks() {
 
+        // Step 0: TaskScheduler 미리 설정 (Runnable 캡처 + 스케줄은 실행 안되게)
+        ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.forClass(Runnable.class);
+        when(taskScheduler.schedule(taskCaptor.capture(), any(Instant.class)))
+                .thenReturn(null); // 혹은 mock(ScheduledFuture.class) 반환 가능
+
+        // Step 1: fintechService - 두 번째 유저만 실패하도록 세팅
+        when(fintechService.transfer(any())).thenAnswer(invocation -> {
+            TransferCommand cmd = invocation.getArgument(0);
+            return cmd.getFromAccountNo().equals("0019468386865145")
+                    ? new TransferDTO(false) // 실패
+                    : new TransferDTO(true); // 성공
+        });
+
+        // Step 2: 유저 승인 (→ 내부적으로 registerNextMonthPayment 호출)
         contractService.approveContract(contract.getId(),
                 new ApproveContractCommand(users.get(1).getId(), "0016876352742020"));
-
         contractService.approveContract(contract.getId(),
                 new ApproveContractCommand(users.get(2).getId(), "0019468386865145"));
-
         contractService.approveContract(contract.getId(),
                 new ApproveContractCommand(users.get(3).getId(), "0010624269496821"));
 
-        // Awaitility로 비동기 작업이 완료될 때까지 최대 5초까지 대기
+        // Step 3: 등록된 작업들 수동 실행
+        List<Runnable> scheduledTasks = taskCaptor.getAllValues();
+        Runnable collectTask = scheduledTasks.get(0); // 전날 작업
+        Runnable ownerTask = scheduledTasks.get(1);   // 당일 작업
+
+        // Step 4: 전날 작업 수동 실행 (→ 일부 실패 유도)
+        collectTask.run();
+
         Awaitility.await().untilAsserted(() -> {
             PaymentEntity payment = paymentRepository.findAll().get(0);
+            assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PARTIALLY_PAID);
+        });
 
-            // 공동계좌 송금 완료 확인
+        // Step 5: fintechService → 전체 성공으로 다시 세팅
+        Mockito.reset(fintechService);
+        when(fintechService.transfer(any())).thenReturn(new TransferDTO(true));
+
+        // Step 6: 당일 작업 수동 실행 (→ 최종 송금 시도)
+        ownerTask.run();
+
+        // Step 7: 최종 상태는 PAID여야 함
+        Awaitility.await().untilAsserted(() -> {
+            PaymentEntity payment = paymentRepository.findAll().get(0);
             assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PAID);
             assertThat(payment.getPaidAmount()).isEqualTo(payment.getTotalAmount());
         });
     }
 
     @Test
-    void testPartialPaymentWhenOneUserFails() {
+    void testRetrySchedulingWhenOwnerTransferFails() {
+        // Step 1: fintechService 설정 → 집주인 송금 실패
+        when(fintechService.transfer(any())).thenReturn(new TransferDTO(false));
 
-        contractService.approveContract(contract.getId(),
-                new ApproveContractCommand(users.get(1).getId(), "0016876352742020"));
+        // Step 2: TaskScheduler Mock → Runnable 캡처
+        ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.forClass(Runnable.class);
+        when(taskScheduler.schedule(taskCaptor.capture(), any(Instant.class)))
+                .thenReturn(null);
 
-        // 유효하지 않은 계좌 넣기
-        contractService.approveContract(contract.getId(),
-                new ApproveContractCommand(users.get(2).getId(), "2122222222"));
+        // Step 3: 유저 승인 (→ 자동 registerNextMonthPayment 호출)
+        contractService.approveContract(contract.getId(), new ApproveContractCommand(users.get(1).getId(), "111"));
+        contractService.approveContract(contract.getId(), new ApproveContractCommand(users.get(2).getId(), "222"));
+        contractService.approveContract(contract.getId(), new ApproveContractCommand(users.get(2).getId(), "222"));
+        contractService.approveContract(contract.getId(), new ApproveContractCommand(users.get(3).getId(), "333"));
 
-        contractService.approveContract(contract.getId(),
-                new ApproveContractCommand(users.get(3).getId(), "0010624269496821"));
+        // Step 4: 수동으로 전날 collect 작업 먼저 성공 처리
+        List<Runnable> scheduledTasks = taskCaptor.getAllValues();
+        Runnable collectTask = scheduledTasks.get(0);
+        Runnable ownerTask = scheduledTasks.get(1);
 
+        // Step 5: fintechService 재설정 → collect는 성공하게
+        reset(fintechService);
+        when(fintechService.transfer(any())).thenReturn(new TransferDTO(true));
+        collectTask.run();
+
+        // Step 6: 다시 실패 설정 → payToOwner는 실패
+        reset(fintechService);
+        when(fintechService.transfer(any())).thenAnswer(invocation -> {
+            return new TransferDTO(false); // 집주인 송금 실패 유도
+        });
+
+        ownerTask.run();
+        paymentRepository.flush();
+
+        // Step 7: 상태 확인 (RETRY_PENDING)
         Awaitility.await().untilAsserted(() -> {
             PaymentEntity payment = paymentRepository.findAll().get(0);
-
-            // 상태가 PARTIALLY_PAID인지 확인
-            assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PARTIALLY_PAID);
-
-            // 유저 송금 내역 상태 확인
-            List<UserPaymentEntity> userPayments = userPaymentRepository.findWithMemberAndUserByPaymentId(
-                    payment.getId());
-            long failedCount = userPayments.stream()
-                    .filter(p -> p.getStatus() == PaymentStatus.FAILED)
-                    .count();
-            long successCount = userPayments.stream()
-                    .filter(p -> p.getStatus() == PaymentStatus.COLLECTED)
-                    .count();
-
-            assertThat(failedCount).isEqualTo(1);
-            assertThat(successCount).isEqualTo(3); // 나머지 유저를 포함
+            assertThat(payment.getStatus()).isEqualTo(PaymentStatus.RETRY_PENDING);
+            assertThat(payment.getRetryCount()).isEqualTo(1);
         });
+
+        // Step 8: 재시도 스케줄러 등록 확인
+        verify(taskScheduler, times(3)).schedule(any(Runnable.class), any(Instant.class));
     }
 
-    @Test
-    void testAllPaymentStatusesScheduleCount() {
-        // 1. 유저 승인
-        contractService.approveContract(contract.getId(),
-                new ApproveContractCommand(users.get(1).getId(), "0016876352742020"));
-        contractService.approveContract(contract.getId(),
-                new ApproveContractCommand(users.get(2).getId(), "0019468386865145"));
-        contractService.approveContract(contract.getId(),
-                new ApproveContractCommand(users.get(3).getId(), "0010624269496821"));
+    void savePaymentWithStatus(PaymentStatus status) {
+        PaymentEntity payment = PaymentEntity.builder()
+                .contract(contract)
+                .month(202503)
+                .feeType(FeeType.RENT)
+                .totalAmount(10000)
+                .status(status)
+                .paidAmount(0)
+                .build();
 
-        // 2. 각 상태에 대해 PaymentEntity 생성
-        savePaymentWithStatus(PaymentStatus.STARTED);         // 2번 등록 (collect + owner)
-        savePaymentWithStatus(PaymentStatus.PARTIALLY_PAID);  // 1번 등록 (owner)
-        savePaymentWithStatus(PaymentStatus.COLLECTED);       // 1번 등록 (owner)
-        savePaymentWithStatus(PaymentStatus.RETRY_PENDING);   // 1번 등록 (owner)
-        savePaymentWithStatus(PaymentStatus.PAID);            // ❌ 등록 X
-        savePaymentWithStatus(PaymentStatus.FAILED);          // ❌ 등록 X
-
-        // 3. 즉시 실행되게 설정
-        doAnswer(invocation -> {
-            Runnable task = invocation.getArgument(0);
-            task.run();
-            return null;
-        }).when(taskScheduler).schedule(any(Runnable.class), any(Instant.class));
-
-        // 4. 복구 로직 실행
-        new BatchInitializer(batchConfig).run(null);
-
-        // 5. TaskScheduler 호출 횟수 검증
-        // - STARTED 2번 →  2 * 2 = 4번 (collect + pay)
-        // - PARTIALLY_PAID, COLLECTED, RETRY_PENDING → 각 1번 (pay만)
-        // 총 5번이 되어야 정상
-        verify(taskScheduler, times(7)).schedule(any(Runnable.class), any(Instant.class));
+        payment.setNextExecutionDate(ZonedDateTime.now().plusSeconds(2));
+        paymentRepository.save(payment);
     }
 
     ContractEntity setUpContract() {
@@ -242,22 +278,8 @@ public class RentBatchServiceTest {
 
         contractService.confirmContract(draftContract.getId(), confirmContractCommand);
 
-        return contractRepository.findById(draftContract.getId())
+        return contractRepository.findByIdWithMembers(draftContract.getId())
                 .orElseThrow(() -> new BadRequestException("계약이 없습니다."));
-    }
-
-    void savePaymentWithStatus(PaymentStatus status) {
-        PaymentEntity payment = PaymentEntity.builder()
-                .contract(contract)
-                .month(202503)
-                .feeType(FeeType.RENT)
-                .totalAmount(10000)
-                .status(status)
-                .paidAmount(0)
-                .build();
-
-        payment.setNextExecutionDate(ZonedDateTime.now().plusSeconds(2));
-        paymentRepository.save(payment);
     }
 
 }
