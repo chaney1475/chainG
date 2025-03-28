@@ -13,6 +13,7 @@ import com.ssafy.chaing.blockchain.provider.CustomGasProvider;
 import com.ssafy.chaing.blockchain.web3j.ContractManager;
 import java.math.BigInteger;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.TransactionManager;
 
+@Slf4j
 @Component
 public class ContractHandler {
     private final Web3j web3j;
@@ -42,7 +44,7 @@ public class ContractHandler {
     }
 
 
-    public String addContract(ContractInput input) throws Exception {
+    public boolean addContract(ContractInput input) throws Exception {
         try {
             // DTO의 PaymentInfo 리스트를 ContractManager의 PaymentInfo 객체로 변환
             List<ContractManager.PaymentInfo> paymentInfos = input.getPaymentInfos().stream()
@@ -70,9 +72,10 @@ public class ContractHandler {
                     input.getCardId()
             ).send();
 
-            return "addContract success";
+            return true;
         } catch (Exception e) {
-            return "addContract fail";
+            log.error("❗addContract error: {}❗", e.getMessage());
+            return false;
         }
     }
 

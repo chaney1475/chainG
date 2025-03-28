@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ContractPortfolio {
     private ContractOutput contractOutput;
-    List<RentOutput> rentOutputList;
-    List<UtilityOutput> utilityOutputList;
+
+    public static ContractPortfolio from(ContractOutput contractOutput) {
+        return new ContractPortfolio(contractOutput);
+    }
 }

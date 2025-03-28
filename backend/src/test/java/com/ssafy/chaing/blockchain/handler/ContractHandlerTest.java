@@ -29,6 +29,7 @@ import org.web3j.tx.TransactionManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -98,10 +99,10 @@ class ContractHandlerTest {
         input.setCardId(BigInteger.valueOf(123));
 
         // ContractManager의 addContract 메서드를 모의하여 "resultAddress" 반환하도록 설정합니다.
-        when(contractHandler.addContract(any(ContractInput.class))).thenReturn("resultAddress");
+        when(contractHandler.addContract(any(ContractInput.class))).thenReturn(true);
 
-        String result = contractHandler.addContract(input);
-        assertEquals("resultAddress", result);
+        boolean result = contractHandler.addContract(input);
+        assertTrue(result);
         verify(contractHandler).addContract(any(ContractInput.class));
     }
 
