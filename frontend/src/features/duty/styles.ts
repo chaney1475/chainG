@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 import Link from 'next/link'
 
 export const Container = styled.div`
-  border: 1px solid blue;
   display: flex;
   flex: 1;
   flex-direction: column;

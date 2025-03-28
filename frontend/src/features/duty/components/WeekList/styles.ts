@@ -20,11 +20,8 @@ export const TopContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-
-  > div {
-    ${({ theme }) => theme.typography.styles.default}
-    color: ${({ theme }) => theme.color.text.disabled}
-  }
+  ${({ theme }) => theme.typography.styles.default}
+  color: ${({ theme }) => theme.color.text.disabled}
 `
 
 export const TextContainer = styled.div`
@@ -38,10 +35,4 @@ export const TextContainer = styled.div`
     ${({ theme }) => theme.typography.styles.title}
     color: ${({ theme }) => theme.color.text.regular}
   }
-`
-
-export const ImageContainer = styled.div`
-  position: relative;
-  height: 100%;
-  aspect-ratio: 1/1;
 `

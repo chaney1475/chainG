@@ -3,23 +3,22 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { IconButton } from '@/components/IconButton'
 import '@/styles/styles'
 
 import { WeekSelector } from '../WeekSelector'
-import {
-  Container,
-  ImageContainer,
-  TextContainer,
-  TopContainer,
-} from './styles'
+import { Container, TextContainer, TopContainer } from './styles'
 
 export function WeekList() {
   const { t } = useTranslation()
   const router = useRouter()
   const week = 'second'
+
+  const handleClick = () => {
+    router.push('/duty/schedule/add')
+  }
 
   return (
     <Container>
@@ -27,14 +26,11 @@ export function WeekList() {
         <div>3월 {t(`duty.schedule.week.${week}`)}</div>
         <TextContainer>
           <div>이번주 당번</div>
-          <ImageContainer>
-            <Image
-              src="/icons/plus_circle.svg"
-              alt="plus_circle"
-              fill
-              style={{ objectFit: 'contain' }}
-            />
-          </ImageContainer>
+          <IconButton
+            src="/icons/plus_circle.svg"
+            alt="plus_circle"
+            onClick={handleClick}
+          />
         </TextContainer>
       </TopContainer>
 

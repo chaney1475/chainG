@@ -47,7 +47,7 @@ export const DutyItem = styled.div`
   justify-content: start;
   align-items: center;
   align-self: stretch;
-  background-color: ${({ theme }) => theme.color.text.disabled};
+  background-color: ${({ theme }) => theme.color.border};
 
   ${({ theme }) => theme.typography.styles.tinyBold};
   color: ${({ theme }) => theme.color.text.low};
