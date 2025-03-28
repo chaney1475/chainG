@@ -6,7 +6,7 @@ contract RentManager {
     // 거래 내역 구조체
     struct Rent {
         uint256 id;         // 내역 하나에 대한 PK
-        uint256 accountId;  // 계좌 PK
+        uint256 accountId;  // contractUser PK
         uint8 month;        // 이체가 발생한 달
         string from;        // 이체한 사람
         string to;          // 받는 통장
