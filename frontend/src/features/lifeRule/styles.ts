@@ -18,8 +18,7 @@ export const FullMain = styled.main`
   align-items: flex-start;
   gap: 20px;
   width: 100%;
-  height: 100%;
-
+  height: auto;
   border: 1px solid green;
   overflow: auto;
   padding-bottom: 75px;
