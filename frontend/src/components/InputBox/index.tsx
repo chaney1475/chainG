@@ -5,6 +5,8 @@ import { FieldError } from 'react-hook-form'
 
 import Image from 'next/image'
 
+import { ValidationItem } from '@/types/ui'
+
 import {
   InputContainer,
   Label,
@@ -13,11 +15,6 @@ import {
   ValidationMessage,
   ValidationWrapper,
 } from './styles'
-
-interface ValidationItem {
-  isValid: boolean
-  message: string
-}
 
 interface InputBoxProps {
   id: string
@@ -30,7 +27,7 @@ interface InputBoxProps {
   className?: string
   disabled?: boolean
   required?: boolean
-  validations?: ValidationItem[]
+  validations?: { [key: string]: ValidationItem }
 }
 
 const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
@@ -71,8 +68,8 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
         />
         {!isError && validations && (
           <ValidationWrapper>
-            {validations.map((validation, index) => (
-              <ValidationContainer key={index}>
+            {Object.entries(validations || {}).map(([key, validation]) => (
+              <ValidationContainer key={key}>
                 <Image
                   src={`/icons/validation-${validation.isValid ? 'true' : 'false'}.svg`}
                   alt={

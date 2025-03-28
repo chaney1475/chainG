@@ -14,7 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const messaging = getMessaging(app)
 
-export const getFcmToken = async () => {
+export const getFCMToken = async () => {
   try {
     const currentToken = await getToken(messaging, {
       vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,

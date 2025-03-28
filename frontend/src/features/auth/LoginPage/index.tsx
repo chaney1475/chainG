@@ -3,14 +3,19 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { login } from '@/apis/auth'
+import { login, registerFCMToken } from '@/apis/auth'
+import { getFCMToken, onForegroundMessage } from '@/app/firebase'
 import { ConfirmButton, InputBox } from '@/components'
-import { Form, Main } from '@/styles/styles'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setAccessToken, setFCMToken } from '@/store/slices/authSlice'
+import { setUser } from '@/store/slices/userSlice'
+import { Container, Form, Main } from '@/styles/styles'
 
-import { Container, SignupLinkContainer, StyledLink } from './styles'
+import { SignupLinkContainer, StyledLink } from './styles'
 
 interface LoginForm {
   emailAddress: string
@@ -20,20 +25,43 @@ interface LoginForm {
 export function LoginPage() {
   const { t } = useTranslation()
   const router = useRouter()
+  const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>()
 
-  const onSubmit = async (data: LoginForm): Promise<void> => {
-    try {
-      const response = await login(data)
-      if (response.success) {
-        router.push('/')
-      }
-    } catch (error) {
-      console.error('로그인 실패:', error)
+  const FCMToken = useAppSelector((state) => state.auth.FCMToken)
+
+  const initFCM = async () => {
+    if (FCMToken) return
+    const token = await getFCMToken()
+
+    if (token) {
+      await dispatchFCMToken(token)
+    }
+  }
+
+  const dispatchFCMToken = async (token: string) => {
+    const response = await registerFCMToken({ FCMToken: token })
+
+    if (!response) return
+
+    dispatch(setFCMToken(token))
+    onForegroundMessage()
+  }
+
+  const onSubmit = async (data: LoginForm) => {
+    const response = await login(data)
+    if (response) {
+      const token = response.headers['authorization']
+      await Promise.all([
+        dispatch(setAccessToken(token)),
+        dispatch(setUser(response.data.data)),
+        initFCM(),
+      ])
+      router.push('/')
     }
   }
 
@@ -79,7 +107,7 @@ export function LoginPage() {
               createProfile
             </StyledLink>
             <StyledLink href="/group/create/inviteCode">invite</StyledLink>
-            <StyledLink href="/auth/signup">회원가입</StyledLink>
+            <StyledLink href="/auth/signup">{t('signUp.title')}</StyledLink>
           </SignupLinkContainer>
         </Form>
       </Main>
