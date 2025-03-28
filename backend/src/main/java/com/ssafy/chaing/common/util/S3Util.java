@@ -1,10 +1,9 @@
 package com.ssafy.chaing.common.util;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.chaing.common.exception.ExceptionCode;
-import com.ssafy.chaing.common.exception.FileStorageException;
+import com.ssafy.chaing.common.exception.ServerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,7 @@ public class S3Util {
                             null)
                     );
         } catch (IOException e) {
-            throw new FileStorageException(ExceptionCode.S3_UPLOAD_FAILED);
+            throw new ServerException(ExceptionCode.S3_UPLOAD_FAILED);
         }
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
@@ -46,7 +45,7 @@ public class S3Util {
         try {
             amazonS3.deleteObject(bucketName, fileName);
         } catch (Exception e) {
-            throw new FileStorageException(ExceptionCode.S3_DELETE_FAILED);
+            throw new ServerException(ExceptionCode.S3_DELETE_FAILED);
         }
     }
 

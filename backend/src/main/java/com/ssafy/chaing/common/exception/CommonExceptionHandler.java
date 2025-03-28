@@ -77,13 +77,23 @@ public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(BaseResponse.error(error));
     }
 
-    @ExceptionHandler(FileStorageException.class)
-    public ResponseEntity<BaseResponse<ErrorResponse>> handleFileStorageException(FileStorageException e) {
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<BaseResponse<ErrorResponse>> s3BucketException(ServerException e) {
         log.error("S3 처리 실패: {}", e.getMessage());
         ErrorResponse error = ErrorResponse.of(e.getCode(), e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseResponse.error(error));
     }
+
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<BaseResponse<ErrorResponse>> gptServerException(ServerException e) {
+        log.error("GPT 처리 실패: {}", e.getMessage());
+        ErrorResponse error = ErrorResponse.of(e.getCode(), e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(BaseResponse.error(error));
+    }
+
 }
 
