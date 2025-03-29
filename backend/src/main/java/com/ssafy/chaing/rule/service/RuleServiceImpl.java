@@ -54,6 +54,10 @@ public class RuleServiceImpl implements RuleService {
         UserEntity user = findUserOrThrow(userId);
         GroupEntity group = findGroupOrThrow(user);
 
+        if (lifeRuleRepository.findByGroup(group).isPresent()) {
+            throw new BadRequestException(ExceptionCode.LIFE_RULE_ALREADY_EXISTS);
+        }
+
         LifeRuleEntity lifeRule = LifeRuleEntity.builder()
                 .group(group)
                 .build();
@@ -213,12 +217,6 @@ public class RuleServiceImpl implements RuleService {
                 item.clear();
             }
         }
-    }
-
-    @Override
-    public RecommendCategoryResponse recommendCategory(RecommendCategoryRequest request) {
-        // TODO : GPT 써서 request 에서 온 category 값을 이제 변환해서 반환.
-        return null;
     }
 
 
