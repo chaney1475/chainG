@@ -39,8 +39,12 @@ public class LifeRuleUserEntity {
     @Column(name = "is_voted")
     private boolean isVoted;
 
-    public void setLifeRule(LifeRuleEntity lifeRule) {
+    public void settingLifeRule(LifeRuleEntity lifeRule) {
         this.lifeRule = lifeRule;
+    }
+
+    public void setVoted(boolean isVoted) {
+        this.isVoted = isVoted;
     }
 
 }
