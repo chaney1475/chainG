@@ -62,8 +62,7 @@ public class DutyController {
 
     @DeleteMapping("/{dutyId}")
     public ResponseEntity<BaseResponse<RemovedDutyResponse>> deleteDuty(
-            @PathVariable("dutyId") Long dutyId,
-            @AuthenticationPrincipal UserPrincipal principal) {
+            @PathVariable("dutyId") Long dutyId) {
         RemovedDutyResponse removedDutyResponse = dutyService.removeDuty(dutyId);
         return ResponseEntity.ok(BaseResponse.success(removedDutyResponse));
     }
