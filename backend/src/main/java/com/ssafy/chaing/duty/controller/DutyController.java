@@ -69,8 +69,7 @@ public class DutyController {
 
     @PostMapping("/category")
     public ResponseEntity<BaseResponse<RecommendResponse>> deleteDuty(
-            @RequestBody RecommendRequest body,
-            @AuthenticationPrincipal UserPrincipal principal) {
+            @RequestBody RecommendRequest body) {
         RecommendResponse response = recommendService.recommendDutyCategory(body);
         return ResponseEntity.ok(BaseResponse.success(response));
     }
