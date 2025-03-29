@@ -41,6 +41,7 @@ public enum ExceptionCode {
     LIFE_RULE_NOT_FOUND("LIFE_RULE_NOT_FOUND", "생활 룰이 존재하지 않습니다."),
     LIFE_RULE_ITEM_NOT_FOUND("LIFE_RULE_ITEM_NOT_FOUND" , "생활 룰 변경 사항이 존재하지 않습니다."),
     LIFE_RULE_CHANGE_REQUEST_NOT_FOUND("LIFE_RULE_CHANGE_REQUEST_NOT_FOUND", "변경 요청이 존재하지 않습니다."),
+    LIFE_RULE_ALREADY_EXISTS("LIFE_RULE_ALREADY_EXISTS", "이미 생성된 생활 수칙이 존재합니다."),
 
     S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
     S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다."),
