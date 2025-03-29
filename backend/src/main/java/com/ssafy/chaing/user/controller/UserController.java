@@ -1,6 +1,7 @@
 package com.ssafy.chaing.user.controller;
 
 
+import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.user.service.UserService;
 import com.ssafy.chaing.user.service.dto.UserDTO;
 import com.sun.security.auth.UserPrincipal;
@@ -29,11 +30,10 @@ public class UserController {
             description = "나의 요약 프로필을 조회합니다."
     )
     @GetMapping("/me/summary")
-    public ResponseEntity<UserDTO> getMySummary(@AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<BaseResponse<UserDTO>> getMySummary(@AuthenticationPrincipal UserPrincipal principal) {
         // 나의 프로필 정보 조회
         UserDTO dto = userService.getMe(Long.valueOf(principal.getName()));
-
-        return ResponseEntity.ok().body(dto);
+        return ResponseEntity.ok().body(BaseResponse.success(dto));
     }
 
 }

@@ -60,6 +60,16 @@ spring:
             enable: true
             required: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+
+server:
+  shutdown: graceful
+
 application:
   security:
     jwt:
@@ -72,6 +82,9 @@ app:
     allow-hosts:
       - ${allow-host.front}
       - ${allow-host.local}
+      - ${allow-host.local.front1}
+      - ${allow-host.local.front2}
+
   frontend:
     url: ${allow-host.front}
 springdoc:
@@ -88,20 +101,32 @@ api:
 cloud:
   aws:
     s3:
-      bucket: sample
-    stack.auto: false
-    region.static: sample
-    credentials:
-      accessKey: sample
-      secretKey: sample
+      bucket: ${aws.bucket}
+
+web3j:
+  client-address: ${client-address}
+  wallet-private-key: ${wallet-private-key}
+  contract-address: ${contract-address} # DB 에 넣어야 함.
+  rent-contract-address: ${rent-contract-address}
+  utility-contract-address: ${utility-contract-address}
+  chain-id: ${chain-id}
 
 ssafy:
   fintech:
-    api-key: ${ssafy.fintech.api-key}
-    user-key: ${ssafy.fintech.user-key}
-    card-unique-no: ${ssafy.fintech.card-unique-no}
-    base-url: ${ssafy.fintech.base-url}
+    api-key: ${ssafy.fintech.apiKey}
+    user-key: ${ssafy.fintech.userKey}
+    card-unique-no: ${ssafy.fintech.cardUniqueNo}
+    base-url: ${ssafy.fintech.baseUrl}
 
+firebase:
+  project-name: ${firebase.projectName}
+  service-account-base64: ${firebase.serviceAccount}
+
+openai:
+  api:
+    key: ${gpt.apiKey}
+    url: ${gpt.apiUrl}
+  model: ${gpt.model}
 #
 #logging:
 #  level:

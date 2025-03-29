@@ -1,9 +1,17 @@
 spring:
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
   application:
     name:
   config:
     import:
       - optional:file:.env[.properties] #ENV ?? ??
+      - aws-parameterstore:/chaing/
 
   datasource:
     url: ${DATASOURCE_URL}
@@ -55,12 +63,26 @@ spring:
             enable: true
             required: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+
+server:
+  shutdown: graceful
+
 application:
   security:
     jwt:
       secret-key: ${APPLICATION_SECURITY_JWT_SECRET_KEY}
       access-token-expiration: ${APPLICATION_SECURITY_JWT_ACCESS_TOKEN_EXPIRATION}
       refresh-token-expiration: ${APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION}
+
+firebase:
+  project-name: ${FIREBASE_PROJECT_NAME}
+  service-account-base64: ${FIREBASE_SERVICE_ACCOUNT}
 
 app:
   cors:
@@ -84,18 +106,28 @@ cloud:
   aws:
     s3:
       bucket: ${AWS_BUCKET_NAME}
-    stack.auto: false
-    region.static: ap-northeast-2
-    credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
+
+web3j:
+  client-address: ${client-address}
+  wallet-private-key: ${wallet-private-key}
+  contract-address: ${contract-address} # DB 에 넣어야 함.
+  rent-contract-address: ${rent-contract-address}
+  utility-contract-address: ${utility-contract-address}
+  chain-id: ${chain-id}
 
 ssafy:
   fintech:
-    api-key: a57e58879de94373856c981706ca1056
-    user-key: ed638cf5-675b-4e37-91c5-1ea6f5a92f67
-    card-unique-no: 1002-4b4764d264c3460
-    base-url: https://finopenapi.ssafy.io/ssafy/api/v1/edu
+    api-key: ${FINTECH_API_KEY}
+    user-key: ${FINTECH_USER_KEY}
+    card-unique-no: ${FINTECH_CARD_UNIQUE_NO}
+    base-url: ${FINTECH_BASEURL}
+
+openai:
+  api:
+    key: ${GPT_API_KEY}
+    url: ${GPT_URL}
+  model: ${GPT_MODEL}
+
 #
 #logging:
 #  level:

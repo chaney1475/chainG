@@ -59,4 +59,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "provider_id", nullable = true)
     private String providerId;
 
+    @Column(name = "fcm_token", nullable = true)
+    private String fcmToken;
+
 }
