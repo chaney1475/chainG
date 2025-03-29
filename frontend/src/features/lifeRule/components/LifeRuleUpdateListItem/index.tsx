@@ -14,7 +14,11 @@ import {
   CatrgoryIcon,
   Container,
   Content,
+  CreateButton,
+  DeleteButton,
   ItemContainer,
+  StyledActionButton,
+  UpdateButton,
 } from './styles'
 
 interface LifeRuleUpdateListItemProps {
@@ -31,23 +35,14 @@ const ActionButton = ({
   onClick: () => void
 }) => {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        background: 'none',
-        border: 'none',
-        padding: '4px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-      }}>
+    <StyledActionButton onClick={onClick}>
       <Image
         src={`/images/lifeRule/${type}.svg`}
         alt={type}
         width={24}
         height={24}
       />
-    </button>
+    </StyledActionButton>
   )
 }
 
@@ -65,7 +60,9 @@ export const LifeRuleUpdateListItem = ({
         return (
           <>
             <p>{content}</p>
-            <button onClick={() => setVariant('DEFAULT')}>취소</button>
+            <DeleteButton onClick={() => setVariant('DEFAULT')}>
+              취소
+            </DeleteButton>
           </>
         )
       case 'UPDATE':
@@ -76,7 +73,9 @@ export const LifeRuleUpdateListItem = ({
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
-            <button onClick={() => setVariant('DEFAULT')}>확인</button>
+            <UpdateButton onClick={() => setVariant('DEFAULT')}>
+              확인
+            </UpdateButton>
           </>
         )
       case 'CREATE':
@@ -87,7 +86,9 @@ export const LifeRuleUpdateListItem = ({
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
-            <button onClick={() => setVariant('DEFAULT')}>생성</button>
+            <CreateButton onClick={() => setVariant('DEFAULT')}>
+              생성
+            </CreateButton>
           </>
         )
       default:

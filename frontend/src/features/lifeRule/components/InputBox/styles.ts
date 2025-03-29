@@ -2,8 +2,8 @@ import styled from '@emotion/styled'
 
 export const InputContainer = styled.div`
   position: relative;
-  margin-bottom: 1rem;
   width: 100%;
+  border: 1px solid red;
 `
 
 export const ValidationWrapper = styled.div`
