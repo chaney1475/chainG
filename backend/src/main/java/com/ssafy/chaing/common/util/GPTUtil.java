@@ -90,7 +90,7 @@ public class GPTUtil {
     // 당번 분류 프롬프트
     private String dutyPrompt(String content) {
         return "다음 내용을 아래 10개 카테고리 중 하나로 분류해 주세요.\n" +
-                "[SPORTS, TECHNOLOGY, HEALTH, FINANCE, ENTERTAINMENT, EDUCATION, TRAVEL, FOOD, POLITICS, ENVIRONMENT]\n\n" +
+                "[CLEANING, COOKING, SHOPPING, MAINTENANCE, GARBAGE, LAUNDRY, PET_CARE, PLANT_CARE, SETTLEMENT, OTHER]\n\n" +
                 "내용: \"" + content + "\"\n\n" +
                 "카테고리만 정확히 영어로 응답해주세요.";
     }
