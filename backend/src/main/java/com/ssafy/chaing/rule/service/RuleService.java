@@ -22,5 +22,4 @@ public interface RuleService {
 
     void approveLifeRule(LifeRuleApproveRequest request, Long groupUserId);
 
-    RecommendCategoryResponse recommendCategory(RecommendCategoryRequest request);
 }
