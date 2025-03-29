@@ -42,7 +42,8 @@ public enum ExceptionCode {
     S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
     S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다."),
 
-    FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다.");
+    FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다."),
+    GPT_REQUEST_FAILED("GPT_REQUEST_FAILED", "GPT 응답 처리 중 오류가 발생했습니다.");
     private final String code;
     private final String message;
 }
