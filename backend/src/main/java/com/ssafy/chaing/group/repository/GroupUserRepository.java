@@ -1,8 +1,10 @@
 package com.ssafy.chaing.group.repository;
 
 import com.ssafy.chaing.group.domain.GroupUserEntity;
+import com.ssafy.chaing.user.domain.UserEntity;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -42,10 +44,24 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
     boolean existsByGroupIdAndUserProfileImage(@Param("groupId") Long groupId,
                                                @Param("profileImage") String profileImage);
 
-    long countByGroup_Id(Long groupId);
+    @Query("""
+           SELECT DISTINCT gu.user
+           FROM GroupUserEntity gu
+           JOIN gu.user
+           WHERE gu.group.id = (
+               SELECT gu2.group.id
+               FROM GroupUserEntity gu2
+               WHERE gu2.user.id = :userId
+           )
+           """)
+    Set<UserEntity> findAllUsersInGroupByUserId(@Param("userId") Long userId);
 
-    Optional<GroupUserEntity> findByUserId(Long userId);
-
-    Optional<GroupUserEntity> findByUser_Id(Long userId);
+    @Query("""
+           SELECT gu
+           FROM GroupUserEntity gu
+           JOIN FETCH gu.group
+           WHERE gu.user.id = :userId
+           """)
+    Optional<GroupUserEntity> findByUserIdWithGroup(@Param("userId") Long userId);
 
 }
