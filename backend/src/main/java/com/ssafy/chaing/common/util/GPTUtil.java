@@ -66,6 +66,9 @@ public class GPTUtil {
             if (!response.isSuccessful()) {
                 throw new ServerException(ExceptionCode.GPT_REQUEST_FAILED);
             }
+            if (response.body() == null) {
+                throw new ServerException(ExceptionCode.GPT_REQUEST_FAILED);
+            }
             String responseBody = response.body().string();
             JSONObject responseJson = new JSONObject(responseBody);
             return responseJson
