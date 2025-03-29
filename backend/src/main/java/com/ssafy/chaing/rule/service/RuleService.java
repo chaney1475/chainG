@@ -4,9 +4,7 @@ package com.ssafy.chaing.rule.service;
 import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
-import com.ssafy.chaing.rule.controller.request.RecommendCategoryRequest;
 import com.ssafy.chaing.rule.controller.response.LifeRuleResponse;
-import com.ssafy.chaing.rule.controller.response.RecommendCategoryResponse;
 import com.ssafy.chaing.rule.dto.LifeRuleUpdateDto;
 import java.util.List;
 
