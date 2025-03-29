@@ -9,9 +9,7 @@ import com.ssafy.chaing.recommend.service.RecommendService;
 import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
-import com.ssafy.chaing.rule.controller.request.RecommendCategoryRequest;
 import com.ssafy.chaing.rule.controller.response.LifeRuleResponse;
-import com.ssafy.chaing.rule.controller.response.RecommendCategoryResponse;
 import com.ssafy.chaing.rule.dto.LifeRuleUpdateDto;
 import com.ssafy.chaing.rule.service.RuleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +36,6 @@ public class RuleController {
     private final RuleService ruleService;
     private final RecommendService recommendService;
 
-    // 생활룰 전체 페이지 생성
     @PostMapping
     public ResponseEntity<BaseResponse<LifeRuleResponse>> createLifeRule(
             @RequestBody LifeRuleFormRequest body,
