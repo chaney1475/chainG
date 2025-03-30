@@ -135,6 +135,8 @@ public class ContractServiceImpl implements ContractService {
 
         contractUserRepository.save(contractUser);
 
+        // TODO: 서약서 스마트 컨트랙트 저장 메서드를 비동기로 호출
+
         // TODO: 계약 완료시 월세 이체 잡 생성
 //        if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
 //            rentBatchService.registerNextMonthPayment(contractEntity);

@@ -70,8 +70,10 @@ dependencies {
 
     //aws 관련
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
-//    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.696'
+
+    // PDF
+    implementation 'com.itextpdf:itext7-core:7.2.4'
 
     implementation 'org.json:json:20230227'  // org.json 사용 (버전은 필요에 따라 조정)
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'

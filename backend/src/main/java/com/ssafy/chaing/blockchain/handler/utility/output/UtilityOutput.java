@@ -17,5 +17,4 @@ public class UtilityOutput {
     private BigInteger amount;
     private Boolean status;
     private String time;
-
 }
