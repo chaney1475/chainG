@@ -1,11 +1,19 @@
 package com.ssafy.chaing.blockchain.handler;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ssafy.chaing.blockchain.handler.contract.ContractHandler;
 import com.ssafy.chaing.blockchain.handler.contract.input.ContractInput;
 import com.ssafy.chaing.blockchain.handler.contract.input.LiveAccountInput;
 import com.ssafy.chaing.blockchain.handler.contract.input.PaymentInfoInput;
-import com.ssafy.chaing.blockchain.handler.contract.output.ContractOverviewOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.ContractOutput;
+import com.ssafy.chaing.blockchain.handler.contract.output.ContractOverviewOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.ContractRentOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.PaymentInfoCountOutput;
 import com.ssafy.chaing.blockchain.web3j.ContractManager;
@@ -27,29 +35,17 @@ import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tuples.generated.Tuple6;
 import org.web3j.tx.TransactionManager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class ContractHandlerTest {
 
+    private final String CONTRACT_ADDRESS = "0x7928F8BEa5E1d502eb5B882b7cab0d3e11a85e35";
     @Mock
     private Web3j web3j;
-
     @Mock
     private TransactionManager txManager;
-
     // ContractHandler가 내부적으로 의존하는 ContractManager를 모의 객체로 생성
     @Mock
     private ContractManager contractManager;
-
     private ContractHandler contractHandler;
-
-    private final String CONTRACT_ADDRESS = "0x7928F8BEa5E1d502eb5B882b7cab0d3e11a85e35";
 
     @BeforeEach
     void setUp() {
@@ -148,7 +144,8 @@ class ContractHandlerTest {
     @Test
     void testGetContractOverview() throws Exception {
         // 모의 RemoteFunctionCall 객체 생성
-        RemoteFunctionCall<Tuple3<BigInteger, String, String>> mockFunctionCall = Mockito.mock(RemoteFunctionCall.class);
+        RemoteFunctionCall<Tuple3<BigInteger, String, String>> mockFunctionCall = Mockito.mock(
+                RemoteFunctionCall.class);
         // 테스트용 dummy 결과 생성
         Tuple3<BigInteger, String, String> dummyTuple =
                 new Tuple3<>(BigInteger.ONE, "2025-01-01", "2025-12-31");
@@ -229,10 +226,10 @@ class ContractHandlerTest {
                 .thenReturn(remoteCall);
 
         // 실제 메서드 호출
-        String result = contractHandler.addLiveAccount(BigInteger.ONE, liveAccountInput);
+        boolean result = contractHandler.addLiveAccount(BigInteger.ONE, liveAccountInput);
 
         // 결과 검증: TransactionReceipt.isStatusOK()가 true이므로 "addLiveAccount success"가 반환되어야 합니다.
-        assertEquals("addLiveAccount success", result);
+        assertTrue(result);
     }
 }
 
