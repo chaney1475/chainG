@@ -45,7 +45,7 @@ public class S3Util {
                             null)
                     );
         } catch (IOException e) {
-            throw new FileStorageException(ExceptionCode.S3_UPLOAD_FAILED);
+            throw new ServerException(ExceptionCode.S3_UPLOAD_FAILED);
         }
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
@@ -95,13 +95,10 @@ public class S3Util {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // InputStream은 PutObjectRequest 내부에서 처리되므로 명시적으로 닫을 필요는 없어 보이지만,
-        // 안전하게 하려면 try-with-resources 사용 고려:
-        // try (InputStream inputStream = new ByteArrayInputStream(pdfBytes)) { ... }
     }
 
     /**
-     * S3 내에서 고유한 파일 키(경로 포함)를 생성합니다. (이 메소드는 변경 없음)
+     * S3 내에서 고유한 파일 키(경로 포함)를 생성합니다.
      * 예: portfolios/contracts/contract-123-2025-03-27T12-34-56Z-uuid.pdf
      */
     private String generateUniqueKey(String prefix, String baseName) {
