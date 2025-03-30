@@ -10,3 +10,15 @@ export const ButtonVariant = {
 } as const
 
 export type ButtonVariant = keyof typeof ButtonVariant
+
+export interface CardItem {
+  url: string
+  image: string
+  title: string
+  description: string
+}
+export interface SnapPoints {
+  MIN: number
+  MID: number
+  MAX: number
+}
