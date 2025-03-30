@@ -1,10 +1,11 @@
 package com.ssafy.chaing.blockchain.handler.utility;
 
-import com.ssafy.chaing.blockchain.handler.rent.output.RentOutput;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.handler.utility.output.UtilityOutput;
 import com.ssafy.chaing.blockchain.provider.CustomGasProvider;
 import com.ssafy.chaing.blockchain.web3j.UtilityManager;
+import com.ssafy.chaing.common.exception.BadRequestException;
+import com.ssafy.chaing.common.exception.ExceptionCode;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class UtilityHandler {
 
     private final String utilityAddress;
 
-    private final UtilityManager utiliyManager;
+    private final UtilityManager utilityManager;
 
     @Autowired
     public UtilityHandler(Web3j web3j, TransactionManager txManager,
@@ -32,15 +33,15 @@ public class UtilityHandler {
         this.txManager = txManager;
         this.utilityAddress = utilityAddress;
         // ContractManager 인스턴스 초기화
-        this.utiliyManager = UtilityManager.load(utilityAddress, web3j, txManager,
+        this.utilityManager = UtilityManager.load(utilityAddress, web3j, txManager,
                 new CustomGasProvider());
     }
 
 
-    public String addContract(UtilityInput input) throws Exception {
+    public boolean addContract(UtilityInput input) {
         try {
             // 컨트랙트의 addContract 함수 호출 후 트랜잭션 해시 반환
-            TransactionReceipt receipt = utiliyManager.addTransaction(
+            TransactionReceipt receipt = utilityManager.addTransaction(
                     input.getId(),
                     input.getAccountId(),
                     input.getMonth(),
@@ -51,25 +52,25 @@ public class UtilityHandler {
                     input.getTime()
             ).send();
 
-            return "addContract success";
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception(e.getMessage());
+            return false;
         }
     }
 
-    public List<?> getAllTransactions() throws Exception {
+    public List<?> getAllTransactions() {
         try {
-            return utiliyManager.getAllTransactions().send();
+            return utilityManager.getAllTransactions().send();
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new BadRequestException(ExceptionCode.TRANSFER_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
     // 변환된 DTO 리스트 형태로 반환하도록 수정된 메서드
-    public List<UtilityOutput> getTransactionsByAccountId(BigInteger accountId) throws Exception {
+    public List<UtilityOutput> getTransactionsByAccountId(BigInteger accountId) {
         try {
-            List<?> rawList = utiliyManager.getTransactionsByAccount(accountId).send();
+            List<?> rawList = utilityManager.getTransactionsByAccount(accountId).send();
             // 각 항목을 RentTransactionDTO로 변환
             List<UtilityOutput> dtoList = new ArrayList<>();
             for (Object obj : rawList) {
@@ -92,7 +93,7 @@ public class UtilityHandler {
             }
             return dtoList;
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new BadRequestException(ExceptionCode.TRANSFER_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 }
