@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.chaing.common.exception.ExceptionCode;
-import com.ssafy.chaing.common.exception.FileStorageException;
+import com.ssafy.chaing.common.exception.ServerException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
