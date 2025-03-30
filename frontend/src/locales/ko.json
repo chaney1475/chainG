@@ -88,7 +88,7 @@
   },
   "inviteCode": {
     "title": "방 참여하기",
-    "description": "초대 코드를\n입력해주세요",
+    "header": "초대 코드를\n입력해주세요",
     "inviteCode": {
       "label": "초대 코드",
       "placeholder": "초대 코드를 입력해주세요",
@@ -98,14 +98,49 @@
       }
     }
   },
+  "createGroup": {
+    "title": "방 만들기",
+    "header": "함께 살 방을\n만들어볼까요?",
+    "maxParticipants": {
+      "label": "참여인원"
+    },
+    "groupName": {
+      "label": "방 이름",
+      "placeholder": "방 이름을 입력해주세요",
+      "error": {
+        "required": "방 이름을 입력해주세요",
+        "maxLength": "20자 이내"
+      }
+    },
+    "confirm": "방 만들기"
+  },
   "createProfile": {
     "title": "프로필 설정",
+    "header": "프로필을\n설정해주세요",
     "description": "원하는 프로필 이미지를 선택해주세요",
+    "profileImage": {
+      "error": {
+        "required": "프로필 이미지 중복"
+      }
+    },
     "nickname": {
       "label": "닉네임",
-      "placeholder": "닉네임을 입력해주세요"
+      "placeholder": "닉네임을 입력해주세요",
+      "error": {
+        "required": "닉네임을 입력해주세요",
+        "duplicate": "닉네임 중복"
+      }
     },
     "confirm": "입주하기"
+  },
+  "shareInviteCode": {
+    "title": "초대하기",
+    "header": "방 만드신 걸 축하드려요!",
+    "description": "같이 살 친구들을 초대해볼까요?",
+    "inviteCode": {
+      "label": "초대 코드"
+    },
+    "confirm": "다음"
   },
   "next": "다음",
   "prev": "이전",

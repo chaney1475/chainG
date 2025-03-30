@@ -55,13 +55,13 @@ export function StartPage() {
 
   const cardItems: CardItem[] = [
     {
-      url: '/group/create/createRoom',
+      url: '/group/create',
       image: '/images/group/group-create.svg',
       title: t('onboarding.create.title'),
       description: t('onboarding.create.description'),
     },
     {
-      url: '/group/join/inviteCode',
+      url: '/group/join',
       image: '/images/group/group-join.svg',
       title: t('onboarding.join.title'),
       description: t('onboarding.join.description'),
