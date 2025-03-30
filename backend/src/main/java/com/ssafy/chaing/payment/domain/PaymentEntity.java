@@ -46,10 +46,10 @@ public class PaymentEntity extends BaseEntity {
     @JoinColumn(name = "contract_id", nullable = false)
     private ContractEntity contract;
 
-    @Column(name = "month", nullable = false)
+    @Column(name = "payment_month", nullable = false)
     private int month; // YYYYMM 형식 (예: 202503)
 
-    @Column(name = "week", nullable = true)
+    @Column(name = "payment_week", nullable = true)
     private Integer week; // 공과금인 경우 주차 값 저장
 
     @Column(name = "fee_type", nullable = false)

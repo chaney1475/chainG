@@ -21,6 +21,7 @@ public enum ExceptionCode {
     CONTRACT_ALREADY_EXIST("CONTRACT_ALREADY_EXIST", "이미 계약서가 존재합니다."),
     CONTRACT_NOT_FOUND("CONTRACT_NOT_FOUND", "계약서가 존재하지 않습니다."),
     CARD_NOT_FOUND("CARD_NOT_FOUND", "카드가 존재하지 않습니다."),
+    CONTRACT_USER_NOT_FOUND("CONTRACT_USER_NOT_FOUND", "사용자의 계약 정보가 존재하지 않습니다."),
 
     INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 틀렸습니다."),
     INVALID_TOKEN("EXPIRED_ACCESS_TOKEN", "로그인에 실패하였습니다."),
@@ -31,7 +32,29 @@ public enum ExceptionCode {
     DUTY_NOT_FOUND("DUTY_NOT_FOUND", "당번이 존재하지 않습니다."),
     USER_NOT_IN_GROUP("USER_NOT_IN_GROUP", "해당 유저가 그룹에 속해 있지 않습니다."),
 
-    USER_PAYMENT_NOT_FOUND("USER_PAYMENT_NOT_FOUND", "결제 정보에 해당하는 사용자가 없습니다.");
+    USER_PAYMENT_NOT_FOUND("USER_PAYMENT_NOT_FOUND", "결제 정보에 해당하는 사용자가 없습니다."),
+    LIVING_ACCOUNT_ALREADY_EXIST("LIVING_ACCOUNT_ALREADY_EXIST", "이미 계좌가 존재합니다."),
+    RENT_ACCOUNT_ALREADY_EXIST("RENT_ACCOUNT_ALREADY_EXIST", "공과금/월세 계좌번호가 존재하지 않습니다."),
+
+    INVALID_YEAR("INVALID_YEAR", "입력된 '년도'가 범위를 초과하였습니다."),
+    INVALID_MONTH("INVALID_MONTH", "입력된 '월'이 범위를 초과하였습니다."),
+
+    S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
+    S3_DELETE_FAILED("S3_DELETE_FAILED", "파일 삭제에 실패하였습니다."),
+
+    CONTRACT_TRANSACTION_REGISTRATION_FAILED("CONTRACT_TRANSACTION_REGISTRATION_FAILED", "서약서 스마트 컨트랙트 등록 중 오류가 발생하였습니다."),
+    CONTRACT_TRANSACTION_RETRIEVE_FAILED("CONTRACT_TRANSACTION_RETRIEVE_FAILED", "서약서 스마트 컨트랙트 조회 중 오류가 발생하였습니다."),
+    LIVE_ACCOUNT_REGISTRATION_FAILED("LIVE_ACCOUNT_REGISTRATION_FAILED", "스마트 컨트랙트에 생활비 계좌 등록 중 오류가 발생하였습니다."),
+    LIVE_ACCOUNT_RETRIEVE_FAILED("LIVE_ACCOUNT_RETRIEVE_FAILED", "스마트 컨트랙트에 생활비 계좌 조회 중 오류가 발생하였습니다."),
+    TRANSFER_TRANSACTION_REGISTRATION_FAILED("TRANSFER_TRANSACTION_REGISTRATION_FAILED", "이체 내역 스마트 컨트랙트 등록 중 오류가 발생하였습니다."),
+    TRANSFER_TRANSACTION_RETRIEVE_FAILED("TRANSFER_TRANSACTION_RETRIEVE_FAILED", "이체 내역 스마트 컨트랙트 조회 중 오류가 발생하였습니다."),
+
+    PDF_GENERATION_FAILED("PDF_GENERATION_FAILED", "PDF 생성 중 오류가 발생하였습니다."),
+
+    TRANSFER_PORTFOLIO_IS_NULL("TRANSFER_PORTFOLIO_IS_NULL", "이체에 대한 정보가 비어있습니다."),
+    FINTECH_TRANSFER_FAILED("FINTECH_TRANSFER_FAILED", "핀테크 송금에 실패하였습니다."),
+
+    GPT_REQUEST_FAILED("GPT_REQUEST_FAILED", "GPT 응답 처리 중 오류가 발생했습니다.");
 
     private final String code;
     private final String message;

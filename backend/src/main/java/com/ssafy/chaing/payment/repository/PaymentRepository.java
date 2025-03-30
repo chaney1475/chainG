@@ -24,6 +24,8 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
     List<PaymentEntity> findAllByContractIdAndFeeType(Long contractId, FeeType feeType);
 
+    List<PaymentEntity> findAllByContractIdAndFeeTypeAndMonthOrderByWeekDesc(Long contractId, FeeType feeType, int month);
+
     @Query("SELECT p.retryCount FROM PaymentEntity p WHERE p.id = :id")
     int findRetryCount(Long id);
 

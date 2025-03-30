@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MonthPaymentIDTO {
+public class MonthPaymentDTO {
     private String month;
     private List<Long> paidUserIds;
     private List<Long> debtUserIds;

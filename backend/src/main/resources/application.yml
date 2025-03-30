@@ -11,7 +11,7 @@ spring:
   config:
     import:
       - optional:file:.env[.properties] #ENV ?? ??
-      - aws-parameterstore:/chaing/web3j/
+      - aws-parameterstore:/chaing/
 
   datasource:
     url: ${DATASOURCE_URL}
@@ -67,12 +67,22 @@ spring:
     jdbc:
       initialize-schema: always
 
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+
+server:
+  shutdown: graceful
+
 application:
   security:
     jwt:
       secret-key: ${APPLICATION_SECURITY_JWT_SECRET_KEY}
       access-token-expiration: ${APPLICATION_SECURITY_JWT_ACCESS_TOKEN_EXPIRATION}
       refresh-token-expiration: ${APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION}
+
+firebase:
+  project-name: ${FIREBASE_PROJECT_NAME}
+  service-account-base64: ${FIREBASE_SERVICE_ACCOUNT}
 
 app:
   cors:
@@ -111,6 +121,13 @@ ssafy:
     user-key: ${FINTECH_USER_KEY}
     card-unique-no: ${FINTECH_CARD_UNIQUE_NO}
     base-url: ${FINTECH_BASEURL}
+
+openai:
+  api:
+    key: ${GPT_API_KEY}
+    url: ${GPT_URL}
+  model: ${GPT_MODEL}
+
 #
 #logging:
 #  level:
