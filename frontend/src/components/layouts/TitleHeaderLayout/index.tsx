@@ -5,6 +5,7 @@ import { ButtonVariant } from '@/types/ui'
 export function TitleHeaderLayout({
   title = '',
   header,
+  description,
   label,
   children,
   onClick,
@@ -12,6 +13,7 @@ export function TitleHeaderLayout({
 }: {
   title?: string
   header: string
+  description?: string
   label?: string
   children: React.ReactNode
   onClick: () => void
@@ -22,7 +24,10 @@ export function TitleHeaderLayout({
       <Container>
         <TopHeader title={title} />
         <Main>
-          <TitleHeader title={header} />
+          <TitleHeader
+            title={header}
+            description={description}
+          />
           {children}
         </Main>
         <BottomContainer>
