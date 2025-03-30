@@ -58,7 +58,7 @@ const reducer = (
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'group'],
+  whitelist: ['auth', 'group', 'user'],
 }
 
 const persistedReducer = persistReducer(persistConfig, reducer)
