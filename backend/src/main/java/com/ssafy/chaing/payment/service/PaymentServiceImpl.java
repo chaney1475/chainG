@@ -11,6 +11,9 @@ import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
+import com.ssafy.chaing.notification.service.command.NotificationCommand;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
@@ -59,6 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ContractUserRepository contractUserRepository;
     private final UserPaymentRepository userPaymentRepository;
     private final FintechService fintechService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -123,6 +127,13 @@ public class PaymentServiceImpl implements PaymentService {
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
+
+        notificationService.sendNotification(
+                transferInfo.getUserId(),
+                "송금 완료",
+                "임대인에게 " + transferInfo.getBalance() + "원이 송금되었습니다.",
+                NotificationCategory.PAYMENT
+        );
     }
 
     @Override
@@ -146,6 +157,13 @@ public class PaymentServiceImpl implements PaymentService {
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
+
+        notificationService.sendNotification(
+                transferInfo.getUserId(),
+                "입금 완료",
+                "생활비 계좌로 " + transferInfo.getBalance() + "원이 입금되었습니다.",
+                NotificationCategory.PAYMENT
+        );
     }
 
     @Override
@@ -405,5 +423,21 @@ public class PaymentServiceImpl implements PaymentService {
         month = String.valueOf(Integer.parseInt(month));
         return year + "-" + month;
     }
+
+//    // 결제 알림 공통 메서드
+//    private void sendPaymentNotification(Long userId, String title, String content) {
+//        userRepository.findById(userId).ifPresent(user -> {
+//            if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
+//                notificationService.publishNotification(
+//                        NotificationCommand.builder()
+//                                .userId(user.getId())
+//                                .title(title)
+//                                .content(content)
+//                                .category(NotificationCategory.PAYMENT)
+//                                .build()
+//                );
+//            }
+//        });
+//    }
 
 }
