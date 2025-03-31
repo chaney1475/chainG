@@ -118,9 +118,9 @@ export function StartPage() {
         open={isBottomSheetOpen}
         onOpenChange={setIsBottomSheetOpen}
         snapPoints={{
-          MIN: 0.1, // 최소값
-          MID: 0.5, // 기본값
-          MAX: 0.5, // 세로길이
+          MIN: 0.1,
+          MID: 0.5,
+          MAX: 0.5,
         }}>
         <HeaderContainer>{t('onboarding.title')}</HeaderContainer>
         <CardButton cardItems={cardItems} />

@@ -9,4 +9,7 @@ export const colors = {
     confirm: '#3bce6e',
   },
   border: '#d9d9d9',
+  update: '#ffc107',
+  create: '#3bce6e',
+  delete: '#ff9494',
 }

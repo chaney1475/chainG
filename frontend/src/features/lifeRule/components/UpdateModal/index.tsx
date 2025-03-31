@@ -22,13 +22,10 @@ interface ModalProps {
   confirmText?: string
 }
 
-export default function Modal({
+export default function UpdateModal({
   open,
   onOpenChange,
   onConfirm,
-  title = '생활규칙 수정 불가',
-  description = '기존에 수정된 항목이 존재합니다\n승인 후에 수정할 수 있습니다',
-  confirmText = '확인',
 }: ModalProps) {
   const { t } = useTranslation()
   return (
@@ -38,21 +35,19 @@ export default function Modal({
       <Dialog.Portal>
         <Dialog.Overlay css={overlayStyle} />
         <Dialog.Content css={contentStyle}>
-          <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
+          <Dialog.Title css={titleStyle}>
+            {t('lifeRule.modal.title')}
+          </Dialog.Title>
           <Dialog.Description css={descStyle}>
-            {description.split('\n').map((line, idx) => (
-              <p key={idx}>{line}</p>
-            ))}
+            {t('lifeRule.modal.description')
+              .split('\n')
+              .map((line, idx) => (
+                <p key={idx}>{line}</p>
+              ))}
           </Dialog.Description>
           <ButtonWrapper>
-            <Dialog.Close asChild>
-              <ConfirmButton
-                label={t('cancel')}
-                variant={'prev'}
-              />
-            </Dialog.Close>
             <ConfirmButton
-              label={confirmText}
+              label={t('lifeRule.modal.confirmText')}
               variant={'next'}
               onClick={onConfirm}
             />

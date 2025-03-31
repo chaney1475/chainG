@@ -22,7 +22,6 @@ export function SignUpPage() {
   const router = useRouter()
   const dispatch = useDispatch()
   const signUp = useAppSelector((state) => state.auth.signUpRequest)
-  const emailAddress = signUp?.emailAddress
   const {
     register,
     handleSubmit,
@@ -30,7 +29,7 @@ export function SignUpPage() {
     formState: { errors },
   } = useForm<SignupForm>({
     defaultValues: {
-      emailAddress: emailAddress || '',
+      emailAddress: signUp?.emailAddress || '',
     },
   })
   const currentEmail = watch('emailAddress')
@@ -41,9 +40,11 @@ export function SignUpPage() {
 
   useEffect(() => {
     return () => {
-      dispatch(setSignUpEmail(currentEmail))
+      if (currentEmail) {
+        dispatch(setSignUpEmail(currentEmail))
+      }
     }
-  }, [])
+  }, [currentEmail, dispatch])
   return (
     <TitleHeaderLayout
       header={t('signUp.email.title')}

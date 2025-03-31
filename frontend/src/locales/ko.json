@@ -180,6 +180,23 @@
       "title": "생활 규칙",
       "updateMessage": "생활 규칙이 수정되었어요. 클릭해서 확인해주세요!"
     },
+    "confirm": "입주하기"
+  },
+  "lifeRule": {
+    "title": "생활 규칙",
+    "updateTitle": "생활규칙 수정",
+    "updateApproveTitle": "생활규칙 수정승인",
+    "updateMessage": "생활 규칙이 수정되었어요. 클릭해서 확인해주세요!",
+    "modal": {
+      "title": "생활규칙 수정 불가",
+      "description": "기존에 수정된 항목이 존재합니다\n승인 후에 수정할 수 있습니다",
+      "confirmText": "확인"
+    },
+    "updateModal": {
+      "title": "생활규칙 수정완료",
+      "description": "생활규칙 수정을 완료하시나요?\n완료를 누르면 수정 완료이 되니 신중히 결정해 주세요!",
+      "confirmText": "확인"
+    },
 
     "home": "홈",
     "contract": "계약",

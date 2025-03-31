@@ -5,7 +5,7 @@ import { memo } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { Container, HeaderButton } from './styles'
+import { Container, HeaderButton, Title } from './styles'
 
 interface TopHeaderProps {
   title: string
@@ -38,7 +38,7 @@ export const TopHeader = memo(function TopHeader({
           height={24}
         />
       </HeaderButton>
-      <div>{title}</div>
+      <Title>{title}</Title>
       <Image
         onClick={handleUpdateClick}
         src="/icons/update.svg"

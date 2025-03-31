@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 
 export const InputContainer = styled.div`
   position: relative;
-  margin-bottom: 1rem;
   width: 100%;
 `
 
@@ -29,11 +28,11 @@ export const ValidationContainer = styled.div`
 
 export const StyledInput = styled.input`
   width: 100%;
-  padding: 1rem;
+  padding: 0.75rem;
   border: 1px solid ${({ theme }) => theme.color.border};
-  border-radius: 1rem;
+  border-radius: 8px;
   ${({ theme }) => theme.typography.styles.default};
-  font-size: 1rem;
+  font-size: 14px;
   background: ${({ theme }) => theme.color.secondary};
   transition: all 0.2s ease-in-out;
 

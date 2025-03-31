@@ -9,7 +9,7 @@ export const ButtonVariant = {
   prev: 'prev',
 } as const
 
-export type ButtonVariant = keyof typeof ButtonVariant
+export type ButtonVariant = 'next' | 'disabled' | 'prev' | 'reject' | 'approve'
 
 export interface CardItem {
   url: string

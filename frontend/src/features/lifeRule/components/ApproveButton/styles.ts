@@ -7,19 +7,29 @@ interface StyledButtonProps {
   variant: ButtonVariant
 }
 
-export const StyledButton = styled.button<StyledButtonProps>`
-  padding: 20px;
+export const ButtonContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  width: 100%;
   margin: 20px 0;
+`
+
+export const StyledButton = styled.button<StyledButtonProps>`
+  flex: 1;
+  padding: 20px;
   border-radius: 16px;
   border: none;
+  font-size: 16px;
   text-align: center;
-  width: 100%;
-
-  ${({ theme }) => theme.typography.styles.button};
 
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
     switch (variant) {
-      case 'next':
+      case 'reject':
+        return `
+         background-color: ${theme.color.secondary};
+          color: ${theme.color.text.low};   
+        `
+      case 'approve':
         return `
           background-color: ${theme.color.primary};
           color: white;
@@ -29,11 +39,6 @@ export const StyledButton = styled.button<StyledButtonProps>`
           background-color: ${theme.color.border};
           color: ${theme.color.text.disabled};
           cursor: not-allowed;
-        `
-      case 'prev':
-        return `
-          background-color: ${theme.color.secondary};
-          color: ${theme.color.text.low};
         `
       default:
         return ''
