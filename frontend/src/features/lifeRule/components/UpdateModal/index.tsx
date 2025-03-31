@@ -22,7 +22,7 @@ interface ModalProps {
   confirmText?: string
 }
 
-export default function UpdateModal({
+export default function Modal({
   open,
   onOpenChange,
   onConfirm,
@@ -45,6 +45,12 @@ export default function UpdateModal({
             ))}
           </Dialog.Description>
           <ButtonWrapper>
+            <Dialog.Close asChild>
+              <ConfirmButton
+                label={t('cancel')}
+                variant={'prev'}
+              />
+            </Dialog.Close>
             <ConfirmButton
               label={confirmText}
               variant={'next'}
