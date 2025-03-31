@@ -7,7 +7,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
-import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
+import { LifeRuleUpdateVariant, UpdateLifeRule } from '@/types/lifeRule'
 
 import {
   CatrgoryIcon,
@@ -18,8 +18,8 @@ import {
 } from './styles'
 
 interface LifeRuleUpdateApproveListItemProps {
-  lifeRule: LifeRule
-  variant: LifeRuleUpdateVariant
+  lifeRule: UpdateLifeRule
+  variant: LifeRuleUpdateVariant | string
 }
 
 export const LifeRuleUpdateApproveListItem = ({
@@ -55,7 +55,7 @@ export const LifeRuleUpdateApproveListItem = ({
   }
 
   return (
-    <ItemContainer variant={variant}>
+    <ItemContainer variant={variant as LifeRuleUpdateVariant}>
       <CatrgoryIcon>
         <Image
           src={

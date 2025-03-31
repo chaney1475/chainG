@@ -14,7 +14,11 @@ import { TopHeader } from '@/components/TopHeader'
 import { lifeRuleList } from '@/constants/lifeRuleList'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { Container } from '@/styles/styles'
-import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
+import {
+  LifeRule,
+  LifeRuleUpdateVariant,
+  UpdateLifeRule,
+} from '@/types/lifeRule'
 
 import { LifeRuleUpdateListItem } from '../components/LifeRuleUpdateListItem'
 import { ConfirmContainer, FullMain, LifeRuleUpdateList } from './styles'
@@ -25,7 +29,7 @@ type FormValues = {
     variant: LifeRuleUpdateVariant
     actionType: LifeRuleUpdateVariant
     content: string
-    rule?: LifeRule
+    rule: LifeRule
   }>
 }
 
@@ -40,9 +44,10 @@ export function LifeRuleUpdatePage() {
     defaultValues: {
       items: lifeRules.map((rule) => ({
         id: rule.id,
-        variant: rule.actionType as LifeRuleUpdateVariant,
-        actionType: rule.actionType as LifeRuleUpdateVariant,
+        variant: 'DEFAULT' as LifeRuleUpdateVariant,
+        actionType: 'DEFAULT' as LifeRuleUpdateVariant,
         content: rule.content,
+        rule,
       })),
     },
   })
@@ -57,19 +62,19 @@ export function LifeRuleUpdatePage() {
   const [isUpdateMode, setIsUpdateMode] = useState(false)
 
   useEffect(() => {
-    if (lifeRules?.lifeRules?.length > 0) {
+    if (lifeRules?.length > 0) {
       methods.setValue(
         'items',
-        lifeRules.lifeRules.map((rule: LifeRule, index: number) => ({
-          id: index,
+        lifeRules.map((rule: LifeRule) => ({
+          id: rule.id,
           rule,
           variant: 'DEFAULT' as LifeRuleUpdateVariant,
           actionType: 'DEFAULT' as LifeRuleUpdateVariant,
-          content: '',
+          content: rule.content,
         })),
       )
     }
-  }, [lifeRules?.lifeRules, methods])
+  }, [lifeRules, methods])
 
   const handleVariantChange = (
     id: number,
@@ -107,7 +112,7 @@ export function LifeRuleUpdatePage() {
       if (itemIndex !== -1) {
         update(itemIndex, {
           ...currentItem,
-          variant: 'DEFAULT',
+          variant: 'DEFAULT' as LifeRuleUpdateVariant,
         })
         setIsUpdated(true)
       }
@@ -139,7 +144,7 @@ export function LifeRuleUpdatePage() {
 
     const updatedItems = items.map((item) => ({
       content: item.content,
-      category: item.rule?.category || '',
+      category: item.rule.category,
       actionType: item.actionType,
     }))
 
@@ -157,12 +162,11 @@ export function LifeRuleUpdatePage() {
       <TopHeader title={t('lifeRule.updateTitle')} />
       <FormProvider {...methods}>
         <FullMain>
-          {'이동현씨의 역작 '}
           <LifeRuleUpdateList>
             {fields.map((field, index) => (
               <LifeRuleUpdateListItem
                 key={field.id}
-                lifeRule={field.rule || lifeRuleList[0]}
+                lifeRule={field.rule}
                 variant={field.variant}
                 actionType={field.actionType}
                 setVariant={(variant) => handleVariantChange(field.id, variant)}

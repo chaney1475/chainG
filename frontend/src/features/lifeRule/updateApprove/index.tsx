@@ -14,51 +14,52 @@ import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/Li
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setUpdateLifeRules } from '@/store/slices/lifeRuleSlice'
 import { Container } from '@/styles/styles'
-import { LifeRuleUpdateVariant } from '@/types/lifeRule'
+
+// import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 import { ApproveButton } from '../components/ApproveButton'
 import { ConfirmContainer } from '../update/styles'
 import { ApproveProfileContainer, FullMain, LifeRuleUpdateList } from './styles'
 
-// 예시 데이터
-const sampleItems: Array<{
-  id: number
-  rule: (typeof lifeRuleList)[0]
-  variant: LifeRuleUpdateVariant
-}> = [
-  {
-    id: 1,
-    rule: {
-      ...lifeRuleList[0],
-      content: '토요일은 대청소의 날',
-    },
-    variant: 'DEFAULT',
-  },
-  {
-    id: 2,
-    rule: {
-      ...lifeRuleList[0],
-      content: '미리미의 생활규칙',
-    },
-    variant: 'UPDATE',
-  },
-  {
-    id: 3,
-    rule: {
-      ...lifeRuleList[0],
-      content: '새로운 생활규칙',
-    },
-    variant: 'CREATE',
-  },
-  {
-    id: 4,
-    rule: {
-      ...lifeRuleList[0],
-      content: '삭제할 생활규칙',
-    },
-    variant: 'DELETE',
-  },
-]
+// // 예시 데이터
+// const sampleItems: Array<{
+//   id: number
+//   rule: (typeof lifeRuleList)[0]
+//   variant: LifeRuleUpdateVariant
+// }> = [
+//   {
+//     id: 1,
+//     rule: {
+//       ...lifeRuleList[0],
+//       content: '토요일은 대청소의 날',
+//     },
+//     variant: 'DEFAULT',
+//   },
+//   {
+//     id: 2,
+//     rule: {
+//       ...lifeRuleList[0],
+//       content: '미리미의 생활규칙',
+//     },
+//     variant: 'UPDATE',
+//   },
+//   {
+//     id: 3,
+//     rule: {
+//       ...lifeRuleList[0],
+//       content: '새로운 생활규칙',
+//     },
+//     variant: 'CREATE',
+//   },
+//   {
+//     id: 4,
+//     rule: {
+//       ...lifeRuleList[0],
+//       content: '삭제할 생활규칙',
+//     },
+//     variant: 'DELETE',
+//   },
+// ]
 
 export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
@@ -106,7 +107,6 @@ export function LifeRuleUpdateApprovePage() {
           {updateLifeRules.map((item) => (
             <LifeRuleUpdateApproveListItem
               key={item.id}
-              content={item.content}
               lifeRule={item || lifeRuleList[0]}
               variant={item?.actionType || 'DEFAULT'}
             />
