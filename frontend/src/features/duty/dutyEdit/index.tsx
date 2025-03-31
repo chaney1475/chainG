@@ -1,46 +1,55 @@
 'use client'
 
-import React from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useRouter } from 'next/navigation'
+import { BottomSheet, ConfirmButton, TopHeader } from '@/components'
+import { userList } from '@/constants/userList'
 
-import { ConfirmButton, InputBox, TopHeader } from '@/components'
+import { DutySelectContent } from './components/DutySelectContent'
+import { DutySelector } from './components/DutySelector'
+import { TaskSelector } from './components/TaskSelector'
+import { TimeSelector } from './components/TimeSelector'
+import { WeekSelector } from './components/WeekSelector'
+import { BottomContainer, Container, FullMain } from './styles'
 
-import { Container, FullMain, Navigator } from './styles'
-
-// 내 하위에 있는 style을 쓰겠다
-
-interface LoginForm {
-  emailAddress: string
-  password: string
-}
-
-export function DutyList() {
+export function DutyEdit() {
   const { t } = useTranslation()
-  const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginForm>()
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([])
 
-  const onSubmit = async (data: LoginForm): Promise<void> => {
-    try {
-      // TODO: 실제 로그인 API 호출 구현
-      console.log('로그인 데이터:', data)
-      router.push('/')
-    } catch (error) {
-      console.error('로그인 실패:', error)
-    }
+  const handleSaveUsers = (selected: number[]) => {
+    setSelectedUsers(selected)
+    setIsBottomSheetOpen(false)
   }
 
+  const sizeOfUserList = userList.length <= 4 ? userList.length : 4
   return (
     <Container>
       <TopHeader title={t('duty.title')} />
-      <FullMain></FullMain>
-      <Navigator></Navigator>
+      <FullMain>
+        <WeekSelector />
+        <TimeSelector />
+        <TaskSelector />
+        <DutySelector setIsBottomSheetOpen={setIsBottomSheetOpen} />
+        <BottomSheet
+          open={isBottomSheetOpen}
+          onOpenChange={setIsBottomSheetOpen}
+          snapPoints={{
+            MIN: 0.1,
+            MID: 29 / 100 + (9 / 92) * sizeOfUserList,
+            MAX: 29 / 100 + (9 / 92) * sizeOfUserList,
+          }}>
+          <DutySelectContent
+            userList={userList}
+            selectedUsers={selectedUsers}
+            onConfirm={handleSaveUsers}
+          />
+        </BottomSheet>
+      </FullMain>
+      <BottomContainer>
+        <ConfirmButton label="저장" />
+      </BottomContainer>
     </Container>
   )
 }

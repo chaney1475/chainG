@@ -7,17 +7,22 @@ import { useRouter } from 'next/navigation'
 
 import { IconButton } from '@/components/IconButton'
 import '@/styles/styles'
+import { DutyWeekList } from '@/types/duty'
 
 import { WeekSelector } from '../WeekSelector'
 import { Container, TextContainer, TopContainer } from './styles'
 
-export function WeekList() {
+interface WeekListProps {
+  dutyList: DutyWeekList
+}
+
+export function WeekList({ dutyList }: WeekListProps) {
   const { t } = useTranslation()
   const router = useRouter()
   const week = 'second'
 
   const handleClick = () => {
-    router.push('/duty/schedule/add')
+    router.push('/duty/edit')
   }
 
   return (
@@ -34,7 +39,7 @@ export function WeekList() {
         </TextContainer>
       </TopContainer>
 
-      <WeekSelector />
+      <WeekSelector dutyList={dutyList} />
     </Container>
   )
 }

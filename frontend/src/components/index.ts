@@ -1,4 +1,5 @@
 export { ConfirmButton } from './ConfirmButton'
+export { ToggleSwitch } from './ToggleSwitch'
 export { InputBox } from './InputBox'
 export { TitleHeader } from './TitleHeader'
 export { TopHeader } from './TopHeader'

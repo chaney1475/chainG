@@ -7,5 +7,4 @@ export const Container = styled.div`
   justify-content: space-between;
   align-items: start;
   width: 100%;
-  background-color: ${({ theme }) => theme.color.background.white};
 `
