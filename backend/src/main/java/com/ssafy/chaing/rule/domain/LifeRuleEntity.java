@@ -13,7 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.List;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,10 +39,26 @@ public class LifeRuleEntity extends BaseEntity {
     private GroupEntity group;
 
     @OneToMany(mappedBy = "lifeRule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LifeRuleItemEntity> items;
+    private Set<LifeRuleItemEntity> items;
 
     @Column(name = "change_request_id", nullable = true)
-    private Long changeRequestId;  // 현재 적용되지 않은 변경 요청의 ID (승인 대기 상태)
+    private Long changeRequestId;
 
+    @OneToMany(mappedBy = "lifeRule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LifeRuleUserEntity> lifeRuleUsers;
+
+    public void setItems(Set<LifeRuleItemEntity> items) {
+        this.items = items;
+        for (LifeRuleItemEntity item : items) {
+            item.assignToLifeRule(this);
+        }
+    }
+
+    public void setLifeRuleUsers(Set<LifeRuleUserEntity> lifeRuleUsers) {
+        this.lifeRuleUsers = lifeRuleUsers;
+         for (LifeRuleUserEntity user : lifeRuleUsers) {
+             user.settingLifeRule(this);
+         }
+    }
 
 }

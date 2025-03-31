@@ -1,0 +1,31 @@
+package com.ssafy.chaing.rule.repository;
+
+import com.ssafy.chaing.rule.domain.ChangeRequestStatus;
+import com.ssafy.chaing.rule.domain.LifeRuleChangeRequestEntity;
+import com.ssafy.chaing.rule.domain.LifeRuleEntity;
+import jakarta.persistence.LockModeType;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface LifeRuleChangeRequestRepository extends JpaRepository<LifeRuleChangeRequestEntity, Long> {
+
+    Optional<LifeRuleChangeRequestEntity> findByLifeRuleAndStatus(LifeRuleEntity lifeRule, ChangeRequestStatus status);
+
+    @EntityGraph(attributePaths = {"changeItems"})
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+           SELECT r
+           FROM LifeRuleChangeRequestEntity r
+           WHERE r.lifeRule = :lifeRule
+             AND r.status = :status
+           """)
+    Optional<LifeRuleChangeRequestEntity> findWithLockByLifeRuleAndStatus(
+            @Param("lifeRule") LifeRuleEntity lifeRule,
+            @Param("status") ChangeRequestStatus status);
+
+    Optional<LifeRuleChangeRequestEntity> findByLifeRule(LifeRuleEntity lifeRule);
+}

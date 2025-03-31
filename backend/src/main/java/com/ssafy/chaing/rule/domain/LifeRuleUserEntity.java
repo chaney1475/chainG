@@ -1,6 +1,6 @@
 package com.ssafy.chaing.rule.domain;
 
-import com.ssafy.chaing.common.domain.BaseEntity;
+import com.ssafy.chaing.user.domain.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,43 +9,42 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLRestriction;
 
 @Getter
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction(value = "is_deleted = false")
-@Table(name = "life_rule_items")
+@Table(name = "life_rule_user")
 @Entity
-public class LifeRuleItemEntity extends BaseEntity {
-
+public class LifeRuleUserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "life_rule_id", nullable = false)
-    private LifeRuleEntity lifeRule;  // 하나의 생활룰에 여러 개의 요소 포함
+    private LifeRuleEntity lifeRule;
 
-    @Column(name = "content", nullable = false, length = 500)
-    private String content;  // 생활룰 요소 내용
+    @Column(name = "is_voted")
+    private boolean isVoted;
 
-    @Column(name = "category", nullable = false)
-    private String category;
-
-    public void assignToLifeRule(LifeRuleEntity lifeRule) {
+    public void settingLifeRule(LifeRuleEntity lifeRule) {
         this.lifeRule = lifeRule;
     }
 
-    public void update(String newValue, String category) {
-        this.content = newValue;
-        this.category = category;
+    public void setVoted(boolean isVoted) {
+        this.isVoted = isVoted;
     }
+
 }
