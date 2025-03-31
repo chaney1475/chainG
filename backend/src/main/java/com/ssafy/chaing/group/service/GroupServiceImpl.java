@@ -62,11 +62,11 @@ public class GroupServiceImpl implements GroupService {
         groupUserRepository.save(groupUser);
 
         // 알림 전송
-        sendGroupNotification(
+        notificationService.sendNotification(
                 owner.getId(),
                 "그룹이 생성되었습니다",
-                "방 [" + group.getName() + "] 을 새로 생성했습니다."
-        );
+                "방 [" + group.getName() + "] 을 새로 생성했습니다.",
+                NotificationCategory.GROUP);
 
         return GroupDTO.from(group);
     }
@@ -127,8 +127,12 @@ public class GroupServiceImpl implements GroupService {
 
         groupUsers.stream()
                 .filter(u -> !u.getId().equals(command.getUserId()))
-                .forEach(u -> sendGroupNotification(u.getId(), title, content));
-
+                .forEach(u -> notificationService.sendNotification(
+                        u.getId(),
+                        title,
+                        content,
+                        NotificationCategory.GROUP
+                        ));
         return GroupDTO.from(group);
     }
 
@@ -141,21 +145,6 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
         return GroupDTO.from(group);
-    }
-
-    private void sendGroupNotification(Long userId, String title, String content) {
-        userRepository.findById(userId).ifPresent(user -> {
-            if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
-                notificationService.publishNotification(
-                        NotificationCommand.builder()
-                                .userId(user.getId())
-                                .title(title)
-                                .content(content)
-                                .category(NotificationCategory.GROUP)
-                                .build()
-                );
-            }
-        });
     }
 
 }
