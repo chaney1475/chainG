@@ -26,7 +26,6 @@ interface LifeRuleUpdateListItemProps {
   variant: LifeRuleUpdateVariant
   setVariant: (variant: LifeRuleUpdateVariant) => void
   onContentChange: () => void
-  onDelete?: () => void
 }
 
 const ActionButton = ({
@@ -53,7 +52,6 @@ export const LifeRuleUpdateListItem = ({
   variant,
   setVariant,
   onContentChange,
-  onDelete,
 }: LifeRuleUpdateListItemProps) => {
   const { t } = useTranslation()
   const [content, setContent] = useState(lifeRule.content)
@@ -67,8 +65,6 @@ export const LifeRuleUpdateListItem = ({
             <DeleteButton onClick={() => setVariant('DEFAULT')}>
               취소
             </DeleteButton>
-            <StyledActionButton onClick={onDelete}>삭제</StyledActionButton>{' '}
-            {/* 삭제 버튼 */}
           </>
         )
       case 'UPDATE':

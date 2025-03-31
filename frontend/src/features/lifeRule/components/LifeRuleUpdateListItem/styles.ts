@@ -13,7 +13,6 @@ export const Container = styled.div`
   justify-content: center;
   border-radius: 8px;
   background: ${({ theme }) => theme.color.background.white};
-  border: 1px solid red;
 `
 
 // 카테고리 아이콘
@@ -34,7 +33,6 @@ export const Content = styled.div`
   justify-content: space-between;
   ${({ theme }) => theme.typography.styles.inputBoxTitle};
   color: ${({ theme }) => theme.color.text.regular};
-  border: 1px solid green;
 `
 
 interface StyledButtonProps {
@@ -75,7 +73,6 @@ export const ActionButtons = styled.div`
   align-items: center;
   margin-left: auto;
   justify-content: center;
-  border: 1px solid red;
 `
 
 // 라이프 규칙 액션 버튼
@@ -86,7 +83,6 @@ export const StyledActionButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
-  border: 1px solid blue;
 `
 
 // 라이프 규칙 확인 버튼
@@ -101,7 +97,6 @@ export const UpdateButton = styled.button`
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyMedium};
   color: ${({ theme }) => theme.color.text.low};
   display: flex;
-  border: 1px solid red;
 `
 // 라이프 규칙 취소 버튼
 export const DeleteButton = styled.button`
@@ -114,7 +109,6 @@ export const DeleteButton = styled.button`
   background-color: ${({ theme }) => theme.color.background.delete};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyMedium};
   color: ${({ theme }) => theme.color.text.low};
-  border: 1px solid red;
 `
 
 export const CreateButton = styled.button`

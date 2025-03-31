@@ -13,6 +13,8 @@ export const StyledButton = styled.button<StyledButtonProps>`
   border-radius: 16px;
   border: none;
   text-align: center;
+  width: 100%;
+
   ${({ theme }) => theme.typography.styles.button};
 
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
