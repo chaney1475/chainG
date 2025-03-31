@@ -112,10 +112,9 @@ export function LifeRuleUpdatePage() {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onConfirm={handleModalConfirm}
-        title="생활규칙 수정완료"
-        description="생활규칙 수정을 완료하시나요?
-        완료를 누르면 수정 완료이 되니 신중히 결정해 주세요!"
-        confirmText="확인"
+        title={t('lifeRule.updateModal.title')}
+        description={t('lifeRule.updateModal.description')}
+        confirmText={t('lifeRule.updateModal.confirmText')}
       />
     </Container>
   )

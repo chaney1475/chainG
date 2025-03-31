@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 
 import { ConfirmButton } from '@/components/ConfirmButton'
 import { TopHeader } from '@/components/TopHeader'
@@ -18,7 +18,7 @@ import { ApproveProfileContainer, FullMain, LifeRuleUpdateList } from './styles'
 
 export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
-  const router = useRouter()
+  // const router = useRouter()
   const [variant, setVariant] = useState<LifeRuleUpdateVariant>('DELETE')
   const [selectedProfileId, setSelectedProfileId] = useState('')
 

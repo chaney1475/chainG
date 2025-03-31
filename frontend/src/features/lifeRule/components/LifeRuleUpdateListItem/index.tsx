@@ -47,7 +47,7 @@ const ActionButton = ({
   )
 }
 
-ActionButton.displayName = 'ActionButton'
+//ActionButton.displayName = 'ActionButton'
 
 export const LifeRuleUpdateListItem = ({
   lifeRule,

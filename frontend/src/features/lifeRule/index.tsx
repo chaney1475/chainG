@@ -53,9 +53,6 @@ export function LifeRulePage() {
         open={isModalOpen}
         onOpenChange={handleCloseModal}
         onConfirm={handleCloseModal}
-        // title="생활 규칙 승인"
-        // description="기존에 수정된 항목이 존재합니다. 승인을 하셔야 수정이 가능합니다."
-        // confirmText="확인"
       />
 
       <BottomNavigation />
