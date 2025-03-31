@@ -24,10 +24,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class BatchTestScenarioRunner implements CommandLineRunner {
 
@@ -36,18 +35,18 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
     private final ContractService contractService;
     private final ContractRepository contractRepository;
     private final RentBatchService rentBatchService;
-    private final BatchConfig batchConfig;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
         log.info("🚀 통합 시나리오 실행 시작");
 
-        ZonedDateTime now = ZonedDateTime.now().plusSeconds(60); // 1분 후 시작
+        ZonedDateTime now = ZonedDateTime.now();
+        log.info("기준시!!");
 
-        rentBatchService.setCollectTime(new ExecutionTime(now));
-        rentBatchService.setPayTime(new ExecutionTime(now.plusSeconds(60)));
-        rentBatchService.setRetryTime(new ExecutionTime(now.plusSeconds(120)));
+        rentBatchService.setCollectTime(new ExecutionTime(now.plusSeconds(60)));       // 1분 뒤
+        rentBatchService.setPayTime(new ExecutionTime(now.plusSeconds(120)));          // 2분 뒤
+        rentBatchService.setRetryTime(new ExecutionTime(now.plusSeconds(180)));        // 3분 뒤
 
         UserEntity admin = UserEntity.builder()
                 .name("어드민")
@@ -67,12 +66,16 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
 
         // Contract1 → 즉시 approve
         // Step 2: 유저 승인 (→ 내부적으로 registerNextMonthPayment 호출)
+
         contractService.approveContract(contract1.getId(),
                 new ApproveContractCommand(users1.get(0).getId(), "0016876352742020"));
         contractService.approveContract(contract1.getId(),
                 new ApproveContractCommand(users1.get(1).getId(), "0019468386865145"));
         contractService.approveContract(contract1.getId(),
                 new ApproveContractCommand(users1.get(2).getId(), "0010624269496821"));
+
+//        contractService.approveContract(contract1.getId(),
+//                new ApproveContractCommand(users1.get(2).getId(), "111"));
 
         contractService.approveContract(contract2.getId(),
                 new ApproveContractCommand(users2.get(0).getId(), "0016876352742020"));
@@ -93,7 +96,7 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
 
     private List<UserEntity> createUsers(String prefix) {
         List<UserEntity> users = new ArrayList<>();
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 0; i < 3; i++) {
             UserEntity user = UserEntity.builder()
                     .emailAddress(prefix + "_test" + i + "@test.com")
                     .password(passwordEncoder.encode("password1!"))
@@ -108,13 +111,13 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
     }
 
     private ContractEntity setUpContract(List<UserEntity> users) {
-        UserEntity creator = users.get(1);
+        UserEntity creator = users.get(0);
         GroupDTO group = groupService.createGroup(new CreateGroupCommand(
                 creator.getId(), "nickname", "profile", "testGroup", 3
         ));
 
-        groupService.joinGroup(new JoinGroupCommand(users.get(2).getId(), group.getId(), "message1", "info1"));
-        groupService.joinGroup(new JoinGroupCommand(users.get(3).getId(), group.getId(), "message2", "info2"));
+        groupService.joinGroup(new JoinGroupCommand(users.get(1).getId(), group.getId(), "message1", "info1"));
+        groupService.joinGroup(new JoinGroupCommand(users.get(2).getId(), group.getId(), "message2", "info2"));
 
         ContractDTO draftContract = contractService.createDraftContract(group.getId(), creator.getId());
 
@@ -130,13 +133,13 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
                         3,
                         List.of(
                                 new ConfirmContractCommand.ConfirmRentCommand.ConfirmUserPaymentCommand(
+                                        users.get(0).getId(), 3333, 1
+                                ),
+                                new ConfirmContractCommand.ConfirmRentCommand.ConfirmUserPaymentCommand(
                                         users.get(1).getId(), 3333, 1
                                 ),
                                 new ConfirmContractCommand.ConfirmRentCommand.ConfirmUserPaymentCommand(
                                         users.get(2).getId(), 3333, 1
-                                ),
-                                new ConfirmContractCommand.ConfirmRentCommand.ConfirmUserPaymentCommand(
-                                        users.get(3).getId(), 3333, 1
                                 )
                         )
                 ),

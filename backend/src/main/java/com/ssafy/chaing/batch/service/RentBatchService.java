@@ -1,17 +1,19 @@
 package com.ssafy.chaing.batch.service;
 
 import com.ssafy.chaing.batch.config.ExecutionTime;
+import com.ssafy.chaing.batch.config.PaymentCreatedEvent;
+import com.ssafy.chaing.batch.config.PaymentEventPublisher;
 import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
-import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
+import com.ssafy.chaing.payment.service.PaymentService;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,9 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class RentBatchService {
 
     private final FintechService fintechService;
+    private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
     private final UserPaymentRepository userPaymentRepository;
     private final TaskScheduler taskScheduler;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Setter
     private ExecutionTime collectTime = new ExecutionTime(18, 0, -1);
@@ -39,64 +43,44 @@ public class RentBatchService {
     @Setter
     private ExecutionTime retryTime = new ExecutionTime(0, 0, 1);
 
-    @Transactional
     public void registerNextMonthPayment(ContractEntity contract) {
         log.info("📅 Payment 생성 시작 → Contract ID = {}", contract.getId());
 
         ZonedDateTime collectExecution = collectTime.calculate(contract.getDueDate());
         ZonedDateTime ownerExecution = payTime.calculate(contract.getDueDate());
 
-        PaymentEntity payment = PaymentEntity.builder()
-                .contract(contract)
-                .month(ownerExecution.getYear() * 100 + ownerExecution.getMonthValue())
-                .feeType(FeeType.RENT)
-                .totalAmount(contract.getRentTotalAmount())
-                .status(PaymentStatus.STARTED)
-                .paidAmount(0)
-                .retryCount(0)
-                .build();
+        PaymentEntity payment = paymentService.createPayment(contract, collectExecution);
 
-        payment.setNextExecutionDate(ownerExecution);
-        paymentRepository.save(payment);
+        // ✅ 여기서 이벤트만 발행
+        paymentEventPublisher.publish(new PaymentCreatedEvent(
+                payment.getId(),
+                collectExecution,
+                ownerExecution
+        ));
 
-        Long paymentId = payment.getId();
-
-        for (ContractUserEntity member : contract.getMembers()) {
-            UserPaymentEntity userPayment = UserPaymentEntity.builder()
-                    .payment(payment)
-                    .contractMember(member)
-                    .amount(member.getRentAmount())
-                    .status(PaymentStatus.PENDING)
-                    .build();
-            userPaymentRepository.save(userPayment);
-        }
-
-        taskScheduler.schedule(() -> collectToJointAccount(paymentId),
-                collectExecution.toInstant());
-
-        taskScheduler.schedule(() -> payToOwner(paymentId),
-                ownerExecution.toInstant());
-
-        log.info("💡 Payment 등록 완료 → Payment ID = {}, Next Execution = {}",
-                paymentId, ownerExecution);
+        log.info("💡 Payment 등록 완료 → Payment ID = {}, Next Execution = {}", payment.getId(), ownerExecution);
     }
 
     @Transactional
     public void payToOwner(Long paymentId) {
         PaymentEntity payment = paymentRepository.findWithContractAndMembersById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Payment"));
+        if (payment.getStatus() == PaymentStatus.PAID || payment.getStatus() == PaymentStatus.FAILED) {
+            return;
+        }
 
         log.info("💰 *당일 작업!* 공동 계좌로 모으기와 집주인 계좌 송금 둘 다 → Payment ID = {}", payment.getId());
 
         if (payment.getStatus() == PaymentStatus.PARTIALLY_PAID) {
             log.warn("⚠️ 공동 계좌 모으기 실패 상태. 재시도 수행 → Payment ID = {}", payment.getId());
             collectToJointAccount(payment);
-        }
 
-        if (payment.getStatus() != PaymentStatus.COLLECTED) {
-            log.warn("⚠️ Payment ID {} 상태가 COLLECTED가 아닌 경우. 송금 불가, 재시도 등록", payment.getId());
-            registerRetryPayment(payment);
-            return;
+            // 💡 여기서 상태 재확인 필요!
+            if (payment.getStatus() != PaymentStatus.COLLECTED) {
+                log.warn("⚠️ 여전히 COLLECTED가 아님 → Retry 등록");
+                registerRetryPayment(payment);
+                return;
+            }
         }
 
         log.info("💰 집주인에게 송금 시작 → Payment ID = {}", payment.getId());
@@ -116,13 +100,7 @@ public class RentBatchService {
             payment.updateStatus(PaymentStatus.RETRY_PENDING);
             registerRetryPayment(payment);
         }
-
-        if (payment.getStatus() != PaymentStatus.COLLECTED) {
-            log.warn("⚠️ Payment ID {} 상태가 COLLECTED가 아닌 경우. 송금 불가, 재시도 등록", payment.getId());
-            registerRetryPayment(payment);
-            return;
-        }
-
+        
         paymentRepository.save(payment);
     }
 
@@ -139,6 +117,10 @@ public class RentBatchService {
     }
 
     private void collectToJointAccountInternal(PaymentEntity payment) {
+        if (payment.getStatus() == PaymentStatus.PAID || payment.getStatus() == PaymentStatus.FAILED) {
+            return;
+        }
+
         log.info("💰 *전날 작업!* 공동 계좌로 송금 시작 → Payment ID = {}", payment.getId());
 
         boolean allSuccess = true;
@@ -194,7 +176,6 @@ public class RentBatchService {
 
         paymentRepository.save(payment);
     }
-
 
     private void registerRetryPayment(PaymentEntity payment) {
 

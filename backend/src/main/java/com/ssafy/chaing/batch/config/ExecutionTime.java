@@ -49,8 +49,11 @@ public class ExecutionTime {
             return fixedTime;
         }
 
-        return ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-                .plusDays(dayOffset)
-                .withHour(hour).withMinute(minute).withSecond(0);
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return now
+                .plusDays(dayOffset != null ? dayOffset : 0)
+                .plusHours(hour != null ? hour : 0)
+                .plusMinutes(minute != null ? minute : 0)
+                .withSecond(0);
     }
 }
