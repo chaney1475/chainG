@@ -6,7 +6,7 @@ export interface Contract {
   endDate: string
   rent: Rent
   utility: Utility
-  status: ContractStatusType
+  status: ContractStatus
   createdAt: string
   updatedAt: string
 }
@@ -38,18 +38,20 @@ export interface Utility {
 }
 
 export const ContractStatus = {
+  none: 'none',
   draft: 'draft',
-  confirm: 'confirm',
+  isContractApproved: 'isContractApproved',
   pending: 'pending',
   reviewRequired: 'reviewRequired',
+  confirm: 'confirm',
 } as const
 
-export type ContractStatusType =
+export type ContractStatus =
   (typeof ContractStatus)[keyof typeof ContractStatus]
 
 export interface ContractUser extends User {
   approved: boolean
-  status: ContractStatusType
+  status: ContractStatus
 }
 
 export interface Card {
