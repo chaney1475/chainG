@@ -53,5 +53,5 @@ export const login = (params: LoginRequest) =>
 export const getRefreshToken = async () =>
   await postRequest<LoginUser | null>('/auth/refresh-token')
 
-export const registerFCMToken = async (params: { FCMToken: string }) =>
+export const registerFCMToken = async (params: { fcmToken: string }) =>
   await postBooleanRequest('/auth/fcm', params)

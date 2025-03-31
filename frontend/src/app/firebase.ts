@@ -11,7 +11,9 @@ const firebaseConfig = {
   measurementId: 'G-R74J9NZ52L',
 }
 
-const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+const vapidKey =
+  process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY ??
+  'BGJgredDif8ty9AQYNopTGMzWaox7j2hxz5SXbcU3ylm6dTUJR1nSxv7pIddFkTETZJV_32yoMLJPtu4JlJCW7k'
 
 let app: any = null
 let messaging: any = null
