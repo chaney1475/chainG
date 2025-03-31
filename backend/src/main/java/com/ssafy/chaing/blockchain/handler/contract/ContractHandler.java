@@ -1,14 +1,15 @@
 package com.ssafy.chaing.blockchain.handler.contract;
 
+import com.ssafy.chaing.blockchain.Web3jConnectionManager;
 import com.ssafy.chaing.blockchain.handler.contract.input.ContractInput;
 import com.ssafy.chaing.blockchain.handler.contract.input.LiveAccountInput;
 import com.ssafy.chaing.blockchain.handler.contract.output.ContractOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.ContractOverviewOutput;
+import com.ssafy.chaing.blockchain.handler.contract.output.ContractRentOutput;
+import com.ssafy.chaing.blockchain.handler.contract.output.ContractUtilityOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.LiveAccountOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.PaymentInfoCountOutput;
 import com.ssafy.chaing.blockchain.handler.contract.output.PaymentInfoOutput;
-import com.ssafy.chaing.blockchain.handler.contract.output.ContractRentOutput;
-import com.ssafy.chaing.blockchain.handler.contract.output.ContractUtilityOutput;
 import com.ssafy.chaing.blockchain.provider.CustomGasProvider;
 import com.ssafy.chaing.blockchain.web3j.ContractManager;
 import com.ssafy.chaing.common.exception.BadRequestException;
@@ -21,78 +22,102 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.web3j.protocol.Web3j;
+import org.web3j.crypto.Credentials;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tuples.generated.Tuple3;
+import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 
 @Slf4j
 @Component
 public class ContractHandler {
-    private final Web3j web3j;
-    private final TransactionManager txManager;
-
+    private final Web3jConnectionManager connectionManager;
+    private final Credentials credentials;
+    private final long chainId;
     private final String contractAddress;
-
-    private final ContractManager contractManager;
+    private final CustomGasProvider gasProvider;
 
     @Autowired
-    public ContractHandler(Web3j web3j, TransactionManager txManager,
+    public ContractHandler(Web3jConnectionManager connectionManager,
+                           Credentials credentials,
+                           long chainId, // Web3jConfig에서 빈으로 등록된 chainId 주입
                            @Value("${web3j.contract-address}") String contractAddress) {
-        this.web3j = web3j;
-        this.txManager = txManager;
+        this.connectionManager = connectionManager;
+        this.credentials = credentials;
+        this.chainId = chainId;
         this.contractAddress = contractAddress;
-        // ContractManager 인스턴스 초기화
-        this.contractManager = ContractManager.load(contractAddress, web3j, txManager,
-                new CustomGasProvider());
+        this.gasProvider = new CustomGasProvider(); // 필요 시 빈으로 등록하여 주입받아도 됨
     }
 
-    @Async
-    public CompletableFuture<Boolean> addContract(ContractInput input) {
-        try {
-            // DTO의 PaymentInfo 리스트를 ContractManager의 PaymentInfo 객체로 변환
-            List<ContractManager.PaymentInfo> paymentInfos = input.getPaymentInfos().stream()
-                    .map(pi -> new ContractManager.PaymentInfo(
-                            pi.getUserId(),
-                            pi.getAmount(),
-                            pi.getRatio()
-                    ))
-                    .toList();
+    // --- Helper Method to load ContractManager within execute context ---
+    private ContractManager loadContractManager(org.web3j.protocol.Web3j web3j) {
+        // execute 콜백 내에서 현재 활성 web3j 인스턴스로 TransactionManager 생성
+        // 중요: 매번 새 TransactionManager를 만드는 것이 일반적입니다.
+        TransactionManager txManager = new RawTransactionManager(web3j, credentials, chainId);
+        // ContractManager 로드
+        return ContractManager.load(contractAddress, web3j, txManager, gasProvider);
+    }
 
-            // 컨트랙트의 addContract 함수 호출 후 트랜잭션 해시 반환
-            TransactionReceipt receipt = contractManager.addContract(
-                    input.getId(),
-                    input.getStartDate(),
-                    input.getEndDate(),
-                    input.getRentTotalAmount(),
-                    input.getRentDueDate(),
-                    input.getRentAccountNo(),
-                    input.getOwnerAccountNo(),
-                    input.getRentTotalRatio(),
-                    paymentInfos,
-                    input.getLiveAccountNo(),
-                    input.getIsUtilityEnabled(),
-                    input.getUtilitySplitRatio(),
-                    input.getCardId()
-            ).send();
-            return CompletableFuture.completedFuture(true);
-        } catch (Exception e) {
-            log.error("❗addContract error: {}❗", e.getMessage());
-            return CompletableFuture.completedFuture(false);
-        }
+    // --- Contract Methods adapted to use Web3jConnectionManager ---
+
+    @Async // Spring의 @Async 사용
+    public CompletableFuture<Boolean> addContract(ContractInput input) {
+        // CompletableFuture.supplyAsync 사용하여 비동기 처리
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                TransactionReceipt receipt = connectionManager.execute(web3j -> {
+                    ContractManager localContractManager = loadContractManager(web3j);
+                    log.info("Executing addContract on: {}", connectionManager.getCurrentRpcEndpoint());
+
+                    List<ContractManager.PaymentInfo> paymentInfos = input.getPaymentInfos().stream()
+                            .map(pi -> new ContractManager.PaymentInfo(
+                                    pi.getUserId(),
+                                    pi.getAmount(),
+                                    pi.getRatio()
+                            ))
+                            .toList(); // Java 16+ .toList(), 이전 버전은 .collect(Collectors.toList())
+
+                    // 실제 컨트랙트 함수 호출 (send() 포함)
+                    return localContractManager.addContract(
+                            input.getId(), input.getStartDate(), input.getEndDate(),
+                            input.getRentTotalAmount(), input.getRentDueDate(), input.getRentAccountNo(),
+                            input.getOwnerAccountNo(), input.getRentTotalRatio(), paymentInfos,
+                            input.getLiveAccountNo(), input.getIsUtilityEnabled(), input.getUtilitySplitRatio(),
+                            input.getCardId()
+                    ).send(); // send()는 execute 콜백 내에서 호출
+                });
+                // execute가 성공하고 트랜잭션이 성공적으로 완료되었는지 확인
+                boolean success = receipt != null && receipt.isStatusOK();
+                log.info("addContract Transaction status: {}", success);
+                return success;
+            } catch (Exception e) {
+                // connectionManager.execute 에서 최종적으로 던져진 예외 처리
+                log.error("❗addContract error during execution: {}❗", e.getMessage(), e);
+                return false; // 비동기 작업 실패 시 false 반환
+            }
+        });
     }
 
     public List<?> getAllContracts() {
         try {
-            return contractManager.getAllContracts().send();
+            return connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getAllContracts on: {}", connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getAllContracts().send();
+            });
         } catch (Exception e) {
+            log.error("❗getAllContracts error: {}❗", e.getMessage(), e);
             throw new BadRequestException(ExceptionCode.CONTRACT_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
     public ContractOutput getContract(BigInteger id) {
         try {
-            var tuple = contractManager.getFullContractData(id).send();
+            var tuple = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getFullContractData for ID {} on: {}", id,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getFullContractData(id).send();
+            });
 
             List<PaymentInfoOutput> dtos = tuple.component9().stream()
                     .map(paymentInfo -> new PaymentInfoOutput(
@@ -102,55 +127,73 @@ public class ContractHandler {
                     .toList();
 
             return new ContractOutput(
-                    tuple.component1(),
-                    tuple.component2(),
-                    tuple.component3(),
-                    tuple.component4(),
-                    tuple.component5(),
-                    tuple.component6(),
-                    tuple.component7(),
-                    tuple.component8(),
-                    dtos,
-                    tuple.component10(),
-                    tuple.component11(),
-                    tuple.component12(),
+                    tuple.component1(), tuple.component2(), tuple.component3(),
+                    tuple.component4(), tuple.component5(), tuple.component6(),
+                    tuple.component7(), tuple.component8(), dtos,
+                    tuple.component10(), tuple.component11(), tuple.component12(),
                     tuple.component13()
             );
         } catch (Exception e) {
+            log.error("❗getContract error for ID {}: {}❗", id, e.getMessage(), e);
             throw new BadRequestException(ExceptionCode.CONTRACT_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
+    // ... (getContractOverview, getPaymentInfoCount 등 다른 읽기 메서드들도 유사하게 수정) ...
+    // 예시: getContractOverview
     public ContractOverviewOutput getContractOverview(BigInteger id) {
         try {
-            var tuple = contractManager.getContractOverview(id).send();
+            var tuple = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getContractOverview for ID {} on: {}", id,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getContractOverview(id).send();
+            });
             return new ContractOverviewOutput(tuple.component1(), tuple.component2(), tuple.component3());
         } catch (Exception e) {
+            log.error("❗getContractOverview error for ID {}: {}❗", id, e.getMessage(), e);
             throw new BadRequestException(ExceptionCode.CONTRACT_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
     public PaymentInfoCountOutput getPaymentInfoCount(BigInteger id) {
         try {
-            BigInteger count = contractManager.getPaymentInfoCount(id).send();
+            BigInteger count = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getPaymentInfoCount for ID {} on: {}", id,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getPaymentInfoCount(id).send();
+            });
             return new PaymentInfoCountOutput(count);
         } catch (Exception e) {
+            log.error("❗getContractOverview error for ID {}: {}❗", id, e.getMessage(), e);
             throw new BadRequestException(ExceptionCode.CONTRACT_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
     public PaymentInfoOutput getPaymentInfoByIndex(BigInteger id, BigInteger index) {
         try {
-            Tuple3<BigInteger, BigInteger, BigInteger> tuple = contractManager.getPaymentInfoByIndex(id, index).send();
+            var tuple = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getPaymentInfoByIndex for ID {} on: {}", id,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getPaymentInfoByIndex(id, index).send();
+            });
             return new PaymentInfoOutput(tuple.component1(), tuple.component2(), tuple.component3());
         } catch (Exception e) {
+            log.error("❗getContractOverview error for ID {}: {}❗", id, e.getMessage(), e);
             throw new BadRequestException(ExceptionCode.CONTRACT_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
     public ContractRentOutput getRentData(BigInteger id) {
         try {
-            var tuple = contractManager.getRentData(id).send();
+            var tuple = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getRentData for ID {} on: {}", id,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getRentData(id).send();
+            });
             return new ContractRentOutput(
                     tuple.component1(),
                     tuple.component2(),
@@ -166,7 +209,12 @@ public class ContractHandler {
 
     public ContractUtilityOutput getUtilityData(BigInteger id) {
         try {
-            var tuple = contractManager.getUtilityData(id).send();
+            var tuple = connectionManager.execute(web3j -> {
+                ContractManager contractManager = loadContractManager(web3j);
+                log.info("Executing getUtilityData for ID {} on: {}", id,
+                        connectionManager.getCurrentRpcEndpoint());
+                return contractManager.getUtilityData(id).send();
+            });
             return new ContractUtilityOutput(
                     tuple.component1(),
                     tuple.component2(),
@@ -179,19 +227,32 @@ public class ContractHandler {
 
     public boolean addLiveAccount(BigInteger contractId, LiveAccountInput input) {
         try {
-            TransactionReceipt receipt = contractManager.updateLiveAccountNo(contractId, input.getLiveAccountNo())
-                    .send();
-            return receipt.isStatusOK();
+            TransactionReceipt receipt = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing updateLiveAccountNo for Contract ID {} on: {}", contractId,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.updateLiveAccountNo(contractId, input.getLiveAccountNo()).send();
+            });
+            boolean success = receipt != null && receipt.isStatusOK();
+            log.info("addLiveAccount Transaction status for Contract ID {}: {}", contractId, success);
+            return success;
         } catch (Exception e) {
+            log.error("❗addLiveAccount error for Contract ID {}: {}❗", contractId, e.getMessage(), e);
             return false;
         }
     }
 
     public LiveAccountOutput getLiveAccount(BigInteger contractId) {
         try {
-            String liveAccountNo = contractManager.getLiveAccountNo(contractId).send();
+            String liveAccountNo = connectionManager.execute(web3j -> {
+                ContractManager localContractManager = loadContractManager(web3j);
+                log.info("Executing getLiveAccountNo for Contract ID {} on: {}", contractId,
+                        connectionManager.getCurrentRpcEndpoint());
+                return localContractManager.getLiveAccountNo(contractId).send();
+            });
             return new LiveAccountOutput(liveAccountNo);
         } catch (Exception e) {
+            log.error("❗getLiveAccount error for Contract ID {}: {}❗", contractId, e.getMessage(), e);
             throw new BadRequestException(ExceptionCode.LIVE_ACCOUNT_RETRIEVE_FAILED);
         }
     }

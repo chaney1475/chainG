@@ -11,6 +11,7 @@ import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
 import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioList;
 import com.ssafy.chaing.blockchain.service.BlockchainService;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,7 +76,8 @@ public class BlockchainController {
     public ResponseEntity<?> createRent(
             @RequestBody RentInput input
     ) {
-        boolean response = rentHandler.addContract(input);
+        CompletableFuture<Boolean> future = rentHandler.addContract(input);
+        boolean response = future.join();
         return ResponseEntity.ok(response);
     }
 
