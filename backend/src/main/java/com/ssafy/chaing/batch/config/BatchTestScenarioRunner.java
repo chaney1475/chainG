@@ -15,6 +15,8 @@ import com.ssafy.chaing.group.service.dto.GroupDTO;
 import com.ssafy.chaing.user.domain.RoleType;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +44,12 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
         log.info("🚀 통합 시나리오 실행 시작");
 
         ZonedDateTime now = ZonedDateTime.now();
-        log.info("기준시!!");
+        int nowHour = now.getHour();
+        int nowMinute = now.getMinute();
 
-        rentBatchService.setCollectTime(new ExecutionTime(now.plusSeconds(60)));       // 1분 뒤
-        rentBatchService.setPayTime(new ExecutionTime(now.plusSeconds(120)));          // 2분 뒤
-        rentBatchService.setRetryTime(new ExecutionTime(now.plusSeconds(180)));        // 3분 뒤
+        rentBatchService.setCollectTime(new ExecutionTime(nowHour, (nowMinute + 1) % 60, 0));
+        rentBatchService.setPayTime(new ExecutionTime(nowHour, (nowMinute + 2) % 60, 0));
+        rentBatchService.setRetryTime(new ExecutionTime(nowHour, (nowMinute + 3) % 60, 0));
 
         UserEntity admin = UserEntity.builder()
                 .name("어드민")
@@ -121,13 +124,16 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
 
         ContractDTO draftContract = contractService.createDraftContract(group.getId(), creator.getId());
 
+        ZonedDateTime nowInKorea = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDate koreanDate = nowInKorea.toLocalDate();
+
         ConfirmContractCommand confirmContractCommand = new ConfirmContractCommand(
                 creator.getId(),
                 ZonedDateTime.now(),
-                ZonedDateTime.now().plusMonths(1),
+                ZonedDateTime.now().plusMonths(6),
                 new ConfirmContractCommand.ConfirmRentCommand(
                         10000,
-                        10,
+                        koreanDate.getDayOfMonth(),
                         "0015632899269172",
                         "0012860463440599",
                         3,
