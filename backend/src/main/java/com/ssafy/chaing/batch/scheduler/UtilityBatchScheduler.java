@@ -28,41 +28,22 @@ import org.springframework.stereotype.Component;
 public class UtilityBatchScheduler {
 
     private final JobLauncher jobLauncher;
-    private final Job utilityAddContractJob;
-    private final TaskScheduler taskScheduler;
+    private final Job utilityBillingStatementJob;
 
-    private Long dueDate;
-
-    // Cron 표현식: "0 0 18 ? * THU", zone을 "Asia/Seoul"로 지정
-    @Scheduled(cron = "0 0 18 ? * THU", zone = "Asia/Seoul")
-    public void runUtilityAddContractJob() {
-        ObjectMapper objectMapper = new ObjectMapper();
+//    @Scheduled(cron = "0 0 9 * * MON", zone = "Asia/Seoul") // UTC 기준 월요일 0시 0분 0초
+    public void runUtilityBillingJob() {
         try {
-            // Test용 RentInput 객체  생성
-            // 추후 실제 자동이체가 이루어진 뒤 값을 받아와서 생성할 예정
-            UtilityInput utilityInput = new UtilityInput(
-                    BigInteger.ONE,
-                    BigInteger.valueOf(2),
-                    BigInteger.valueOf(3),
-                    "112233445566",
-                    "665544332211",
-                    BigInteger.valueOf(100000),
-                    true,
-                    "2025-03-20Z"
-            );
-
-            String utilityInputJson = objectMapper.writeValueAsString(utilityInput);
-
-            // 매 실행마다 고유한 JobParameter를 생성하여 중복 실행을 방지합니다.
-            JobParameters params = new JobParametersBuilder()
-                    .addString("utilityInputJson", utilityInputJson)
-                    .addLong("time", System.currentTimeMillis())
+            // Job 실행 시 파라미터 전달 (동일 파라미터로 재실행 방지 및 실행 기록 구분용)
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addString("JobID", String.valueOf(System.currentTimeMillis())) // 현재 시간을 파라미터로 추가
                     .toJobParameters();
-            jobLauncher.run(utilityAddContractJob, params);
-            log.info("매주 목요일 오후 6시(한국 시간)에 배치 작업이 실행되었습니다.");
+
+            log.info(">>> 스케줄러 실행: Utility Billing Job 시작. Params: {}", jobParameters);
+            jobLauncher.run(utilityBillingStatementJob, jobParameters); // Job 실행
+            log.info("<<< 스케줄러 실행: Utility Billing Job 완료.");
+
         } catch (Exception e) {
-            log.info("배치 작업 실행 중 문제 발생: {}", e.getMessage());
+            log.error("!!! 스케줄러 실행 중 오류 발생: Utility Billing Job 실패", e);
         }
     }
-
 }
