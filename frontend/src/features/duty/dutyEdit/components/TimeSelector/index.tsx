@@ -12,7 +12,6 @@ import { Container, TimeSwitcherContainer } from './styles'
 
 export function TimeSelector() {
   const { t } = useTranslation()
-  // const [isOn, setIsOn] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
 
   return (

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -15,7 +14,6 @@ export const Container = styled.div`
 
 export const FullMain = styled.div`
   display: flex;
-  border: 1px solid red;
   padding: 0px 20px;
   flex: 1;
   flex-direction: column;
@@ -24,13 +22,9 @@ export const FullMain = styled.div`
   width: 100%;
   background-color: ${({ theme }) => theme.color.background.white};
 `
-
-export const Navigator = styled.div`
+export const BottomContainer = styled.div`
+  padding: 0px 20px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  border: 1px solid;
-  height: 75px;
-  gap: 60px;
   width: 100%;
+  flex-direction: column;
 `

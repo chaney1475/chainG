@@ -5,8 +5,7 @@ export const dutyCategoryList: DutyCategory[] = [
   { id: 'trash', src: '/images/duty/duty-category-trash.png' },
 ]
 
-export const dutyList: DutyWeekList = {
-  sunday: [],
+export const dutyWeekList: DutyWeekList = {
   monday: [
     {
       id: 1,
@@ -21,7 +20,7 @@ export const dutyList: DutyWeekList = {
       id: 2,
       title: '회의실 청소 및 화이트보드 정ㅓ거ㅐㅑ',
       dutyTime: '15:00Z',
-      dayOfWeek: 'tuesday',
+      dayOfWeek: 'monday',
       useTime: true,
       assignees: [103],
       category: 'clean',
@@ -30,7 +29,7 @@ export const dutyList: DutyWeekList = {
       id: 3,
       title: '휴게실과 복도 정리',
       dutyTime: '13:00Z',
-      dayOfWeek: 'wednesday',
+      dayOfWeek: 'monday',
       useTime: false,
       assignees: [101, 104, 105],
       category: 'clean',
@@ -61,4 +60,5 @@ export const dutyList: DutyWeekList = {
   thursday: [],
   friday: [],
   saturday: [],
+  sunday: [],
 }

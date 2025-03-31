@@ -28,7 +28,8 @@
         "title": "요일 선택"
       },
       "time": {
-        "title": "시간"
+        "title": "시간 선택",
+        "description": "시간"
       },
       "task": {
         "title": "할 일 입력",

@@ -3,38 +3,24 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useRouter } from 'next/navigation'
-
-import { IconButton } from '@/components/IconButton'
+import { InputBox } from '@/components'
 import '@/styles/styles'
 
-import { WeekSelector } from '../WeekSelector'
-import { Container, TextContainer, TopContainer } from './styles'
+import { Container, TopContainer } from './styles'
 
-export function WeekList() {
+export function TaskSelector() {
   const { t } = useTranslation()
-  const router = useRouter()
-  const week = 'second'
-
-  const handleClick = () => {
-    router.push('/duty/edit')
-  }
 
   return (
     <Container>
       <TopContainer>
-        <div>3월 {t(`duty.schedule.week.${week}`)}</div>
-        <TextContainer>
-          <div>이번주 당번</div>
-          <IconButton
-            src="/icons/plus_circle.svg"
-            alt="plus_circle"
-            onClick={handleClick}
-          />
-        </TextContainer>
+        <div>할 일 입력</div>
       </TopContainer>
-
-      <WeekSelector />
+      <InputBox
+        id="task"
+        placeholder="할 일을 입력해주세요"
+        type="text"
+      />
     </Container>
   )
 }
