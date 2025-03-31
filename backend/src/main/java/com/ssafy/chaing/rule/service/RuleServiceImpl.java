@@ -5,6 +5,10 @@ import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
+import com.ssafy.chaing.notification.domain.NotificationType;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
+import com.ssafy.chaing.notification.service.command.NotificationCommand;
 import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
@@ -32,7 +36,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-// TODO : FCM 알림 서비스 추가...
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,6 +47,7 @@ public class RuleServiceImpl implements RuleService {
     private final LifeRuleChangeRequestRepository lifeRuleChangeRequestRepository;
     private final LifeRuleChangeItemRepository lifeRuleChangeItemRepository;
     private final LifeRuleUserRepository lifeRuleUserRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -90,6 +94,9 @@ public class RuleServiceImpl implements RuleService {
                 .build();
         lifeRuleChangeRequestRepository.save(changeRequest);
 
+        // 생활 룰 생성 알림.
+        sendLifeRuleNotificationToGroupUsers(groupUsers, NotificationType.LIFE_RULE_CREATED);
+
         return LifeRuleResponse.fromDTO(convertToDtoSet(items));
     }
 
@@ -132,6 +139,13 @@ public class RuleServiceImpl implements RuleService {
                         .build())
                 .toList();
         changeRequest.getChangeItems().addAll(changeItems);
+
+
+        // 수정 요청 생성 알림.
+        sendLifeRuleNotificationToGroupUsers(
+                groupUserRepository.findAllUsersInGroupByUserId(userId),
+                NotificationType.LIFE_RULE_UPDATE_REQUESTED
+        );
 
         return changeItems.stream().map(changeItem -> {
             LifeRuleUpdateDto dto = new LifeRuleUpdateDto();
@@ -205,6 +219,11 @@ public class RuleServiceImpl implements RuleService {
                         }
                     }
                 }
+                // 수정 APPROVE 알림.
+                sendLifeRuleNotificationToGroupUsers(
+                        groupUserRepository.findAllUsersInGroupByUserId(userId),
+                        NotificationType.LIFE_RULE_APPROVED
+                );
                 changeRequest.clear();
                 changeRequest.getChangeItems().forEach(LifeRuleChangeItemEntity::clear);
                 lifeRuleUserRepository.findByLifeRule(lifeRule)
@@ -215,6 +234,12 @@ public class RuleServiceImpl implements RuleService {
             changeRequest.getChangeItems().forEach(LifeRuleChangeItemEntity::clear);
             lifeRuleUserRepository.findByLifeRule(lifeRule)
                     .forEach(lru -> lru.setVoted(false));
+
+            // 거절 알림
+            sendLifeRuleNotificationToGroupUsers(
+                    groupUserRepository.findAllUsersInGroupByUserId(userId),
+                    NotificationType.LIFE_RULE_REJECTED
+            );
         }
     }
 
@@ -234,4 +259,18 @@ public class RuleServiceImpl implements RuleService {
                 })
                 .collect(Collectors.toList());
     }
+
+    private void sendLifeRuleNotificationToGroupUsers(Set<UserEntity> users, NotificationType notificationType) {
+        users.forEach(user -> {
+            NotificationCommand command = NotificationCommand.builder()
+                    .userId(user.getId())
+                    .title(notificationType.getTitle())
+                    .content(notificationType.getContent())
+                    .category(NotificationCategory.RULE)
+                    .date(ZonedDateTime.now())
+                    .build();
+            notificationService.publishNotification(command);
+        });
+    }
+
 }
