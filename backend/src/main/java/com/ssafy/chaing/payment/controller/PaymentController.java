@@ -16,6 +16,7 @@ import com.ssafy.chaing.payment.service.PaymentService;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
 import com.ssafy.chaing.payment.service.dto.TransferDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +35,7 @@ public class PaymentController {
 
     @GetMapping("/rent")
     public ResponseEntity<?> retrieveRent(
-            @RequestBody RetrieveRentRequest body,
+            @Valid @RequestBody RetrieveRentRequest body,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         RetrieveRentCommand command = body.toCommand(principal);
@@ -44,7 +45,7 @@ public class PaymentController {
 
     @GetMapping("/utility")
     public ResponseEntity<?> retrieveUtility(
-            @RequestBody RetrieveUtilityRequest body,
+            @Valid @RequestBody RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
             ) {
         RetrieveUtilityCommand command = body.toCommand(principal);
@@ -61,7 +62,7 @@ public class PaymentController {
 
     @PostMapping("/withdraw")
     public ResponseEntity<BaseResponse<Void>> transferToOwner(
-            @RequestBody DepositTransferRequest body,
+            @Valid  @RequestBody DepositTransferRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
         TransferDto transferDto = TransferDto.fromDepositRequest(body, principal.getId());
         paymentService.transferToOwner(transferDto);
@@ -70,7 +71,7 @@ public class PaymentController {
 
     @PostMapping("/deposit")
     public ResponseEntity<BaseResponse<Void>> depositToLifeAccount(
-            @RequestBody WithdrawTransferRequest body,
+            @Valid @RequestBody WithdrawTransferRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
         TransferDto transferDto = TransferDto.fromWithdrawRequest(body, principal.getId());
         paymentService.depositToLifeAccount(transferDto);
