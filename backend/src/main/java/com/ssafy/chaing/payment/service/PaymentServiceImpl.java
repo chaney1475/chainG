@@ -132,9 +132,19 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         TransferCommand dto = new TransferCommand(
+                payment.getId(),
+                payment.getContract().getId(),
+                (long) payment.getMonth(),
+                group.getName() + "의 대표 계좌: " + contract.getRentAccountNo().substring(0, 4),
                 contract.getRentAccountNo(),
+                group.getName() + "의 집주인 계좌: " + contract.getOwnerAccountNo().substring(0, 4),
                 contract.getOwnerAccountNo(),
-                command.getBalance()
+                payment.getTotalAmount(),
+                payment.getStatus() == PaymentStatus.PAID,
+                payment.getPaymentDate().toString(),
+                payment.getFeeType(),
+                group.getId(),
+                null
         );
 
         TransferDTO result = fintechService.transfer(dto);
@@ -189,9 +199,19 @@ public class PaymentServiceImpl implements PaymentService {
         // 송금: 요청자가 본인 계좌에서 → 월세 계좌로 송금
         TransferDTO result = fintechService.transfer(
                 new TransferCommand(
-                        contract.getRentAccountNo(),
-                        command.getAccountNo(),
-                        command.getBalance()
+                        userPayment.getId(),
+                        contract.getId(),
+                        (long) payment.getMonth(),
+                        user.getName() + "의 계좌: " + contractUser.getAccountNo().substring(0, 4),
+                        contractUser.getAccountNo(),
+                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
+                        payment.getContract().getRentAccountNo(),
+                        command.getBalance(),
+                        payment.getStatus() == PaymentStatus.COLLECTED,
+                        payment.getPaymentDate().toString(),
+                        payment.getFeeType(),
+                        null,
+                        user.getId()
                 )
         );
 

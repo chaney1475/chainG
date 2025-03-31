@@ -3,19 +3,31 @@ package com.ssafy.chaing.batch.service;
 import com.ssafy.chaing.batch.config.ExecutionTime;
 import com.ssafy.chaing.batch.config.PaymentCreatedEvent;
 import com.ssafy.chaing.batch.config.PaymentEventPublisher;
+import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
+import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
 import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
+import com.ssafy.chaing.group.domain.GroupEntity;
+import com.ssafy.chaing.group.domain.GroupUserEntity;
+import com.ssafy.chaing.group.repository.GroupUserRepository;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.payment.service.PaymentService;
+import com.ssafy.chaing.user.domain.UserEntity;
+import com.ssafy.chaing.user.repository.UserRepository;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -34,7 +46,11 @@ public class RentBatchService {
     private final PaymentRepository paymentRepository;
     private final UserPaymentRepository userPaymentRepository;
     private final TaskScheduler taskScheduler;
+    private final NotificationService notificationService;
+    private final GroupUserRepository groupUserRepository;
     private final PaymentEventPublisher paymentEventPublisher;
+    private final RentHandler rentHandler;
+    private final UserRepository userRepository;
 
     @Setter
     private ExecutionTime collectTime = new ExecutionTime(18, 0, -1);
@@ -86,11 +102,23 @@ public class RentBatchService {
 
         log.info("💰 집주인에게 송금 시작 → Payment ID = {}", payment.getId());
 
+        ContractEntity contract = payment.getContract();
+        GroupEntity group = contract.getGroup();
         TransferDTO result = fintechService.transfer(
                 new TransferCommand(
-                        payment.getContract().getRentAccountNo(),
-                        payment.getContract().getOwnerAccountNo(),
-                        payment.getTotalAmount()
+                        paymentId,
+                        payment.getContract().getId(),
+                        (long) payment.getMonth(),
+                        group.getName() + "의 대표 계좌: " + contract.getRentAccountNo().substring(0, 4),
+                        contract.getRentAccountNo(),
+                        group.getName() + "의 집주인 계좌: " + contract.getOwnerAccountNo().substring(0, 4),
+                        contract.getOwnerAccountNo(),
+                        payment.getTotalAmount(),
+                        false,
+                        ZonedDateTime.now().toString(),
+                        payment.getFeeType(),
+                        group.getId(),
+                        null
                 )
         );
 
@@ -153,11 +181,22 @@ public class RentBatchService {
                 continue;
             }
 
+            ContractEntity contract = payment.getContract();
             TransferDTO result = fintechService.transfer(
                     new TransferCommand(
+                            userPayment.getId(),
+                            contract.getId(),
+                            (long) payment.getMonth(),
+                            member.getUser().getName() + "의 계좌: " + member.getAccountNo().substring(0, 4),
                             member.getAccountNo(),
+                            payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
                             payment.getContract().getRentAccountNo(),
-                            member.getRentAmount()
+                            member.getRentAmount(),
+                            false,
+                            ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString(),
+                            payment.getFeeType(),
+                            null,
+                            member.getUser().getId()
                     )
             );
 

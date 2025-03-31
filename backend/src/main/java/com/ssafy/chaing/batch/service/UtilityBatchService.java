@@ -195,11 +195,22 @@ public class UtilityBatchService {
                 continue;
             }
 
+            ContractEntity contract = payment.getContract();
             TransferDTO result = fintechService.transfer(
                     new TransferCommand(
+                            userPayment.getId(),
+                            contract.getId(),
+                            (long) payment.getMonth(),
+                            member.getUser().getName() + "의 계좌: " + member.getAccountNo().substring(0, 4),
                             member.getAccountNo(),
+                            payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
                             payment.getContract().getRentAccountNo(),
-                            userPayment.getAmount()
+                            member.getRentAmount(),
+                            false,
+                            payment.getPaymentDate().toString(),
+                            payment.getFeeType(),
+                            null,
+                            member.getUser().getId()
                     )
             );
 
