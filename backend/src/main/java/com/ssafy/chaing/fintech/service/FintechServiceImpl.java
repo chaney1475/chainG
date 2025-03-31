@@ -2,13 +2,16 @@ package com.ssafy.chaing.fintech.service;
 
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.config.SsafyApiConfig;
+import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.dto.ClientResponseRec;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
+import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
 import com.ssafy.chaing.fintech.service.common.HeaderWithUserKeyDTO;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.fintech.service.request.ClientTransferRequest;
 import com.ssafy.chaing.fintech.service.request.CreateFintechCardRequest;
+import com.ssafy.chaing.fintech.service.request.InquireBillingRequest;
 import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
 import com.ssafy.chaing.fintech.service.response.FintechBaseResponse;
 import com.ssafy.chaing.fintech.util.ClientErrorParser;
@@ -105,6 +108,26 @@ public class FintechServiceImpl implements FintechService {
             return new TransferDTO(false);
         }
 
+    }
+
+    @Override
+    public List<InquireBillingStatementsRec> inquireBillingStatements(InquireBillingCommand command) {
+        HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
+                "inquireBillingStatements", "inquireBillingStatements"
+        );
+
+        InquireBillingRequest request = new InquireBillingRequest(requestHeader, command);
+
+        ResponseEntity<FintechBaseResponse<List<InquireBillingStatementsRec>>> responseEntity =
+                restTemplate.exchange(
+                        config.getBaseUrl() + "/creditCard/createCreditCard",
+                        HttpMethod.POST,
+                        new HttpEntity<>(request),
+                        new ParameterizedTypeReference<>() {
+                        }
+                );
+
+        return Objects.requireNonNull(responseEntity.getBody()).rec();
     }
 
 }
