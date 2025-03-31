@@ -16,8 +16,9 @@ export const ValidationMessage = styled.div<{ isValid: boolean }>`
   display: flex;
   align-items: center;
   gap: 4px;
-  color: ${({ isValid }) => (isValid ? '#2E7D32' : '#757575')};
   ${({ theme }) => theme.typography.styles.description};
+  color: ${({ isValid, theme }) =>
+    isValid ? theme.color.text.regular : theme.color.text.distructive};
 `
 
 export const ValidationContainer = styled.div`

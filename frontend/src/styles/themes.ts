@@ -80,6 +80,10 @@ export type CustomTheme = {
         fontFamily: string
         fontSize: string
       }
+      cardDescription: {
+        fontFamily: string
+        fontSize: string
+      }
     }
   }
 }
@@ -166,6 +170,10 @@ const theme: CustomTheme = {
       defaultHighlight: {
         fontFamily: 'var(--font-paperlogy-bold)',
         fontSize: '1.125rem',
+      },
+      cardDescription: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '0.75rem',
       },
     },
   },

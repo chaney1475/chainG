@@ -12,16 +12,74 @@ export const overlayStyle = css`
 
 export const bottomSheetStyle = css`
   background: white;
-  border-radius: 16px;
-  width: 90vw;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  width: 100%;
+  height: 100vh;
   position: fixed;
   bottom: 0;
-  min-height: 30vh;
+  left: 0;
   z-index: 1001;
-  word-break: keep-all;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  touch-action: none;
+  will-change: transform;
+`
+
+export const headerStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  position: relative;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  background: white;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  button {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+`
+
+export const handleStyle = css`
+  width: 32px;
+  height: 4px;
+  background-color: ${theme.color.border};
+  border-radius: 2px;
+  margin: 8px 0;
+`
+
+export const contentStyle = css`
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px 16px;
+  overscroll-behavior-y: contain;
+  position: relative;
+  background: white;
+`
+
+export const visuallyHiddenStyle = css`
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 `
 
 export const titleStyle = css`

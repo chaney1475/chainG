@@ -88,7 +88,7 @@
   },
   "inviteCode": {
     "title": "방 참여하기",
-    "description": "초대 코드를\n입력해주세요",
+    "header": "초대 코드를\n입력해주세요",
     "inviteCode": {
       "label": "초대 코드",
       "placeholder": "초대 코드를 입력해주세요",
@@ -98,18 +98,69 @@
       }
     }
   },
+  "createGroup": {
+    "title": "방 만들기",
+    "header": "함께 살 방을\n만들어볼까요?",
+    "maxParticipants": {
+      "label": "참여인원"
+    },
+    "groupName": {
+      "label": "방 이름",
+      "placeholder": "방 이름을 입력해주세요",
+      "error": {
+        "required": "방 이름을 입력해주세요",
+        "maxLength": "20자 이내"
+      }
+    },
+    "confirm": "방 만들기"
+  },
   "createProfile": {
     "title": "프로필 설정",
+    "header": "프로필을\n설정해주세요",
     "description": "원하는 프로필 이미지를 선택해주세요",
+    "profileImage": {
+      "error": {
+        "required": "프로필 이미지 중복"
+      }
+    },
     "nickname": {
       "label": "닉네임",
-      "placeholder": "닉네임을 입력해주세요"
+      "placeholder": "닉네임을 입력해주세요",
+      "error": {
+        "required": "닉네임을 입력해주세요",
+        "duplicate": "닉네임 중복"
+      }
     },
     "confirm": "입주하기"
   },
+  "shareInviteCode": {
+    "title": "초대하기",
+    "header": "방 만드신 걸 축하드려요!",
+    "description": "같이 살 친구들을 초대해볼까요?",
+    "inviteCode": {
+      "label": "초대 코드"
+    },
+    "confirm": "다음"
+  },
   "next": "다음",
   "prev": "이전",
-
+  "onboarding": {
+    "blockChain": "블록체인으로\n우리의 동거 생활을\n더욱 안전하게",
+    "transfer": "월세, 공과금\n자동이체로 편하게",
+    "budget": "우리만의 생활비 계좌를\n자유롭게 관리해요",
+    "awkward": "소중한 친구들과\n어색해지지 않도록\n도와드릴게요",
+    "start": "새로운 동거 생활의\n시작을 환영해요",
+    "title": "ChainG와 함께 셰어하우스에 입주해요",
+    "create": {
+      "title": "방 생성하기",
+      "description": "방장이 되어 방을 만들고\n친구들을 초대할 수 있어요"
+    },
+    "join": {
+      "title": "방 참여하기",
+      "description": "이미 생성된 방에\n입주할 수 있어요"
+    },
+    "confirm": "입주하기"
+  },
   "lifeRule": {
     "title": "생활 규칙",
     "updateMessage": "생활 규칙이 수정되었어요. 클릭해서 확인해주세요!"

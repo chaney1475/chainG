@@ -101,4 +101,6 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
   },
 )
 
+InputBoxBase.displayName = 'InputBoxBase'
+
 export const InputBox = memo(InputBoxBase)

@@ -5,13 +5,15 @@ export const Container = styled.div`
   flex-direction: column;
   flex: 1;
   justify-content: space-between;
-  height: 100vh;
+  height: 100dvh;
+  width: 100%;
   @media (min-width: 768px) {
     width: 50%;
     justify-content: center;
     margin: 0 auto;
   }
 `
+
 export const HeaderContainer = styled.div`
   padding: 20px 16px;
   display: flex;

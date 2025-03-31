@@ -7,24 +7,38 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { ConfirmButton, InputBox, TitleHeader, TopHeader } from '@/components'
+import { InputBox, TitleHeaderLayout } from '@/components'
 import { profileList } from '@/constants/profileList'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import {
-  setGroupName,
   setOwnerNickname,
   setOwnerProfileImage,
 } from '@/store/slices/groupSlice'
-import { Container, Main } from '@/styles/styles'
+import { Main } from '@/styles/styles'
 
-import ProfileSelector from './components/ProfileSelector'
+import { ProfileSelector } from '../components/ProfileSelector'
 
-export function CreateProfilePage() {
+export function CreateProfilePage({ leader }: { leader: boolean }) {
   const { t } = useTranslation()
-  const { register, watch, setValue } = useForm()
-  const nickname = watch('nickname')
   const dispatch = useDispatch()
   const router = useRouter()
+  const create = useAppSelector((state) => state.group.create)
+  const join = useAppSelector((state) => state.group.join)
+
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<{ nickname: string; profileImage: string }>({
+    defaultValues: {
+      nickname: leader ? create.ownerNickname : join.nickname,
+      profileImage: leader ? create.ownerProfileImage : join.profileImage,
+    },
+  })
+  const nickname = watch('nickname')
+  if (leader) {
+  }
   const existingNickname = useAppSelector(
     (state) => state.group.create.ownerNickname,
   )
@@ -34,7 +48,6 @@ export function CreateProfilePage() {
     return profileList[randomIndex].id
   })
 
-  // 기존 닉네임이 있다면 form에 설정
   useEffect(() => {
     if (existingNickname) {
       setValue('nickname', existingNickname)
@@ -48,28 +61,29 @@ export function CreateProfilePage() {
   }
 
   return (
-    <Container>
-      <TopHeader title={t('createProfile.title')} />
+    <TitleHeaderLayout
+      title={t('createProfile.title')}
+      header={t('createProfile.header')}
+      description={t('createProfile.description')}
+      label={t('createProfile.confirm')}
+      onClick={handleComplete}
+      buttonVariant={nickname ? 'next' : 'disabled'}>
       <Main>
-        <TitleHeader
-          title={t('createProfile.title')}
-          description={t('createProfile.description')}
-        />
         <ProfileSelector
           selectedId={selected}
           onSelect={setSelected}
         />
         <InputBox
           {...register('nickname')}
+          label={t('createProfile.nickname.label')}
           id="nickname"
-          placeholder={t('createProfile.nickname.placeholder')}
+          {...register('nickname', {
+            required: t('createProfile.nickname.error.required'),
+          })}
+          placeholder={t('createGroup.groupName.placeholder')}
+          error={errors.nickname}
         />
       </Main>
-      <ConfirmButton
-        label={t('createProfile.confirm')}
-        onClick={handleComplete}
-        variant={nickname ? 'next' : 'disabled'}
-      />
-    </Container>
+    </TitleHeaderLayout>
   )
 }
