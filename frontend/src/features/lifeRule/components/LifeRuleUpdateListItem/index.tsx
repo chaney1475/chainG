@@ -26,7 +26,7 @@ interface LifeRuleUpdateListItemProps {
   variant: LifeRuleUpdateVariant
   setVariant: (variant: LifeRuleUpdateVariant) => void
   onContentChange: () => void
-  onDelete: () => void
+  onDelete?: () => void
 }
 
 const ActionButton = ({

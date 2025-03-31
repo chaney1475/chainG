@@ -27,6 +27,7 @@ export function LifeRuleUpdateApprovePage() {
             lifeRule={lifeRuleList[0]}
             variant="DEFAULT"
             setVariant={setVariant}
+            onContentChange={() => {}}
           />
         </LifeRuleUpdateList>
       </FullMain>
