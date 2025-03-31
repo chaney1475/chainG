@@ -29,6 +29,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+  batch:
+    jdbc:
+      initialize-schema: always
+      platform: mysql
+    job:
+      enabled: false
+
 application:
   security:
     jwt:
