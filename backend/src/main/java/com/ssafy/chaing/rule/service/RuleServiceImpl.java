@@ -260,7 +260,9 @@ public class RuleServiceImpl implements RuleService {
                 .collect(Collectors.toList());
     }
 
-    private void sendLifeRuleNotificationToGroupUsers(Set<UserEntity> users, NotificationType notificationType) {
+    private void sendLifeRuleNotificationToGroupUsers(
+            Set<UserEntity> users,
+            NotificationType notificationType) {
         users.forEach(user -> {
             NotificationCommand command = NotificationCommand.builder()
                     .userId(user.getId())
