@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +80,8 @@ public class PaymentServiceImpl implements PaymentService {
         Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
 
         // 현재 월 결제 정보
-        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
+        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth,
+                userPaymentsByPaymentId);
 
         // 월별 결제 요약
         List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
@@ -131,7 +131,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
         ContractEntity contract = contractUser.getContract();
 
-        if (contract == null){
+        if (contract == null) {
             throw new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND);
         }
 
@@ -195,6 +195,36 @@ public class PaymentServiceImpl implements PaymentService {
         );
     }
 
+    @Transactional
+    public PaymentEntity createPayment(ContractEntity contract, ZonedDateTime ownerExecution) {
+
+        PaymentEntity payment = PaymentEntity.builder()
+                .contract(contract)
+                .month(ownerExecution.getYear() * 100 + ownerExecution.getMonthValue())
+                .feeType(FeeType.RENT)
+                .totalAmount(contract.getRentTotalAmount())
+                .status(PaymentStatus.STARTED)
+                .paidAmount(0)
+                .retryCount(0)
+                .build();
+
+        payment.setNextExecutionDate(ownerExecution);
+        PaymentEntity savedPayment = paymentRepository.save(payment);
+
+        for (ContractUserEntity member : contract.getMembers()) {
+            UserPaymentEntity userPayment = UserPaymentEntity.builder()
+                    .payment(payment)
+                    .contractMember(member)
+                    .amount(member.getRentAmount())
+                    .status(PaymentStatus.PENDING)
+                    .build();
+            userPaymentRepository.save(userPayment);
+        }
+
+        return savedPayment;
+
+    }
+
 
     private UserEntity getUserEntity(Long userId) {
         return userRepository.findById(userId)
@@ -228,7 +258,7 @@ public class PaymentServiceImpl implements PaymentService {
             return getCurrentMonth(); // 기존 메서드 활용
         }
 
-        if(year < 1000 || year > 9999) {
+        if (year < 1000 || year > 9999) {
             throw new BadRequestException(ExceptionCode.INVALID_YEAR);
         }
 
