@@ -67,14 +67,17 @@ public class GroupController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<BaseResponse<GroupResponse>> getGroupByInviteCode(
+    public ResponseEntity<BaseResponse<GroupWithMemberResponse>> getGroupByInviteCode(
             @Parameter(description = "초대 코드", required = true) @RequestParam(name = "inviteCode") String inviteCode
     ) {
-        GroupResponse response = GroupResponse.from(
-                groupService.getGroupByInviteCode(inviteCode)
-        );
 
-        return ResponseEntity.ok(BaseResponse.success(response));
+        GroupWithMemberDTO dto = groupService.getGroupByInviteCode(inviteCode);
+
+        GroupWithMemberResponse response = GroupWithMemberResponse.from(dto);
+
+        return ResponseEntity.ok()
+                .body(BaseResponse.success(response));
+
     }
 
     @PostMapping("/join")

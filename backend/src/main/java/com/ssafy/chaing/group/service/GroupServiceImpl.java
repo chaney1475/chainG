@@ -116,13 +116,13 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public GroupDTO getGroupByInviteCode(String inviteCode) {
+    public GroupWithMemberDTO getGroupByInviteCode(String inviteCode) {
         GroupInviteCode paredCode = new GroupInviteCode(inviteCode);
 
         GroupEntity group = groupRepository.findByIdAndGroupCode(paredCode.getGroupId(), paredCode.getGroupCode())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
-        return GroupDTO.from(group);
+        return GroupWithMemberDTO.from(group);
     }
 
 }
