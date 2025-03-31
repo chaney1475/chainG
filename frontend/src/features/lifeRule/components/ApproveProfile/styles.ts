@@ -45,16 +45,15 @@ export const ProfileItem = styled.div<{ isSelected: boolean }>`
   cursor: pointer;
 
   img {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     border: 2px solid
       ${({ isSelected }) => (isSelected ? '#FF6B00' : 'transparent')};
   }
 
   span {
-    font-size: 0.875rem;
-    font-family: ${({ theme }) => theme.typography.styles.name};
+    font-family: ${({ theme }) => theme.typography.styles.navigator};
     color: ${({ theme }) => theme.color.text.low};
   }
 `

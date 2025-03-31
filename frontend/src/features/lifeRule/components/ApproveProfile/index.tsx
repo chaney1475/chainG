@@ -17,17 +17,20 @@ const profiles: Profile[] = [
   {
     id: '1',
     name: '현래래',
-    imageUrl: '/images/lifeRule/profile.svg',
+    imageUrl: '/images/profile/user1.png',
+    isApproved: false,
   },
   {
     id: '2',
     name: '미리미',
-    imageUrl: '/images/lifeRule/profile.svg',
+    imageUrl: '/images/profile/user2.png',
+    isApproved: false,
   },
   {
     id: '3',
     name: '비동현',
-    imageUrl: '/images/lifeRule/profile.svg',
+    imageUrl: '/images/profile/user3.png',
+    isApproved: true,
   },
 ]
 
@@ -54,8 +57,8 @@ export function ApproveProfile({
                 : profile.imageUrl
             }
             alt={profile.name}
-            width={46}
-            height={46}
+            width={42}
+            height={42}
           />
           <span>{profile.name}</span>
         </ProfileItem>
