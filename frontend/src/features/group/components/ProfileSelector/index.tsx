@@ -11,11 +11,13 @@ import { Container, ProfileGrid, ProfileImage, SelectedImage } from './styles'
 interface ProfileSelectorProps {
   selectedId: string
   onSelect: (id: string) => void
+  blockList: string[]
 }
 
 export function ProfileSelector({
   selectedId,
   onSelect,
+  blockList,
 }: ProfileSelectorProps): React.ReactElement {
   const theme = useTheme()
   const selected = profileList.find((profile) => profile.id === selectedId)
@@ -40,6 +42,7 @@ export function ProfileSelector({
             height={50}
             isSelected={selectedId === profile.id}
             primaryColor={theme.color.primary}
+            disabled={blockList.includes(profile.id)}
             onClick={() => onSelect(profile.id)}
           />
         ))}
