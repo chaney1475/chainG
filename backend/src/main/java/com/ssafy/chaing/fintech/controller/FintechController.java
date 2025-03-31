@@ -1,6 +1,8 @@
 package com.ssafy.chaing.fintech.controller;
 
+import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
+import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.service.FintechService;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +34,10 @@ public class FintechController {
     )
     @PostMapping("/transfer")
     public ResponseEntity<BaseResponse<TransferDTO>> transfer(
-            @RequestBody TransferCommand body
+            @RequestBody ManualTransferCommand body,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        TransferDTO dto = fintechService.transfer(body);
+        TransferDTO dto = fintechService.manualTransfer(body, principal.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(BaseResponse.success(dto));

@@ -2,6 +2,7 @@ package com.ssafy.chaing.fintech.service;
 
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
+import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
@@ -12,6 +13,7 @@ import java.util.List;
 public interface FintechService {
     CreateFintechCardRec createFintechCard(CreateCardCommand createCardCommand);
 
+    TransferDTO manualTransfer(ManualTransferCommand command, Long userId);
     TransferDTO transfer(TransferCommand command);
 
     List<InquireBillingStatementsRec> inquireBillingStatements(InquireBillingCommand command);

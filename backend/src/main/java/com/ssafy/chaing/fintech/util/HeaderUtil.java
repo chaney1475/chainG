@@ -26,12 +26,12 @@ public class HeaderUtil {
         String transmissionDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String transmissionTime = now.format(DateTimeFormatter.ofPattern("HHmmss"));
 
-        String institutionTransactionUniqueNo = generateInstitutionCode(transmissionDate, transmissionTime);
+        String institutionTransactionUniqueNo = generateInstitutionCode("20250403", "123800");
 
         return new HeaderWithUserKeyDTO(
                 apiName,
-                transmissionDate,
-                transmissionTime,
+                "20250403",
+                "123800",
                 "00100",
                 "001",
                 apiServiceCode,
