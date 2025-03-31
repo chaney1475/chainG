@@ -12,5 +12,5 @@ public interface GroupService {
 
     GroupDTO joinGroup(JoinGroupCommand command);
 
-    GroupDTO getGroupByInviteCode(String inviteCode);
+    GroupWithMemberDTO getGroupByInviteCode(String inviteCode);
 }

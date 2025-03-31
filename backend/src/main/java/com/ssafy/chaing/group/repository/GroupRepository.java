@@ -11,6 +11,13 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long> {
 
     Optional<GroupEntity> findByGroupCode(String groupCode);
 
+    @Query("""
+                SELECT DISTINCT g
+                FROM GroupEntity g
+                LEFT JOIN FETCH g.members m
+                LEFT JOIN FETCH m.user
+                WHERE g.id = :id AND g.groupCode = :groupCode
+            """)
     Optional<GroupEntity> findByIdAndGroupCode(Long id, String groupCode);
 
     @Query("""
