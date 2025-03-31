@@ -8,6 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ContractUserRepository extends JpaRepository<ContractUserEntity, Long> {
+    @Query("""
+            SELECT cu FROM ContractUserEntity cu
+            JOIN FETCH cu.user
+            WHERE cu.contract.id = :contractId AND cu.user.id IN :userIds
+            """)
     List<ContractUserEntity> findByContractIdAndUserIdIn(Long contractId, List<Long> userIds);
 
     Optional<ContractUserEntity> findByContractIdAndIsSurplusUser(Long contractId, Boolean isSurplusUser);

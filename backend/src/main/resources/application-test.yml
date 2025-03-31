@@ -1,29 +1,33 @@
 spring:
-  sql:
-    init:
-      mode: never
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
   config:
+    import:
+      - optional:file:.env[.properties]
+      - aws-parameterstore:/chaing/
     activate:
       on-profile: test
+
   datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
-    defer-datasource-initialization: true
-#    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create # 테스트 실행 시마다 DB 새로 생성
+      ddl-auto: create
+    show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect # 이 키를 사용해서 H2 Dialect 지정
-        format_sql: true
-        show_sql: true
-
-firebase:
-  project-name: chain-g
-  service-account-base64: dGVzdC1zZXJ2aWNlLWFjY291bnQ=
+        dialect: org.hibernate.dialect.MySQLDialect
 
 application:
   security:

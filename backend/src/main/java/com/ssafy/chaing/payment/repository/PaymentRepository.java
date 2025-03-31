@@ -6,6 +6,7 @@ import com.ssafy.chaing.payment.domain.PaymentStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
@@ -13,9 +14,20 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
     List<PaymentEntity> findByStatus(PaymentStatus paymentStatus);
 
+    @Query("""
+            SELECT p FROM PaymentEntity p
+                        JOIN FETCH p.contract c
+                        JOIN FETCH c.members
+                        WHERE p.id = :id
+            """)
+    Optional<PaymentEntity> findWithContractAndMembersById(Long id);
 
     List<PaymentEntity> findAllByContractIdAndFeeType(Long contractId, FeeType feeType);
 
     List<PaymentEntity> findAllByContractIdAndFeeTypeAndMonthOrderByWeekDesc(Long contractId, FeeType feeType, int month);
 
+    @Query("SELECT p.retryCount FROM PaymentEntity p WHERE p.id = :id")
+    int findRetryCount(Long id);
+
+    Optional<PaymentEntity> findByMonth(int month);
 }
