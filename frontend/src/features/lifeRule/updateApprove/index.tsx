@@ -1,14 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
+import { getUpdateLifeRule } from '@/apis/lifeRule'
 // import { useRouter } from 'next/navigation'
-
+import { approveUpdateForm } from '@/apis/lifeRule'
 import { TopHeader } from '@/components/TopHeader'
 import { lifeRuleList } from '@/constants/lifeRuleList'
 import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
 import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/LifeRuleUpdateApproveListItem'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setUpdateLifeRules } from '@/store/slices/lifeRuleSlice'
 import { Container } from '@/styles/styles'
 import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
@@ -58,6 +62,10 @@ const sampleItems: Array<{
 
 export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const updateLifeRules = useAppSelector(
+    (state) => state.lifeRule.updateLifeRules,
+  )
   // const router = useRouter()
   const [selectedProfileId, setSelectedProfileId] = useState('')
 
@@ -65,6 +73,25 @@ export function LifeRuleUpdateApprovePage() {
     setSelectedProfileId(id)
   }
 
+  const handleApprove = async () => {
+    const response = await approveUpdateForm({ approved: true })
+    console.log('approve', response)
+  }
+
+  useEffect(() => {
+    const fetchUpdateLifeRule = async () => {
+      const response = await getUpdateLifeRule()
+      if (response.success) {
+        dispatch(setUpdateLifeRules(response.data))
+      }
+      console.log('response', response)
+    }
+    fetchUpdateLifeRule()
+  }, [])
+  const handleReject = async () => {
+    const response = await approveUpdateForm({ approved: false })
+    console.log('reject', response)
+  }
   return (
     <Container>
       <TopHeader title={t('lifeRule.updateApproveTitle')} />
@@ -76,17 +103,21 @@ export function LifeRuleUpdateApprovePage() {
           />
         </ApproveProfileContainer>
         <LifeRuleUpdateList>
-          {sampleItems.map((item) => (
+          {updateLifeRules.map((item) => (
             <LifeRuleUpdateApproveListItem
               key={item.id}
-              lifeRule={item.rule}
-              variant={item.variant}
+              content={item.content}
+              lifeRule={item || lifeRuleList[0]}
+              variant={item?.actionType || 'DEFAULT'}
             />
           ))}
         </LifeRuleUpdateList>
       </FullMain>
       <ConfirmContainer>
-        <ApproveButton />
+        <ApproveButton
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
       </ConfirmContainer>
     </Container>
   )

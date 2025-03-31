@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
+
+//import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -8,7 +9,6 @@ export const Container = styled.div`
   min-height: 100vh;
   width: 100%;
   background-color: ${({ theme }) => theme.color.background.white};
-  border: 1px solid yellow;
 `
 export const FullMain = styled.main`
   padding: 1.25rem;
@@ -18,7 +18,6 @@ export const FullMain = styled.main`
   gap: 60px;
   width: 100%;
   flex: 1;
-  border: 1px solid green;
   align-items: center;
   overflow-y: visible;
 `
@@ -34,13 +33,11 @@ export const LifeRuleUpdateList = styled.div`
 export const NavigatorBar = styled.div`
   text-align: center;
   height: 75px;
-  border: 1px solid red;
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
 `
 
 export const ConfirmContainer = styled.div`
-  border: 1px solid blue;
   padding-right: 20px;
   padding-left: 20px;
   width: 100%;

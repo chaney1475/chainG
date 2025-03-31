@@ -28,4 +28,5 @@ export const Content = styled.div`
   margin: auto;
   ${({ theme }) => theme.typography.styles.inputBoxTitle};
   color: ${({ theme }) => theme.color.text.regular};
+  font-size: 14px;
 `

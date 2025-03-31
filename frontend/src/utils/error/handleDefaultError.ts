@@ -42,6 +42,9 @@ export const handleDefaultError = (error: unknown) => {
   const responseData = error.response?.data?.data
 
   if (responseData && !responseData.success) {
+    if (responseData.data.code == 'LIFE_RULE_NOT_FOUND')
+      return Promise.reject(error)
+
     fetchErrorModal({
       title: '',
       content: responseData.message,

@@ -29,10 +29,12 @@ export const Content = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
+  text-align: left;
   gap: 16px;
   justify-content: space-between;
   ${({ theme }) => theme.typography.styles.inputBoxTitle};
   color: ${({ theme }) => theme.color.text.regular};
+  border: 1px solid red;
 `
 
 interface StyledButtonProps {

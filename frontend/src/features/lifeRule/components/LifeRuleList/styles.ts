@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -9,6 +8,6 @@ export const Container = styled.div`
   align-items: center;
   min-height: 100vh;
   width: 100%;
-  gap: 8px;
+  gap: 12px;
   background-color: ${({ theme }) => theme.color.background.white};
 `

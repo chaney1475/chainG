@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
+import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
 
+import { IconButton } from '@/components'
 import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
 import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 
@@ -24,8 +26,11 @@ import {
 interface LifeRuleUpdateListItemProps {
   lifeRule: LifeRule
   variant: LifeRuleUpdateVariant
+  actionType: LifeRuleUpdateVariant
   setVariant: (variant: LifeRuleUpdateVariant) => void
-  onContentChange: () => void
+  onContentChange: (content: string) => void
+  onAddItem: (index: number) => void
+  index: number
 }
 
 const ActionButton = ({
@@ -36,14 +41,11 @@ const ActionButton = ({
   onClick: () => void
 }) => {
   return (
-    <StyledActionButton onClick={onClick}>
-      <Image
-        src={`/images/lifeRule/${type}.svg`}
-        alt={type}
-        width={24}
-        height={24}
-      />
-    </StyledActionButton>
+    <IconButton
+      onClick={onClick}
+      src={`/images/lifeRule/${type}.svg`}
+      alt={type}
+    />
   )
 }
 
@@ -52,11 +54,15 @@ const ActionButton = ({
 export const LifeRuleUpdateListItem = ({
   lifeRule,
   variant,
+  actionType,
   setVariant,
   onContentChange,
+  onAddItem,
+  index,
 }: LifeRuleUpdateListItemProps) => {
   const { t } = useTranslation()
-  const [content, setContent] = useState(lifeRule.content)
+  const { register, watch } = useFormContext()
+  const content = watch(`items.${index}.content`)
 
   const renderContent = () => {
     switch (variant) {
@@ -73,12 +79,11 @@ export const LifeRuleUpdateListItem = ({
         return (
           <>
             <InputBox
+              {...register(`items.${index}.content`, {
+                onChange: (e) => onContentChange(e.target.value),
+              })}
               id={lifeRule.id.toString()}
               value={content}
-              onChange={(e) => {
-                setContent(e.target.value)
-                onContentChange()
-              }}
             />
             <UpdateButton onClick={() => setVariant('DEFAULT')}>
               확인
@@ -89,16 +94,13 @@ export const LifeRuleUpdateListItem = ({
         return (
           <>
             <InputBox
+              {...register(`items.${index}.content`, {
+                onChange: (e) => onContentChange(e.target.value),
+              })}
               id={lifeRule.id.toString()}
               value={content}
-              onChange={(e) => {
-                setContent(e.target.value)
-                onContentChange()
-              }}
             />
-            <CreateButton onClick={() => setVariant('DEFAULT')}>
-              추가
-            </CreateButton>
+            <CreateButton onClick={() => onAddItem(index)}>추가</CreateButton>
           </>
         )
       default:
@@ -122,6 +124,7 @@ export const LifeRuleUpdateListItem = ({
 
   return (
     <ItemContainer variant={variant}>
+      v{variant} a{actionType}
       <CatrgoryIcon>
         <Image
           src={

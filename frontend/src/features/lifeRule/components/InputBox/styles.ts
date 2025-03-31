@@ -28,9 +28,9 @@ export const ValidationContainer = styled.div`
 
 export const StyledInput = styled.input`
   width: 100%;
-  padding: 1rem;
+  padding: 0.75rem;
   border: 1px solid ${({ theme }) => theme.color.border};
-  border-radius: 1rem;
+  border-radius: 8px;
   ${({ theme }) => theme.typography.styles.default};
   font-size: 14px;
   background: ${({ theme }) => theme.color.secondary};

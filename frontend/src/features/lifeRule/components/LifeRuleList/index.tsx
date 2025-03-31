@@ -15,6 +15,7 @@ interface LifeRuleListProps {
 
 export function LifeRuleList({ lifeRuleList }: LifeRuleListProps) {
   // const { t } = useTranslation()
+
   return (
     <Container>
       {lifeRuleList.map((lifeRule) => (

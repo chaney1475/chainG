@@ -8,6 +8,7 @@ import appReducer from './slices/appSlice'
 import authReducer from './slices/authSlice'
 import errorModalReducer from './slices/errorModalSlice'
 import groupReducer from './slices/groupSlice'
+import lifeRuleReducer from './slices/lifeRuleSlice'
 import uiReducer from './slices/uiSlice'
 import userReducer from './slices/userSlice'
 
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   group: groupReducer,
   ui: uiReducer,
   user: userReducer,
+  lifeRule: lifeRuleReducer,
 })
 
 const reducer = (

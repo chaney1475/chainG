@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
+
+// import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -19,7 +20,6 @@ export const FullMain = styled.main`
   gap: 20px;
   width: 100%;
   height: auto;
-  border: 1px solid green;
   overflow: auto;
   padding-bottom: 75px;
 `
@@ -31,7 +31,11 @@ export const NavigatorBar = styled.div`
   right: 0;
   text-align: center;
   height: 75px;
-  border: 1px solid red;
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
+`
+export const ImageContainer = styled.div`
+  border: 1px solid red;
+  height: 30dvh;
+  overflow: hidden;
 `
