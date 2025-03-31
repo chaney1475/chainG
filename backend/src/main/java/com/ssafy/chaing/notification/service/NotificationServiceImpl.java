@@ -14,6 +14,7 @@ import com.ssafy.chaing.notification.service.dto.NotificationDTO;
 import com.ssafy.chaing.notification.service.dto.UnreadNotificationDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .title(command.getTitle())
                 .content(command.getContent())
                 .isRead(false)
-                .createdAt(ZonedDateTime.now())
+                .createdAt(ZonedDateTime.now(ZoneOffset.UTC))
                 .category(command.getCategory())
                 .build();
 
@@ -119,7 +120,7 @@ public class NotificationServiceImpl implements NotificationService {
                         .title(title)
                         .content(content)
                         .isRead(false)
-                        .createdAt(ZonedDateTime.now())
+                        .createdAt(ZonedDateTime.now(ZoneOffset.UTC))
                         .category(category)
                         .build();
 

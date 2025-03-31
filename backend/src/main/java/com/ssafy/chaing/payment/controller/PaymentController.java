@@ -2,22 +2,19 @@ package com.ssafy.chaing.payment.controller;
 
 import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
-import com.ssafy.chaing.contract.controller.response.ContractDetailResponse;
-import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.payment.controller.request.DepositTransferRequest;
-import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.payment.controller.request.RetrieveRentRequest;
 import com.ssafy.chaing.payment.controller.request.RetrieveUtilityRequest;
-import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
-import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
 import com.ssafy.chaing.payment.controller.request.WithdrawTransferRequest;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
+import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
+import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
 import com.ssafy.chaing.payment.service.PaymentService;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
+import com.ssafy.chaing.payment.service.command.TransferRentCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import com.ssafy.chaing.payment.service.command.TransferRentCommand;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +59,7 @@ public class PaymentController {
     public ResponseEntity<?> retrieveUtility(
             @Valid @RequestBody RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
-            ) {
+    ) {
         RetrieveUtilityCommand command = body.toCommand(principal);
         RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
         return ResponseEntity.ok(BaseResponse.success(response));
@@ -80,8 +77,8 @@ public class PaymentController {
     }
 
     @Operation(
-            summary = "사용자 → 그룹장 송금",
-            description = "사용자 개인 계좌에서 그룹장 계좌로 송금합니다."
+            summary = "공동 계좌 → 집주인 송금",
+            description = "공동 계좌에서 집주인 계좌로 송금합니다."
     )
     @PostMapping("/withdraw")
     public ResponseEntity<BaseResponse<Void>> transferToOwner(
@@ -93,15 +90,15 @@ public class PaymentController {
     }
 
     @Operation(
-            summary = "그룹장 → 생활비 계좌 입금",
-            description = "그룹장이 개인 계좌에서 공동 생활비 계좌로 입금합니다."
+            summary = "멤버 → 생활비 계좌 입금",
+            description = "멤버가 개인 계좌에서 공동 월세 계좌로 입금합니다."
     )
     @PostMapping("/deposit")
-    public ResponseEntity<BaseResponse<Void>> depositToLifeAccount(
+    public ResponseEntity<BaseResponse<Void>> depositToRentAccount(
             @Valid @RequestBody WithdrawTransferRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
         TransferRentCommand transferCommand = TransferRentCommand.fromWithdrawRequest(body, principal.getId());
-        paymentService.depositToLifeAccount(transferCommand);
+        paymentService.depositToRentAccount(transferCommand);
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 

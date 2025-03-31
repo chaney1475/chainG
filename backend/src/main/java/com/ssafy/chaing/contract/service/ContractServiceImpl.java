@@ -34,6 +34,7 @@ import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +152,7 @@ public class ContractServiceImpl implements ContractService {
         // 상태를 CONFIRMED로 변경하고 계좌 정보 저장하고, 승인 처리 시간 저장
         contractUser.setAccountNo(command.getAccountNo());
         contractUser.updateContractStatus(ContractUserStatus.CONFIRMED);
-        contractUser.setConfirmedAt(ZonedDateTime.now());
+        contractUser.setConfirmedAt(ZonedDateTime.now(ZoneOffset.UTC));
 
         contractUserRepository.save(contractUser);
 

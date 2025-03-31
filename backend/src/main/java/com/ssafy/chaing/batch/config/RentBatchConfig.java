@@ -9,6 +9,7 @@ import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,8 @@ public class RentBatchConfig {
         );
 
         //
-        ZonedDateTime now = ZonedDateTime.now();
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
         // 실패한 작업은 오늘 올리기
         ZoneId zone = ZoneId.of("Asia/Seoul");
