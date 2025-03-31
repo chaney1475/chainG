@@ -37,8 +37,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +79,8 @@ public class PaymentServiceImpl implements PaymentService {
         Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
 
         // 현재 월 결제 정보
-        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
+        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth,
+                userPaymentsByPaymentId);
 
         // 월별 결제 요약
         List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
@@ -131,7 +130,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
         ContractEntity contract = contractUser.getContract();
 
-        if (contract == null){
+        if (contract == null) {
             throw new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND);
         }
 
@@ -151,7 +150,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command) {
-        Objects.requireNonNull(command, "Command cannot be null");
         Long userId = command.getUserId();
         Integer year = Integer.valueOf(command.getYear());
         Integer month = Integer.valueOf(command.getMonth());
@@ -228,7 +226,7 @@ public class PaymentServiceImpl implements PaymentService {
             return getCurrentMonth(); // 기존 메서드 활용
         }
 
-        if(year < 1000 || year > 9999) {
+        if (year < 1000 || year > 9999) {
             throw new BadRequestException(ExceptionCode.INVALID_YEAR);
         }
 
@@ -300,7 +298,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.PAID
+                                    up.getStatus() == PaymentStatus.COLLECTED
                             ));
                 })
                 .collect(Collectors.toList());
@@ -331,9 +329,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
-                            if (userPayment.getStatus() == PaymentStatus.PAID) {
+                            if (userPayment.getStatus() == PaymentStatus.COLLECTED) {
                                 paidUserIds.add(userEntityId);
-                            } else {
+                            } else if (userPayment.getStatus() == PaymentStatus.STARTED) {
                                 debtUserIds.add(userEntityId);
                             }
                         }
@@ -373,9 +371,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
-                            if (userPayment.getStatus() == PaymentStatus.PAID) {
+                            if (userPayment.getStatus() == PaymentStatus.COLLECTED) {
                                 paidUserIds.add(userEntityId);
-                            } else {
+                            } else if (userPayment.getStatus() == PaymentStatus.STARTED) {
                                 debtUserIds.add(userEntityId);
                             }
                         }
