@@ -5,10 +5,12 @@ import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.group.controller.request.CreateGroupRequest;
 import com.ssafy.chaing.group.controller.request.JoinGroupRequest;
 import com.ssafy.chaing.group.controller.response.GroupResponse;
+import com.ssafy.chaing.group.controller.response.GroupWithMemberResponse;
 import com.ssafy.chaing.group.service.GroupService;
 import com.ssafy.chaing.group.service.command.CreateGroupCommand;
 import com.ssafy.chaing.group.service.command.JoinGroupCommand;
 import com.ssafy.chaing.group.service.dto.GroupDTO;
+import com.ssafy.chaing.group.service.dto.GroupWithMemberDTO;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
@@ -55,8 +57,10 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<BaseResponse<GroupResponse>> getGroup(@PathVariable Long groupId) {
-        GroupResponse response = GroupResponse.from(groupService.getGroup(groupId));
+    public ResponseEntity<BaseResponse<GroupWithMemberResponse>> getGroup(@PathVariable Long groupId) {
+        GroupWithMemberDTO dto = groupService.getGroup(groupId);
+
+        GroupWithMemberResponse response = GroupWithMemberResponse.from(dto);
 
         return ResponseEntity.ok()
                 .body(BaseResponse.success(response));
