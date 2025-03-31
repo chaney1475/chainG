@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -10,7 +9,6 @@ import { useRouter } from 'next/navigation'
 import { InputBox, TitleHeaderLayout } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setSignUpEmail } from '@/store/slices/authSlice'
-import { Form } from '@/styles/styles'
 import { ButtonVariant } from '@/types/ui'
 
 interface SignupForm {
@@ -38,13 +36,6 @@ export function SignUpPage() {
     router.push('/auth/signup/name')
   }
 
-  useEffect(() => {
-    return () => {
-      if (currentEmail) {
-        dispatch(setSignUpEmail(currentEmail))
-      }
-    }
-  }, [currentEmail, dispatch])
   return (
     <TitleHeaderLayout
       header={t('signUp.email.title')}
@@ -52,22 +43,20 @@ export function SignUpPage() {
       buttonVariant={
         currentEmail ? ButtonVariant.next : ButtonVariant.disabled
       }>
-      <Form>
-        <InputBox
-          label={t('signUp.email.label')}
-          id="emailAddress"
-          type="email"
-          placeholder={t('signUp.email.placeholder')}
-          error={errors.emailAddress}
-          {...register('emailAddress', {
-            required: t('signUp.email.error.required'),
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: t('signUp.email.error.invalidEmail'),
-            },
-          })}
-        />
-      </Form>
+      <InputBox
+        label={t('signUp.email.label')}
+        id="emailAddress"
+        type="email"
+        placeholder={t('signUp.email.placeholder')}
+        error={errors.emailAddress}
+        {...register('emailAddress', {
+          required: t('signUp.email.error.required'),
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: t('signUp.email.error.invalidEmail'),
+          },
+        })}
+      />
     </TitleHeaderLayout>
   )
 }

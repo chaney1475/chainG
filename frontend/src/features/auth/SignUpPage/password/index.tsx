@@ -94,7 +94,7 @@ export function SignUpPasswordPage() {
   }
 
   const dispatchFCMToken = async (token: string) => {
-    const response = await registerFCMToken({ FCMToken: token })
+    const response = await registerFCMToken({ fcmToken: token })
     if (!response) return
 
     dispatch(setFCMToken(token))
@@ -105,7 +105,7 @@ export function SignUpPasswordPage() {
     if (signUpRequest?.password) {
       const handleSignUp = async () => {
         const response = await signUp(signUpRequest)
-        dispatch(clearSignUp())
+        await dispatch(clearSignUp())
         if (response) {
           const token = response.headers['authorization']
           await dispatch(setAccessToken(token))
