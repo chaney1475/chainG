@@ -99,10 +99,20 @@ export const ParticipantsContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   width: 100%;
-`
-export const ImageContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  background-color: ${({ theme }) => theme.color.background.white};
+
+  &:focus {
+    outline: 1px solid ${({ theme }) => theme.color.primary};
+  }
+
+  &:hover {
+    border-color: ${({ theme }) => theme.color.primary}40;
+    background-color: ${({ theme }) => theme.color.primary}10;
+  }
 `

@@ -4,23 +4,28 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
+import { getGroupByInviteCode } from '@/apis/group'
 import { InputBox, TitleHeaderLayout } from '@/components'
-import { setInviteCode } from '@/store/slices/groupSlice'
+import {
+  setGroup,
+  setInviteCode,
+  setJoinGroupId,
+} from '@/store/slices/groupSlice'
 import { ButtonVariant } from '@/types/ui'
 
 interface FormValues {
   inviteCode: string
 }
 
-const fakeServerValidation = async (inviteCode: string) => inviteCode === '1234'
-
 export function InviteCodePage() {
   const { t } = useTranslation()
   const router = useRouter()
   const dispatch = useDispatch()
-
+  //params에서 inviteCode 가져오기
+  const searchParams = useSearchParams()
+  const inviteCode = searchParams.get('inviteCode') || ''
   const {
     register,
     handleSubmit,
@@ -28,23 +33,30 @@ export function InviteCodePage() {
     clearErrors,
     watch,
     formState: { errors },
-  } = useForm<FormValues>()
+  } = useForm<FormValues>({
+    defaultValues: {
+      inviteCode: inviteCode,
+    },
+  })
 
-  const inviteCode = watch('inviteCode')
+  const currentInviteCode = watch('inviteCode')
 
   const onSubmit = async (data: FormValues) => {
-    const isValid = await fakeServerValidation(data.inviteCode)
-    if (!isValid) {
+    clearErrors('inviteCode')
+    dispatch(setInviteCode(data.inviteCode))
+
+    const group = await getGroupByInviteCode(data.inviteCode)
+    if (group.success) {
+      dispatch(setJoinGroupId(group.data.id))
+      console.log(group.data)
+      dispatch(setGroup(group.data))
+      router.push('/group/join/createProfile')
+    } else {
       setError('inviteCode', {
         type: 'server',
         message: t('inviteCode.inviteCode.error.invalid'),
       })
-      return
     }
-
-    clearErrors('inviteCode')
-    dispatch(setInviteCode(data.inviteCode))
-    router.push('/group/create/createProfile')
   }
 
   return (
@@ -53,7 +65,9 @@ export function InviteCodePage() {
       header={t('inviteCode.header')}
       onClick={handleSubmit(onSubmit)}
       label={t('next')}
-      buttonVariant={inviteCode ? ButtonVariant.next : ButtonVariant.disabled}>
+      buttonVariant={
+        currentInviteCode ? ButtonVariant.next : ButtonVariant.disabled
+      }>
       <InputBox
         {...register('inviteCode')}
         id="inviteCode"

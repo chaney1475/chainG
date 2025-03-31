@@ -1,15 +1,15 @@
-/*
-import { getRequest, postBooleanRequest, postRequest, putRequest } from './api'
+import { Notification } from '@/types/notification'
+
+import { getRequest, putRequest } from './api'
 
 //markNotificationAsRead
-PUT / api / v1 / notification / read
-
-//publishNotification
-POST / api / v1 / notification / publish
+export const markNotificationAsRead = async (notificationIds: number[]) =>
+  await putRequest<Notification[]>(`/notification/read`, notificationIds)
 
 //getNotifications
-GET / api / v1 / notification
+export const getNotifications = async (userId: number) =>
+  await getRequest<Notification[]>(`/notification?userId=${userId}`)
 
 //getUnreadNotificationCount
-GET / api / v1 / notification / count
-*/
+export const getUnreadNotificationCount = async (userId: number) =>
+  await getRequest<{ count: number }>(`/notification/count?userId=${userId}`)

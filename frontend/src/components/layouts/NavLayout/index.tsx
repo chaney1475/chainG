@@ -1,5 +1,5 @@
 import { BottomNavigation, TopHeader } from '@/components'
-import { Container, Main } from '@/styles/styles'
+import { Container, FullMain } from '@/styles/styles'
 
 export function NavLayout({
   title = '',
@@ -8,7 +8,7 @@ export function NavLayout({
 }: {
   title?: string
   children: React.ReactNode
-  headerRightButton: React.ReactNode
+  headerRightButton?: React.ReactNode
 }) {
   return (
     <>
@@ -17,7 +17,7 @@ export function NavLayout({
           title={title}
           headerRightButton={headerRightButton}
         />
-        <Main>{children}</Main>
+        <FullMain>{children}</FullMain>
         <BottomNavigation />
       </Container>
     </>

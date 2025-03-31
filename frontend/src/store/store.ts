@@ -6,6 +6,7 @@ import createWebStorage from 'redux-persist/lib/storage/createWebStorage'
 
 import appReducer from './slices/appSlice'
 import authReducer from './slices/authSlice'
+import contractReducer from './slices/contractSlice'
 import errorModalReducer from './slices/errorModalSlice'
 import groupReducer from './slices/groupSlice'
 import lifeRuleReducer from './slices/lifeRuleSlice'
@@ -44,6 +45,7 @@ const rootReducer = combineReducers({
   ui: uiReducer,
   user: userReducer,
   lifeRule: lifeRuleReducer,
+  contract: contractReducer,
 })
 
 const reducer = (
@@ -60,7 +62,7 @@ const reducer = (
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'group', 'user'],
+  whitelist: ['auth', 'group', 'user', 'contract'],
 }
 
 const persistedReducer = persistReducer(persistConfig, reducer)

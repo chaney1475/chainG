@@ -47,12 +47,14 @@ export const approveContract = async (contractId: string) =>
   await postBooleanRequest(`/contract/${contractId}/approve`)
 
 //getGroup
-export const getGroup = async (groupId: string) =>
+export const getGroup = async (groupId: number) =>
   await getRequest<Group>(`/groups/${groupId}`)
 
 //getGroupByInviteCode
-export const getGroupByInviteCode = async () =>
-  await getRequest<Group>('/groups/search')
+export const getGroupByInviteCode = async (inviteCode: string) =>
+  await getRequest<Group>(
+    `/groups/search?inviteCode=${encodeURIComponent(inviteCode)}`,
+  )
 
 //getContractMembers
 export const getContractMembers = async (contractId: string) =>

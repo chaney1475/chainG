@@ -13,7 +13,7 @@ const initialState: GroupState = {
   inviteCode: '',
   create: {
     groupName: '',
-    maxParticipants: 0,
+    maxParticipants: 1,
     ownerNickname: '',
     ownerProfileImage: '',
   },
@@ -23,6 +23,7 @@ const initialState: GroupState = {
     inviteCode: '',
     leaderId: 0,
     maxParticipants: 0,
+    members: [],
   },
   join: {
     groupId: 0,
@@ -65,6 +66,15 @@ const groupSlice = createSlice({
     setJoinProfileImage: (state, action: PayloadAction<string>) => {
       state.join.profileImage = action.payload
     },
+    clearJoin: (state) => {
+      Object.assign(state.join, initialState.join)
+    },
+    clearCreate: (state) => {
+      Object.assign(state.create, initialState.create)
+    },
+    clearGroup: (state) => {
+      Object.assign(state.group, initialState.group)
+    },
   },
 })
 
@@ -75,5 +85,12 @@ export const {
   setOwnerNickname,
   setOwnerProfileImage,
   setGroup,
+  setJoin,
+  setJoinGroupId,
+  setJoinNickname,
+  setJoinProfileImage,
+  clearJoin,
+  clearCreate,
+  clearGroup,
 } = groupSlice.actions
 export default groupSlice.reducer

@@ -1,20 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
+import { createGroup, joinGroup } from '@/apis/group'
 import { InputBox, TitleHeaderLayout } from '@/components'
 import { profileList } from '@/constants/profileList'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import {
+  clearCreate,
+  clearJoin,
+  setGroup,
+  setJoinNickname,
+  setJoinProfileImage,
   setOwnerNickname,
   setOwnerProfileImage,
 } from '@/store/slices/groupSlice'
-import { Main } from '@/styles/styles'
+import {
+  setGroupId,
+  setUserNickname,
+  setUserProfileImage,
+} from '@/store/slices/userSlice'
+import { ButtonVariant } from '@/types/ui'
 
 import { ProfileSelector } from '../components/ProfileSelector'
 
@@ -24,66 +35,130 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
   const router = useRouter()
   const create = useAppSelector((state) => state.group.create)
   const join = useAppSelector((state) => state.group.join)
+  const group = useAppSelector((state) => state.group.group)
+
+  const defaultProfileImage = useMemo(() => {
+    const profileImage = leader ? create.ownerProfileImage : join.profileImage
+    if (profileImage === '') {
+      const randomIndex = Math.floor(Math.random() * profileList.length)
+      return profileList[randomIndex].id
+    }
+    return profileImage
+  }, [leader, create.ownerProfileImage, join.profileImage])
 
   const {
     register,
     watch,
     setValue,
+    handleSubmit,
     formState: { errors },
   } = useForm<{ nickname: string; profileImage: string }>({
     defaultValues: {
       nickname: leader ? create.ownerNickname : join.nickname,
-      profileImage: leader ? create.ownerProfileImage : join.profileImage,
+      profileImage: defaultProfileImage,
     },
   })
   const nickname = watch('nickname')
+  const profileImage = watch('profileImage')
+
   if (leader) {
   }
   const existingNickname = useAppSelector(
     (state) => state.group.create.ownerNickname,
   )
 
-  const [selected, setSelected] = useState(() => {
-    const randomIndex = Math.floor(Math.random() * profileList.length)
-    return profileList[randomIndex].id
-  })
-
   useEffect(() => {
     if (existingNickname) {
       setValue('nickname', existingNickname)
     }
   }, [existingNickname, setValue])
-
-  const handleComplete = () => {
-    dispatch(setOwnerNickname(nickname))
-    dispatch(setOwnerProfileImage(selected))
-    router.push('/')
+  const [isConfirm, setIsConfirm] = useState(false)
+  const onSubmit = async ({
+    nickname,
+    profileImage,
+  }: {
+    nickname: string
+    profileImage: string
+  }) => {
+    console.log('required인데? nickname', nickname)
+    let response = null
+    if (leader) {
+      dispatch(setOwnerNickname(nickname))
+      dispatch(setOwnerProfileImage(profileImage))
+      response = await createGroup({
+        ownerNickname: nickname,
+        ownerProfileImage: profileImage,
+        groupName: create.groupName,
+        maxParticipants: create.maxParticipants,
+      })
+      if (response.success) {
+        await dispatch(clearCreate())
+        setIsConfirm(true)
+      }
+    } else {
+      dispatch(setJoinNickname(nickname))
+      dispatch(setJoinProfileImage(profileImage))
+      response = await joinGroup({
+        nickname: nickname,
+        profileImage: profileImage,
+        groupId: join.groupId,
+      })
+      if (response.success) {
+        await dispatch(clearJoin())
+        setIsConfirm(true)
+      }
+    }
+    console.log('response', response)
+    if (response.success) {
+      await dispatch(setGroup(response.data))
+      await dispatch(setGroupId(response.data.id))
+      await dispatch(setUserNickname(nickname))
+      await dispatch(setUserProfileImage(profileImage))
+      setIsConfirm(true)
+    }
   }
 
+  useEffect(() => {
+    const handleRouting = async () => {
+      if (isConfirm && group?.id) {
+        if (leader) {
+          await router.push('/group/create/shareInviteCode')
+        } else {
+          await router.push('/')
+        }
+      }
+    }
+    handleRouting()
+  }, [group, router, isConfirm, leader])
+
+  const blockList = useAppSelector(
+    (state) =>
+      state.group.group.members?.map((member) => member.profileImage ?? '') ??
+      [],
+  )
   return (
     <TitleHeaderLayout
       title={t('createProfile.title')}
       header={t('createProfile.header')}
       description={t('createProfile.description')}
       label={t('createProfile.confirm')}
-      onClick={handleComplete}
-      buttonVariant={nickname ? 'next' : 'disabled'}>
-      <Main>
-        <ProfileSelector
-          selectedId={selected}
-          onSelect={setSelected}
-        />
-        <InputBox
-          {...register('nickname')}
-          label={t('createProfile.nickname.label')}
-          id="nickname"
-          {...register('nickname', {
-            required: t('createProfile.nickname.error.required'),
-          })}
-          placeholder={t('createGroup.groupName.placeholder')}
-          error={errors.nickname}
-        />
-      </Main>
+      onClick={handleSubmit(onSubmit)}
+      buttonVariant={nickname ? ButtonVariant.next : ButtonVariant.disabled}>
+      <ProfileSelector
+        selectedId={profileImage}
+        onSelect={(id) => setValue('profileImage', id)}
+        blockList={blockList}
+      />
+      {profileImage}
+      <InputBox
+        id="nickname"
+        label={t('createProfile.nickname.label')}
+        {...register('nickname', {
+          required: t('createProfile.nickname.error.required'),
+        })}
+        placeholder={t('createGroup.groupName.placeholder')}
+        error={errors.nickname}
+      />
     </TitleHeaderLayout>
   )
 }

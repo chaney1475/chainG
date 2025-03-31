@@ -16,6 +16,17 @@ export const StyledButton = styled.button<StyledButtonProps>`
   width: 100%;
 
   ${({ theme }) => theme.typography.styles.button};
+  cursor: pointer;
+  outline: none;
+
+  &:focus {
+    outline: 1px solid ${({ theme }) => theme.color.primary};
+    outline-offset: 1px;
+
+    border-color: ${({ theme }) => theme.color.primary};
+    outline: none;
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.color.primary}33;
+  }
 
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
     switch (variant) {
