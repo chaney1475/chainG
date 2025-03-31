@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 
+import { colors } from '@/constants/colors'
 import { CustomTheme } from '@/styles/themes'
 import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
@@ -31,6 +32,7 @@ export const Content = styled.div`
   align-items: center;
   gap: 16px;
   justify-content: space-between;
+  font-size: 16px;
   ${({ theme }) => theme.typography.styles.inputBoxTitle};
   color: ${({ theme }) => theme.color.text.regular};
 `
@@ -53,72 +55,45 @@ export const ItemContainer = styled(Container)<StyledButtonProps>`
       case 'DELETE':
         return `
           background-color: ${theme.color.background.delete};
-          border: 1px solid ${theme.color.text.sunday};
+          border: 1px solid ${colors.delete};
+        `
+      case 'UPDATE':
+        return `
+          background-color: ${theme.color.background.update};
+          border: 1px solid ${colors.update};
+        `
+      case 'CREATE':
+        return `
+          background-color: ${theme.color.background.create};
+          border: 1px solid ${colors.create};
         `
       default:
         return `
-        background-color: ${theme.color.background.white};
-        border: 1px solid ${theme.color.border};
-        align-items: center;
-        flex-direction: row;
-      `
+          background-color: ${theme.color.background.white};
+          border: 1px solid ${theme.color.border};
+        `
     }
   }}
 `
 
-// 라이프 규칙 액션 버튼 컨테이너
-export const ActionButtons = styled.div`
+export const StatusIcon = styled.div`
   display: flex;
-  gap: 8px;
+  flex-direction: column;
   align-items: center;
+  gap: 6px;
   margin-left: auto;
-  justify-content: center;
-`
 
-// 라이프 규칙 액션 버튼
-export const StyledActionButton = styled.button`
-  background: none;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
+  p {
+    color: ${({ theme }) => theme.color.text.disabled};
+    ${({ theme }) => theme.typography.styles.navigator};
+  }
+`
+export const ContentContainer = styled.div`
   display: flex;
+  width: 100%;
   align-items: center;
-`
-
-// 라이프 규칙 확인 버튼
-export const UpdateButton = styled.button`
-  width: 46px;
-  border-radius: 8px;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid ${({ theme }) => theme.color.background.white};
-  background-color: ${({ theme }) => theme.color.background.white};
-  font-family: ${({ theme }) => theme.typography.fonts.paperlogyMedium};
-  color: ${({ theme }) => theme.color.text.low};
-  display: flex;
-`
-// 라이프 규칙 취소 버튼
-export const DeleteButton = styled.button`
-  width: 46px;
-  border-radius: 8px;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid ${({ theme }) => theme.color.background.delete};
-  background-color: ${({ theme }) => theme.color.background.delete};
-  font-family: ${({ theme }) => theme.typography.fonts.paperlogyMedium};
-  color: ${({ theme }) => theme.color.text.low};
-`
-
-export const CreateButton = styled.button`
-  width: 46px;
-  border-radius: 8px;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid ${({ theme }) => theme.color.background.white};
-  background-color: ${({ theme }) => theme.color.background.white};
-  font-family: ${({ theme }) => theme.typography.fonts.paperlogyMedium};
-  color: ${({ theme }) => theme.color.text.low};
+  gap: 16px;
+  justify-content: space-between;
+  ${({ theme }) => theme.typography.styles.inputBoxTitle};
+  color: ${({ theme }) => theme.color.text.regular};
 `

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 
 // import { useTranslation } from 'react-i18next'
 
@@ -9,112 +9,48 @@ import Image from 'next/image'
 import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
 import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 
-import { InputBox } from '../InputBox'
 import {
-  ActionButtons,
   CatrgoryIcon,
   Content,
-  CreateButton,
-  DeleteButton,
+  ContentContainer,
   ItemContainer,
-  StyledActionButton,
-  UpdateButton,
+  StatusIcon,
 } from './styles'
 
 interface LifeRuleUpdateApproveListItemProps {
   lifeRule: LifeRule
   variant: LifeRuleUpdateVariant
-  setVariant: (variant: LifeRuleUpdateVariant) => void
-  onContentChange: () => void
-}
-
-const ActionButton = ({
-  type,
-  onClick,
-}: {
-  type: 'update' | 'delete'
-  onClick: () => void
-}) => {
-  return (
-    <StyledActionButton onClick={onClick}>
-      <Image
-        src={`/images/lifeRule/${type}.svg`}
-        alt={type}
-        width={24}
-        height={24}
-      />
-    </StyledActionButton>
-  )
 }
 
 export const LifeRuleUpdateApproveListItem = ({
   lifeRule,
   variant,
-  setVariant,
-  onContentChange,
 }: LifeRuleUpdateApproveListItemProps) => {
   // const { t } = useTranslation()
-  const [content, setContent] = useState(lifeRule.content)
 
-  const renderContent = () => {
+  const getStatusIcon = () => {
     switch (variant) {
-      case 'DELETE':
-        return (
-          <>
-            <p>{content}</p>
-            <DeleteButton onClick={() => setVariant('DEFAULT')}>
-              취소
-            </DeleteButton>
-          </>
-        )
       case 'UPDATE':
-        return (
-          <>
-            <InputBox
-              id={lifeRule.id.toString()}
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value)
-                onContentChange()
-              }}
-            />
-            <UpdateButton onClick={() => setVariant('DEFAULT')}>
-              확인
-            </UpdateButton>
-          </>
-        )
+        return '/images/lifeRule/update.svg'
       case 'CREATE':
-        return (
-          <>
-            <InputBox
-              id={lifeRule.id.toString()}
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value)
-                onContentChange()
-              }}
-            />
-            <CreateButton onClick={() => setVariant('DEFAULT')}>
-              추가
-            </CreateButton>
-          </>
-        )
+        return '/images/lifeRule/create.svg'
+      case 'DELETE':
+        return '/images/lifeRule/delete.svg'
       default:
-        return (
-          <>
-            <p>{content}</p>
-            <ActionButtons>
-              <ActionButton
-                type="update"
-                onClick={() => setVariant('UPDATE')}
-              />
-              <ActionButton
-                type="delete"
-                onClick={() => setVariant('DELETE')}
-              />
-            </ActionButtons>
-          </>
-        )
+        return null
+    }
+  }
+
+  const getStatusText = () => {
+    switch (variant) {
+      case 'UPDATE':
+        return '수정'
+      case 'CREATE':
+        return '추가'
+      case 'DELETE':
+        return '삭제'
+      default:
+        return ''
     }
   }
 
@@ -132,7 +68,20 @@ export const LifeRuleUpdateApproveListItem = ({
           height={46}
         />
       </CatrgoryIcon>
-      <Content>{renderContent()}</Content>
+      <Content>
+        <ContentContainer>{lifeRule.content}</ContentContainer>
+        {getStatusIcon() && (
+          <StatusIcon>
+            <Image
+              src={getStatusIcon() as string}
+              alt="status"
+              width={24}
+              height={24}
+            />
+            <p>{getStatusText()}</p>
+          </StatusIcon>
+        )}
+      </Content>
     </ItemContainer>
   )
 }

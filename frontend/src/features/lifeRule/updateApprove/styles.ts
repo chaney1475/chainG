@@ -22,7 +22,6 @@ export const FullMain = styled.main`
   border: 1px solid green;
   padding-bottom: 100px;
   overflow: hidden;
-  border: 1px solid red;
 `
 
 export const LifeRuleUpdateList = styled.div`
@@ -36,7 +35,6 @@ export const LifeRuleUpdateList = styled.div`
 export const NavigatorBar = styled.div`
   text-align: center;
   height: 75px;
-  border: 1px solid red;
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
 `
@@ -47,6 +45,5 @@ export const ApproveProfileContainer = styled.div`
   gap: 16px;
   width: 100%;
   justify-content: center;
-  border: 1px solid blue;
   margin-bottom: 0px;
 `
