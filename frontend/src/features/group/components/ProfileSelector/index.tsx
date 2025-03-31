@@ -6,19 +6,14 @@ import { useTheme } from '@emotion/react'
 
 import { profileList } from '@/constants/profileList'
 
-import {
-  Container,
-  ProfileGrid,
-  ProfileImage,
-  SelectedImage,
-} from './ProfileSelector.styles'
+import { Container, ProfileGrid, ProfileImage, SelectedImage } from './styles'
 
 interface ProfileSelectorProps {
   selectedId: string
   onSelect: (id: string) => void
 }
 
-function ProfileSelector({
+export function ProfileSelector({
   selectedId,
   onSelect,
 }: ProfileSelectorProps): React.ReactElement {
@@ -52,5 +47,3 @@ function ProfileSelector({
     </Container>
   )
 }
-
-export default ProfileSelector

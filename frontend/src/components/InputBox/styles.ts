@@ -16,8 +16,9 @@ export const ValidationMessage = styled.div<{ isValid: boolean }>`
   display: flex;
   align-items: center;
   gap: 4px;
-  color: ${({ isValid }) => (isValid ? '#2E7D32' : '#757575')};
   ${({ theme }) => theme.typography.styles.description};
+  color: ${({ isValid, theme }) =>
+    isValid ? theme.color.text.regular : theme.color.text.distructive};
 `
 
 export const ValidationContainer = styled.div`
@@ -33,7 +34,6 @@ export const StyledInput = styled.input`
   border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: 1rem;
   ${({ theme }) => theme.typography.styles.default};
-  font-size: 1rem;
   background: ${({ theme }) => theme.color.secondary};
   transition: all 0.2s ease-in-out;
 
@@ -50,6 +50,11 @@ export const StyledInput = styled.input`
     &::placeholder {
       color: transparent;
     }
+  }
+
+  &:-webkit-autofill {
+    ${({ theme }) => theme.typography.styles.default} !important;
+    color: ${({ theme }) => theme.color.text.regular} !important;
   }
 `
 

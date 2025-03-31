@@ -2,29 +2,35 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { getFcmToken, onForegroundMessage } from '@/app/firebase'
 import { IconButton } from '@/components/IconButton'
-import { RootState } from '@/store/store'
+import { useAppSelector } from '@/hooks/useAppSelector'
 import { Container, Main } from '@/styles/styles'
 
 import { HomeLayout } from '../components/HomeLayout'
-import { Page } from './styles'
 
 export function HomePage() {
   const { t } = useTranslation()
   const router = useRouter()
   const [isMounted, setIsMounted] = useState(false)
-  const accessToken = useSelector(
-    (state: RootState) => state.auth.loginToken.accessToken,
+  const accessToken = useAppSelector(
+    (state) => state.auth.loginToken.accessToken,
   )
+  const user = useAppSelector((state) => state.user.user)
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  useEffect(() => {
+    console.log('user', user)
+    if (!user.id) return
+    if (!user.groupId) {
+      router.push('/onboarding')
+    }
+  }, [user, router])
 
   useEffect(() => {
     if (!isMounted) return
@@ -33,13 +39,6 @@ export function HomePage() {
       router.push('/auth/login')
       return
     }
-
-    const initFirebase = async () => {
-      await getFcmToken()
-      onForegroundMessage()
-    }
-
-    initFirebase()
   }, [accessToken, router, isMounted])
 
   if (!isMounted) {
@@ -66,10 +65,23 @@ export function HomePage() {
           alt={t('notice.title')}
         />
       }>
-      <Main>
-        <h1>ChainG 메인 페이지</h1>
-        <p>홈이에요</p>
-      </Main>
+      <h1>ChainG 메인 페이지</h1>
+      <p>홈이에요</p>
+      <p>id: {user.id}</p>
+      <p>name: {user.name}</p>
+      <p>nickname: {user.nickname}</p>
+      <p>profileImage: {user.profileImage}</p>
+      <p>groupId: {user.groupId}</p>
+      <p>contractId: {user.contractId}</p>
+
+      <h1>ChainG 메인 페이지</h1>
+      <p>홈이에요</p>
+      <p>id: {user.id}</p>
+      <p>name: {user.name}</p>
+      <p>nickname: {user.nickname}</p>
+      <p>profileImage: {user.profileImage}</p>
+      <p>groupId: {user.groupId}</p>
+      <p>contractId: {user.contractId}</p>
     </HomeLayout>
   )
 }

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 import { CustomTheme } from '@/styles/themes'
-import { ButtonVariant } from '@/types/button'
+import { ButtonVariant } from '@/types/ui'
 
 interface StyledButtonProps {
   variant: ButtonVariant

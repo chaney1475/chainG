@@ -4,17 +4,13 @@ export interface SocialLogin {
   refreshToken: string | null
 }
 
-export interface signUpRequest {
+export interface LoginRequest {
+  emailAddress: string
+  password: string
+}
+
+export interface SignUpRequest {
   emailAddress: string | null
   password: string | null
   name: string | null
-}
-
-export interface AuthUserResponse {
-  id: number
-  name: string
-  nickname: string | null
-  profileImage: string | null
-  groupId: number | null
-  contractId: number | null
 }
