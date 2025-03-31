@@ -1,5 +1,8 @@
 package com.ssafy.chaing.fintech.controller.request;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +23,9 @@ public class InquireBillingCommand {
     }
 
     public void setBillingPeriod() {
-        java.time.LocalDate today = java.time.LocalDate.now();
-        this.endMonth = String.valueOf(today.getMonthValue());
-        this.startMonth = String.valueOf(today.minusMonths(1).getMonthValue());
+        ZonedDateTime today = ZonedDateTime.now(ZoneId.of("UTC"));
+        this.endMonth = today.format(DateTimeFormatter.ofPattern("yyyyMM"));
+        this.startMonth = today.minusMonths(1).format(DateTimeFormatter.ofPattern("yyyyMM"));
     }
     
 }
