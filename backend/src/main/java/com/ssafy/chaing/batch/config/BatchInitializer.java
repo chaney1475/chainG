@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BatchInitializer implements ApplicationRunner {
 
-    private final BatchConfig batchConfig;
+    private final RentBatchConfig rentBatchConfig;
 
     @Override
     public void run(ApplicationArguments args) {
         // 어플리케이션이 시작될때 처리되지 않은 payment를 taskScheduler에 추가
-        batchConfig.registerExistingPayments();
+        rentBatchConfig.registerExistingPayments();
     }
 }
 
