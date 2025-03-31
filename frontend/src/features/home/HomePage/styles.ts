@@ -17,3 +17,13 @@ export const Main = styled.div`
   margin-top: 1.5rem;
   color: ${({ theme }) => theme.color.text.low};
 `
+export const GroupName = styled.div`
+  font-family: ${({ theme }) => theme.typography.fonts.paperlogyBold};
+  font-size: 22px;
+  color: ${({ theme }) => theme.color.text.regular};
+`
+export const Description = styled.div`
+  font-family: ${({ theme }) => theme.typography.fonts.paperlogyMedium};
+  font-size: 1rem;
+  color: ${({ theme }) => theme.color.text.disabled};
+`
