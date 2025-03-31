@@ -19,7 +19,6 @@ export const FullMain = styled.main`
   width: 100%;
   flex: 1;
   border: 1px solid green;
-  align-items: center;
 `
 
 export const LifeRuleUpdateList = styled.div`

@@ -37,7 +37,7 @@ export function SignUpPasswordPage() {
     formState: { errors },
   } = useForm<SignupForm>()
 
-  const signUpRequest = useAppSelector((state) => state.auth.signUpRequest)
+  const singUpRequest = useAppSelector((state) => state.auth.signUpRequest)
   const FCMToken = useAppSelector((state) => state.auth.FCMToken)
   const user = useAppSelector((state) => state.user.user)
 
@@ -81,8 +81,9 @@ export function SignUpPasswordPage() {
       newValidations.length.isValid =
         password.length >= 8 && password.length <= 20
       setValidations(newValidations)
+      Object.values(validations).every((v) => v.isValid)
     }
-  }, [password])
+  }, [password, validations])
 
   const initFCM = async () => {
     if (FCMToken) return
@@ -102,9 +103,9 @@ export function SignUpPasswordPage() {
   }
 
   useEffect(() => {
-    if (signUpRequest?.password) {
+    if (singUpRequest?.password) {
       const handleSignUp = async () => {
-        const response = await signUp(signUpRequest)
+        const response = await signUp(singUpRequest)
         dispatch(clearSignUp())
         if (response) {
           const token = response.headers['authorization']
@@ -115,7 +116,7 @@ export function SignUpPasswordPage() {
       }
       handleSignUp()
     }
-  }, [signUpRequest?.password, dispatch])
+  }, [singUpRequest?.password, dispatch])
 
   const onSubmit = async (data: SignupForm) => {
     if (isValidPassword) {

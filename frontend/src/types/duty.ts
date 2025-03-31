@@ -1,5 +1,3 @@
-import { dutyCategoryList } from '@/constants/dutyList'
-
 export interface Duty {
   id: number
   title: string
@@ -11,13 +9,13 @@ export interface Duty {
 }
 
 export interface DutyWeekList {
-  sunday: Duty[]
   monday: Duty[]
   tuesday: Duty[]
   wednesday: Duty[]
   thursday: Duty[]
   friday: Duty[]
   saturday: Duty[]
+  sunday: Duty[]
 }
 
 export interface DutyCategory {

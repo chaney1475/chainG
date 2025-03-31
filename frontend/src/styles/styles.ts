@@ -57,3 +57,11 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
 `
+
+export const SwitcherContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+`

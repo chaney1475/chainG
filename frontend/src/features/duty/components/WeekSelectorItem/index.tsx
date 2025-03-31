@@ -7,13 +7,12 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import '@/styles/styles'
-import { Duty, SelectorVariant } from '@/types/duty'
+import { DayKey, Duty, SelectorVariant } from '@/types/duty'
 
 import { Container, DateSelection, DutyContainer, DutyItem } from './styles'
 
 interface WeekSelectorItemProps {
-  key: string
-  day: string
+  day: DayKey
   date: number
   duty: Duty[]
 }

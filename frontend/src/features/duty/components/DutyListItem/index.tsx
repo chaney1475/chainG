@@ -3,9 +3,8 @@
 import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 
-import { dutyCategoryList } from '@/constants/dutyList'
+import { dutyCategoryList } from '@/constants/duty'
 import { Duty } from '@/types/duty'
 
 import { Assignees } from '../Assignees'

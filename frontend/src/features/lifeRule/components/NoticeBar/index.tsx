@@ -3,7 +3,6 @@
 import React from 'react'
 
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 
 import { NoticeBarContainer } from './styles'
 
@@ -12,12 +11,8 @@ interface NoticeBarProps {
 }
 
 export const NoticeBar: React.FC<NoticeBarProps> = ({ message }) => {
-  const router = useRouter()
-  const handleClick = () => {
-    router.push('/lifeRule/updateApprove')
-  }
   return (
-    <NoticeBarContainer onClick={handleClick}>
+    <NoticeBarContainer>
       <Image
         src="/images/lifeRule/notice.svg"
         alt="notice"
