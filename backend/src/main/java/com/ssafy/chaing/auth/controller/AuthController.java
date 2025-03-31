@@ -12,6 +12,7 @@ import com.ssafy.chaing.common.schema.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +70,7 @@ public class AuthController {
     }
 
     @PostMapping("/fcm")
-    public ResponseEntity<BaseResponse<Void>> registerFcmToken(@RequestBody FcmRequest request,
+    public ResponseEntity<BaseResponse<Void>> registerFcmToken(@Valid @RequestBody FcmRequest request,
                                                                @AuthenticationPrincipal UserPrincipal user) {
         authService.updateFcmToken(request.toCommand(user.getId()));
 
