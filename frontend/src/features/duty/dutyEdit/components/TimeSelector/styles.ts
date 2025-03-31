@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -16,5 +15,12 @@ export const WeekSelectorItemContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: start;
+  width: 100%;
+`
+
+export const TimeSwitcherContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
 `

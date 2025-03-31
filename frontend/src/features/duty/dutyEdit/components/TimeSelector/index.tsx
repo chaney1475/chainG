@@ -1,22 +1,32 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useRouter } from 'next/navigation'
-
-import { InputBox } from '@/components'
+import { ToggleSwitch } from '@/components'
 import '@/styles/styles'
+import { SwitcherContainer } from '@/styles/styles'
 
-import { Container } from './styles'
+import { TimeInputContainer } from '../TimeInputContainer'
+import { Container, TimeSwitcherContainer } from './styles'
 
 export function TimeSelector() {
   const { t } = useTranslation()
-  const router = useRouter()
+  // const [isOn, setIsOn] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
 
   return (
     <Container>
-      <div> {t(`duty.edit.time.title`)} </div>
+      <TimeSwitcherContainer>
+        <SwitcherContainer>
+          <div> {t(`duty.edit.time.title`)} </div>
+          <ToggleSwitch
+            isOn={isVisible}
+            setIsOn={setIsVisible}
+          />
+        </SwitcherContainer>
+      </TimeSwitcherContainer>
+      {isVisible && <TimeInputContainer />}
     </Container>
   )
 }
