@@ -12,7 +12,7 @@ public class UserInfoResponse {
     private String nickname;
     private String profileImage;
     private Long groupId;
-    private Long contract;
+    private Long contractId;
 
     public static UserInfoResponse from(UserDetailInfoDTO dto) {
         return new UserInfoResponse(

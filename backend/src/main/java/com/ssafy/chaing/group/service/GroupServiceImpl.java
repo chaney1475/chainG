@@ -12,6 +12,7 @@ import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.group.service.command.CreateGroupCommand;
 import com.ssafy.chaing.group.service.command.JoinGroupCommand;
 import com.ssafy.chaing.group.service.dto.GroupDTO;
+import com.ssafy.chaing.group.service.dto.GroupWithMemberDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class GroupServiceImpl implements GroupService {
                 .build();
 
         groupRepository.save(group);
-        
+
         owner.setGroupId(group.getId());
 
         userRepository.save(owner);
@@ -61,11 +62,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public GroupDTO getGroup(Long groupId) {
-        GroupEntity group = groupRepository.findById(groupId).orElseThrow(
+    public GroupWithMemberDTO getGroup(Long groupId) {
+        GroupEntity group = groupRepository.findWithMembersAndUsersById(groupId).orElseThrow(
                 () -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND)
         );
-        return GroupDTO.from(group);
+
+        return GroupWithMemberDTO.from(group);
     }
 
     @Override
@@ -114,13 +116,13 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public GroupDTO getGroupByInviteCode(String inviteCode) {
+    public GroupWithMemberDTO getGroupByInviteCode(String inviteCode) {
         GroupInviteCode paredCode = new GroupInviteCode(inviteCode);
 
         GroupEntity group = groupRepository.findByIdAndGroupCode(paredCode.getGroupId(), paredCode.getGroupCode())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
-        return GroupDTO.from(group);
+        return GroupWithMemberDTO.from(group);
     }
 
 }

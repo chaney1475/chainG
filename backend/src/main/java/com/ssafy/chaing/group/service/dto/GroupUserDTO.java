@@ -1,5 +1,6 @@
 package com.ssafy.chaing.group.service.dto;
 
+import com.ssafy.chaing.group.domain.GroupUserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,4 +11,13 @@ public class GroupUserDTO {
     private String name;
     private String nickname;
     private String profileImage;
+
+    public static GroupUserDTO from(GroupUserEntity entity) {
+        return new GroupUserDTO(
+                entity.getId(),
+                entity.getUser().getName(),
+                entity.getUser().getNickname(),
+                entity.getUser().getProfileImage()
+        );
+    }
 }

@@ -9,8 +9,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,4 +54,7 @@ public class GroupEntity extends BaseEntity {
 
     @Column(name = "contract_id", nullable = true)
     private Long contractId;
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+    private List<GroupUserEntity> members = new ArrayList<>();
 }
