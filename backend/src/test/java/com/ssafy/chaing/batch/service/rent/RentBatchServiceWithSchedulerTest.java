@@ -1,13 +1,14 @@
-package com.ssafy.chaing.batch.service;
+package com.ssafy.chaing.batch.service.rent;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.ssafy.chaing.batch.config.BatchConfig;
+import com.ssafy.chaing.batch.config.RentBatchConfig;
 import com.ssafy.chaing.batch.config.BatchInitializer;
 import com.ssafy.chaing.batch.config.ExecutionTime;
+import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
@@ -93,7 +94,7 @@ public class RentBatchServiceWithSchedulerTest {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BatchConfig batchConfig;
+    private RentBatchConfig rentBatchConfig;
 
     @Autowired
     private BatchInitializer batchInitializer;
