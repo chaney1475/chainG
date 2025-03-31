@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+
+// import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
 
@@ -12,7 +13,6 @@ import { InputBox } from '../InputBox'
 import {
   ActionButtons,
   CatrgoryIcon,
-  Container,
   Content,
   CreateButton,
   DeleteButton,
@@ -21,7 +21,7 @@ import {
   UpdateButton,
 } from './styles'
 
-interface LifeRuleUpdateListItemProps {
+interface LifeRuleUpdateApproveListItemProps {
   lifeRule: LifeRule
   variant: LifeRuleUpdateVariant
   setVariant: (variant: LifeRuleUpdateVariant) => void
@@ -47,15 +47,13 @@ const ActionButton = ({
   )
 }
 
-ActionButton.displayName = 'ActionButton'
-
-export const LifeRuleUpdateListItem = ({
+export const LifeRuleUpdateApproveListItem = ({
   lifeRule,
   variant,
   setVariant,
   onContentChange,
-}: LifeRuleUpdateListItemProps) => {
-  const { t } = useTranslation()
+}: LifeRuleUpdateApproveListItemProps) => {
+  // const { t } = useTranslation()
   const [content, setContent] = useState(lifeRule.content)
 
   const renderContent = () => {

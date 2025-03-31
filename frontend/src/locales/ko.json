@@ -163,6 +163,8 @@
   },
   "lifeRule": {
     "title": "생활 규칙",
+    "updateTitle": "생활규칙 수정",
+    "updateApproveTitle": "생활규칙 수정승인",
     "updateMessage": "생활 규칙이 수정되었어요. 클릭해서 확인해주세요!"
   },
 

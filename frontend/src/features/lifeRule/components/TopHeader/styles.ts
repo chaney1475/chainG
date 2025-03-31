@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 
 export const Container = styled.div`
   padding: 20px 16px;
-  border:1px solid blue;
+  border: 1px solid blue;
   display: flex;
   justify-content: space-between;
   align-items: center;

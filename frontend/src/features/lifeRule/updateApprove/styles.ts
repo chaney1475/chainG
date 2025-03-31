@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
+
+//import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -15,12 +16,13 @@ export const FullMain = styled.main`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 60px;
+  gap: 20px;
   width: 100%;
   flex: 1;
   border: 1px solid green;
   padding-bottom: 100px;
   overflow: hidden;
+  border: 1px solid red;
 `
 
 export const LifeRuleUpdateList = styled.div`
@@ -37,4 +39,14 @@ export const NavigatorBar = styled.div`
   border: 1px solid red;
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
+`
+export const ApproveProfileContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+  border: 1px solid blue;
+  margin-bottom: 0px;
 `
