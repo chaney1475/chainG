@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
@@ -25,6 +25,8 @@ interface LifeRuleUpdateListItemProps {
   lifeRule: LifeRule
   variant: LifeRuleUpdateVariant
   setVariant: (variant: LifeRuleUpdateVariant) => void
+  onContentChange: () => void
+  onDelete: () => void
 }
 
 const ActionButton = ({
@@ -50,6 +52,8 @@ export const LifeRuleUpdateListItem = ({
   lifeRule,
   variant,
   setVariant,
+  onContentChange,
+  onDelete,
 }: LifeRuleUpdateListItemProps) => {
   const { t } = useTranslation()
   const [content, setContent] = useState(lifeRule.content)
@@ -63,6 +67,8 @@ export const LifeRuleUpdateListItem = ({
             <DeleteButton onClick={() => setVariant('DEFAULT')}>
               취소
             </DeleteButton>
+            <StyledActionButton onClick={onDelete}>삭제</StyledActionButton>{' '}
+            {/* 삭제 버튼 */}
           </>
         )
       case 'UPDATE':
@@ -71,7 +77,10 @@ export const LifeRuleUpdateListItem = ({
             <InputBox
               id={lifeRule.id.toString()}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => {
+                setContent(e.target.value)
+                onContentChange()
+              }}
             />
             <UpdateButton onClick={() => setVariant('DEFAULT')}>
               확인
@@ -84,10 +93,13 @@ export const LifeRuleUpdateListItem = ({
             <InputBox
               id={lifeRule.id.toString()}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => {
+                setContent(e.target.value)
+                onContentChange()
+              }}
             />
             <CreateButton onClick={() => setVariant('DEFAULT')}>
-              생성
+              추가
             </CreateButton>
           </>
         )
