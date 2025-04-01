@@ -17,16 +17,21 @@ export const ProfileGrid = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
+  margin: 0 2rem;
 `
 
 export const ProfileImage = styled.img<{
   isSelected: boolean
   primaryColor: string
+  disabled: boolean
 }>`
   border-radius: 50%;
   border: 3px solid
     ${({ isSelected, primaryColor }) =>
       isSelected ? primaryColor : 'transparent'};
-  box-sizing: border-box;
   cursor: pointer;
+  box-shadow: 0 0 0 2px
+    ${({ isSelected, theme }) =>
+      isSelected ? theme.color.primary : 'transparent'}33;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `

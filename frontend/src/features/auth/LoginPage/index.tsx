@@ -44,7 +44,7 @@ export function LoginPage() {
   }
 
   const dispatchFCMToken = async (token: string) => {
-    const response = await registerFCMToken({ FCMToken: token })
+    const response = await registerFCMToken({ fcmToken: token })
 
     if (!response) return
 
@@ -100,7 +100,7 @@ export function LoginPage() {
           />
           <ConfirmButton
             onClick={handleSubmit(onSubmit)}
-            label={t('login.title')}
+            label={'login.title'}
           />
           <SignupLinkContainer>
             <StyledLink href="/group/create/createProfile">

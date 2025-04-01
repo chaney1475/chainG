@@ -26,6 +26,8 @@ export type CustomTheme = {
     fonts: {
       paperlogyRegular: string
       paperlogyMedium: string
+      paperlogySemiBold: string
+      paperlogyBold: string
     }
     styles: {
       topHeader: {
@@ -117,6 +119,8 @@ const theme: CustomTheme = {
     fonts: {
       paperlogyRegular: 'var(--font-paperlogy-regular)',
       paperlogyMedium: 'var(--font-paperlogy-medium)',
+      paperlogySemiBold: 'var(--font-paperlogy-semi-bold)',
+      paperlogyBold: 'var(--font-paperlogy-bold)',
     },
     styles: {
       topHeader: {

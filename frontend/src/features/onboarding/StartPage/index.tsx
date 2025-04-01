@@ -111,7 +111,7 @@ export function StartPage() {
       <BottomContainer>
         <ConfirmButton
           onClick={handleNext}
-          label={isConfirmButtonVisible ? t('onboarding.confirm') : t('next')}
+          label={isConfirmButtonVisible ? 'onboarding.confirm' : 'next'}
         />
       </BottomContainer>
       <BottomSheet

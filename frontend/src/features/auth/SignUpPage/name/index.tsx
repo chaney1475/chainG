@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -11,7 +10,6 @@ import { TitleHeaderLayout } from '@/components'
 import { InputBox } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setSignUpName } from '@/store/slices/authSlice'
-import { Form } from '@/styles/styles'
 import { ButtonVariant } from '@/types/ui'
 
 interface SignupForm {
@@ -37,19 +35,9 @@ export function SignUpNamePage() {
 
   const currentName = watch('name')
 
-  useEffect(() => {
-    return () => {
-      dispatch(setSignUpName(currentName))
-    }
-  }, [])
-
   const onSubmit = async (data: SignupForm) => {
-    try {
-      dispatch(setSignUpName(data.name))
-      router.push('/auth/signup/password')
-    } catch (error) {
-      console.error('이름 저장 실패:', error)
-    }
+    dispatch(setSignUpName(data.name))
+    router.push('/auth/signup/password')
   }
 
   return (
@@ -57,22 +45,20 @@ export function SignUpNamePage() {
       header={t('signUp.name.title')}
       onClick={handleSubmit(onSubmit)}
       buttonVariant={currentName ? ButtonVariant.next : ButtonVariant.disabled}>
-      <Form>
-        <InputBox
-          label={t('signUp.name.label')}
-          id="name"
-          type="text"
-          error={errors.name}
-          placeholder={t('signUp.name.placeholder')}
-          {...register('name', {
-            required: t('signUp.name.error.required'),
-            minLength: {
-              value: 2,
-              message: t('signUp.name.error.minLength'),
-            },
-          })}
-        />
-      </Form>
+      <InputBox
+        label={t('signUp.name.label')}
+        id="name"
+        type="text"
+        error={errors.name}
+        placeholder={t('signUp.name.placeholder')}
+        {...register('name', {
+          required: t('signUp.name.error.required'),
+          minLength: {
+            value: 2,
+            message: t('signUp.name.error.minLength'),
+          },
+        })}
+      />
     </TitleHeaderLayout>
   )
 }
