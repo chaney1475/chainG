@@ -2,16 +2,13 @@ package com.ssafy.chaing.payment.controller;
 
 import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
-import com.ssafy.chaing.contract.controller.response.ContractDetailResponse;
-import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.payment.controller.request.DepositTransferRequest;
-import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.payment.controller.request.RetrieveRentRequest;
 import com.ssafy.chaing.payment.controller.request.RetrieveUtilityRequest;
-import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
-import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
 import com.ssafy.chaing.payment.controller.request.WithdrawTransferRequest;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
+import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
+import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
 import com.ssafy.chaing.payment.service.PaymentService;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,7 +33,7 @@ public class PaymentController {
 
     @GetMapping("/rent")
     public ResponseEntity<?> retrieveRent(
-            @Valid @RequestBody RetrieveRentRequest body,
+            @Valid @RequestParam("month") RetrieveRentRequest body,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         RetrieveRentCommand command = body.toCommand(principal);
@@ -45,9 +43,10 @@ public class PaymentController {
 
     @GetMapping("/utility")
     public ResponseEntity<?> retrieveUtility(
-            @Valid @RequestBody RetrieveUtilityRequest body,
+            @Valid @RequestParam("month") RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
-            ) {
+    ) {
+        System.out.println(principal.getId());
         RetrieveUtilityCommand command = body.toCommand(principal);
         RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
         return ResponseEntity.ok(BaseResponse.success(response));
@@ -62,7 +61,7 @@ public class PaymentController {
 
     @PostMapping("/withdraw")
     public ResponseEntity<BaseResponse<Void>> transferToOwner(
-            @Valid  @RequestBody DepositTransferRequest body,
+            @Valid @RequestBody DepositTransferRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
         TransferDto transferDto = TransferDto.fromDepositRequest(body, principal.getId());
         paymentService.transferToOwner(transferDto);
