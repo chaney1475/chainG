@@ -99,3 +99,9 @@ export const ImageContainer = styled.div`
   justify-content: center;
   width: 100%;
 `
+export const UserTileContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: auto;
+`
