@@ -14,7 +14,7 @@ public class GroupUserDTO {
 
     public static GroupUserDTO from(GroupUserEntity entity) {
         return new GroupUserDTO(
-                entity.getId(),
+                entity.getUser().getId() ,
                 entity.getUser().getName(),
                 entity.getUser().getNickname(),
                 entity.getUser().getProfileImage()
