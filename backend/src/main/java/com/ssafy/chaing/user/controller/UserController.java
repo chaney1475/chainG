@@ -1,10 +1,10 @@
 package com.ssafy.chaing.user.controller;
 
 
+import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.user.service.UserService;
 import com.ssafy.chaing.user.service.dto.UserDTO;
-import com.sun.security.auth.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/me/summary")
     public ResponseEntity<BaseResponse<UserDTO>> getMySummary(@AuthenticationPrincipal UserPrincipal principal) {
         // 나의 프로필 정보 조회
-        UserDTO dto = userService.getMe(Long.valueOf(principal.getName()));
+        UserDTO dto = userService.getMe(principal.getId());
         return ResponseEntity.ok().body(BaseResponse.success(dto));
     }
 
