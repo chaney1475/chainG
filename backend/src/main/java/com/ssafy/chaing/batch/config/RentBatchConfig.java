@@ -24,7 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableBatchProcessing
 @RequiredArgsConstructor
 @Slf4j
-public class BatchConfig {
+public class RentBatchConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;

@@ -1,4 +1,4 @@
-package com.ssafy.chaing.batch.service;
+package com.ssafy.chaing.batch.service.rent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -6,8 +6,9 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.ssafy.chaing.batch.config.BatchConfig;
+import com.ssafy.chaing.batch.config.RentBatchConfig;
 import com.ssafy.chaing.batch.config.BatchInitializer;
+import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
@@ -72,7 +73,7 @@ public class RentBatchServiceTest {
     private PaymentRepository paymentRepository;
 
     @Autowired
-    private BatchConfig batchConfig;
+    private RentBatchConfig rentBatchConfig;
 
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -178,7 +179,7 @@ public class RentBatchServiceTest {
         }).when(taskScheduler).schedule(any(Runnable.class), any(Instant.class));
 
         // 4. 복구 로직 실행
-        new BatchInitializer(batchConfig).run(null);
+        new BatchInitializer(rentBatchConfig).run(null);
 
         // 5. TaskScheduler 호출 횟수 검증
         // - STARTED 2번 →  2 * 2 = 4번 (collect + pay)

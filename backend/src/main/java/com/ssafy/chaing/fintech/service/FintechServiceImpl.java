@@ -2,17 +2,21 @@ package com.ssafy.chaing.fintech.service;
 
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.config.SsafyApiConfig;
+import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.dto.ClientResponseRec;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
+import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
 import com.ssafy.chaing.fintech.service.common.HeaderWithUserKeyDTO;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.fintech.service.request.ClientTransferRequest;
 import com.ssafy.chaing.fintech.service.request.CreateFintechCardRequest;
+import com.ssafy.chaing.fintech.service.request.InquireBillingRequest;
 import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
 import com.ssafy.chaing.fintech.service.response.FintechBaseResponse;
 import com.ssafy.chaing.fintech.util.ClientErrorParser;
 import com.ssafy.chaing.fintech.util.HeaderUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +109,38 @@ public class FintechServiceImpl implements FintechService {
             return new TransferDTO(false);
         }
 
+    }
+
+    @Override
+    public List<InquireBillingStatementsRec> inquireBillingStatements(InquireBillingCommand command) {
+        try {
+            HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
+                    "inquireBillingStatements", "inquireBillingStatements"
+            );
+
+            InquireBillingRequest request = new InquireBillingRequest(requestHeader, command);
+
+            ResponseEntity<FintechBaseResponse<List<InquireBillingStatementsRec>>> responseEntity =
+                    restTemplate.exchange(
+                            config.getBaseUrl() + "/creditCard/inquireBillingStatements",
+                            HttpMethod.POST,
+                            new HttpEntity<>(request),
+                            new ParameterizedTypeReference<>() {
+                            }
+                    );
+
+            return Objects.requireNonNull(responseEntity.getBody()).rec();
+        } catch (HttpClientErrorException e) {
+            log.error("청구서 조회 실패 - 상태 코드: {}, 응답 내용: {}", e.getStatusCode(), e.getResponseBodyAsString());
+
+            // 🔥 에러 응답 파싱 및 처리
+            ClientErrorResponse errorResponse = ClientErrorParser.parseErrorResponse(e.getResponseBodyAsString());
+            return new ArrayList<>();
+
+        } catch (Exception e) {
+            log.error("청구서 조회 중 알 수 없는 오류 발생: {}", e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
 }

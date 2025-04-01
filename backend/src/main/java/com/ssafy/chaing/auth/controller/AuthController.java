@@ -32,7 +32,7 @@ public class AuthController {
 
     @Operation(summary = "회원가입", description = "사용자가 회원가입을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/signup")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@ModelAttribute SignupRequest body,
+    public ResponseEntity<BaseResponse<UserInfoResponse>> signup(@Valid @ModelAttribute SignupRequest body,
                                                                  HttpServletResponse response) {
         AuthDTO authDTO = authService.signup(
                 new SignupCommand(body.getEmailAddress(), body.getPassword(), body.getName()),
@@ -48,7 +48,7 @@ public class AuthController {
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 하고 JWT 토큰과 사용자 정보를 받습니다.")
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@ModelAttribute LoginRequest body,
+    public ResponseEntity<BaseResponse<UserInfoResponse>> login(@Valid @ModelAttribute LoginRequest body,
                                                                 HttpServletResponse response) {
         AuthDTO authDTO = authService.login(body.getEmailAddress(), body.getPassword(), response);
         UserInfoResponse result = UserInfoResponse.from(authDTO.getUserInfo());
