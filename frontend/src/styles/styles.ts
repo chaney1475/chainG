@@ -37,6 +37,7 @@ export const Main = styled.main`
   margin: auto;
   gap: 60px;
   width: 100%;
+  overflow-y: auto;
 `
 
 export const FullMain = styled.div`
@@ -98,4 +99,10 @@ export const ImageContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+`
+export const UserTileContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: auto;
 `

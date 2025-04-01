@@ -22,3 +22,15 @@ export interface SnapPoints {
   MID: number
   MAX: number
 }
+
+export type MenuContent = {
+  title: string
+  onSelect: () => void
+  color?: string
+  disabled?: boolean
+}
+
+export interface ProgressBarProps {
+  step: number
+  steps: number
+}

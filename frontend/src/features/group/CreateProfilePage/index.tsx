@@ -80,7 +80,6 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
     nickname: string
     profileImage: string
   }) => {
-    console.log('required인데? nickname', nickname)
     let response = null
     if (leader) {
       dispatch(setOwnerNickname(nickname))
@@ -108,7 +107,6 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
         setIsConfirm(true)
       }
     }
-    console.log('response', response)
     if (response.success) {
       await dispatch(setGroup(response.data))
       await dispatch(setGroupId(response.data.id))
@@ -149,7 +147,6 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
         onSelect={(id) => setValue('profileImage', id)}
         blockList={blockList}
       />
-      {profileImage}
       <InputBox
         id="nickname"
         label={t('createProfile.nickname.label')}

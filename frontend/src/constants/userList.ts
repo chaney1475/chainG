@@ -7,33 +7,27 @@ export interface User {
 
 export const userList: User[] = [
   {
-    id: 1,
+    id: 101,
     name: 'John Doe',
-    nickname: 'John',
+    nickname: '배고파',
     profileImage: '/images/profile/user1.png',
   },
   {
-    id: 2,
+    id: 102,
     name: 'Jane Doe2',
-    nickname: 'Jane',
+    nickname: '싹싹김치',
     profileImage: '/images/profile/user2.png',
   },
   {
-    id: 3,
+    id: 103,
     name: 'John Doe3',
-    nickname: 'John3',
+    nickname: '김현래에요',
     profileImage: '/images/profile/user3.png',
   },
   {
-    id: 3,
-    name: 'John Doe3',
-    nickname: 'John3',
-    profileImage: '/images/profile/user3.png',
-  },
-  {
-    id: 3,
-    name: 'John Doe3',
-    nickname: 'John3',
-    profileImage: '/images/profile/user3.png',
+    id: 104,
+    name: 'John Doe4',
+    nickname: '칠가이욥',
+    profileImage: '/images/profile/user4.png',
   },
 ]

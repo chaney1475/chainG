@@ -44,7 +44,7 @@ export function ShareInviteCodePage() {
             height={105}
           />
         </ImageContainer>
-        <Label>{t('inviteCode.inviteCode.label')}</Label>
+        <Label>{t('shareInviteCode.inviteCode.label')}</Label>
         <ShowBox>
           <HeaderButton />
           {group.inviteCode}

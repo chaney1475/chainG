@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import { IconButton } from '@/components/IconButton'
-import '@/styles/styles'
 import { DutyWeekList } from '@/types/duty'
 
 import { WeekSelector } from '../WeekSelector'

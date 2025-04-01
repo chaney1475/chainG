@@ -2,20 +2,23 @@ import styled from '@emotion/styled'
 
 export const Container = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: end;
   gap: 4px;
+  flex: 1;
+  height: 100%;
+  flex-direction: row;
   height: 100%;
 `
 export const ProfileContainer = styled.div`
   display: flex;
-  justify-content: center;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: 4px;
   width: 46px;
+  height: 100%;
 `
 export const Name = styled.div`
   ${({ theme }) => theme.typography.styles.navigator};
   color: ${({ theme }) => theme.color.text.low};
-  white-space: nowrap;
 `

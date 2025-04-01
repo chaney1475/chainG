@@ -1,12 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { useRouter } from 'next/navigation'
-
-import '@/styles/styles'
 import { DayKey, Duty, SelectorVariant } from '@/types/duty'
 
 import { Container, DateSelection, DutyContainer, DutyItem } from './styles'

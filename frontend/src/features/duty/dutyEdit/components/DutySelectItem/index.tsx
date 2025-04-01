@@ -1,12 +1,10 @@
 'use client'
 
 import React from 'react'
-import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
 
 import { User } from '@/constants/userList'
-import '@/styles/styles'
 
 import { Container } from './styles'
 
@@ -21,8 +19,6 @@ export function DutySelectItem({
   selected = false,
   onClick,
 }: DutySelectItemProps) {
-  const { t } = useTranslation()
-
   return (
     <Container
       onClick={onClick}
