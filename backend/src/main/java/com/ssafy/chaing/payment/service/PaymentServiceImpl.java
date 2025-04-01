@@ -39,7 +39,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ContractUserRepository contractUserRepository;
     private final UserPaymentRepository userPaymentRepository;
     private final FintechService fintechService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
