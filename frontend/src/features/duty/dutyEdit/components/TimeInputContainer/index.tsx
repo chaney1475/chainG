@@ -3,14 +3,8 @@
 import { useTranslation } from 'react-i18next'
 
 import { IconButton } from '@/components'
-import '@/styles/styles'
 
-import {
-  Container,
-  IconContainer,
-  TimePickerContainer,
-  TopContainer,
-} from './styles'
+import { Container, TimePickerContainer, TopContainer } from './styles'
 
 export function TimeInputContainer() {
   const { t } = useTranslation()

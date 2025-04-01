@@ -1,16 +1,12 @@
 'use client'
 
 import React from 'react'
-import { useTranslation } from 'react-i18next'
 
 import { InputBox } from '@/components'
-import '@/styles/styles'
 
 import { Container, TopContainer } from './styles'
 
 export function TaskSelector() {
-  const { t } = useTranslation()
-
   return (
     <Container>
       <TopContainer>

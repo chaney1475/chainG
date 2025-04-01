@@ -8,7 +8,7 @@ import { dutyCategoryList } from '@/constants/duty'
 import { Duty } from '@/types/duty'
 
 import { Assignees } from '../Assignees'
-import { CatrgoryIcon, Container, DutyInfo } from './styles'
+import { CatrgoryIcon, Container, Content, DutyInfo } from './styles'
 
 interface DutyListItemProps {
   duty: Duty
@@ -31,12 +31,18 @@ export const DutyListItem = ({ duty }: DutyListItemProps) => {
         />
       </CatrgoryIcon>
       <DutyInfo>
-        <div>
-          {t(`duty.category.${duty.category}`)} {duty.dutyTime}
-        </div>
-        <div>{duty.title}</div>
+        <Content>
+          <div>
+            {t(`duty.category.${duty.category}`)} {duty.dutyTime}
+          </div>
+          <div>{duty.title}</div>
+        </Content>
+        <Assignees
+          key={duty.id}
+          assignees={duty.assignees}
+        />
       </DutyInfo>
-      <Assignees assignees={duty.assignees} />
+
       <Image
         src="/icons/menu.svg"
         alt={duty.category}

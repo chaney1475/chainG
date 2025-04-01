@@ -3,10 +3,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import '@/styles/styles'
-
-import { Container, TopContainer } from './styles'
-import { TaskButtonContainer } from './styles'
+import { Container, TaskButtonContainer, TopContainer } from './styles'
 
 interface DutySelectorProps {
   setIsBottomSheetOpen: (isBottomSheetOpen: boolean) => void
