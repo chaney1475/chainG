@@ -20,10 +20,8 @@ export const getUpdateLifeRule = async () =>
   await getRequest<UpdateLifeRule[]>(`/life-rule/update-temp`)
 
 //updateLifeRule
-export const updateLifeRule = async (updates: UpdateLifeRule[]) =>
-  await postRequest<UpdateLifeRule[]>(`/life-rule/update-temp`, {
-    updates: updates,
-  })
+export const updateLifeRule = async (params: { updates: UpdateLifeRule[] }) =>
+  await postRequest<UpdateLifeRule[]>(`/life-rule/update-temp`, params)
 
 //recommendCategory0
 export const recommendCategory = async (params: { content: string }) =>
