@@ -71,6 +71,10 @@ public class FintechServiceImpl implements FintechService {
     @Override
     public TransferDTO transfer(TransferCommand command) {
         try {
+            if (command.getAmount() <= 0) {
+                log.info("송금할 금액이 없습니다. Transaction Balance : {}", command.getAmount());
+                return new TransferDTO(true);
+            }
             HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
                     "updateDemandDepositAccountTransfer", "updateDemandDepositAccountTransfer"
             );

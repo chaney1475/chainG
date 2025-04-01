@@ -206,7 +206,6 @@ public class PaymentServiceImpl implements PaymentService {
         UserEntity user = getUserEntity(userId);
         GroupEntity group = getGroupEntity(user);
         ContractEntity contract = getContractEntity(group);
-        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
 
         // 현재 월과 주 가져오기
         int currentMonth = formatToYearMonth(year, month);

@@ -15,6 +15,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +38,7 @@ import org.hibernate.annotations.SQLRestriction;
                 @Index(name = "idx_payment_status", columnList = "payment_status")
         }
 )
+
 public class PaymentEntity extends BaseEntity {
 
     @Id
@@ -97,6 +100,29 @@ public class PaymentEntity extends BaseEntity {
             this.allPaid = true; // 계약 상태 갱신
         } else {
             this.status = PaymentStatus.PARTIALLY_PAID;
+        }
+    }
+
+    public void refreshStatusFromUserPayments(List<UserPaymentEntity> userPayments) {
+        int total = userPayments.stream()
+                .filter(up -> up.getStatus() == PaymentStatus.COLLECTED || up.getStatus() == PaymentStatus.PAID)
+                .mapToInt(up -> up.getAmount() == null ? 0 : up.getAmount())
+                .sum();
+
+        this.paidAmount = total;
+
+        boolean allPaid = userPayments.stream()
+                .allMatch(up -> up.getStatus() == PaymentStatus.COLLECTED || up.getStatus() == PaymentStatus.PAID);
+
+        if (allPaid && total >= this.totalAmount) {
+            this.status = PaymentStatus.COLLECTED;
+            this.allPaid = true;
+        } else if (total > 0) {
+            this.status = PaymentStatus.PARTIALLY_PAID;
+            this.allPaid = false;
+        } else {
+            this.status = PaymentStatus.STARTED;
+            this.allPaid = false;
         }
     }
 
