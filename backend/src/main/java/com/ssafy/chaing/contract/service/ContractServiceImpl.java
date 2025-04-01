@@ -27,7 +27,6 @@ import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
-import com.ssafy.chaing.notification.service.command.NotificationCommand;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZonedDateTime;
@@ -365,7 +364,33 @@ public class ContractServiceImpl implements ContractService {
         List<ContractUserEntity> contractUsers = contractUserRepository.findByContractId(contractId);
 
         for (ContractUserEntity contractUser : contractUsers) {
-            switch (contractUser.getContractStatus()) {
+            if (contractUser.isSurplusUser()) {
+                continue;
+            }
+
+            ContractUserStatus previousStatus = contractUser.getContractStatus();
+
+            // ✅ 알림 먼저 보냄
+            switch (previousStatus) {
+                case CONFIRMED -> notificationService.sendNotification(
+                        contractUser.getUser().getId(),
+                        "계약서 승인 무효화",
+                        "계약서가 수정되어 기존 승인이 무효화되었습니다. 다시 확인해주세요.",
+                        NotificationCategory.CONTRACT
+                );
+                case DRAFT -> notificationService.sendNotification(
+                        contractUser.getUser().getId(),
+                        "계약서 승인 요청",
+                        "계약서가 수정되어 승인이 필요합니다. 내용을 확인해주세요.",
+                        NotificationCategory.CONTRACT
+                );
+                default -> {
+
+                }
+            }
+
+            //상태 변경
+            switch (previousStatus) {
                 case DRAFT -> contractUser.setContractStatus(ContractUserStatus.PENDING);
                 case CONFIRMED -> {
                     contractUser.setContractStatus(ContractUserStatus.REVIEW_REQUIRED);
@@ -375,6 +400,7 @@ public class ContractServiceImpl implements ContractService {
                     // PENDING 상태는 유지
                 }
             }
+
             contractUserRepository.save(contractUser);
         }
     }
