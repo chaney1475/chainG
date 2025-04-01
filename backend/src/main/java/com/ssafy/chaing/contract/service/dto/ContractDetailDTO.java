@@ -64,7 +64,13 @@ public class ContractDetailDTO {
                 contract.getTotalRentRatio(),
                 contract.getMembers().stream()
                         .filter(user -> !user.isSurplusUser())
-                        .map(user -> new UserPaymentInfoDTO(user.getId(), user.getRentAmount(), user.getRentRatio()))
+                        .map(cu ->
+                                new UserPaymentInfoDTO(
+                                        cu.getUser().getId(),
+                                        cu.getRentAmount(),
+                                        cu.getRentRatio()
+                                )
+                        )
                         .toList()
         );
 

@@ -16,13 +16,13 @@ import jakarta.persistence.Table;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
@@ -38,7 +38,7 @@ import org.hibernate.annotations.SQLRestriction;
                 @Index(name = "idx_payment_status", columnList = "payment_status")
         }
 )
-@Slf4j
+
 public class PaymentEntity extends BaseEntity {
 
     @Id
@@ -93,6 +93,14 @@ public class PaymentEntity extends BaseEntity {
     public void addPaidAmount(int amount) {
         // 현재 납부 금액 증가
         this.paidAmount += amount;
+
+        // 전체 금액이 모이면 상태 갱신
+        if (this.paidAmount >= this.totalAmount) {
+            this.status = PaymentStatus.COLLECTED;
+            this.allPaid = true; // 계약 상태 갱신
+        } else {
+            this.status = PaymentStatus.PARTIALLY_PAID;
+        }
     }
 
     public void refreshStatusFromUserPayments(List<UserPaymentEntity> userPayments) {
@@ -102,11 +110,6 @@ public class PaymentEntity extends BaseEntity {
                 .sum();
 
         this.paidAmount = total;
-
-        log.debug("userPayments:");
-        for (UserPaymentEntity up : userPayments) {
-            log.debug("{}", up.getStatus());
-        }
 
         boolean allPaid = userPayments.stream()
                 .allMatch(up -> up.getStatus() == PaymentStatus.COLLECTED || up.getStatus() == PaymentStatus.PAID);
@@ -129,4 +132,5 @@ public class PaymentEntity extends BaseEntity {
     }
 
 }
+
 

@@ -40,4 +40,7 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
             WHERE c.status = :status
             """)
     List<PaymentEntity> findAllPaymentsForConfirmedContracts(@Param("status") ContractStatus status);
+
+    Optional<PaymentEntity> findWithUsersByContractIdAndMonthAndFeeType(Long contractId, int month, FeeType feeType);
+
 }

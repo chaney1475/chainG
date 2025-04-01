@@ -1,5 +1,7 @@
 package com.ssafy.chaing.contract.service;
 
+import static com.ssafy.chaing.common.exception.ExceptionCode.AlREADY_CONFIRMED_CONTRACT;
+import static com.ssafy.chaing.common.exception.ExceptionCode.AlREADY_CONFIRMED_USER;
 import static com.ssafy.chaing.common.exception.ExceptionCode.CONTRACT_ALREADY_EXIST;
 
 import com.ssafy.chaing.batch.service.RentBatchService;
@@ -123,19 +125,20 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public void approveContract(Long contractId, ApproveContractCommand command) {
 
+        UserEntity user = getUserEntity(command.getUserId());
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), command.getUserId());
+
         ContractEntity contractEntity = contractRepository.findByIdWithMembers(contractId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
         if (contractEntity.isCompleted()) {
-            return;
+            throw new BadRequestException(AlREADY_CONFIRMED_CONTRACT);
         }
 
-        ContractUserEntity contractUser = contractUserRepository.findByContractIdAndUserId(contractId,
-                        command.getUserId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
-
         if (contractUser.getContractStatus() == ContractUserStatus.CONFIRMED) {
-            return;
+            throw new BadRequestException(AlREADY_CONFIRMED_USER);
         }
 
         // 상태를 CONFIRMED로 변경하고 계좌 정보 저장하고, 승인 처리 시간 저장
@@ -347,9 +350,9 @@ public class ContractServiceImpl implements ContractService {
             throw new BadRequestException("사용자의 납부 비율 총합이 잘못되었습니다.");
         }
 
-        if (command.getRent().getDueDate() < 2 || command.getRent().getDueDate() > 28) {
-            throw new BadRequestException("납부 기한은 1일부터 28일 사이여야 합니다.");
-        }
+//        if (command.getRent().getDueDate() < 2 || command.getRent().getDueDate() > 28) {
+//            throw new BadRequestException("납부 기한은 1일부터 28일 사이여야 합니다.");
+//        }
 
     }
 
@@ -404,5 +407,26 @@ public class ContractServiceImpl implements ContractService {
             contractUserRepository.save(contractUser);
         }
     }
+
+    private UserEntity getUserEntity(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    private GroupEntity getGroupEntity(UserEntity user) {
+        return groupRepository.findById(user.getGroupId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+    }
+
+    private ContractEntity getContractEntity(GroupEntity group) {
+        return contractRepository.findById(group.getContractId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND));
+    }
+
+    private ContractUserEntity getContractUserEntity(Long contractId, Long userId) {
+        return contractUserRepository.findByContractIdAndUserId(contractId, userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+    }
+
 
 }

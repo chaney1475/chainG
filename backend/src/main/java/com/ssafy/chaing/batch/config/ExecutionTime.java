@@ -37,10 +37,6 @@ public class ExecutionTime {
         ZonedDateTime baseDate = now.withDayOfMonth(baseDayOfMonth)
                 .withHour(hour).withMinute(minute).withSecond(0);
 
-        if (baseDate.isBefore(now)) {
-            baseDate = baseDate.plusMonths(1).withDayOfMonth(baseDayOfMonth);
-        }
-
         return baseDate.plusDays(dayOffset);
     }
 

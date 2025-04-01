@@ -100,7 +100,7 @@ public class RentBatchService {
             payment.updateStatus(PaymentStatus.RETRY_PENDING);
             registerRetryPayment(payment);
         }
-        
+
         paymentRepository.save(payment);
     }
 
@@ -139,6 +139,11 @@ public class RentBatchService {
             if (userPayment == null) {
                 log.error("🚨 해당 멤버의 UserPayment가 없음 → memberId={}, paymentId={}", member.getId(), payment.getId());
                 allSuccess = false;
+                continue;
+            }
+
+            if (userPayment.getAmount() == 0) {
+                userPayment.updateStatus(PaymentStatus.COLLECTED);
                 continue;
             }
 

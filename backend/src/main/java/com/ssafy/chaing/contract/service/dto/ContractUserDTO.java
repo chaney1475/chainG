@@ -17,7 +17,7 @@ public class ContractUserDTO {
 
     static public ContractUserDTO from(ContractUserEntity entity) {
         return new ContractUserDTO(
-                entity.getId(),
+                entity.getUser().getId(),
                 entity.getUser().getName(),
                 entity.getUser().getNickname(),
                 entity.getUser().getProfileImage(),

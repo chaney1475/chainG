@@ -14,7 +14,8 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
 
     @Query("""
             SELECT c FROM ContractEntity c
-            JOIN FETCH c.members
+            JOIN FETCH c.members cu
+            JOIN FETCH cu.user u
             WHERE c.id = :id
             """)
     Optional<ContractEntity> findByIdWithMembers(Long id);
