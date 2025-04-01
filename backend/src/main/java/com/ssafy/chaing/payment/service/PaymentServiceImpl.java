@@ -13,7 +13,6 @@ import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
-import com.ssafy.chaing.notification.service.command.NotificationCommand;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
@@ -41,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -85,7 +83,8 @@ public class PaymentServiceImpl implements PaymentService {
         Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
 
         // 현재 월 결제 정보
-        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth, userPaymentsByPaymentId);
+        List<CurrentPaymentDTO> currentMonthPayments = getCurrentMonthPayments(payments, currentMonth,
+                userPaymentsByPaymentId);
 
         // 월별 결제 요약
         List<MonthPaymentDTO> monthList = getMonthPaymentSummaries(payments, userPaymentsByPaymentId);
@@ -128,12 +127,16 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
 
-        notificationService.sendNotification(
-                transferInfo.getUserId(),
-                "송금 완료",
-                "임대인에게 " + transferInfo.getBalance() + "원이 송금되었습니다.",
-                NotificationCategory.PAYMENT
-        );
+        List<UserEntity> users = userRepository.findAllUsersInSameContract(transferInfo.getUserId());
+
+        for (UserEntity user : users) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "월세 송금 완료",
+                    transferInfo.getBalance() + "원이 임대인에게 송금되었습니다.",
+                    NotificationCategory.PAYMENT
+            );
+        }
     }
 
     @Override
@@ -142,7 +145,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
         ContractEntity contract = contractUser.getContract();
 
-        if (contract == null){
+        if (contract == null) {
             throw new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND);
         }
 
@@ -158,12 +161,16 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
 
-        notificationService.sendNotification(
-                transferInfo.getUserId(),
-                "입금 완료",
-                "생활비 계좌로 " + transferInfo.getBalance() + "원이 입금되었습니다.",
-                NotificationCategory.PAYMENT
-        );
+        List<UserEntity> users = userRepository.findAllUsersInSameContract(transferInfo.getUserId());
+
+        for (UserEntity user : users) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "생활비 입금 완료",
+                    transferInfo.getBalance() + "원이 생활비 계좌에 입금되었습니다.",
+                    NotificationCategory.PAYMENT
+            );
+        }
     }
 
     @Override
@@ -246,7 +253,7 @@ public class PaymentServiceImpl implements PaymentService {
             return getCurrentMonth(); // 기존 메서드 활용
         }
 
-        if(year < 1000 || year > 9999) {
+        if (year < 1000 || year > 9999) {
             throw new BadRequestException(ExceptionCode.INVALID_YEAR);
         }
 
@@ -423,21 +430,5 @@ public class PaymentServiceImpl implements PaymentService {
         month = String.valueOf(Integer.parseInt(month));
         return year + "-" + month;
     }
-
-//    // 결제 알림 공통 메서드
-//    private void sendPaymentNotification(Long userId, String title, String content) {
-//        userRepository.findById(userId).ifPresent(user -> {
-//            if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
-//                notificationService.publishNotification(
-//                        NotificationCommand.builder()
-//                                .userId(user.getId())
-//                                .title(title)
-//                                .content(content)
-//                                .category(NotificationCategory.PAYMENT)
-//                                .build()
-//                );
-//            }
-//        });
-//    }
 
 }
