@@ -19,6 +19,8 @@ public enum ExceptionCode {
     GROUP_INVITE_CODE_INVALID("GROUP_INVITE_CODE_INVALID", "유효하지 않은 그룹 초대 코드입니다."),
 
     // Contract 관련
+    AlREADY_CONFIRMED_CONTRACT("AlREADY_CONFIRMED_CONTRACT", "이미 확정된 계약서 입니다."),
+    AlREADY_CONFIRMED_USER("AlREADY_CONFIRMED_USER", "이미 승인한 계약서 입니다."),
     CONTRACT_ALREADY_CONFIRMED("CONTRACT_ALREADY_CONFIRMED", "수정이 불가능합니다. 계약서가 이미 확정 되었습니다."),
     CONTRACT_ALREADY_EXIST("CONTRACT_ALREADY_EXIST", "이미 계약서가 존재합니다."),
     CONTRACT_NOT_FOUND("CONTRACT_NOT_FOUND", "계약서가 존재하지 않습니다."),
