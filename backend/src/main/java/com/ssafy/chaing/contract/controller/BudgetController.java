@@ -72,6 +72,7 @@ public class BudgetController {
     public ResponseEntity<BaseResponse<Void>> notifyLivingDeposit(
             @AuthenticationPrincipal UserPrincipal principal) {
 
+        budgetService.notifyLivingDeposit(principal.getId());
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
@@ -82,7 +83,7 @@ public class BudgetController {
     @PostMapping("/notice/withdraw")
     public ResponseEntity<BaseResponse<Void>> notifyLivingWithdraw(
             @AuthenticationPrincipal UserPrincipal principal) {
-
+        budgetService.notifyLivingWithdraw(principal.getId());
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
