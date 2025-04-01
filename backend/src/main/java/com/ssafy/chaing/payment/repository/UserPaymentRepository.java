@@ -2,8 +2,8 @@ package com.ssafy.chaing.payment.repository;
 
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -22,5 +22,8 @@ public interface UserPaymentRepository extends JpaRepository<UserPaymentEntity, 
             """)
     List<UserPaymentEntity> findWithMemberAndUserByPaymentId(Long paymentId);
 
+    Optional<UserPaymentEntity> findByPaymentIdAndContractMemberId(Long paymentId, Long contractUserId);
+
+    List<UserPaymentEntity> findByPaymentId(Long id);
 
 }

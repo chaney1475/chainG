@@ -93,8 +93,10 @@ public class PaymentEntity extends BaseEntity {
 
         // 전체 금액이 모이면 상태 갱신
         if (this.paidAmount >= this.totalAmount) {
-            this.status = PaymentStatus.PAID;
+            this.status = PaymentStatus.COLLECTED;
             this.allPaid = true; // 계약 상태 갱신
+        } else {
+            this.status = PaymentStatus.PARTIALLY_PAID;
         }
     }
 

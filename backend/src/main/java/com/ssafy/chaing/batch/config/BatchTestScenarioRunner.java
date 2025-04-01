@@ -43,13 +43,13 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
     public void run(String... args) {
         log.info("🚀 통합 시나리오 실행 시작");
 
-        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now().plusSeconds(40);
         int nowHour = now.getHour();
         int nowMinute = now.getMinute();
 
-        rentBatchService.setCollectTime(new ExecutionTime(nowHour, (nowMinute + 1) % 60, 0));
-        rentBatchService.setPayTime(new ExecutionTime(nowHour, (nowMinute + 2) % 60, 0));
-        rentBatchService.setRetryTime(new ExecutionTime(nowHour, (nowMinute + 3) % 60, 0));
+        rentBatchService.setCollectTime(new ExecutionTime(nowHour, nowMinute + 4, 0));
+        rentBatchService.setPayTime(new ExecutionTime(nowHour, nowMinute + 6 % 60, 0));
+        rentBatchService.setRetryTime(new ExecutionTime(nowHour, nowMinute + 8 % 60, 0));
 
         UserEntity admin = UserEntity.builder()
                 .name("어드민")
@@ -90,6 +90,15 @@ public class BatchTestScenarioRunner implements CommandLineRunner {
             @Override
             public void run() {
                 log.info("Contract2 1분 뒤 승인");
+
+                ZonedDateTime now2 = ZonedDateTime.now().plusSeconds(40);
+                int nowHour2 = now2.getHour();
+                int nowMinute2 = now2.getMinute();
+
+                rentBatchService.setCollectTime(new ExecutionTime(nowHour2, nowMinute2 + 4, 0));
+                rentBatchService.setPayTime(new ExecutionTime(nowHour2, nowMinute2 + 6 % 60, 0));
+                rentBatchService.setRetryTime(new ExecutionTime(nowHour2, nowMinute2 + 8 % 60, 0));
+
                 contractService.approveContract(contract2.getId(),
                         new ApproveContractCommand(users2.get(2).getId(), "0010624269496821"));
             }

@@ -2,6 +2,7 @@ package com.ssafy.chaing.payment.service;
 
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.common.exception.NotFoundException;
 import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
@@ -20,11 +21,11 @@ import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
+import com.ssafy.chaing.payment.service.command.TransferRentCommand;
 import com.ssafy.chaing.payment.service.dto.CurrentPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.MonthPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
-import com.ssafy.chaing.payment.service.dto.TransferDto;
 import com.ssafy.chaing.payment.service.dto.WeekPaymentDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
@@ -40,9 +41,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -106,45 +109,90 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void transferToOwner(TransferDto transferInfo) {
-        ContractUserEntity contractUser = contractUserRepository.findWithContractByUserId(transferInfo.getUserId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_USER_NOT_FOUND));
-        ContractEntity contract = contractUser.getContract();
+    @Transactional
+    public void transferToOwner(TransferRentCommand command) {
 
-        TransferCommand command = new TransferCommand(
+        UserEntity user = getUserEntity(command.getUserId());
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), command.getUserId());
+
+        int targetMonth = command.getMonth(); // ex: 202510
+        FeeType feeType = FeeType.RENT;
+
+        PaymentEntity payment = paymentRepository
+                .findWithUsersByContractIdAndMonthAndFeeType(contract.getId(), targetMonth, feeType)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_PAYMENT_NOT_FOUND));
+
+        if (payment.getStatus().equals(PaymentStatus.PAID)) {
+            throw new BadRequestException(ExceptionCode.ALREADY_PAID);
+        }
+
+        TransferCommand dto = new TransferCommand(
                 contract.getRentAccountNo(),
-                transferInfo.getAccountNo(),
-                transferInfo.getBalance()
+                contract.getOwnerAccountNo(),
+                command.getBalance()
         );
 
-        TransferDTO result = fintechService.transfer(command);
+        TransferDTO result = fintechService.transfer(dto);
 
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
+
+        payment.setStatus(PaymentStatus.PAID);
+
+        log.info("💸 유저 ID={} → 집주인에게 월세 수동 납부 완료. PaymentID={}",
+                user.getId(), payment.getId());
     }
 
-    @Override
-    public void depositToLifeAccount(TransferDto transferInfo) {
-        ContractUserEntity contractUser = contractUserRepository.findWithContractByUserId(transferInfo.getUserId())
-                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
-        ContractEntity contract = contractUser.getContract();
 
-        if (contract == null) {
-            throw new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND);
+    @Override
+    @Transactional
+    public void depositToLifeAccount(TransferRentCommand command) {
+
+        UserEntity user = getUserEntity(command.getUserId());
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), command.getUserId());
+
+        int targetMonth = command.getMonth(); // ex: 202510
+        FeeType feeType = FeeType.RENT;
+
+        PaymentEntity payment = paymentRepository
+                .findWithUsersByContractIdAndMonthAndFeeType(contract.getId(), targetMonth, feeType)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_PAYMENT_NOT_FOUND));
+
+        // 사용자에 대한 UserPaymentEntity 조회
+        UserPaymentEntity userPayment = userPaymentRepository
+                .findByPaymentIdAndContractMemberId(payment.getId(), contractUser.getId())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_PAYMENT_NOT_FOUND));
+
+        // 이미 처리된 경우 중복 처리 방지
+        if (userPayment.getStatus() == PaymentStatus.PAID || userPayment.getStatus() == PaymentStatus.COLLECTED) {
+            throw new BadRequestException(ExceptionCode.ALREADY_PAID);
         }
 
-        TransferCommand command = new TransferCommand(
-                transferInfo.getAccountNo(),
-                contract.getRentAccountNo(),
-                transferInfo.getBalance()
+        // 송금: 요청자가 본인 계좌에서 → 월세 계좌로 송금
+        TransferDTO result = fintechService.transfer(
+                new TransferCommand(
+                        contract.getRentAccountNo(),
+                        command.getAccountNo(),
+                        command.getBalance()
+                )
         );
-
-        TransferDTO result = fintechService.transfer(command);
 
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
+
+        payment.addPaidAmount(userPayment.getAmount());
+        userPayment.updateStatus(PaymentStatus.COLLECTED);
+        userPaymentRepository.save(userPayment);
+
+        log.info("💸 유저 ID={} → 월세 수동 납부 완료. PaymentID={}, UserPaymentID={}",
+                user.getId(), payment.getId(), userPayment.getId());
+
     }
 
     @Override
@@ -298,7 +346,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.PAID
+                                    up.getStatus() == PaymentStatus.COLLECTED
                             ));
                 })
                 .collect(Collectors.toList());

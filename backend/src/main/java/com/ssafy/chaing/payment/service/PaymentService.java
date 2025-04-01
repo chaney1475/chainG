@@ -5,9 +5,9 @@ import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
+import com.ssafy.chaing.payment.service.command.TransferRentCommand;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
-import com.ssafy.chaing.payment.service.dto.TransferDto;
 import java.time.ZonedDateTime;
 
 public interface PaymentService {
@@ -16,9 +16,9 @@ public interface PaymentService {
 
     AccountInfoResponse getRentAccountNo(Long userId);
 
-    void transferToOwner(TransferDto transferInfo);
+    void transferToOwner(TransferRentCommand transferInfo);
 
-    void depositToLifeAccount(TransferDto transferDto);
+    void depositToLifeAccount(TransferRentCommand transferCommand);
 
     RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command);
 
