@@ -217,6 +217,7 @@ public class RuleServiceImpl implements RuleService {
                             lifeRule.getItems().remove(toDelete);
                             lifeRuleItemRepository.delete(toDelete);
                         }
+                        default -> throw new BadRequestException(ExceptionCode.INVALID_RULE_ACTION_TYPE);
                     }
                 }
                 // 수정 APPROVE 알림.

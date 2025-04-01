@@ -53,6 +53,7 @@ public enum ExceptionCode {
     LIFE_RULE_ALREADY_EXISTS("LIFE_RULE_ALREADY_EXISTS", "이미 생성된 생활 수칙이 존재합니다."),
     LIFE_RULE_USER_NOT_FOUND("LIFE_RULE_USER_NOT_FOUND", "해당 생활 룰 사용자 정보가 존재하지 않습니다."),
     LIFE_RULE_USER_ALREADY_VOTED("LIFE_RULE_USER_ALREADY_VOTED", "이미 승인/거절한 사용자는 다시 처리할 수 없습니다."),
+    INVALID_RULE_ACTION_TYPE("INVALID_RULE_ACTION_TYPE", "유효하지 않은 생활 룰 변경 유형입니다."),
 
     // S3 관련
     S3_UPLOAD_FAILED("S3_UPLOAD_FAILED", "파일 업로드에 실패하였습니다."),
