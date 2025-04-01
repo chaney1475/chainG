@@ -14,7 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 @Slf4j
 public class OneTimeBatchTestRunner implements ApplicationListener<ApplicationReadyEvent> {
