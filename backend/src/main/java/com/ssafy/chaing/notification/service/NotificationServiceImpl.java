@@ -5,6 +5,7 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.domain.NotificationEntity;
 import com.ssafy.chaing.notification.repository.NotificationRepository;
 import com.ssafy.chaing.notification.service.command.NotificationCommand;
@@ -104,5 +105,29 @@ public class NotificationServiceImpl implements NotificationService {
                 log.error("FCM 발송 실패 - {}", e.getMessage(), e);
             }
         }).orTimeout(5, TimeUnit.SECONDS); // 5초 타임아웃 설정
+    }
+
+    @Override
+    @Transactional
+    public void sendNotification(Long userId, String title, String content, NotificationCategory category) {
+        userRepository.findById(userId).ifPresent(user -> {
+            if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
+                NotificationEntity notification = NotificationEntity.builder()
+                        .user(user)
+                        .title(title)
+                        .content(content)
+                        .isRead(false)
+                        .createdAt(ZonedDateTime.now())
+                        .category(category)
+                        .build();
+
+                NotificationEntity saved = notificationRepository.save(notification);
+                log.info("알림 저장 완료: {}", NotificationDTO.from(saved));
+
+                sendNotificationAsync(user.getFcmToken(), title, content);
+            } else {
+                log.warn("FCM 토큰이 없어서 알림 발송 생략 - userId: {}", userId);
+            }
+        });
     }
 }

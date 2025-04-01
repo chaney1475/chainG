@@ -25,6 +25,8 @@ import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZonedDateTime;
@@ -47,6 +49,7 @@ public class ContractServiceImpl implements ContractService {
     private final GroupUserRepository groupUserRepository;
     private final UserRepository userRepository;
     private final RentBatchService rentBatchService;
+    private final NotificationService notificationService;
 
     @Transactional
     @Override
@@ -95,6 +98,15 @@ public class ContractServiceImpl implements ContractService {
         contractRepository.save(contract);
         group.setContractId(contract.getId());
 
+        for (GroupUserEntity member : members) {
+            notificationService.sendNotification(
+                    member.getUser().getId(),
+                    "계약서 초안 생성",
+                    "그룹 [" + group.getName() + "]에 계약서 초안이 생성되었습니다.",
+                    NotificationCategory.CONTRACT
+            );
+        }
+
         return ContractDTO.from(contract);
     }
 
@@ -132,6 +144,13 @@ public class ContractServiceImpl implements ContractService {
         contractUser.setConfirmedAt(ZonedDateTime.now());
 
         contractUserRepository.save(contractUser);
+
+        notificationService.sendNotification(
+                command.getUserId(),
+                "계약서 승인 완료",
+                "계약서 승인이 완료되었습니다.",
+                NotificationCategory.CONTRACT
+        );
 
         // TODO: 서약서 스마트 컨트랙트 저장 메서드를 비동기로 호출
 
@@ -229,6 +248,16 @@ public class ContractServiceImpl implements ContractService {
 
         updateContractUserStatusForConfirmation(contractEntity, contractId);
 
+        List<ContractUserEntity> usersToNotify = contractUserRepository.findNonSurplusUsersByContractId(contractId);
+        for (ContractUserEntity user : usersToNotify) {
+            notificationService.sendNotification(
+                    user.getUser().getId(),
+                    "계약 확정 알림",
+                    "계약이 최종 확정되었습니다.",
+                    NotificationCategory.CONTRACT
+            );
+        }
+
         return ContractDetailDTO.from(updatedContract);
     }
 
@@ -291,6 +320,16 @@ public class ContractServiceImpl implements ContractService {
             contractUserRepository.save(contractUserEntity);
         }
 
+        List<ContractUserEntity> usersToNotify = contractUserRepository.findNonSurplusUsersByContractId(contractId);
+        for (ContractUserEntity user : usersToNotify) {
+            notificationService.sendNotification(
+                    user.getUser().getId(),
+                    "계약서 초안 수정",
+                    "계약서 초안 내용이 수정되었습니다. 확인해주세요.",
+                    NotificationCategory.CONTRACT
+            );
+        }
+
         // 변경된 계약 정보를 DTO로 변환하여 반환
         return ContractDetailDTO.from(updatedContract);
     }
@@ -325,7 +364,33 @@ public class ContractServiceImpl implements ContractService {
         List<ContractUserEntity> contractUsers = contractUserRepository.findByContractId(contractId);
 
         for (ContractUserEntity contractUser : contractUsers) {
-            switch (contractUser.getContractStatus()) {
+            if (contractUser.isSurplusUser()) {
+                continue;
+            }
+
+            ContractUserStatus previousStatus = contractUser.getContractStatus();
+
+            // ✅ 알림 먼저 보냄
+            switch (previousStatus) {
+                case CONFIRMED -> notificationService.sendNotification(
+                        contractUser.getUser().getId(),
+                        "계약서 승인 무효화",
+                        "계약서가 수정되어 기존 승인이 무효화되었습니다. 다시 확인해주세요.",
+                        NotificationCategory.CONTRACT
+                );
+                case DRAFT -> notificationService.sendNotification(
+                        contractUser.getUser().getId(),
+                        "계약서 승인 요청",
+                        "계약서 확정에 필요한 승인이 필요합니다. 내용을 확인해주세요.",
+                        NotificationCategory.CONTRACT
+                );
+                default -> {
+
+                }
+            }
+
+            //상태 변경
+            switch (previousStatus) {
                 case DRAFT -> contractUser.setContractStatus(ContractUserStatus.PENDING);
                 case CONFIRMED -> {
                     contractUser.setContractStatus(ContractUserStatus.REVIEW_REQUIRED);
@@ -335,6 +400,7 @@ public class ContractServiceImpl implements ContractService {
                     // PENDING 상태는 유지
                 }
             }
+
             contractUserRepository.save(contractUser);
         }
     }

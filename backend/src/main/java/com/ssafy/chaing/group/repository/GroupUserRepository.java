@@ -45,23 +45,31 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Long
                                                @Param("profileImage") String profileImage);
 
     @Query("""
-           SELECT DISTINCT gu.user
-           FROM GroupUserEntity gu
-           JOIN gu.user
-           WHERE gu.group.id = (
-               SELECT gu2.group.id
-               FROM GroupUserEntity gu2
-               WHERE gu2.user.id = :userId
-           )
-           """)
+            SELECT DISTINCT gu.user
+            FROM GroupUserEntity gu
+            JOIN gu.user
+            WHERE gu.group.id = (
+                SELECT gu2.group.id
+                FROM GroupUserEntity gu2
+                WHERE gu2.user.id = :userId
+            )
+            """)
     Set<UserEntity> findAllUsersInGroupByUserId(@Param("userId") Long userId);
 
     @Query("""
-           SELECT gu
-           FROM GroupUserEntity gu
-           JOIN FETCH gu.group
-           WHERE gu.user.id = :userId
-           """)
+            SELECT gu
+            FROM GroupUserEntity gu
+            JOIN FETCH gu.group
+            WHERE gu.user.id = :userId
+            """)
     Optional<GroupUserEntity> findByUserIdWithGroup(@Param("userId") Long userId);
+
+    @Query("""
+            SELECT g.owner.id
+            FROM GroupUserEntity gu
+            JOIN gu.group g
+            WHERE gu.user.id = :userId
+            """)
+    Optional<Long> findGroupOwnerIdByUserId(@Param("userId") Long userId);
 
 }

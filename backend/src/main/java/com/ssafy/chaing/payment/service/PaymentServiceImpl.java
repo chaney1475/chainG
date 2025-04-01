@@ -11,6 +11,8 @@ import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.repository.GroupRepository;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
@@ -59,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ContractUserRepository contractUserRepository;
     private final UserPaymentRepository userPaymentRepository;
     private final FintechService fintechService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -124,6 +127,17 @@ public class PaymentServiceImpl implements PaymentService {
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
+
+        List<UserEntity> users = userRepository.findAllUsersInSameContract(transferInfo.getUserId());
+
+        for (UserEntity user : users) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "월세 송금 완료",
+                    transferInfo.getBalance() + "원이 임대인에게 송금되었습니다.",
+                    NotificationCategory.PAYMENT
+            );
+        }
     }
 
     @Override
@@ -146,6 +160,17 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
+        }
+
+        List<UserEntity> users = userRepository.findAllUsersInSameContract(transferInfo.getUserId());
+
+        for (UserEntity user : users) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "생활비 입금 완료",
+                    transferInfo.getBalance() + "원이 생활비 계좌에 입금되었습니다.",
+                    NotificationCategory.PAYMENT
+            );
         }
     }
 
