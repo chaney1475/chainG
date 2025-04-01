@@ -66,8 +66,8 @@ export function HomePage() {
   }, [user, router])
 
   useEffect(() => {
-    if (user.groupId == null || user.groupId === 0) return
     const fetchGroup = async () => {
+      if (user.groupId == null || user.groupId === 0) return
       const response = await getGroup(user.groupId)
       if (response.success) {
         dispatch(setGroup(response.data))
