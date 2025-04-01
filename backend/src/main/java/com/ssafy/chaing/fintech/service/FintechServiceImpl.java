@@ -4,14 +4,17 @@ import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.config.SsafyApiConfig;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
+import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.ClientResponseRec;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
+import com.ssafy.chaing.fintech.dto.InquireDemandDepositAccountRec;
 import com.ssafy.chaing.fintech.service.common.HeaderWithUserKeyDTO;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.fintech.service.request.ClientTransferRequest;
 import com.ssafy.chaing.fintech.service.request.CreateFintechCardRequest;
 import com.ssafy.chaing.fintech.service.request.InquireBillingRequest;
+import com.ssafy.chaing.fintech.service.request.InquireDemandDepositAccountRequest;
 import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
 import com.ssafy.chaing.fintech.service.response.FintechBaseResponse;
 import com.ssafy.chaing.fintech.util.ClientErrorParser;
@@ -146,5 +149,42 @@ public class FintechServiceImpl implements FintechService {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public FintechResponse<?> inquireDemandDepositAccount(String accountNo) {
+        ClientErrorResponse errorResponse = null;
+        try {
+            HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
+                    "inquireDemandDepositAccount", "inquireDemandDepositAccount"
+            );
+
+            InquireDemandDepositAccountRequest request = new InquireDemandDepositAccountRequest(requestHeader,
+                    accountNo);
+
+            ResponseEntity<FintechBaseResponse<InquireDemandDepositAccountRec>> responseEntity =
+                    restTemplate.exchange(
+                            config.getBaseUrl() + "/demandDeposit/inquireDemandDepositAccount",
+                            HttpMethod.POST,
+                            new HttpEntity<>(request),
+                            new ParameterizedTypeReference<>() {
+                            }
+                    );
+
+            InquireDemandDepositAccountRec rec = Objects.requireNonNull(responseEntity.getBody()).rec();
+            return new FintechResponse<>(rec);
+        } catch (HttpClientErrorException e) {
+            log.error("청구서 조회 실패 - 상태 코드: {}, 응답 내용: {}", e.getStatusCode(), e.getResponseBodyAsString());
+
+            // 🔥 에러 응답 파싱 및 처리
+            errorResponse = ClientErrorParser.parseErrorResponse(e.getResponseBodyAsString());
+            return new FintechResponse<>(errorResponse);
+
+        } catch (Exception e) {
+            log.error("청구서 조회 중 알 수 없는 오류 발생: {}", e.getMessage());
+            return new FintechResponse<>(errorResponse);
+        }
+    }
+
+
 
 }
