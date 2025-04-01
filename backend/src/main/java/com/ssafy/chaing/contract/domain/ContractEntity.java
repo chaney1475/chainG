@@ -5,6 +5,8 @@ import com.ssafy.chaing.group.domain.GroupEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -78,6 +80,7 @@ public class ContractEntity extends BaseEntity {
     private List<ContractUserEntity> members = new ArrayList<>();
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ContractStatus status;
 
     @Column(name = "completed", nullable = false)

@@ -43,9 +43,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -60,7 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final ContractUserRepository contractUserRepository;
     private final UserPaymentRepository userPaymentRepository;
     private final FintechService fintechService;
-    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -176,7 +177,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command) {
-        Objects.requireNonNull(command, "Command cannot be null");
         Long userId = command.getUserId();
         Integer year = Integer.valueOf(command.getYear());
         Integer month = Integer.valueOf(command.getMonth());
@@ -185,7 +185,6 @@ public class PaymentServiceImpl implements PaymentService {
         UserEntity user = getUserEntity(userId);
         GroupEntity group = getGroupEntity(user);
         ContractEntity contract = getContractEntity(group);
-        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
 
         // 현재 월과 주 가져오기
         int currentMonth = formatToYearMonth(year, month);
@@ -218,6 +217,36 @@ public class PaymentServiceImpl implements PaymentService {
                 currentWeekPayments,
                 weekList
         );
+    }
+
+    @Transactional
+    public PaymentEntity createPayment(ContractEntity contract, ZonedDateTime ownerExecution) {
+
+        PaymentEntity payment = PaymentEntity.builder()
+                .contract(contract)
+                .month(ownerExecution.getYear() * 100 + ownerExecution.getMonthValue())
+                .feeType(FeeType.RENT)
+                .totalAmount(contract.getRentTotalAmount())
+                .status(PaymentStatus.STARTED)
+                .paidAmount(0)
+                .retryCount(0)
+                .build();
+
+        payment.setNextExecutionDate(ownerExecution);
+        PaymentEntity savedPayment = paymentRepository.save(payment);
+
+        for (ContractUserEntity member : contract.getMembers()) {
+            UserPaymentEntity userPayment = UserPaymentEntity.builder()
+                    .payment(payment)
+                    .contractMember(member)
+                    .amount(member.getRentAmount())
+                    .status(PaymentStatus.PENDING)
+                    .build();
+            userPaymentRepository.save(userPayment);
+        }
+
+        return savedPayment;
+
     }
 
 
@@ -295,7 +324,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.PAID
+                                    up.getStatus() == PaymentStatus.COLLECTED
                             ));
                 })
                 .collect(Collectors.toList());
@@ -325,7 +354,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.PAID
+                                    up.getStatus() == PaymentStatus.COLLECTED
                             ));
                 })
                 .collect(Collectors.toList());
@@ -356,9 +385,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
-                            if (userPayment.getStatus() == PaymentStatus.PAID) {
+                            if (userPayment.getStatus() == PaymentStatus.COLLECTED) {
                                 paidUserIds.add(userEntityId);
-                            } else {
+                            } else if (userPayment.getStatus() == PaymentStatus.STARTED) {
                                 debtUserIds.add(userEntityId);
                             }
                         }
@@ -398,9 +427,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                         for (UserPaymentEntity userPayment : userPayments) {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
-                            if (userPayment.getStatus() == PaymentStatus.PAID) {
+                            if (userPayment.getStatus() == PaymentStatus.COLLECTED) {
                                 paidUserIds.add(userEntityId);
-                            } else {
+                            } else if (userPayment.getStatus() == PaymentStatus.STARTED) {
                                 debtUserIds.add(userEntityId);
                             }
                         }

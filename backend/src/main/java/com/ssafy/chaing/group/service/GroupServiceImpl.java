@@ -15,6 +15,7 @@ import com.ssafy.chaing.group.service.dto.GroupDTO;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.notification.service.command.NotificationCommand;
+import com.ssafy.chaing.group.service.dto.GroupWithMemberDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.util.Set;
@@ -73,11 +74,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public GroupDTO getGroup(Long groupId) {
-        GroupEntity group = groupRepository.findById(groupId).orElseThrow(
+    public GroupWithMemberDTO getGroup(Long groupId) {
+        GroupEntity group = groupRepository.findWithMembersAndUsersById(groupId).orElseThrow(
                 () -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND)
         );
-        return GroupDTO.from(group);
+
+        return GroupWithMemberDTO.from(group);
     }
 
     @Override
@@ -138,13 +140,13 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public GroupDTO getGroupByInviteCode(String inviteCode) {
+    public GroupWithMemberDTO getGroupByInviteCode(String inviteCode) {
         GroupInviteCode paredCode = new GroupInviteCode(inviteCode);
 
         GroupEntity group = groupRepository.findByIdAndGroupCode(paredCode.getGroupId(), paredCode.getGroupCode())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
-        return GroupDTO.from(group);
+        return GroupWithMemberDTO.from(group);
     }
 
 }

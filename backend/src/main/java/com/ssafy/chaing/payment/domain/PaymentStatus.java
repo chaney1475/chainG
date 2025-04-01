@@ -7,6 +7,7 @@ public enum PaymentStatus {
     PARTIALLY_PAID,   // 일부 실패
     RETRY_PENDING,    // 재시도 상태
     FAILED,           // 완전히 실패
-    DEBT, STARTED
+    DEBT,
+    STARTED
 }
 
