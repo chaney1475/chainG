@@ -13,18 +13,17 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SaveBillingStatementTasklet implements Tasklet {
+public class CollectToUtilityAccountTasklet implements Tasklet {
 
     private final UtilityBatchService utilityBatchService;
 
     @Override
-    public RepeatStatus execute(
-            @NotNull StepContribution contribution,
-            @NotNull ChunkContext chunkContext)
-    {
+    public RepeatStatus execute(@NotNull StepContribution contribution,
+                                @NotNull ChunkContext chunkContext
+    ) {
         log.info(">>> 이번 주 공과금 청구 내역 저장 배치 Tasklet 시작");
 
-        utilityBatchService.saveCurrentWeekBillingStatement();
+        utilityBatchService.collectToUtilityAccount();
 
         log.info("<<< 이번 주 공과금 청구 내역 저장 배치 Tasklet 완료");
         return RepeatStatus.FINISHED; // 작업 완료 후 종료
