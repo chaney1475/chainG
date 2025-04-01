@@ -29,3 +29,8 @@ export type MenuContent = {
   color?: string
   disabled?: boolean
 }
+
+export interface ProgressBarProps {
+  step: number
+  steps: number
+}
