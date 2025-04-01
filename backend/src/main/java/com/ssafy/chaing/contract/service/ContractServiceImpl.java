@@ -381,7 +381,7 @@ public class ContractServiceImpl implements ContractService {
                 case DRAFT -> notificationService.sendNotification(
                         contractUser.getUser().getId(),
                         "계약서 승인 요청",
-                        "계약서가 수정되어 승인이 필요합니다. 내용을 확인해주세요.",
+                        "계약서 확정에 필요한 승인이 필요합니다. 내용을 확인해주세요.",
                         NotificationCategory.CONTRACT
                 );
                 default -> {
