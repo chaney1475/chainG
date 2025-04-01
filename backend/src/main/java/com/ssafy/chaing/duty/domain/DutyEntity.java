@@ -40,11 +40,11 @@ public class DutyEntity extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", nullable = false)
-    private String content;
+    @Column(name = "category", nullable = false)
+    private String category;
 
-    @Column(name = "duty_time", nullable = true)
-    private ZonedDateTime dutyTime; // 업무 시간 (Nullable)
+    @Column(name = "duty_time")
+    private String dutyTimeRaw;
 
     @Column(name = "day_of_week", nullable = false)
     private String dayOfWeek; // 수행 요일
@@ -61,10 +61,10 @@ public class DutyEntity extends BaseEntity {
     private Set<DutyAssigneeEntity> assignees = new HashSet<>(); // 할당된 사용자 목록
 
     // 도메인 메서드: duty 기본 정보 업데이트
-    public void update(String title, String content, ZonedDateTime dutyTime, String dayOfWeek, boolean useTime) {
+    public void update(String title, String category, String dutyTime, String dayOfWeek, boolean useTime) {
         this.title = title;
-        this.content = content;
-        this.dutyTime = dutyTime;
+        this.category = category;
+        this.dutyTimeRaw = dutyTime;
         this.dayOfWeek = dayOfWeek;
         this.useTime = useTime;
     }
