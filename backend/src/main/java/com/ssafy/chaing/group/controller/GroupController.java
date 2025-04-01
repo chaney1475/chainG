@@ -11,6 +11,7 @@ import com.ssafy.chaing.group.service.command.CreateGroupCommand;
 import com.ssafy.chaing.group.service.command.JoinGroupCommand;
 import com.ssafy.chaing.group.service.dto.GroupDTO;
 import com.ssafy.chaing.group.service.dto.GroupWithMemberDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
@@ -39,6 +40,10 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    @Operation(
+            summary = "그룹 생성",
+            description = "새로운 그룹을 생성하고, 생성자를 그룹장으로 등록합니다."
+    )
     @PostMapping
     public ResponseEntity<BaseResponse<GroupResponse>> createGroup(@RequestBody CreateGroupRequest body,
                                                                    @AuthenticationPrincipal UserPrincipal principal
@@ -56,6 +61,10 @@ public class GroupController {
                 .body(BaseResponse.success(response));
     }
 
+    @Operation(
+            summary = "그룹 정보 조회",
+            description = "그룹 ID로 그룹 정보를 조회합니다."
+    )
     @GetMapping("/{groupId}")
     public ResponseEntity<BaseResponse<GroupWithMemberResponse>> getGroup(@PathVariable Long groupId) {
         GroupWithMemberDTO dto = groupService.getGroup(groupId);
@@ -66,6 +75,10 @@ public class GroupController {
                 .body(BaseResponse.success(response));
     }
 
+    @Operation(
+            summary = "초대 코드로 그룹 조회",
+            description = "초대 코드를 통해 그룹 정보를 조회합니다."
+    )
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<GroupWithMemberResponse>> getGroupByInviteCode(
             @Parameter(description = "초대 코드", required = true) @RequestParam(name = "inviteCode") String inviteCode
@@ -80,6 +93,10 @@ public class GroupController {
 
     }
 
+    @Operation(
+            summary = "그룹 참여",
+            description = "초대 코드를 통해 그룹에 참여합니다."
+    )
     @PostMapping("/join")
     public ResponseEntity<BaseResponse<GroupResponse>> joinGroups(@RequestBody JoinGroupRequest body,
                                                                   @AuthenticationPrincipal UserPrincipal principal) {
