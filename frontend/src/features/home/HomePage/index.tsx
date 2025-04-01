@@ -9,10 +9,15 @@ import { useRouter } from 'next/navigation'
 
 import { getGroup } from '@/apis/group'
 import { getUnreadNotificationCount } from '@/apis/notification'
-import { CardButton, IconButton } from '@/components'
+import { CardButton, IconButton, UserItem } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setGroup } from '@/store/slices/groupSlice'
-import { Container, ImageContainer, Main } from '@/styles/styles'
+import {
+  Container,
+  ImageContainer,
+  Main,
+  UserTileContainer,
+} from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
 
@@ -61,15 +66,15 @@ export function HomePage() {
   }, [user, router])
 
   useEffect(() => {
-    if (!group.id) return
     const fetchGroup = async () => {
-      const response = await getGroup(group.id)
+      if (user.groupId == null || user.groupId === 0) return
+      const response = await getGroup(user.groupId)
       if (response.success) {
         dispatch(setGroup(response.data))
       }
     }
     fetchGroup()
-  }, [group.id, dispatch])
+  }, [user.groupId, dispatch])
 
   useEffect(() => {
     if (!isMounted) return
@@ -142,6 +147,18 @@ export function HomePage() {
           style={{ objectFit: 'cover' }}
         />
       </ImageContainer>
+
+      <UserTileContainer>
+        {group?.members &&
+          group.members.map((user) => (
+            <UserItem
+              key={user.id}
+              user={user}
+              variant="tile"
+              size="medium"
+            />
+          ))}
+      </UserTileContainer>
 
       <CardButton cardItems={cardItems}></CardButton>
       <p>id: {user.id}</p>
