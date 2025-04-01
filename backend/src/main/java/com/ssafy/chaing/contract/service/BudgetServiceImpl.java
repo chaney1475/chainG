@@ -6,6 +6,12 @@ import com.ssafy.chaing.contract.controller.response.budget.LivingBudgetAccountR
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
 import com.ssafy.chaing.contract.service.dto.CreateLivingBudgetDto;
+import com.ssafy.chaing.group.repository.GroupUserRepository;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
+import com.ssafy.chaing.user.domain.UserEntity;
+import com.ssafy.chaing.user.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BudgetServiceImpl implements BudgetService {
 
+    private final UserRepository userRepository;
     private final ContractUserRepository contractUserRepository;
-    //TODO : FCM 으로 알림 보내기.
+    private final GroupUserRepository groupUserRepository;
+    private final NotificationService notificationService;
 
     @Override
     public void notifyLeaderToRegisterLivingAccount(Long userId) {
@@ -23,7 +31,15 @@ public class BudgetServiceImpl implements BudgetService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
         // 생활비 계좌 조회
         if (contractUser.getContract().getLiveAccountNo() == null) {
-            // TODO 1. 방장을 찾는다 2. 방장에게 알림 쏜다(FCM)
+            Long leaderId = groupUserRepository.findGroupOwnerIdByUserId(userId)
+                    .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+
+            notificationService.sendNotification(
+                    leaderId,
+                    "생활비 계좌 등록 요청",
+                    "생활비 계좌가 아직 등록되지 않았습니다. 등록을 진행해주세요.",
+                    NotificationCategory.LIVING_BUDGET
+            );
         } else {
             throw new BadRequestException(ExceptionCode.LIVING_ACCOUNT_ALREADY_EXIST);
         }
@@ -42,17 +58,44 @@ public class BudgetServiceImpl implements BudgetService {
         ContractUserEntity contractUser = contractUserRepository.findByUser_Id(accountInfo.getId())
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
         contractUser.getContract().setLiveAccountNo(accountInfo.getAccountNo());
-        // TODO 모두에게 알림 쏜다(FCM)
+        List<UserEntity> otherUsers = userRepository.findOtherUsersInSameContract(accountInfo.getId());
+
+        for (UserEntity user : otherUsers) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "생활비 계좌 등록 완료",
+                    "공동 생활비 계좌가 등록되었습니다. 확인해주세요.",
+                    NotificationCategory.LIVING_BUDGET
+            );
+        }
     }
 
 
     @Override
     public void notifyLivingDeposit(Long userId) {
-        // TODO 모두에게 알림 쏜다(FCM)
+        List<UserEntity> otherUsers = userRepository.findOtherUsersInSameContract(userId);
+
+        for (UserEntity user : otherUsers) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "생활비 입금 알림",
+                    "생활비가 입금되었습니다.",
+                    NotificationCategory.LIVING_BUDGET
+            );
+        }
     }
 
     @Override
     public void notifyLivingWithdraw(Long userId) {
-        // TODO 모두에게 알림 쏜다(FCM)
+        List<UserEntity> otherUsers = userRepository.findOtherUsersInSameContract(userId);
+
+        for (UserEntity user : otherUsers) {
+            notificationService.sendNotification(
+                    user.getId(),
+                    "생활비 출금 알림",
+                    "생활비가 출금되었습니다.",
+                    NotificationCategory.LIVING_BUDGET
+            );
+        }
     }
 }
