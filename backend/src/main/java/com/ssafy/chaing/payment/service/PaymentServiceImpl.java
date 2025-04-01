@@ -148,13 +148,13 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("💸 유저 ID={} → 집주인에게 월세 수동 납부 완료. PaymentID={}",
                 user.getId(), payment.getId());
 
-        List<UserEntity> users = userRepository.findAllUsersInSameContract(transferInfo.getUserId());
+        List<UserEntity> members = userRepository.findAllUsersInSameContract(command.getUserId());
 
-        for (UserEntity user : users) {
+        for (UserEntity member : members) {
             notificationService.sendNotification(
-                    user.getId(),
+                    member.getId(),
                     "월세 송금 완료",
-                    transferInfo.getBalance() + "원이 임대인에게 송금되었습니다.",
+                    command.getBalance() + "원이 임대인에게 송금되었습니다.",
                     NotificationCategory.PAYMENT
             );
         }
@@ -203,13 +203,13 @@ public class PaymentServiceImpl implements PaymentService {
         userPayment.updateStatus(PaymentStatus.COLLECTED);
         userPaymentRepository.save(userPayment);
 
-        List<UserEntity> users = userRepository.findAllUsersInSameContract(transferInfo.getUserId());
+        List<UserEntity> members = userRepository.findAllUsersInSameContract(command.getUserId());
 
-        for (UserEntity user : users) {
+        for (UserEntity member : members) {
             notificationService.sendNotification(
-                    user.getId(),
+                    member.getId(),
                     "생활비 입금 완료",
-                    transferInfo.getBalance() + "원이 생활비 계좌에 입금되었습니다.",
+                    command.getBalance() + "원이 생활비 계좌에 입금되었습니다.",
                     NotificationCategory.PAYMENT
             );
         }
