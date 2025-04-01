@@ -40,9 +40,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -158,7 +160,6 @@ public class PaymentServiceImpl implements PaymentService {
         UserEntity user = getUserEntity(userId);
         GroupEntity group = getGroupEntity(user);
         ContractEntity contract = getContractEntity(group);
-        ContractUserEntity contractUser = getContractUserEntity(contract.getId(), userId);
 
         // 현재 월과 주 가져오기
         int currentMonth = formatToYearMonth(year, month);
@@ -298,7 +299,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.PAID
+                                    up.getStatus() == PaymentStatus.COLLECTED
                             ));
                 })
                 .collect(Collectors.toList());
