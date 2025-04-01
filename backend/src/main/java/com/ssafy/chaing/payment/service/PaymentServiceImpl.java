@@ -193,6 +193,36 @@ public class PaymentServiceImpl implements PaymentService {
         );
     }
 
+    @Transactional
+    public PaymentEntity createPayment(ContractEntity contract, ZonedDateTime ownerExecution) {
+
+        PaymentEntity payment = PaymentEntity.builder()
+                .contract(contract)
+                .month(ownerExecution.getYear() * 100 + ownerExecution.getMonthValue())
+                .feeType(FeeType.RENT)
+                .totalAmount(contract.getRentTotalAmount())
+                .status(PaymentStatus.STARTED)
+                .paidAmount(0)
+                .retryCount(0)
+                .build();
+
+        payment.setNextExecutionDate(ownerExecution);
+        PaymentEntity savedPayment = paymentRepository.save(payment);
+
+        for (ContractUserEntity member : contract.getMembers()) {
+            UserPaymentEntity userPayment = UserPaymentEntity.builder()
+                    .payment(payment)
+                    .contractMember(member)
+                    .amount(member.getRentAmount())
+                    .status(PaymentStatus.PENDING)
+                    .build();
+            userPaymentRepository.save(userPayment);
+        }
+
+        return savedPayment;
+
+    }
+
 
     private UserEntity getUserEntity(Long userId) {
         return userRepository.findById(userId)

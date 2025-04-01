@@ -109,7 +109,6 @@ public class RentBatchServiceWithSchedulerTest {
     @Autowired
     private TaskScheduler scheduler;
 
-
     @BeforeEach
     void setUp() {
         // 기존에 작성한 계약 설정 메서드를 호출
