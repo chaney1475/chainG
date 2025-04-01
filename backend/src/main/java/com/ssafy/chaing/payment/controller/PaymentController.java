@@ -33,21 +33,20 @@ public class PaymentController {
 
     @GetMapping("/rent")
     public ResponseEntity<?> retrieveRent(
-            @Valid @RequestParam("month") RetrieveRentRequest body,
+            @Valid @RequestParam RetrieveRentRequest month,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        RetrieveRentCommand command = body.toCommand(principal);
+        RetrieveRentCommand command = month.toCommand(principal);
         RetrieveRentResponse response = RetrieveRentResponse.from(paymentService.retrieveRent(command));
         return ResponseEntity.ok(BaseResponse.success(response));
     }
 
     @GetMapping("/utility")
     public ResponseEntity<?> retrieveUtility(
-            @Valid @RequestParam("month") RetrieveUtilityRequest body,
+            @Valid @RequestParam RetrieveUtilityRequest month,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        System.out.println(principal.getId());
-        RetrieveUtilityCommand command = body.toCommand(principal);
+        RetrieveUtilityCommand command = month.toCommand(principal);
         RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
         return ResponseEntity.ok(BaseResponse.success(response));
     }
