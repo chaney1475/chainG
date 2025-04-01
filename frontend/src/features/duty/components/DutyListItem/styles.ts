@@ -1,18 +1,19 @@
 import styled from '@emotion/styled'
 
 export const Container = styled.div`
-  padding: 16px 0;
+  padding: 1rem 0;
   display: flex;
-  align-items: flex-start;
+  align-items: start;
+  height: 100%;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1rem;
   width: 100%;
 `
 
 export const CatrgoryIcon = styled.div`
   background-color: ${({ theme }) => theme.color.secondary};
-  min-height: 48px;
-  min-width: 48px;
+  min-height: 3rem;
+  min-width: 3rem;
   border-radius: 50%;
   position: relative;
   display: flex;
@@ -22,9 +23,18 @@ export const CatrgoryIcon = styled.div`
 
 export const DutyInfo = styled.div`
   display: flex;
-  gap: 4px;
-  flex-direction: column;
+  gap: 1rem;
   width: 100%;
+  max-height: 4.75rem;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
 
   > div:first-of-type {
     ${({ theme }) => theme.typography.styles.description};
@@ -37,5 +47,10 @@ export const DutyInfo = styled.div`
     max-width: 100%;
     word-break: break-all;
     line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 `

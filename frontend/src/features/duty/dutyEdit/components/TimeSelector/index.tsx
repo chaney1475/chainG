@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ToggleSwitch } from '@/components'
-import '@/styles/styles'
 import { SwitcherContainer } from '@/styles/styles'
 
 import { TimeInputContainer } from '../TimeInputContainer'

@@ -1,12 +1,8 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
-
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 
-import { dutyCategoryList } from '@/constants/duty'
-import { Duty } from '@/types/duty'
+import { userList } from '@/constants/userList'
 
 import { Container, Name, ProfileContainer } from './styles'
 
@@ -15,27 +11,21 @@ interface AssigneesProps {
 }
 
 export const Assignees = ({ assignees }: AssigneesProps) => {
-  const profileList = [
-    {
-      src: '/images/profile/user1.png',
-      name: '펭펭이이오',
-    },
-    {
-      src: '/images/profile/user1.png',
-      name: '펭펭이이오',
-    },
-  ]
+  const assigneeIdSet = new Set(assignees)
+  const assigneesList = userList.filter((item) => assigneeIdSet.has(item.id))
+
+  console.log(assigneeIdSet)
   return (
     <Container>
-      {profileList.map((profile) => (
-        <ProfileContainer>
+      {assigneesList.map((item) => (
+        <ProfileContainer key={item.id}>
           <Image
-            src={profile.src}
-            alt={profile.name}
+            src={item.profileImage ?? ''}
+            alt={item.name}
             width={32}
             height={32}
           />
-          <Name>{profile.name}</Name>
+          <Name>{item.nickname}</Name>
         </ProfileContainer>
       ))}
     </Container>
