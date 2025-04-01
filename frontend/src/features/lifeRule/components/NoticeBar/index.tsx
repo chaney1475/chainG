@@ -5,7 +5,7 @@ import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { NoticeBarContainer } from './styles'
+import { DivContainer, NoticeBarContainer } from './styles'
 
 interface NoticeBarProps {
   message: string
@@ -18,14 +18,16 @@ export const NoticeBar: React.FC<NoticeBarProps> = ({ message }) => {
   }
   return (
     <NoticeBarContainer onClick={handleClick}>
-      <Image
-        src="/images/lifeRule/notice.svg"
-        alt="notice"
-        width={20}
-        height={20}
-      />
+      <DivContainer>
+        <Image
+          src="/images/lifeRule/notice.svg"
+          alt="notice"
+          width={20}
+          height={20}
+        />
 
-      {message}
+        {message}
+      </DivContainer>
       <Image
         src="/images/lifeRule/move-right.svg"
         alt="notice"
