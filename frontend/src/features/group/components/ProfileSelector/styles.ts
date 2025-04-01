@@ -17,7 +17,7 @@ export const ProfileGrid = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  margin: 0 2rem;
+  margin: 0 0.5rem;
 `
 
 export const ProfileImage = styled.img<{

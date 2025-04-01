@@ -37,6 +37,7 @@ export const Main = styled.main`
   margin: auto;
   gap: 60px;
   width: 100%;
+  overflow-y: auto;
 `
 
 export const FullMain = styled.div`
