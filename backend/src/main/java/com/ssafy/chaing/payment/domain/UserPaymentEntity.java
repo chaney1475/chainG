@@ -55,7 +55,6 @@ public class UserPaymentEntity extends BaseEntity {
     // 상태 업데이트 메서드
     public void updateStatus(PaymentStatus status) {
         this.status = status;
-        payment.updateStatus(status);
     }
 
 }

@@ -2,17 +2,20 @@ package com.ssafy.chaing.payment.controller;
 
 import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
+import com.ssafy.chaing.contract.controller.response.ContractDetailResponse;
+import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.payment.controller.request.DepositTransferRequest;
+import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.payment.controller.request.RetrieveRentRequest;
 import com.ssafy.chaing.payment.controller.request.RetrieveUtilityRequest;
-import com.ssafy.chaing.payment.controller.request.WithdrawTransferRequest;
-import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
 import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
+import com.ssafy.chaing.payment.controller.request.WithdrawTransferRequest;
+import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
 import com.ssafy.chaing.payment.service.PaymentService;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
-import com.ssafy.chaing.payment.service.dto.TransferDto;
+import com.ssafy.chaing.payment.service.command.TransferRentCommand;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,10 +46,10 @@ public class PaymentController {
 
     @GetMapping("/utility")
     public ResponseEntity<?> retrieveUtility(
-            @Valid @RequestParam RetrieveUtilityRequest month,
+            @Valid @RequestBody RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
-    ) {
-        RetrieveUtilityCommand command = month.toCommand(principal);
+            ) {
+        RetrieveUtilityCommand command = body.toCommand(principal);
         RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
         return ResponseEntity.ok(BaseResponse.success(response));
     }
@@ -62,8 +65,8 @@ public class PaymentController {
     public ResponseEntity<BaseResponse<Void>> transferToOwner(
             @Valid @RequestBody DepositTransferRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
-        TransferDto transferDto = TransferDto.fromDepositRequest(body, principal.getId());
-        paymentService.transferToOwner(transferDto);
+        TransferRentCommand transferCommand = TransferRentCommand.fromDepositRequest(body, principal.getId());
+        paymentService.transferToOwner(transferCommand);
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
@@ -71,8 +74,8 @@ public class PaymentController {
     public ResponseEntity<BaseResponse<Void>> depositToLifeAccount(
             @Valid @RequestBody WithdrawTransferRequest body,
             @AuthenticationPrincipal UserPrincipal principal) {
-        TransferDto transferDto = TransferDto.fromWithdrawRequest(body, principal.getId());
-        paymentService.depositToLifeAccount(transferDto);
+        TransferRentCommand transferCommand = TransferRentCommand.fromWithdrawRequest(body, principal.getId());
+        paymentService.depositToLifeAccount(transferCommand);
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 

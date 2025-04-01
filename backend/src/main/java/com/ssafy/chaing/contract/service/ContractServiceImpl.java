@@ -347,9 +347,9 @@ public class ContractServiceImpl implements ContractService {
             throw new BadRequestException("사용자의 납부 비율 총합이 잘못되었습니다.");
         }
 
-        if (command.getRent().getDueDate() < 2 || command.getRent().getDueDate() > 28) {
-            throw new BadRequestException("납부 기한은 1일부터 28일 사이여야 합니다.");
-        }
+//        if (command.getRent().getDueDate() < 2 || command.getRent().getDueDate() > 28) {
+//            throw new BadRequestException("납부 기한은 1일부터 28일 사이여야 합니다.");
+//        }
 
     }
 
