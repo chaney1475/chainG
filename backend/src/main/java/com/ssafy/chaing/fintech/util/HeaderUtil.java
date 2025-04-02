@@ -3,6 +3,8 @@ package com.ssafy.chaing.fintech.util;
 import com.ssafy.chaing.fintech.service.common.HeaderWithUserKeyDTO;
 import com.ssafy.chaing.fintech.service.common.HeaderWithoutUserKeyDTO;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +19,7 @@ public class HeaderUtil {
     private String userKey;
 
     public HeaderWithUserKeyDTO createFintechHeaderWithUserKey(String apiName, String apiServiceCode) {
-        Date now = new Date();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of( "Asia/Seoul"));
         String transmissionDate = new SimpleDateFormat("yyyyMMdd").format(now);
         String transmissionTime = new SimpleDateFormat("HHmmss").format(now);
 
