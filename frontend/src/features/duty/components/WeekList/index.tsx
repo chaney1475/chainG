@@ -6,16 +6,22 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import { IconButton } from '@/components/IconButton'
-import { DutyWeekList } from '@/types/duty'
+import { DayKey, DutyWeekList } from '@/types/duty'
 
 import { WeekSelector } from '../WeekSelector'
 import { Container, TextContainer, TopContainer } from './styles'
 
 interface WeekListProps {
   dutyList: DutyWeekList
+  selectedWeek: DayKey
+  setSelectedWeek: (week: DayKey) => void
 }
 
-export function WeekList({ dutyList }: WeekListProps) {
+export function WeekList({
+  dutyList,
+  selectedWeek,
+  setSelectedWeek,
+}: WeekListProps) {
   const { t } = useTranslation()
   const router = useRouter()
   const week = 'second'
@@ -38,7 +44,11 @@ export function WeekList({ dutyList }: WeekListProps) {
         </TextContainer>
       </TopContainer>
 
-      <WeekSelector dutyList={dutyList} />
+      <WeekSelector
+        dutyList={dutyList}
+        selectedWeek={selectedWeek}
+        setSelectedWeek={setSelectedWeek}
+      />
     </Container>
   )
 }

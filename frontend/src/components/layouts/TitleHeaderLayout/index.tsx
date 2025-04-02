@@ -12,7 +12,7 @@ export function TitleHeaderLayout({
   buttonVariant = ButtonVariant.next,
 }: {
   title?: string
-  header: string
+  header?: string
   description?: string
   label?: string
   children: React.ReactNode
@@ -24,10 +24,12 @@ export function TitleHeaderLayout({
       <Container>
         <TopHeader title={title} />
         <Main>
-          <TitleHeader
-            title={header}
-            description={description}
-          />
+          {header && (
+            <TitleHeader
+              title={header}
+              description={description}
+            />
+          )}
           {children}
         </Main>
         <BottomContainer>

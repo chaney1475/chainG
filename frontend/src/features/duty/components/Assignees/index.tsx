@@ -2,12 +2,15 @@
 
 import Image from 'next/image'
 
+import { UserItem } from '@/components/UserItem'
 import { userList } from '@/constants/userList'
+import { User } from '@/types/user'
 
 import { Container, Name, ProfileContainer } from './styles'
 
 interface AssigneesProps {
   assignees: number[]
+  userList: User[]
 }
 
 export const Assignees = ({ assignees }: AssigneesProps) => {
@@ -18,15 +21,10 @@ export const Assignees = ({ assignees }: AssigneesProps) => {
   return (
     <Container>
       {assigneesList.map((item) => (
-        <ProfileContainer key={item.id}>
-          <Image
-            src={item.profileImage ?? ''}
-            alt={item.name}
-            width={32}
-            height={32}
-          />
-          <Name>{item.nickname}</Name>
-        </ProfileContainer>
+        <UserItem
+          key={item.id}
+          user={item}
+        />
       ))}
     </Container>
   )
