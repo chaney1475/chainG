@@ -15,17 +15,12 @@ import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
-import com.ssafy.chaing.notification.service.command.NotificationCommand;
-import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.OffsetTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -72,7 +67,7 @@ public class DutyServiceImpl implements DutyService {
         DutyEntity dutyEntity = DutyEntity.builder()
                 .title(request.getTitle())
                 .category(request.getCategory())
-                .dutyTimeRaw(dutyTime.toString()) // 15:00Z 형식 그대로 저장
+                .dutyTimeRaw(dutyTime != null ? dutyTime.toString() : null)
                 .dayOfWeek(request.getDayOfWeek())
                 .useTime(request.isUseTime())
                 .group(group)
@@ -113,7 +108,8 @@ public class DutyServiceImpl implements DutyService {
         DutyEntity dutyEntity = dutyRepository.findById(dutyId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.DUTY_NOT_FOUND));
 
-        dutyEntity.update(request.getTitle(), request.getCategory(), request.getDutyTime().toString(), request.getDayOfWeek(),
+        dutyEntity.update(request.getTitle(), request.getCategory(), request.getDutyTime().toString(),
+                request.getDayOfWeek(),
                 request.isUseTime());
 
         dutyEntity.clearAssignees();
