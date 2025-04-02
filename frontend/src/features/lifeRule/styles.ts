@@ -9,6 +9,7 @@ export const Container = styled.div`
   height: 100vh;
   background-color: ${({ theme }) => theme.color.background.white};
   position: relative;
+  border: 1px solid yellow;
 `
 
 export const FullMain = styled.main`
@@ -29,4 +30,28 @@ export const NavigatorBar = styled.div`
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
   z-index: 10;
+`
+
+export const EmptyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid red;
+`
+
+export const TitleContainer = styled.div`
+  text-align: center;
+  border: 1px solid purple;
+`
+
+export const Description = styled.p`
+  color: ${({ theme }) => theme.color.text.disabled};
+  ${({ theme }) => theme.typography.styles.description};
+  text-align: center;
+  border: 1px solid blue;
 `
