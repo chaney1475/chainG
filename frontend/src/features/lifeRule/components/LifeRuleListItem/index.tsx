@@ -4,7 +4,6 @@
 // import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
 
-import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
 import { LifeRule } from '@/types/lifeRule'
 
 import { CatrgoryIcon, Container, Content } from './styles'
@@ -13,17 +12,13 @@ interface LifeRuleListItemProps {
   lifeRule: LifeRule
 }
 
-export const LifeRuleListItem = ({ lifeRule }: LifeRuleListItemProps) => {
+export function LifeRuleListItem({ lifeRule }: LifeRuleListItemProps) {
   //const { t } = useTranslation()
   return (
     <Container>
       <CatrgoryIcon>
         <Image
-          src={
-            lifeRuleCategoryList.find(
-              (category) => category.id === lifeRule.category,
-            )?.src ?? '/images/lifeRule/life-rule-category-clean.svg  '
-          }
+          src={`/images/lifeRule/life-rule-category-${lifeRule.category.toLowerCase().trim()}.svg`}
           alt={lifeRule.category}
           width={46}
           height={46}

@@ -6,8 +6,7 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { getUpdateLifeRule } from '@/apis/lifeRule'
-import { approveUpdateForm } from '@/apis/lifeRule'
+import { approveUpdateForm, getUpdateLifeRule } from '@/apis/lifeRule'
 import { TopHeader } from '@/components/TopHeader'
 import ApproveModal from '@/features/lifeRule/components/ApproveModal'
 import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
@@ -53,9 +52,9 @@ export function LifeRuleUpdateApprovePage() {
   const handleApprovalUpdate = async (approved: boolean) => {
     try {
       if (user?.id) {
-        const response = await approveUpdateForm({ approved })
-        // postBooleanRequest는 boolean을 반환하므로 true일 때 성공
-        if (response === true) {
+        const approveResponse = await approveUpdateForm({ approved })
+        if (approveResponse === true) {
+          setIsModalOpen(false)
           router.push('/lifeRule')
         }
       }
@@ -80,12 +79,12 @@ export function LifeRuleUpdateApprovePage() {
     } catch (error) {
       console.error('Error in approval process:', error)
     }
-    setIsModalOpen(false)
   }
 
   useEffect(() => {
     const initializeData = async () => {
       try {
+        // 변경 요청된 생활규칙 목록 가져오기
         const response = await getUpdateLifeRule()
         if (response.success) {
           dispatch(setUpdateLifeRules(response.data))
