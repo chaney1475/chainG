@@ -17,8 +17,8 @@ const getCurrentWeek = (): DayKey => {
   return weeks[day]
 }
 
-const useSelectWeek = () => {
-  const [selectedWeek, setSelectedWeek] = useState<DayKey>(getCurrentWeek())
+const useSelectWeek = (initialWeek?: DayKey) => {
+  const [selectedWeek, setSelectedWeek] = useState<DayKey>(initialWeek || getCurrentWeek())
 
   return useMemo(
     () => ({

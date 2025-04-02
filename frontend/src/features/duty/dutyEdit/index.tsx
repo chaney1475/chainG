@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next'
 
 import { useRouter } from 'next/navigation'
 
-import { createDuty } from '@/apis/duty'
+import { createDuty, modifyDuty } from '@/apis/duty'
 import { BottomSheet, TitleHeaderLayout } from '@/components'
 // import { userList } from '@/constants/userList'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { DutyRequest } from '@/types/duty'
+import { DayKey, DutyRequest } from '@/types/duty'
 
 import useSelectWeek from '../hooks/useSelectWeek'
 import { AssigneesSelectContent } from './components/AssigneesSelectContent'
@@ -19,21 +19,37 @@ import { TimeSelector } from './components/TimeSelector'
 import { TitleSelector } from './components/TitleSelector'
 import { WeekSelector } from './components/WeekSelector'
 import { FullMain } from './styles'
-
+import { useDispatch } from 'react-redux'
+import { clearEditDuty, clearCreateDayOfWeek } from '@/store/slices/dutySlice'
 export function DutyEdit() {
   const { t } = useTranslation()
   const router = useRouter()
+  const dispatch = useDispatch()
 
-  const { selectedWeek, setSelectedWeek } = useSelectWeek()
+  const editDuty = useAppSelector((state) => state.duty.editDuty)
+  const createDayOfWeek = useAppSelector((state) => state.duty.createDayOfWeek)
+  const isEditMode = !!editDuty 
+  console.log('isEditMode 1111111', isEditMode)
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearEditDuty())
+      dispatch(clearCreateDayOfWeek())
+    }
+  }, [dispatch]) // 페이지 unMount 시 EditDuty 비워주기
+
+  const { selectedWeek, setSelectedWeek } = useSelectWeek(
+     createDayOfWeek || undefined
+  )
 
   const methods = useForm<DutyRequest>({
     defaultValues: {
-      title: '',
-      category: 'RENT',
-      dutyTime: '',
-      dayOfWeek: selectedWeek,
-      useTime: false,
-      assignees: [],
+      title: editDuty?.title || '',
+      category: editDuty?.category || 'RENT',
+      dutyTime: editDuty?.dutyTime || '',
+      dayOfWeek: editDuty?.dayOfWeek || selectedWeek,
+      useTime: editDuty?.useTime || false,
+      assignees: editDuty?.assignees || [],
     },
   })
   const { watch, handleSubmit, setValue } = methods
@@ -69,6 +85,21 @@ export function DutyEdit() {
 
   const onSubmit = async (data: DutyRequest) => {
     console.log('data', data)
+    console.log('isEditMode', isEditMode)
+    if(isEditMode){
+      console.log('==========수정요청보냄============')
+      const response = await modifyDuty(editDuty.id, data)
+      console.log(response)
+      if (response.success) {
+        console.log('success')
+        router.push('/duty')
+      } else {
+        console.log('error')
+      }
+    }
+    else{
+      console.log('==========생성요청보냄============')
+
     const response = await createDuty(group.id, data)
     console.log(response)
     if (response.success) {
@@ -77,6 +108,8 @@ export function DutyEdit() {
     } else {
       console.log('error')
     }
+    }
+
   }
 
   return (
@@ -94,6 +127,7 @@ export function DutyEdit() {
           <TimeSelector
             time={dutyTime}
             setTime={(time: string) => setValue('dutyTime', time)}
+            useTime={editDuty?.useTime || false}
           />
 
           <TitleSelector />

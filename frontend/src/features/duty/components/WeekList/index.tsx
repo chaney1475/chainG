@@ -10,7 +10,8 @@ import { DayKey, DutyWeekList } from '@/types/duty'
 
 import { WeekSelector } from '../WeekSelector'
 import { Container, TextContainer, TopContainer } from './styles'
-
+import { useDispatch } from 'react-redux' 
+import { setCreateDayOfWeek } from '@/store/slices/dutySlice'
 interface WeekListProps {
   dutyList: DutyWeekList
   selectedWeek: DayKey
@@ -24,10 +25,12 @@ export function WeekList({
 }: WeekListProps) {
   const { t } = useTranslation()
   const router = useRouter()
+  const dispatch = useDispatch()
   const week = 'second'
 
   const handleClick = () => {
     router.push('/duty/edit')
+    dispatch(setCreateDayOfWeek(selectedWeek))
   }
 
   return (
