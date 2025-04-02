@@ -21,7 +21,9 @@ import com.ssafy.chaing.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.OffsetTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,19 +42,9 @@ public class DutyServiceImpl implements DutyService {
 
     @Override
     public DutyListResponse getDuties(Long groupId) {
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
-
         List<DutyEntity> duties = dutyRepository.findByGroup_Id(groupId);
-        List<DutyEntity> filteredDuties = duties.stream()
-                .filter(duty -> {
-                    LocalDate dutyDate = duty.getDutyTime().toLocalDate();
-                    return !dutyDate.isBefore(startOfWeek) && !dutyDate.isAfter(endOfWeek);
-                })
-                .collect(Collectors.toList());
 
-        Map<String, List<DutyDetailResponse>> groupedDuties = filteredDuties.stream()
+        Map<String, List<DutyDetailResponse>> groupedDuties = duties.stream()
                 .collect(Collectors.groupingBy(
                         duty -> duty.getDayOfWeek().toLowerCase(),
                         Collectors.mapping(DutyDetailResponse::from, Collectors.toList())
@@ -75,10 +67,12 @@ public class DutyServiceImpl implements DutyService {
         GroupEntity group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
+        OffsetTime dutyTime = request.getDutyTime();
+
         DutyEntity dutyEntity = DutyEntity.builder()
                 .title(request.getTitle())
-                .content(request.getContent())
-                .dutyTime(request.getDutyTime())
+                .category(request.getCategory())
+                .dutyTimeRaw(dutyTime.toString()) // 15:00Z 형식 그대로 저장
                 .dayOfWeek(request.getDayOfWeek())
                 .useTime(request.isUseTime())
                 .group(group)
@@ -119,7 +113,7 @@ public class DutyServiceImpl implements DutyService {
         DutyEntity dutyEntity = dutyRepository.findById(dutyId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.DUTY_NOT_FOUND));
 
-        dutyEntity.update(request.getTitle(), request.getContent(), request.getDutyTime(), request.getDayOfWeek(),
+        dutyEntity.update(request.getTitle(), request.getCategory(), request.getDutyTime().toString(), request.getDayOfWeek(),
                 request.isUseTime());
 
         dutyEntity.clearAssignees();

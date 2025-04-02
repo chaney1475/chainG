@@ -1,6 +1,8 @@
 package com.ssafy.chaing.duty.controller.response;
 
 import com.ssafy.chaing.duty.domain.DutyEntity;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,8 +18,8 @@ import lombok.Setter;
 public class DutyDetailResponse {
     private Long id;
     private String title;
-    private String content;
-    private ZonedDateTime dutyTime;
+    private String category;
+    private OffsetTime dutyTime;
     private String dayOfWeek;
     private boolean useTime;
     private List<Long> assignees;
@@ -30,8 +32,8 @@ public class DutyDetailResponse {
         return new DutyDetailResponse(
                 dutyEntity.getId(),
                 dutyEntity.getTitle(),
-                dutyEntity.getContent(),
-                dutyEntity.getDutyTime(),
+                dutyEntity.getCategory(),
+                OffsetTime.parse(dutyEntity.getDutyTimeRaw()),
                 dutyEntity.getDayOfWeek(),
                 dutyEntity.isUseTime(),
                 assigneeIds
