@@ -20,7 +20,7 @@ export const FullMain = styled.main`
   width: 100%;
   flex: 1;
   padding-bottom: 100px;
-  overflow: hidden;
+  overflow: auto;
 `
 
 export const LifeRuleUpdateList = styled.div`

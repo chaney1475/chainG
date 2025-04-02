@@ -4,12 +4,12 @@ import styled from '@emotion/styled'
 
 export const Container = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+  flex-direction: column;
   width: 100%;
+  height: 100vh;
   background-color: ${({ theme }) => theme.color.background.white};
-  overflow: hidden;
+  position: relative;
+  border: 1px solid yellow;
 `
 
 export const FullMain = styled.main`
@@ -19,23 +19,39 @@ export const FullMain = styled.main`
   align-items: flex-start;
   gap: 20px;
   width: 100%;
-  height: auto;
-  overflow: auto;
-  padding-bottom: 75px;
+  height: calc(100% - 75px);
+  overflow-y: auto;
 `
 
 export const NavigatorBar = styled.div`
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   text-align: center;
   height: 75px;
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
+  z-index: 10;
 `
-export const ImageContainer = styled.div`
+
+export const EmptyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
   border: 1px solid red;
-  height: 30dvh;
-  overflow: hidden;
+`
+
+export const TitleContainer = styled.div`
+  text-align: center;
+  border: 1px solid purple;
+`
+
+export const Description = styled.p`
+  color: ${({ theme }) => theme.color.text.disabled};
+  ${({ theme }) => theme.typography.styles.description};
+  text-align: center;
+  border: 1px solid blue;
 `
