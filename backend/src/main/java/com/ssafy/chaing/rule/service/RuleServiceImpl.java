@@ -5,8 +5,8 @@ import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
-import com.ssafy.chaing.notification.domain.NotificationType;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.domain.NotificationType;
 import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.notification.service.command.NotificationCommand;
 import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
@@ -28,6 +28,7 @@ import com.ssafy.chaing.rule.repository.LifeRuleRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleUserRepository;
 import com.ssafy.chaing.user.domain.UserEntity;
 import jakarta.transaction.Transactional;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class RuleServiceImpl implements RuleService {
         LifeRuleChangeRequestEntity changeRequest = LifeRuleChangeRequestEntity.builder()
                 .lifeRule(lifeRule)
                 .totalGroupMember(groupUsers.size())
-                .requestedAt(ZonedDateTime.now())
+                .requestedAt(ZonedDateTime.now(ZoneOffset.UTC))
                 .approvalCount(1)
                 .status(ChangeRequestStatus.PROGRESS)
                 .build();
@@ -117,7 +118,7 @@ public class RuleServiceImpl implements RuleService {
                 .orElseGet(() -> {
                     LifeRuleChangeRequestEntity newRequest = LifeRuleChangeRequestEntity.builder()
                             .lifeRule(lifeRule)
-                            .requestedAt(ZonedDateTime.now())
+                            .requestedAt(ZonedDateTime.now(ZoneOffset.UTC))
                             .approvalCount(1)
                             .status(ChangeRequestStatus.PROGRESS)
                             .build();
@@ -139,7 +140,6 @@ public class RuleServiceImpl implements RuleService {
                         .build())
                 .toList();
         changeRequest.getChangeItems().addAll(changeItems);
-
 
         // 수정 요청 생성 알림.
         sendLifeRuleNotificationToGroupUsers(
@@ -270,7 +270,7 @@ public class RuleServiceImpl implements RuleService {
                     .title(notificationType.getTitle())
                     .content(notificationType.getContent())
                     .category(NotificationCategory.RULE)
-                    .date(ZonedDateTime.now())
+                    .date(ZonedDateTime.now(ZoneOffset.UTC))
                     .build();
             notificationService.publishNotification(command);
         });

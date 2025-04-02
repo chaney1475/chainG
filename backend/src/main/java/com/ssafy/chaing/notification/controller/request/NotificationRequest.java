@@ -2,6 +2,7 @@ package com.ssafy.chaing.notification.controller.request;
 
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.command.NotificationCommand;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class NotificationRequest {
                 title,
                 category,
                 content,
-                ZonedDateTime.now()
+                ZonedDateTime.now(ZoneOffset.UTC)
         );
     }
 }

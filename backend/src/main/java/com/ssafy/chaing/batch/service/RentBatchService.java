@@ -14,6 +14,7 @@ import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
 import com.ssafy.chaing.payment.service.PaymentService;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class RentBatchService {
             return;
         }
 
-        payment.setLastAttemptDate(ZonedDateTime.now());
+        payment.setLastAttemptDate(ZonedDateTime.now(ZoneOffset.UTC));
         log.info("💰 *당일 작업!* 공동 계좌로 모으기와 집주인 계좌 송금 둘 다 → Payment ID = {}", payment.getId());
 
         if (payment.getStatus() == PaymentStatus.PARTIALLY_PAID || payment.getStatus() == PaymentStatus.STARTED) {
@@ -96,7 +97,7 @@ public class RentBatchService {
 
         if (result.isSuccess()) {
             payment.updateStatus(PaymentStatus.PAID);
-            payment.updatePaidDate(ZonedDateTime.now());
+            payment.updatePaidDate(ZonedDateTime.now(ZoneOffset.UTC));
             log.info("✅ 집주인 송금 성공 → Payment ID = {}", payment.getId());
         } else {
             payment.updateStatus(PaymentStatus.RETRY_PENDING);

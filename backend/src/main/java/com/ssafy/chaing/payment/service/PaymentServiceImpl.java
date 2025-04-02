@@ -32,6 +32,7 @@ import com.ssafy.chaing.payment.service.dto.WeekPaymentDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -143,6 +144,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
         }
 
+        payment.updatePaidDate(ZonedDateTime.now(ZoneOffset.UTC));
         payment.setStatus(PaymentStatus.PAID);
 
         log.info("💸 유저 ID={} → 집주인에게 월세 수동 납부 완료. PaymentID={}",

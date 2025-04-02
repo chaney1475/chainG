@@ -13,6 +13,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -126,7 +127,8 @@ public class PaymentEntity extends BaseEntity {
 
     public void increaseRetryCount() {
         this.retryCount += 1;
-        this.lastAttemptDate = ZonedDateTime.now();
+        this.lastAttemptDate = ZonedDateTime.now(ZoneOffset.UTC);
+        ;
     }
 
     public void updatePaidDate(ZonedDateTime now) {
