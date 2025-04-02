@@ -13,7 +13,7 @@ export function ContractPage() {
 
   return (
     <Container>
-      <TopHeader title={t('contract')} />
+      <TopHeader title={t('contractPage')} />
       <FullMain></FullMain>
       <BottomNavigation />
     </Container>

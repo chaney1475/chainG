@@ -105,4 +105,25 @@ export const UserTileContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   margin: auto;
+  flex: 0;
+`
+
+export const Title = styled.div`
+  ${({ theme }) => theme.typography.styles.title};
+  color: ${({ theme }) => theme.color.text.regular};
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.2s ease-out forwards;
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `
