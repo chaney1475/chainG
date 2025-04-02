@@ -198,7 +198,7 @@ public class RentBatchService {
         taskScheduler.schedule(() -> payToOwner(payment.getId()),
                 retryExecution.toInstant());
 
-        log.info("🔁 {}일 {}분 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
+        log.info("🔁 {}일 {}시간 뒤에 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
                 retryTime.getDayOffset(), retryTime.getHour(), payment.getId(), payment.getRetryCount());
 
     }
