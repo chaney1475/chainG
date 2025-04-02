@@ -46,6 +46,7 @@ export function DutyPage() {
         <DutyList
           dutyList={dutyWeekList}
           selectedWeek={selectedWeek}
+          userList={group.members}
         />
       </FullMain>
       <Navigator></Navigator>
