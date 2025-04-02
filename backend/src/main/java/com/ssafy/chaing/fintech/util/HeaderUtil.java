@@ -5,6 +5,7 @@ import com.ssafy.chaing.fintech.service.common.HeaderWithoutUserKeyDTO;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +20,11 @@ public class HeaderUtil {
     private String userKey;
 
     public HeaderWithUserKeyDTO createFintechHeaderWithUserKey(String apiName, String apiServiceCode) {
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of( "Asia/Seoul"));
-        String transmissionDate = new SimpleDateFormat("yyyyMMdd").format(now);
-        String transmissionTime = new SimpleDateFormat("HHmmss").format(now);
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        String transmissionDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String transmissionTime = now.format(DateTimeFormatter.ofPattern("HHmmss"));
 
         String institutionTransactionUniqueNo = generateInstitutionCode(transmissionDate, transmissionTime);
 
