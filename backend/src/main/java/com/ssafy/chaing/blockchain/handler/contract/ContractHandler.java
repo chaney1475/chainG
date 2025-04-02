@@ -15,9 +15,11 @@ import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -45,8 +47,8 @@ public class ContractHandler {
                 new CustomGasProvider());
     }
 
-
-    public boolean addContract(ContractInput input) {
+    @Async
+    public CompletableFuture<Boolean> addContract(ContractInput input) {
         try {
             // DTO의 PaymentInfo 리스트를 ContractManager의 PaymentInfo 객체로 변환
             List<ContractManager.PaymentInfo> paymentInfos = input.getPaymentInfos().stream()
@@ -73,11 +75,10 @@ public class ContractHandler {
                     input.getUtilitySplitRatio(),
                     input.getCardId()
             ).send();
-
-            return true;
+            return CompletableFuture.completedFuture(true);
         } catch (Exception e) {
             log.error("❗addContract error: {}❗", e.getMessage());
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
     }
 

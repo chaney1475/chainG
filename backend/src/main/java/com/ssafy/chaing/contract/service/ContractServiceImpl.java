@@ -5,6 +5,9 @@ import static com.ssafy.chaing.common.exception.ExceptionCode.AlREADY_CONFIRMED_
 import static com.ssafy.chaing.common.exception.ExceptionCode.CONTRACT_ALREADY_EXIST;
 
 import com.ssafy.chaing.batch.service.RentBatchService;
+import com.ssafy.chaing.blockchain.handler.contract.ContractHandler;
+import com.ssafy.chaing.blockchain.handler.contract.input.ContractInput;
+import com.ssafy.chaing.blockchain.handler.contract.input.PaymentInfoInput;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.contract.domain.ContractEntity;
@@ -35,11 +38,14 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -52,6 +58,7 @@ public class ContractServiceImpl implements ContractService {
     private final UserRepository userRepository;
     private final RentBatchService rentBatchService;
     private final NotificationService notificationService;
+    private final ContractHandler contractHandler;
 
     @Transactional
     @Override
@@ -155,11 +162,45 @@ public class ContractServiceImpl implements ContractService {
                 NotificationCategory.CONTRACT
         );
 
-        // TODO: 서약서 스마트 컨트랙트 저장 메서드를 비동기로 호출
-
         // TODO: 계약 완료시 월세 이체 잡 생성
         if (contractEntity.getStatus() == ContractStatus.CONFIRMED) {
             rentBatchService.registerNextMonthPayment(contractEntity);
+
+            // TODO: 서약서 스마트 컨트랙트 저장 메서드를 비동기로 호출
+            List<PaymentInfoInput> paymentInfos = getPaymentInfoList(contract);
+            ContractInput input = ContractInput.from(contract, paymentInfos);
+
+            log.info("▶️▶️▶️비동기 호출 시작");
+            // ❗❗❗❗❗반드시 프로모션 때 풀어줄 것.
+//            CompletableFuture<Boolean> future = contractHandler.addContract(input);
+            CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
+
+            future.thenAccept(success -> {
+                // 이 코드는 비동기 작업이 완료된 후 실행됩니다 (별도의 스레드에서)
+                if (success) {
+                    log.info("✨ 스마트 컨트랙트 등록 성공! 🚀");
+                    sendNotificationTo(
+                            group,
+                            "스마트 컨트랙트 등록 완료!",
+                            "최근 승인된 서약서가 스마트 컨트랙트에 등록되었어요."
+                    );
+                } else {
+                    log.error("❗ 스마트 컨트랙트 등록 실패 ❗");
+                    sendNotificationTo(
+                            group,
+                            "스마트 컨트랙트 등록 실패!",
+                            "최근 승인된 서약서가 스마트 컨트랙트 등록에 실패했어요."
+                    );
+                }
+            }).exceptionally(ex -> {
+                log.error("❗ 스마트 컨트랙트 등록 실패 ❗");
+                sendNotificationTo(
+                        group,
+                        "스마트 컨트랙트 등록 실패!",
+                        "최근 승인된 서약서가 스마트 컨트랙트 등록에 실패했어요."
+                );
+                return null;
+            });
         }
     }
 
@@ -428,5 +469,24 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
     }
 
+    private List<PaymentInfoInput> getPaymentInfoList(ContractEntity contract) {
+        List<ContractUserEntity> contractUsers = contractUserRepository.findByContractId(contract.getId());
+        List<PaymentInfoInput> paymentInfoList = new ArrayList<>();
+        contractUsers.forEach(contractUser -> {
+            paymentInfoList.add(PaymentInfoInput.from(contractUser));
+        });
+        return paymentInfoList;
+    }
 
+    private void sendNotificationTo(GroupEntity group, String title, String content) {
+        List<GroupUserEntity> members = groupUserRepository.findByGroupId(group.getId());
+        members.forEach(member -> {
+            notificationService.sendNotification(
+                    member.getUser().getId(),
+                    title,
+                    content,
+                    NotificationCategory.CONTRACT
+            );
+        });
+    }
 }
