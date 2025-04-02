@@ -17,11 +17,11 @@ export const createLifeRule = async (rules: CreateLifeRuleRequest) =>
 
 //getUpdateLifeRule
 export const getUpdateLifeRule = async () =>
-  await getRequest<UpdateLifeRule[]>(`/life-rule/update-temp`)
+  await getRequest<UpdateLifeRule[]>(`/life-rule/update`)
 
 //updateLifeRule
 export const updateLifeRule = async (params: { updates: UpdateLifeRule[] }) =>
-  await postRequest<UpdateLifeRule[]>(`/life-rule/update-temp`, params)
+  await postRequest<UpdateLifeRule[]>(`/life-rule/update`, params)
 
 //recommendCategory0
 export const recommendCategory = async (params: { content: string }) =>
@@ -29,4 +29,4 @@ export const recommendCategory = async (params: { content: string }) =>
 
 //approveUpdateForm
 export const approveUpdateForm = async (params: { approved: boolean }) =>
-  await postBooleanRequest(`/life-rule/approved`, params)
+  await postBooleanRequest(`/life-rule/approve`, params)
