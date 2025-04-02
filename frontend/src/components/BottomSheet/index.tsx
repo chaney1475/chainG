@@ -117,6 +117,9 @@ export const BottomSheet = ({
             css={headerStyle}
             {...bind()}>
             <Dialog.Title css={visuallyHiddenStyle}>{title}</Dialog.Title>
+            <Dialog.Description css={visuallyHiddenStyle}>
+              {title} 내용을 확인할 수 있는 바텀시트입니다.
+            </Dialog.Description>
             <div css={handleStyle} />
             <Dialog.Close>
               <Image
