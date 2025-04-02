@@ -76,6 +76,7 @@ export function LifeRuleUpdateApprovePage() {
   const handleModalConfirm = async () => {
     try {
       await handleApprovalUpdate(approveType === 'approve')
+      // router.push('/lifeRule')
     } catch (error) {
       console.error('Error in approval process:', error)
     }

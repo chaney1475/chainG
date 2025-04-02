@@ -215,7 +215,7 @@ export function LifeRuleUpdatePage() {
       console.log('filteredUpdates', filteredUpdates)
       const response = await updateLifeRule({ updates: filteredUpdates })
       if (response.success) {
-        router.push('/lifeRule/updateApprove')
+        router.push('/lifeRule')
       }
     } catch (error) {
       console.error('Error updating life rules:', error)
