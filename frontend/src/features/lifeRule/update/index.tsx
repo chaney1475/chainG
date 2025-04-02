@@ -116,6 +116,7 @@ export function LifeRuleUpdatePage() {
         content: item.content.trim(),
         category: item.rule.category,
         actionType: item.actionType,
+        variant: item.variant,
       }))
       console.log('items updated:', debugUpdates)
     }

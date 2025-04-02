@@ -9,13 +9,15 @@ import { useRouter } from 'next/navigation'
 import { getUpdateLifeRule } from '@/apis/lifeRule'
 import { approveUpdateForm } from '@/apis/lifeRule'
 import { TopHeader } from '@/components/TopHeader'
-import { lifeRuleList } from '@/constants/lifeRuleList'
 import ApproveModal from '@/features/lifeRule/components/ApproveModal'
 import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
 import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/LifeRuleUpdateApproveListItem'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setUpdateLifeRules } from '@/store/slices/lifeRuleSlice'
 import { Container } from '@/styles/styles'
+import { UpdateLifeRule } from '@/types/lifeRule'
+
+// import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 // import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
@@ -24,45 +26,15 @@ import { ApproveButton } from '../components/ApproveButton'
 import { ConfirmContainer } from '../update/styles'
 import { ApproveProfileContainer, FullMain, LifeRuleUpdateList } from './styles'
 
-// // 예시 데이터
-// const sampleItems: Array<{
-//   id: number
-//   rule: (typeof lifeRuleList)[0]
-//   variant: LifeRuleUpdateVariant
-// }> = [
-//   {
-//     id: 1,
-//     rule: {
-//       ...lifeRuleList[0],
-//       content: '토요일은 대청소의 날',
-//     },
-//     variant: 'DEFAULT',
-//   },
-//   {
-//     id: 2,
-//     rule: {
-//       ...lifeRuleList[0],
-//       content: '미리미의 생활규칙',
-//     },
-//     variant: 'UPDATE',
-//   },
-//   {
-//     id: 3,
-//     rule: {
-//       ...lifeRuleList[0],
-//       content: '새로운 생활규칙',
-//     },
-//     variant: 'CREATE',
-//   },
-//   {
-//     id: 4,
-//     rule: {
-//       ...lifeRuleList[0],
-//       content: '삭제할 생활규칙',
-//     },
-//     variant: 'DELETE',
-//   },
-// ]
+// interface UpdateLifeRule extends LifeRule {
+//   actionType: LifeRuleUpdateVariant
+// }
+
+// 나중에 API 응답 타입으로 교체될 인터페이스
+// interface ApprovalStatus {
+//   isCreator: boolean
+//   hasApproved: boolean
+// }
 
 export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
@@ -71,35 +43,40 @@ export function LifeRuleUpdateApprovePage() {
   const updateLifeRules = useAppSelector(
     (state) => state.lifeRule.updateLifeRules,
   )
-  const [selectedProfileId, setSelectedProfileId] = useState('')
+  const user = useAppSelector((state) => state.user.user)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [approveType, setApproveType] = useState<'approve' | 'reject' | null>(
     null,
   )
 
-  const handleProfileSelect = (id: string) => {
-    setSelectedProfileId(id)
+  // 승인/거부 처리 함수
+  const handleApprovalUpdate = async (approved: boolean) => {
+    try {
+      if (user?.id) {
+        const response = await approveUpdateForm({ approved })
+        // postBooleanRequest는 boolean을 반환하므로 true일 때 성공
+        if (response === true) {
+          router.push('/lifeRule')
+        }
+      }
+    } catch (error) {
+      console.error('Error updating approval:', error)
+    }
   }
 
-  const handleApprove = async () => {
+  const handleApprove = () => {
     setApproveType('approve')
     setIsModalOpen(true)
   }
 
-  const handleReject = async () => {
+  const handleReject = () => {
     setApproveType('reject')
     setIsModalOpen(true)
   }
 
   const handleModalConfirm = async () => {
     try {
-      const response = await approveUpdateForm({
-        approved: approveType === 'approve',
-      })
-      if (response) {
-        router.push('/lifeRule')
-      }
-      console.log('response', response)
+      await handleApprovalUpdate(approveType === 'approve')
     } catch (error) {
       console.error('Error in approval process:', error)
     }
@@ -107,32 +84,33 @@ export function LifeRuleUpdateApprovePage() {
   }
 
   useEffect(() => {
-    const fetchUpdateLifeRule = async () => {
-      const response = await getUpdateLifeRule()
-      if (response.success) {
-        dispatch(setUpdateLifeRules(response.data))
+    const initializeData = async () => {
+      try {
+        const response = await getUpdateLifeRule()
+        if (response.success) {
+          dispatch(setUpdateLifeRules(response.data))
+        }
+      } catch (error) {
+        console.error('Error initializing data:', error)
       }
-      console.log('response', response)
     }
-    fetchUpdateLifeRule()
-  }, [])
+
+    initializeData()
+  }, [dispatch])
 
   return (
     <Container>
       <TopHeader title={t('lifeRule.updateApproveTitle')} />
       <FullMain>
         <ApproveProfileContainer>
-          <ApproveProfile
-            selectedId={selectedProfileId}
-            onSelect={handleProfileSelect}
-          />
+          <ApproveProfile />
         </ApproveProfileContainer>
         <LifeRuleUpdateList>
-          {updateLifeRules.map((item) => (
+          {updateLifeRules.map((item: UpdateLifeRule) => (
             <LifeRuleUpdateApproveListItem
               key={item.id}
-              lifeRule={item || lifeRuleList[0]}
-              variant={item?.actionType || 'DEFAULT'}
+              lifeRule={item}
+              variant={item.actionType || 'DEFAULT'}
             />
           ))}
         </LifeRuleUpdateList>
@@ -158,7 +136,7 @@ export function LifeRuleUpdateApprovePage() {
         image={
           approveType === 'approve'
             ? '/images/lifeRule/approve.svg'
-            : '/images/lifeRule/approve.svg'
+            : '/images/lifeRule/reject.svg'
         }
       />
     </Container>
