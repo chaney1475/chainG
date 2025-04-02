@@ -13,4 +13,9 @@ public class CreateAccountRequest {
     @JsonProperty("Header")
     private HeaderWithUserKeyDTO header;
     private String accountTypeUniqueNo;
+
+    public CreateAccountRequest(HeaderWithUserKeyDTO header) {
+        this.header = header;
+        this.accountTypeUniqueNo = "001-1-83409cdb1bbc46";
+    }
 }

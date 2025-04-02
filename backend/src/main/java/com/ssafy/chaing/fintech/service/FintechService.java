@@ -6,7 +6,6 @@ import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
-import com.ssafy.chaing.fintech.dto.InquireDemandDepositAccountRec;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import java.util.List;
 
@@ -19,5 +18,5 @@ public interface FintechService {
 
     FintechResponse<?> inquireDemandDepositAccount(String accountNo);
 
-    FintechResponse<?> createAccount(String accountTypeUniqueNo);
+    FintechResponse<?> createAccount();
 }

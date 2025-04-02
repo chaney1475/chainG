@@ -188,15 +188,14 @@ public class FintechServiceImpl implements FintechService {
     }
 
     @Override
-    public FintechResponse<?> createAccount(String accountTypeUniqueNo) {
+    public FintechResponse<?> createAccount() {
         ClientErrorResponse errorResponse = null;
         try {
             HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
                     "createDemandDepositAccount", "createDemandDepositAccount"
             );
 
-            CreateAccountRequest request = new CreateAccountRequest(requestHeader,
-                    accountTypeUniqueNo);
+            CreateAccountRequest request = new CreateAccountRequest(requestHeader);
 
             ResponseEntity<FintechBaseResponse<CreateAccountRec>> responseEntity =
                     restTemplate.exchange(
