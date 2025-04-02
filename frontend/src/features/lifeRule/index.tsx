@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { createLifeRule, getLifeRule } from '@/apis/lifeRule'
+import { createLifeRule, getLifeRule, getUpdateLifeRule } from '@/apis/lifeRule'
 import { ConfirmButton } from '@/components'
 import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/features/lifeRule/components/TopHeader'
@@ -26,21 +26,8 @@ export function LifeRulePage() {
   const router = useRouter()
   const dispatch = useDispatch()
 
-  const [isUpdated, setIsUpdated] = useState<boolean>(false)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-
-  const handleUpdateRules = () => {
-    setIsUpdated((prevState) => !prevState)
-  }
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-  }
-
+  const [hasUpdates, setHasUpdates] = useState<boolean>(false)
   const [lifeRuleList, setLifeRuleList] = useState<LifeRule[]>([])
   const [isEmpty, setIsEmpty] = useState<boolean>(false)
 
@@ -54,29 +41,39 @@ export function LifeRulePage() {
 
   useEffect(() => {
     console.log('lifeRuleList🔥', lifeRuleList)
-    const fetchLifeRule = async () => {
-      const response = await getLifeRule()
-      if (response.success) {
-        console.log('너무꾸덕해 response.data🔥', response.data)
-        setLifeRuleList(response.data.lifeRules)
-        await dispatch(setLifeRules(response.data.lifeRules))
-      } else {
-        setIsEmpty(true)
+    const fetchData = async () => {
+      try {
+        // 생활규칙 목록 가져오기
+        const lifeRuleResponse = await getLifeRule()
+        if (lifeRuleResponse.success) {
+          console.log('너무꾸덕해 response.data🔥', lifeRuleResponse.data)
+          setLifeRuleList(lifeRuleResponse.data.lifeRules)
+          await dispatch(setLifeRules(lifeRuleResponse.data.lifeRules))
+        } else {
+          setIsEmpty(true)
+        }
+
+        // 업데이트된 내용 확인
+        const updateResponse = await getUpdateLifeRule()
+        if (updateResponse.success) {
+          setHasUpdates(updateResponse.data.length > 0)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
       }
     }
-    fetchLifeRule()
+    fetchData()
   }, [])
 
   return (
     <Container>
       <TopHeader
         title={t('lifeRule.title')}
-        isUpdated={isUpdated}
-        handleOpenModal={handleOpenModal}
+        isUpdated={hasUpdates}
+        handleOpenModal={() => setIsModalOpen(true)}
       />
       <FullMain>
-        {/* 임시 상태변경 버튼 */}
-        <button onClick={handleUpdateRules}>생활 규칙 수정</button>
+        {hasUpdates && <NoticeBar message={t('lifeRule.updateMessage')} />}
         {isEmpty && (
           <EmptyContainer>
             <Image
@@ -98,7 +95,6 @@ export function LifeRulePage() {
           </EmptyContainer>
         )}
 
-        {isUpdated && <NoticeBar message={t('lifeRule.updateMessage')} />}
         {lifeRuleList?.length > 0 && (
           <LifeRuleList lifeRuleList={lifeRuleList} />
         )}
@@ -106,8 +102,8 @@ export function LifeRulePage() {
 
       <UpdateModal
         open={isModalOpen}
-        onOpenChange={handleCloseModal}
-        onConfirm={handleCloseModal}
+        onOpenChange={() => setIsModalOpen(false)}
+        onConfirm={() => setIsModalOpen(false)}
       />
 
       <BottomNavigation />

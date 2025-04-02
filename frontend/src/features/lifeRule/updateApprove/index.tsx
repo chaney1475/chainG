@@ -6,7 +6,11 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { approveUpdateForm, getUpdateLifeRule } from '@/apis/lifeRule'
+import {
+  approveUpdateForm,
+  getLifeRule,
+  getUpdateLifeRule,
+} from '@/apis/lifeRule'
 import { TopHeader } from '@/components/TopHeader'
 import ApproveModal from '@/features/lifeRule/components/ApproveModal'
 import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
@@ -14,27 +18,13 @@ import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/Li
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setUpdateLifeRules } from '@/store/slices/lifeRuleSlice'
 import { Container } from '@/styles/styles'
-import { UpdateLifeRule } from '@/types/lifeRule'
-
-// import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
-
-// import { LifeRuleUpdateVariant } from '@/types/lifeRule'
+import { LifeRuleUpdateVariant, UpdateLifeRule } from '@/types/lifeRule'
 
 import { ApproveButton } from '../components/ApproveButton'
-// import UpdateModal from '../components/UpdateModal'
 import { ConfirmContainer } from '../update/styles'
 import { ApproveProfileContainer, FullMain, LifeRuleUpdateList } from './styles'
 
-// interface UpdateLifeRule extends LifeRule {
-//   actionType: LifeRuleUpdateVariant
-// }
-
-// 나중에 API 응답 타입으로 교체될 인터페이스
-// interface ApprovalStatus {
-//   isCreator: boolean
-//   hasApproved: boolean
-// }
-
+// 수정된 부분 - 업데이트된 규칙에 대한 타입 정의
 export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -47,6 +37,7 @@ export function LifeRuleUpdateApprovePage() {
   const [approveType, setApproveType] = useState<'approve' | 'reject' | null>(
     null,
   )
+  const [mergedLifeRules, setMergedLifeRules] = useState<UpdateLifeRule[]>([])
 
   // 승인/거부 처리 함수
   const handleApprovalUpdate = async (approved: boolean) => {
@@ -54,7 +45,6 @@ export function LifeRuleUpdateApprovePage() {
       if (user?.id) {
         const approveResponse = await approveUpdateForm({ approved })
         if (approveResponse === true) {
-          setIsModalOpen(false)
           router.push('/lifeRule')
         }
       }
@@ -76,7 +66,7 @@ export function LifeRuleUpdateApprovePage() {
   const handleModalConfirm = async () => {
     try {
       await handleApprovalUpdate(approveType === 'approve')
-      // router.push('/lifeRule')
+      setIsModalOpen(false)
     } catch (error) {
       console.error('Error in approval process:', error)
     }
@@ -85,10 +75,51 @@ export function LifeRuleUpdateApprovePage() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        // 변경 요청된 생활규칙 목록 가져오기
-        const response = await getUpdateLifeRule()
-        if (response.success) {
-          dispatch(setUpdateLifeRules(response.data))
+        // 기존 생활규칙 목록 가져오기
+        const lifeRuleResponse = await getLifeRule()
+        if (lifeRuleResponse.success) {
+          // 기본 규칙들에 actionType을 'DEFAULT'로 설정
+          const baseRules = lifeRuleResponse.data.lifeRules.map((rule) => ({
+            ...rule,
+            actionType: 'DEFAULT' as LifeRuleUpdateVariant, // 명시적으로 타입 설정
+          }))
+
+          // 변경 요청된 생활규칙 목록 가져오기
+          const updateResponse = await getUpdateLifeRule()
+          if (updateResponse.success) {
+            dispatch(setUpdateLifeRules(updateResponse.data))
+
+            // 기존 규칙과 업데이트된 규칙 병합
+            const mergedRules: UpdateLifeRule[] = [...baseRules]
+
+            // 업데이트된 규칙들 처리
+            updateResponse.data.forEach((updateRule) => {
+              const existingIndex = mergedRules.findIndex(
+                (rule) => rule.id === updateRule.id,
+              )
+              if (existingIndex !== -1) {
+                // 기존 규칙 업데이트
+                mergedRules[existingIndex] = {
+                  ...updateRule,
+                  id: updateRule.id || mergedRules[existingIndex].id,
+                  actionType: updateRule.actionType || 'DEFAULT', // actionType을 정확히 설정
+                }
+              } else {
+                // 새로운 규칙 추가
+                const maxId = Math.max(
+                  ...mergedRules.map((rule) => rule.id || 0),
+                  0,
+                )
+                mergedRules.push({
+                  ...updateRule,
+                  id: updateRule.id || maxId + 1,
+                  actionType: updateRule.actionType || 'DEFAULT', // actionType을 정확히 설정
+                })
+              }
+            })
+
+            setMergedLifeRules(mergedRules)
+          }
         }
       } catch (error) {
         console.error('Error initializing data:', error)
@@ -106,11 +137,14 @@ export function LifeRuleUpdateApprovePage() {
           <ApproveProfile />
         </ApproveProfileContainer>
         <LifeRuleUpdateList>
-          {updateLifeRules.map((item: UpdateLifeRule) => (
+          {mergedLifeRules.map((item) => (
             <LifeRuleUpdateApproveListItem
               key={item.id}
               lifeRule={item}
-              variant={item.actionType || 'DEFAULT'}
+              variant={
+                updateLifeRules.find((updateRule) => updateRule.id === item.id)
+                  ?.actionType || 'DEFAULT'
+              }
             />
           ))}
         </LifeRuleUpdateList>
