@@ -18,4 +18,6 @@ public interface FintechService {
     List<InquireBillingStatementsRec> inquireBillingStatements(InquireBillingCommand command);
 
     FintechResponse<?> inquireDemandDepositAccount(String accountNo);
+
+    FintechResponse<?> createAccount(String accountTypeUniqueNo);
 }

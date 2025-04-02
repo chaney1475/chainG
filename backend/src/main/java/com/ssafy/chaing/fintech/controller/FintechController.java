@@ -40,10 +40,11 @@ public class FintechController {
         return ResponseEntity.ok(BaseResponse.success(response));
     }
 
-//    @PostMapping("/account/")
-//    public ResponseEntity<?> createAccount(
-//            @RequestBody String accountTypeUniqueNo
-//    ) {
-//        FintechResponse<?> response =
-//    }
+    @PostMapping("/account")
+    public ResponseEntity<?> createAccount(
+            @RequestBody String accountTypeUniqueNo
+    ) {
+        FintechResponse<?> response = fintechService.createAccount(accountTypeUniqueNo);
+        return ResponseEntity.ok(BaseResponse.success(response));
+    }
 }
