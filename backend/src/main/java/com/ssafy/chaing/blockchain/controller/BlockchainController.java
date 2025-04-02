@@ -63,8 +63,8 @@ public class BlockchainController {
     public ResponseEntity<?> createContract(
             @RequestBody ContractInput input
     ) {
-        boolean response = contractHandler.addContract(input);
-        return ResponseEntity.ok(response);
+        contractHandler.addContract(input);
+        return ResponseEntity.ok(true);
     }
 
     @Operation(

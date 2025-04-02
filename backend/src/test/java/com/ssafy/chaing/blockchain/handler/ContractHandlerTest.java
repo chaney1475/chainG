@@ -20,6 +20,7 @@ import com.ssafy.chaing.blockchain.web3j.ContractManager;
 import com.ssafy.chaing.blockchain.web3j.ContractManager.PaymentInfo;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -58,7 +59,7 @@ class ContractHandlerTest {
 
 
     @Test
-    void testAddContract() throws Exception {
+    void testAddContract() {
         // PaymentInfoInput에 대한 테스트 데이터를 생성합니다.
         PaymentInfoInput paymentInfo1 = new PaymentInfoInput(
                 BigInteger.valueOf(1), // userId
@@ -95,10 +96,10 @@ class ContractHandlerTest {
         input.setCardId(BigInteger.valueOf(123));
 
         // ContractManager의 addContract 메서드를 모의하여 "resultAddress" 반환하도록 설정합니다.
-        when(contractHandler.addContract(any(ContractInput.class))).thenReturn(true);
+        when(contractHandler.addContract(any(ContractInput.class))).thenReturn(CompletableFuture.completedFuture(true));
 
-        boolean result = contractHandler.addContract(input);
-        assertTrue(result);
+        CompletableFuture<Boolean> futureResult = contractHandler.addContract(input);
+        assertTrue(futureResult.join());
         verify(contractHandler).addContract(any(ContractInput.class));
     }
 
