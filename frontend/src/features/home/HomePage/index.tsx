@@ -91,9 +91,9 @@ export function HomePage() {
 
   const cardItems: CardItem[] = [
     {
-      url: '/group/create',
+      url: '/contract/create',
       image: '/images/group/group-create.svg',
-      title: t('onboarding.create.title'),
+      title: '계약서 생성하기',
       description: t('onboarding.create.description'),
     },
     {
