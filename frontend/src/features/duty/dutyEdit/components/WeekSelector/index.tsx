@@ -11,11 +11,18 @@ import { DayKey } from '@/types/duty'
 import { WeekSelectorItem } from '../WeekSelectorItem'
 import { Container, WeekSelectorItemContainer } from './styles'
 
-export function WeekSelector() {
-  const { t } = useTranslation()
-  const router = useRouter()
+interface WeekSelectorProps {
+  selectedWeek: DayKey
+  setSelectedWeek: (week: DayKey) => void
+}
 
-  const days: DayKey[] = [
+export function WeekSelector({
+  selectedWeek,
+  setSelectedWeek,
+}: WeekSelectorProps) {
+  const { t } = useTranslation()
+
+  const week: DayKey[] = [
     'monday',
     'tuesday',
     'wednesday',
@@ -29,10 +36,12 @@ export function WeekSelector() {
     <Container>
       <div> {t(`duty.edit.week.title`)} </div>
       <WeekSelectorItemContainer>
-        {days.map((day) => (
+        {week.map((day) => (
           <WeekSelectorItem
             key={day}
             day={day}
+            selectedWeek={selectedWeek}
+            setSelectedWeek={setSelectedWeek}
           />
         ))}
       </WeekSelectorItemContainer>

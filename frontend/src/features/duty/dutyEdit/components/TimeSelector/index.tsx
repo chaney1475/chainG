@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ToggleSwitch } from '@/components'
@@ -9,9 +9,20 @@ import { SwitcherContainer } from '@/styles/styles'
 import { TimeInputContainer } from '../TimeInputContainer'
 import { Container, TimeSwitcherContainer } from './styles'
 
-export function TimeSelector() {
+interface TimeSelectorProps {
+  time: string
+  setTime: (time: string) => void
+}
+
+export function TimeSelector({ time, setTime }: TimeSelectorProps) {
   const { t } = useTranslation()
   const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!isVisible) {
+      setTime('')
+    }
+  }, [isVisible])
 
   return (
     <Container>
@@ -24,7 +35,12 @@ export function TimeSelector() {
           />
         </SwitcherContainer>
       </TimeSwitcherContainer>
-      {isVisible && <TimeInputContainer />}
+      {isVisible && (
+        <TimeInputContainer
+          time={time}
+          setTime={setTime}
+        />
+      )}
     </Container>
   )
 }

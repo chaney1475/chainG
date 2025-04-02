@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -27,8 +26,7 @@ export const Navigator = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  border: 1px solid;
-  height: 75px;
+  height: 10px;
   gap: 60px;
   width: 100%;
 `

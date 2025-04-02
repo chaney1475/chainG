@@ -2,11 +2,16 @@
 
 import { useTranslation } from 'react-i18next'
 
-import { IconButton } from '@/components'
+import { CustomTimePicker, IconButton } from '@/components'
 
 import { Container, TimePickerContainer, TopContainer } from './styles'
 
-export function TimeInputContainer() {
+interface TimeInputContainerProps {
+  time: string
+  setTime: (time: string) => void
+}
+
+export function TimeInputContainer({ time, setTime }: TimeInputContainerProps) {
   const { t } = useTranslation()
   return (
     <Container>
@@ -19,7 +24,10 @@ export function TimeInputContainer() {
       </TopContainer>
       <hr />
       <TimePickerContainer>
-        <div>시간 드르륵</div>
+        <CustomTimePicker
+          time={time}
+          setTime={setTime}
+        />
       </TimePickerContainer>
     </Container>
   )

@@ -6,15 +6,17 @@ import Image from 'next/image'
 
 import { dutyCategoryList } from '@/constants/duty'
 import { Duty } from '@/types/duty'
+import { User } from '@/types/user'
 
 import { Assignees } from '../Assignees'
 import { CatrgoryIcon, Container, Content, DutyInfo } from './styles'
 
 interface DutyListItemProps {
   duty: Duty
+  userList: User[]
 }
 
-export const DutyListItem = ({ duty }: DutyListItemProps) => {
+export const DutyListItem = ({ duty, userList }: DutyListItemProps) => {
   const { t } = useTranslation()
 
   return (
@@ -40,6 +42,7 @@ export const DutyListItem = ({ duty }: DutyListItemProps) => {
         <Assignees
           key={duty.id}
           assignees={duty.assignees}
+          userList={userList}
         />
       </DutyInfo>
 

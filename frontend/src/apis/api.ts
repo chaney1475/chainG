@@ -18,6 +18,7 @@ api.interceptors.request.use(
   (config) => {
     const state: RootState = store.getState()
     const accessToken = state.auth.loginToken.accessToken
+    console.log('accessToken🔥', accessToken)
     if (accessToken) {
       config.headers = config.headers || {}
       config.headers.Authorization = accessToken
