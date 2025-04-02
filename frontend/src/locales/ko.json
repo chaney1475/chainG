@@ -285,12 +285,12 @@
       "label": "서약 종료일을 입력해주세요",
       "placeholder": "서약 종료일을 입력해주세요"
     },
-    "rent": {
+    "rentTotalAmount": {
       "title": "월세",
       "label": "월세 + 관리비 포함된 금액을 입력해주세요",
       "placeholder": "금액을 입력해주세요"
     },
-    "totalRatio": {
+    "rentTotalRatio": {
       "title": "분담 방식",
       "switch": {
         "ratio": "비율",

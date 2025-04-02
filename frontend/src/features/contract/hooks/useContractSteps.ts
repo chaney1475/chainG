@@ -14,8 +14,8 @@ const stepContent: StepContent[] = [
     endDate: 'calendar',
   },
   {
-    rent: 'moneyInputBox',
-    totalRatio: 'switch',
+    rentTotalAmount: 'moneyInputBox',
+    rent: 'switch',
   },
   {
     rentAccountNo: 'account',

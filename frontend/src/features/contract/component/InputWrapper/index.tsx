@@ -24,7 +24,7 @@ export const InputWrapper = ({ id, isAfter, children }: InputBoxProps) => {
     const titleText = `contract.${id}.title`
     setLabel(i18n.exists(labelText) ? t(labelText) : '')
     setTitle(i18n.exists(titleText) ? t(titleText) : '')
-  }, [id, isAfter])
+  }, [id, isAfter, t, i18n])
 
   return (
     <InputContainer>

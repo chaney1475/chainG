@@ -93,6 +93,7 @@ export const Label = styled.label`
   margin-bottom: 8px;
   ${({ theme }) => theme.typography.styles.inputBoxTitle};
   color: ${({ theme }) => theme.color.text.regular};
+  white-space: nowrap;
 `
 export const ImageContainer = styled.div`
   display: flex;

@@ -1,58 +1,67 @@
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
 
+import { createCard } from '@/apis/payment'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import { ShowBox } from '@/styles/styles'
 
-interface CardProps {
-  selected?: boolean
-  onSelect?: () => void
-  title?: string
-  description?: string
+interface AccountInputProps {
+  value?: string
+  onChange?: (value: string) => void
+  label?: string
+  isConfirmed?: boolean
+  onConfirm?: () => void
 }
 
-const Container = styled.div<{ selected: boolean }>`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 16px;
-  border: 2px solid ${({ selected }) => (selected ? '#007AFF' : '#ddd')};
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: ${({ selected }) => (selected ? '#F0F8FF' : 'white')};
-
-  &:hover {
-    border-color: #007aff;
-  }
 `
 
-const Title = styled.h3`
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-`
-
-const Description = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin: 0;
+const InputContainer = styled.div`
+  display: flex;
+  gap: 8px;
 `
 
 export function Card({
-  selected = false,
-  onSelect,
-  title,
-  description,
-}: CardProps) {
+  value,
+  onChange,
+  isConfirmed,
+  onConfirm,
+}: AccountInputProps) {
   const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const cardConfirm = useAppSelector((state) => state.contract.cardConfirm)
+  const rent = useAppSelector((state) => state.contract.contractRequest.rent)
 
+  const handleConfirm = async () => {
+    console.log('handleConfirm')
+    const response = await createCard({ accountNo: rent.rentAccountNo })
+    if (response.success) {
+      const cardId = response.data.id
+      onChange?.(cardId)
+      dispatch(
+        updateUtility({
+          cardId: Number(cardId),
+        }),
+      )
+      dispatch(setCardConfirm(true))
+    }
+    console.log(response)
+    onConfirm?.()
+  }
   return (
-    <Container
-      selected={selected}
-      onClick={onSelect}>
-      <ShowBox onClick={onSelect}></ShowBox>
+    <Container>
+      <InputContainer>
+        <ShowBox onClick={handleConfirm}>
+          {cardConfirm ? t('contract.confirmed') : t('confirm')}
+        </ShowBox>
+      </InputContainer>
     </Container>
   )
 }

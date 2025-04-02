@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
+
+import { createAccount } from '@/apis/payment'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setRentAccountConfirm, updateRent } from '@/store/slices/contractSlice'
+import { ShowBox } from '@/styles/styles'
 
 interface AccountInputProps {
   value?: string
@@ -18,70 +24,48 @@ const Container = styled.div`
   padding: 16px;
 `
 
-const Label = styled.label`
-  font-size: 14px;
-  color: #666;
-`
-
 const InputContainer = styled.div`
   display: flex;
   gap: 8px;
 `
 
-const Input = styled.input`
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-
-  &:focus {
-    outline: none;
-    border-color: #007aff;
-  }
-`
-
-const ConfirmButton = styled.button<{ disabled: boolean }>`
-  padding: 12px 24px;
-  background-color: ${({ disabled }) => (disabled ? '#ccc' : '#007AFF')};
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-`
-
 export function AccountInput({
   value,
   onChange,
-  label,
   isConfirmed,
   onConfirm,
 }: AccountInputProps) {
   const { t } = useTranslation()
   const [inputValue, setInputValue] = useState(value || '')
+  const dispatch = useDispatch()
+  const rentAccountConfirm = useAppSelector(
+    (state) => state.contract.rentAccountConfirm,
+  )
+  const rent = useAppSelector((state) => state.contract.contractRequest.rent)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.replace(/[^0-9]/g, '')
-    setInputValue(newValue)
-    onChange?.(newValue)
+  const handleConfirm = async () => {
+    console.log('handleConfirm')
+    const response = await createAccount()
+    if (response.success) {
+      const accountNo = response.data.data.accountNo
+      onChange?.(accountNo)
+      dispatch(
+        updateRent({
+          ...rent,
+          rentAccountNo: accountNo,
+        }),
+      )
+      dispatch(setRentAccountConfirm(true))
+    }
+    console.log(response)
+    onConfirm?.()
   }
-
   return (
     <Container>
       <InputContainer>
-        <Input
-          type="text"
-          value={inputValue}
-          onChange={handleChange}
-          placeholder={t('contract.enterAccountNumber')}
-          maxLength={14}
-        />
-        <ConfirmButton
-          disabled={!inputValue || isConfirmed}
-          onClick={onConfirm}>
-          {isConfirmed ? t('contract.confirmed') : t('contract.confirm')}
-        </ConfirmButton>
+        <ShowBox onClick={handleConfirm}>
+          {rentAccountConfirm ? t('contract.confirmed') : t('confirm')}
+        </ShowBox>
       </InputContainer>
     </Container>
   )

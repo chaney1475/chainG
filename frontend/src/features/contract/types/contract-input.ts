@@ -1,22 +1,22 @@
-export type FormValue = string | number | boolean | null | undefined
+import { Rent } from '@/types/contract'
+
+export type FormValue = Rent | string | number | boolean | null | undefined
 export type FieldValue = FormValue
 
 export interface FormValues {
   [key: string]: FormValue
 }
 
-export interface BaseInputProps {
+export interface ValueInputProps {
   onChange: (value: FieldValue) => void
   isAfter: boolean
   item: string
+  value: FormValue
+  watch?: (field: string) => FormValue
 }
 
-export interface ValueInputProps extends BaseInputProps {
-  value: FormValue
-}
-
-export interface CalendarInputProps extends BaseInputProps {
-  value: FormValue
+export interface FormValuesInputProps extends ValueInputProps {
+  formValues: FormValues
 }
 
 export type InputType =
@@ -29,11 +29,11 @@ export type InputType =
   | 'card'
 
 export type InputComponentMap = {
-  moneyInputBox: React.ComponentType<ValueInputProps>
-  switch: React.ComponentType<ValueInputProps>
+  moneyInputBox: React.ComponentType<FormValuesInputProps>
+  switch: React.ComponentType<FormValuesInputProps>
   inputBox: React.ComponentType<ValueInputProps>
   account: React.ComponentType<ValueInputProps>
-  calendar: React.ComponentType<CalendarInputProps>
+  calendar: React.ComponentType<ValueInputProps>
   customPicker: React.ComponentType<ValueInputProps>
   card: React.ComponentType<ValueInputProps>
 }
