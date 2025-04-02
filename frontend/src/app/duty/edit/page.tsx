@@ -1,5 +1,5 @@
 'use client'
 
-import { DutyEdit } from '@/features/duty/DutyEdit'
+import { DutyEdit } from '@/features/duty/dutyEdit'
 
 export default DutyEdit
