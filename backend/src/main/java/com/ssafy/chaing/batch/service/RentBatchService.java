@@ -69,9 +69,10 @@ public class RentBatchService {
             return;
         }
 
+        payment.setLastAttemptDate(ZonedDateTime.now());
         log.info("💰 *당일 작업!* 공동 계좌로 모으기와 집주인 계좌 송금 둘 다 → Payment ID = {}", payment.getId());
 
-        if (payment.getStatus() == PaymentStatus.PARTIALLY_PAID) {
+        if (payment.getStatus() == PaymentStatus.PARTIALLY_PAID || payment.getStatus() == PaymentStatus.STARTED) {
             log.warn("⚠️ 공동 계좌 모으기 실패 상태. 재시도 수행 → Payment ID = {}", payment.getId());
             collectToJointAccount(payment);
 
@@ -202,8 +203,8 @@ public class RentBatchService {
         taskScheduler.schedule(() -> payToOwner(payment.getId()),
                 retryExecution.toInstant());
 
-        log.info("🔁 {}일 {}분 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
-                retryTime.getHour(), retryTime.getMinute(), payment.getId(), payment.getRetryCount());
+        log.info("🔁 {}일 {}시간 뒤에 후 재시도 등록 → Payment ID = {}, Retry Count = {}",
+                retryTime.getDayOffset(), retryTime.getHour(), payment.getId(), payment.getRetryCount());
 
     }
 

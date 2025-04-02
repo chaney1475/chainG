@@ -1,9 +1,14 @@
 package com.ssafy.chaing.batch.config;
 
+import static com.ssafy.chaing.payment.domain.PaymentStatus.COLLECTED;
+import static com.ssafy.chaing.payment.domain.PaymentStatus.PARTIALLY_PAID;
+import static com.ssafy.chaing.payment.domain.PaymentStatus.RETRY_PENDING;
+import static com.ssafy.chaing.payment.domain.PaymentStatus.STARTED;
+
 import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
-import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,28 +41,56 @@ public class RentBatchConfig {
      * ✅ 초기 설정 - 기존 계약서에 대해 배치 등록 → 서버 시작 시 실행 보장
      */
     public void registerExistingPayments() {
+
         // ✅ STARTED, COLLECTED, PARTIALLY_PAID, RETRY_PENDING 상태 모두 포함
         List<PaymentEntity> pendingPayments = paymentRepository.findByStatusIn(
-                List.of(PaymentStatus.STARTED, PaymentStatus.COLLECTED, PaymentStatus.PARTIALLY_PAID,
-                        PaymentStatus.RETRY_PENDING)
+                List.of(STARTED, COLLECTED, PARTIALLY_PAID,
+                        RETRY_PENDING)
         );
+
+        //
+        ZonedDateTime now = ZonedDateTime.now();
+
+        // 실패한 작업은 오늘 올리기
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        ZonedDateTime nowKST = ZonedDateTime.now(zone);
+        ZonedDateTime todaySixPM = nowKST.withHour(18).withMinute(0).withSecond(0).withNano(0);
+
+        // 오늘 6시가 이미 지났으면 → 내일 6시로 설정
+        ZonedDateTime retryExecution = nowKST.isAfter(todaySixPM)
+                ? todaySixPM.plusDays(1)
+                : todaySixPM;
 
         for (PaymentEntity payment : pendingPayments) {
             ZonedDateTime collectExecution = payment.getNextExecutionDate().minusDays(1);
             ZonedDateTime ownerExecution = payment.getNextExecutionDate();
 
-            // ✅ 14일 → 공동 계좌 모으기만 수행
-            if (payment.getStatus() == PaymentStatus.STARTED) {
+            // 모으기 작업이 현재 시점보다 이전이면 올리기 -> 아직 실행되지 않은 모으기 taks가 서버가 껏다가 켜지면서 사라졋을 것
+            if (collectExecution.isAfter(now)) {
                 taskScheduler.schedule(() -> rentBatchService.collectToJointAccount(payment.getId()),
                         collectExecution.toInstant());
+                log.info("📦 모으기 작업 등록됨: paymentId={}, 실행시간={}", payment.getId(), collectExecution);
+            }
+            // 전송하기 작업이 현재 시점보다 이전이면 올리기 -> 아직 실행되지 않은 집주인 이체 task가 서버가 껏다가 켜지면서 사라졋을 것
+            if (ownerExecution.isAfter(now)) {
+                taskScheduler.schedule(() -> rentBatchService.payToOwner(payment.getId()),
+                        ownerExecution.toInstant());
+                log.info("🏠 집주인 이체 작업 등록됨: paymentId={}, 실행시간={}", payment.getId(), ownerExecution);
             }
 
-            // ✅ 15일 → 송금 수행 (PARTIALLY_PAID 상태 포함)
-            taskScheduler.schedule(() -> rentBatchService.payToOwner(payment.getId()),
-                    ownerExecution.toInstant());
+            // 위에 두개에 해당되지 않는 과거의 작업들은 아래의 작업을 탄다
 
-            log.info("✅ 기존 배치 등록 완료 → Payment ID = {}, CollectExecution = {}, OwnerExecution = {}",
-                    payment.getId(), collectExecution, ownerExecution);
+            if (payment.getNextExecutionDate().isBefore(now) && List.of(COLLECTED, PARTIALLY_PAID, RETRY_PENDING)
+                    .contains(payment.getStatus())
+                    && payment.getRetryCount() < 5) {
+
+                taskScheduler.schedule(() -> rentBatchService.payToOwner(payment.getId()),
+                        retryExecution.toInstant());
+
+                log.info("🔁 과거 작업 재시도 등록됨: paymentId={}, 현재상태={}, 재시도시간={}",
+                        payment.getId(), payment.getStatus(), retryExecution);
+            }
+
         }
     }
 
@@ -77,7 +110,7 @@ public class RentBatchConfig {
         return (contribution, chunkContext) -> {
             log.info("💰 공동 계좌 송금 배치 시작");
 
-            List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.STARTED);
+            List<PaymentEntity> payments = paymentRepository.findByStatus(STARTED);
             for (PaymentEntity payment : payments) {
                 rentBatchService.collectToJointAccount(payment.getId());
             }
@@ -101,7 +134,7 @@ public class RentBatchConfig {
         return (contribution, chunkContext) -> {
             log.info("💰 집주인 송금 배치 시작");
 
-            List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.COLLECTED);
+            List<PaymentEntity> payments = paymentRepository.findByStatus(COLLECTED);
             for (PaymentEntity payment : payments) {
                 rentBatchService.payToOwner(payment.getId());
             }
