@@ -129,6 +129,9 @@ public class PaymentEntity extends BaseEntity {
         this.lastAttemptDate = ZonedDateTime.now();
     }
 
+    public void updatePaidDate(ZonedDateTime now) {
+        this.paymentDate = now;
+    }
 }
 
 

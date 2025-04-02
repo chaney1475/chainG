@@ -18,7 +18,7 @@ public interface PaymentService {
 
     void transferToOwner(TransferRentCommand transferInfo);
 
-    void depositToLifeAccount(TransferRentCommand transferCommand);
+    void depositToRentAccount(TransferRentCommand transferCommand);
 
     RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command);
 

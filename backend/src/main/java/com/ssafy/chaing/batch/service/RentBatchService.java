@@ -96,6 +96,7 @@ public class RentBatchService {
 
         if (result.isSuccess()) {
             payment.updateStatus(PaymentStatus.PAID);
+            payment.updatePaidDate(ZonedDateTime.now());
             log.info("✅ 집주인 송금 성공 → Payment ID = {}", payment.getId());
         } else {
             payment.updateStatus(PaymentStatus.RETRY_PENDING);

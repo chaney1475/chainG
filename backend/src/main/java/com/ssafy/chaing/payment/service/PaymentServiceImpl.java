@@ -162,7 +162,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void depositToLifeAccount(TransferRentCommand command) {
+    public void depositToRentAccount(TransferRentCommand command) {
 
         UserEntity user = getUserEntity(command.getUserId());
         GroupEntity group = getGroupEntity(user);
