@@ -4,6 +4,10 @@ import React from 'react'
 
 import Image from 'next/image'
 
+import { UserItem } from '@/components/UserItem'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { UserTileContainer } from '@/styles/styles'
+
 import { ProfileItem, ProfileList } from './styles'
 
 interface Profile {
@@ -43,6 +47,7 @@ export function ApproveProfile({
   selectedId,
   onSelect,
 }: ApproveProfileProps): React.ReactElement {
+  const group = useAppSelector((state) => state.group.group)
   return (
     <ProfileList>
       {profiles.map((profile) => (
@@ -63,6 +68,18 @@ export function ApproveProfile({
           <span>{profile.name}</span>
         </ProfileItem>
       ))}
+
+      <UserTileContainer>
+        {group?.members &&
+          group.members.map((user) => (
+            <UserItem
+              key={user.id}
+              user={user}
+              variant="tile"
+              size="small"
+            />
+          ))}
+      </UserTileContainer>
     </ProfileList>
   )
 }

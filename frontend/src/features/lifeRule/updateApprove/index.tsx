@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
+import { useRouter } from 'next/navigation'
+
 import { getUpdateLifeRule } from '@/apis/lifeRule'
-// import { useRouter } from 'next/navigation'
 import { approveUpdateForm } from '@/apis/lifeRule'
 import { TopHeader } from '@/components/TopHeader'
 import { lifeRuleList } from '@/constants/lifeRuleList'
+import ApproveModal from '@/features/lifeRule/components/ApproveModal'
 import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
 import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/LifeRuleUpdateApproveListItem'
 import { useAppSelector } from '@/hooks/useAppSelector'
@@ -18,6 +20,7 @@ import { Container } from '@/styles/styles'
 // import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 import { ApproveButton } from '../components/ApproveButton'
+// import UpdateModal from '../components/UpdateModal'
 import { ConfirmContainer } from '../update/styles'
 import { ApproveProfileContainer, FullMain, LifeRuleUpdateList } from './styles'
 
@@ -64,19 +67,43 @@ import { ApproveProfileContainer, FullMain, LifeRuleUpdateList } from './styles'
 export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const router = useRouter()
   const updateLifeRules = useAppSelector(
     (state) => state.lifeRule.updateLifeRules,
   )
-  // const router = useRouter()
   const [selectedProfileId, setSelectedProfileId] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [approveType, setApproveType] = useState<'approve' | 'reject' | null>(
+    null,
+  )
 
   const handleProfileSelect = (id: string) => {
     setSelectedProfileId(id)
   }
 
   const handleApprove = async () => {
-    const response = await approveUpdateForm({ approved: true })
-    console.log('approve', response)
+    setApproveType('approve')
+    setIsModalOpen(true)
+  }
+
+  const handleReject = async () => {
+    setApproveType('reject')
+    setIsModalOpen(true)
+  }
+
+  const handleModalConfirm = async () => {
+    try {
+      const response = await approveUpdateForm({
+        approved: approveType === 'approve',
+      })
+      if (response) {
+        router.push('/lifeRule')
+      }
+      console.log('response', response)
+    } catch (error) {
+      console.error('Error in approval process:', error)
+    }
+    setIsModalOpen(false)
   }
 
   useEffect(() => {
@@ -89,10 +116,7 @@ export function LifeRuleUpdateApprovePage() {
     }
     fetchUpdateLifeRule()
   }, [])
-  const handleReject = async () => {
-    const response = await approveUpdateForm({ approved: false })
-    console.log('reject', response)
-  }
+
   return (
     <Container>
       <TopHeader title={t('lifeRule.updateApproveTitle')} />
@@ -119,6 +143,24 @@ export function LifeRuleUpdateApprovePage() {
           onReject={handleReject}
         />
       </ConfirmContainer>
+
+      <ApproveModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onConfirm={handleModalConfirm}
+        title={approveType === 'approve' ? '생활 규칙 승인' : '생활 규칙 거부'}
+        description={
+          approveType === 'approve'
+            ? '생활 규칙 수정 확인하셨나요?\n모두가 승인 버튼을 누르면 적용됩니다!'
+            : '바뀐 생활규칙을 거부하실건가요?\n거부버튼을 누르면 기존의 생활규칙이 유지됩니다'
+        }
+        confirmText={approveType === 'approve' ? '확인' : '확인'}
+        image={
+          approveType === 'approve'
+            ? '/images/lifeRule/approve.svg'
+            : '/images/lifeRule/approve.svg'
+        }
+      />
     </Container>
   )
 }
