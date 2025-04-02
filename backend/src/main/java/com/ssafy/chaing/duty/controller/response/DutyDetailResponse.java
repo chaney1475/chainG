@@ -1,9 +1,7 @@
 package com.ssafy.chaing.duty.controller.response;
 
 import com.ssafy.chaing.duty.domain.DutyEntity;
-import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -29,11 +27,17 @@ public class DutyDetailResponse {
                 .map(assignee -> assignee.getGroupUser().getUser().getId())
                 .collect(Collectors.toList());
 
+        String rawTime = dutyEntity.getDutyTimeRaw();
+        OffsetTime dutyTime = null;
+        if (rawTime != null && !rawTime.isBlank()) {
+            dutyTime = OffsetTime.parse(rawTime);
+        }
+
         return new DutyDetailResponse(
                 dutyEntity.getId(),
                 dutyEntity.getTitle(),
                 dutyEntity.getCategory(),
-                OffsetTime.parse(dutyEntity.getDutyTimeRaw()),
+                dutyTime,
                 dutyEntity.getDayOfWeek(),
                 dutyEntity.isUseTime(),
                 assigneeIds
