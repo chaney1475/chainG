@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
+import { useRouter } from 'next/navigation'
+
 import { createDuty } from '@/apis/duty'
 import { BottomSheet, TitleHeaderLayout } from '@/components'
 // import { userList } from '@/constants/userList'
@@ -20,6 +22,7 @@ import { FullMain } from './styles'
 
 export function DutyEdit() {
   const { t } = useTranslation()
+  const router = useRouter()
 
   const { selectedWeek, setSelectedWeek } = useSelectWeek()
 
@@ -70,6 +73,7 @@ export function DutyEdit() {
     console.log(response)
     if (response.success) {
       console.log('success')
+      router.push('/duty')
     } else {
       console.log('error')
     }

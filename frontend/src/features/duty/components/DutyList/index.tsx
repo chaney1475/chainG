@@ -12,9 +12,15 @@ interface DutyListProps {
   dutyList: DutyWeekList
   selectedWeek: DayKey
   userList: User[]
+  onSelectDuty: (dutyId: number) => void
 }
 
-export function DutyList({ dutyList, selectedWeek, userList }: DutyListProps) {
+export function DutyList({
+  dutyList,
+  selectedWeek,
+  userList,
+  onSelectDuty,
+}: DutyListProps) {
   return (
     <Container>
       {dutyList[selectedWeek].map((duty) => (
@@ -22,6 +28,7 @@ export function DutyList({ dutyList, selectedWeek, userList }: DutyListProps) {
           key={duty.id}
           duty={duty}
           userList={userList}
+          onSelectDuty={onSelectDuty}
         />
       ))}
     </Container>

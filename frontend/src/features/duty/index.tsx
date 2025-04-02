@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { getDuties } from '@/apis/duty'
-import { TopHeader } from '@/components'
+import { BottomSheet, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setDutyWeekList } from '@/store/slices/dutySlice'
 
 import { DutyList } from './components/DutyList'
+import { EditOrDeleteDuty } from './components/EditOrDeleteDuty'
 import { WeekList } from './components/WeekList'
 import useSelectWeek from './hooks/useSelectWeek'
 import { Container, FullMain, Navigator } from './styles'
@@ -19,8 +20,22 @@ export function DutyPage() {
   const group = useAppSelector((state) => state.group.group) // 그룹정보 받아오는 커스텀 훅
   const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
   const dispatch = useDispatch()
+  const userList = group.members
 
   const { selectedWeek, setSelectedWeek } = useSelectWeek()
+
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [selectedDutyId, setSelectedDutyId] = useState<number | null>(null)
+
+  const calculateMaxSnapPoint = () => {
+    const windowHeight = window.innerHeight // 화면 높이
+    return Math.min((0.3 * 740) / windowHeight, 0.9) // 최대 90%를 넘지 않도록 제한
+  }
+
+  const handleSelectDuty = (dutyId: number) => {
+    setSelectedDutyId(dutyId)
+    setIsBottomSheetOpen(true)
+  }
 
   useEffect(() => {
     const fetchDuties = async () => {
@@ -46,8 +61,19 @@ export function DutyPage() {
         <DutyList
           dutyList={dutyWeekList}
           selectedWeek={selectedWeek}
-          userList={group.members}
+          userList={userList}
+          onSelectDuty={handleSelectDuty}
         />
+        <BottomSheet
+          open={isBottomSheetOpen}
+          onOpenChange={setIsBottomSheetOpen}
+          snapPoints={{
+            MIN: 0.1,
+            MID: calculateMaxSnapPoint(),
+            MAX: calculateMaxSnapPoint(),
+          }}>
+          <EditOrDeleteDuty selectedDutyId={selectedDutyId} />
+        </BottomSheet>
       </FullMain>
       <Navigator></Navigator>
     </Container>
