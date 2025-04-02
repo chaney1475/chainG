@@ -34,7 +34,6 @@ export const Content = styled.div`
   justify-content: space-between;
   ${({ theme }) => theme.typography.styles.inputBoxTitle};
   color: ${({ theme }) => theme.color.text.regular};
-  border: 1px solid red;
 `
 
 interface StyledButtonProps {
@@ -56,6 +55,20 @@ export const ItemContainer = styled(Container)<StyledButtonProps>`
         return `
           background-color: ${theme.color.background.delete};
           border: 1px solid ${theme.color.text.sunday};
+        `
+      case 'UPDATE':
+        return `
+          background-color: ${theme.color.background.white};
+          border: 1px solid ${theme.color.border};
+          align-items: center;
+          flex-direction: row;
+        `
+      case 'CREATE':
+        return `
+          background-color: ${theme.color.background.white};
+          border: 1px solid ${theme.color.border};
+          align-items: center;
+          flex-direction: row;
         `
       default:
         return `

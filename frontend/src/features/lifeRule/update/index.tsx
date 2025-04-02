@@ -7,18 +7,14 @@ import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { getUpdateLifeRule, updateLifeRule } from '@/apis/lifeRule'
+import { updateLifeRule } from '@/apis/lifeRule'
 import { ConfirmButton } from '@/components/ConfirmButton'
 import Modal from '@/components/Modal'
 import { TopHeader } from '@/components/TopHeader'
 import { lifeRuleList } from '@/constants/lifeRuleList'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { Container } from '@/styles/styles'
-import {
-  LifeRule,
-  LifeRuleUpdateVariant,
-  UpdateLifeRule,
-} from '@/types/lifeRule'
+import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 import { LifeRuleUpdateListItem } from '../components/LifeRuleUpdateListItem'
 import { ConfirmContainer, FullMain, LifeRuleUpdateList } from './styles'
@@ -44,8 +40,8 @@ export function LifeRuleUpdatePage() {
     defaultValues: {
       items: lifeRules.map((rule) => ({
         id: rule.id,
-        variant: 'DEFAULT' as LifeRuleUpdateVariant,
-        actionType: 'DEFAULT' as LifeRuleUpdateVariant,
+        variant: 'DEFAULT',
+        actionType: 'DEFAULT',
         content: rule.content,
         rule,
       })),
@@ -55,11 +51,15 @@ export function LifeRuleUpdatePage() {
   const { fields, append, update } = useFieldArray({
     control: methods.control,
     name: 'items',
+    keyName: 'fieldId',
   })
 
   const items = methods.watch('items')
   const [isUpdated, setIsUpdated] = useState(false)
   const [isUpdateMode, setIsUpdateMode] = useState(false)
+  const [localContents, setLocalContents] = useState<{ [key: string]: string }>(
+    {},
+  )
 
   useEffect(() => {
     if (lifeRules?.length > 0) {
@@ -68,8 +68,8 @@ export function LifeRuleUpdatePage() {
         lifeRules.map((rule: LifeRule) => ({
           id: rule.id,
           rule,
-          variant: 'DEFAULT' as LifeRuleUpdateVariant,
-          actionType: 'DEFAULT' as LifeRuleUpdateVariant,
+          variant: 'DEFAULT',
+          actionType: 'DEFAULT',
           content: rule.content,
         })),
       )
@@ -77,62 +77,122 @@ export function LifeRuleUpdatePage() {
   }, [lifeRules, methods])
 
   const handleVariantChange = (
-    id: number,
+    id: string | number,
     newVariant: LifeRuleUpdateVariant,
   ) => {
-    console.log(' id', id, 'newVariant', newVariant)
-    const itemIndex = items.findIndex((item) => item.id === id)
-    if (itemIndex !== -1) {
+    try {
+      const itemIndex = items.findIndex(
+        (item) => String(item.id) === String(id),
+      )
+
+      if (itemIndex === -1) {
+        console.error('Item not found with id:', id)
+        return
+      }
+
+      const currentItem = items[itemIndex]
+      const updatedContent =
+        newVariant === 'UPDATE' ? currentItem.rule.content : currentItem.content
+
       update(itemIndex, {
-        ...items[itemIndex],
+        ...currentItem,
         variant: newVariant,
+        actionType: newVariant,
+        content: updatedContent,
       })
+
       setIsUpdateMode(true)
       setIsUpdated(true)
+    } catch (error) {
+      console.error('Error in handleVariantChange:', error)
     }
   }
 
+  // 디버깅을 위한 items 변경 감지
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const debugUpdates = items.map((item) => ({
+        id: Number(item.id),
+        content: item.content.trim(),
+        category: item.rule.category,
+        actionType: item.actionType,
+        variant: item.variant,
+      }))
+      console.log('items updated:', debugUpdates)
+    }
+  }, [items])
+
   const handleCreateNew = () => {
+    // 기존 아이템들 중 가장 큰 id 값을 찾아서 +1
+    const maxId = items.reduce((max, item) => {
+      const itemId = Number(item.id)
+      return itemId > max ? itemId : max
+    }, 0)
+
+    const newRule = lifeRuleList[0]
     append({
-      id: items.length,
-      rule: lifeRuleList[0],
-      variant: 'CREATE' as LifeRuleUpdateVariant,
-      actionType: 'CREATE' as LifeRuleUpdateVariant,
+      id: maxId + 1,
+      rule: newRule,
+      variant: 'CREATE',
+      actionType: 'CREATE',
       content: '',
     })
     setIsUpdateMode(true)
     setIsUpdated(true)
   }
 
+  const handleContentChange = (id: string | number, content: string) => {
+    setLocalContents((prev) => ({
+      ...prev,
+      [id]: content,
+    }))
+  }
+
   const handleAddItem = (index: number) => {
-    console.log(' handleAddItem index', index, items)
     const currentItem = items[index]
-    if (currentItem.content.trim()) {
+    const content = localContents[currentItem.id] || ''
+
+    if (content.trim()) {
       const itemIndex = items.findIndex((item) => item.id === currentItem.id)
       if (itemIndex !== -1) {
         update(itemIndex, {
           ...currentItem,
-          variant: 'DEFAULT' as LifeRuleUpdateVariant,
+          content,
+          variant: 'DEFAULT',
+          actionType:
+            currentItem.actionType === 'CREATE' ? 'CREATE' : 'DEFAULT',
+        })
+        setLocalContents((prev) => {
+          const newState = { ...prev }
+          delete newState[currentItem.id]
+          return newState
         })
         setIsUpdated(true)
       }
     }
   }
 
-  const handleContentChange = (id: number, content: string) => {
-    const itemIndex = items.findIndex((item) => item.id === id)
-    if (itemIndex !== -1) {
-      const currentItem = items[itemIndex]
-      update(itemIndex, {
+  const handleUpdateConfirm = (index: number) => {
+    const currentItem = items[index]
+    const content = localContents[currentItem.id] || currentItem.content
+
+    if (content.trim()) {
+      update(index, {
         ...currentItem,
         content,
+        variant: 'DEFAULT',
+        actionType: 'UPDATE',
+      })
+      setLocalContents((prev) => {
+        const newState = { ...prev }
+        delete newState[currentItem.id]
+        return newState
       })
       setIsUpdated(true)
     }
   }
 
   const handleConfirmClick = () => {
-    console.log('items', items)
     if (isUpdated && isUpdateMode) {
       setIsModalOpen(true)
     }
@@ -140,20 +200,25 @@ export function LifeRuleUpdatePage() {
 
   const handleModalConfirm = async () => {
     setIsModalOpen(false)
-    console.log('items', items)
 
-    const updatedItems = items.map((item) => ({
-      content: item.content,
+    const updates = items.map((item) => ({
+      id: Number(item.id),
+      content: item.content.trim(),
       category: item.rule.category,
       actionType: item.actionType,
     }))
 
-    console.log('updatedItems', updatedItems)
-
-    const response = await updateLifeRule(updatedItems)
-    console.log('response', response)
-    if (response.success) {
-      router.push('/lifeRule/updateApprove')
+    try {
+      const filteredUpdates = updates.filter(
+        (update) => update.actionType !== 'DEFAULT',
+      )
+      console.log('filteredUpdates', filteredUpdates)
+      const response = await updateLifeRule({ updates: filteredUpdates })
+      if (response.success) {
+        router.push('/lifeRule')
+      }
+    } catch (error) {
+      console.error('Error updating life rules:', error)
     }
   }
 
@@ -163,20 +228,29 @@ export function LifeRuleUpdatePage() {
       <FormProvider {...methods}>
         <FullMain>
           <LifeRuleUpdateList>
-            {fields.map((field, index) => (
-              <LifeRuleUpdateListItem
-                key={field.id}
-                lifeRule={field.rule}
-                variant={field.variant}
-                actionType={field.actionType}
-                setVariant={(variant) => handleVariantChange(field.id, variant)}
-                onContentChange={(content) =>
-                  handleContentChange(field.id, content)
-                }
-                onAddItem={handleAddItem}
-                index={index}
-              />
-            ))}
+            {fields.map((field, index) => {
+              const item = items[index]
+              const localContent = localContents[item.id]
+              return (
+                <LifeRuleUpdateListItem
+                  key={field.fieldId}
+                  lifeRule={item.rule}
+                  variant={item.variant}
+                  content={
+                    localContent !== undefined ? localContent : item.content
+                  }
+                  setVariant={(variant) =>
+                    handleVariantChange(item.id, variant)
+                  }
+                  onContentChange={(content) =>
+                    handleContentChange(item.id, content)
+                  }
+                  onAddItem={handleAddItem}
+                  onUpdateConfirm={() => handleUpdateConfirm(index)}
+                  index={index}
+                />
+              )
+            })}
           </LifeRuleUpdateList>
 
           <Image

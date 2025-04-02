@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { useFormContext } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
+
+//import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
 
@@ -14,12 +14,10 @@ import { InputBox } from '../InputBox'
 import {
   ActionButtons,
   CatrgoryIcon,
-  Container,
   Content,
   CreateButton,
   DeleteButton,
   ItemContainer,
-  StyledActionButton,
   UpdateButton,
 } from './styles'
 
@@ -27,9 +25,11 @@ interface LifeRuleUpdateListItemProps {
   lifeRule: LifeRule
   variant: LifeRuleUpdateVariant
   actionType: LifeRuleUpdateVariant
+  content: string
   setVariant: (variant: LifeRuleUpdateVariant) => void
   onContentChange: (content: string) => void
   onAddItem: (index: number) => void
+  onUpdateConfirm: () => void
   index: number
 }
 
@@ -54,15 +54,14 @@ const ActionButton = ({
 export const LifeRuleUpdateListItem = ({
   lifeRule,
   variant,
-  actionType,
+  content,
   setVariant,
   onContentChange,
   onAddItem,
+  onUpdateConfirm,
   index,
-}: LifeRuleUpdateListItemProps) => {
-  const { t } = useTranslation()
-  const { register, watch } = useFormContext()
-  const content = watch(`items.${index}.content`)
+}: Omit<LifeRuleUpdateListItemProps, 'actionType'>) => {
+  //const { t } = useTranslation()
 
   const renderContent = () => {
     switch (variant) {
@@ -79,26 +78,22 @@ export const LifeRuleUpdateListItem = ({
         return (
           <>
             <InputBox
-              {...register(`items.${index}.content`, {
-                onChange: (e) => onContentChange(e.target.value),
-              })}
-              id={lifeRule.id.toString()}
+              id={`update-${lifeRule.id}`}
               value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              placeholder="수정할 내용을 입력하세요"
             />
-            <UpdateButton onClick={() => setVariant('DEFAULT')}>
-              확인
-            </UpdateButton>
+            <UpdateButton onClick={onUpdateConfirm}>확인</UpdateButton>
           </>
         )
       case 'CREATE':
         return (
           <>
             <InputBox
-              {...register(`items.${index}.content`, {
-                onChange: (e) => onContentChange(e.target.value),
-              })}
-              id={lifeRule.id.toString()}
+              id={`create-${lifeRule.id}`}
               value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              placeholder="새로운 내용을 입력하세요"
             />
             <CreateButton onClick={() => onAddItem(index)}>추가</CreateButton>
           </>
@@ -124,7 +119,6 @@ export const LifeRuleUpdateListItem = ({
 
   return (
     <ItemContainer variant={variant}>
-      v{variant} a{actionType}
       <CatrgoryIcon>
         <Image
           src={

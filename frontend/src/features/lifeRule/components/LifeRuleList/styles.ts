@@ -6,7 +6,6 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  min-height: 100vh;
   width: 100%;
   gap: 12px;
   background-color: ${({ theme }) => theme.color.background.white};

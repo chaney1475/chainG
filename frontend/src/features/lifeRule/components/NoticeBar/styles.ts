@@ -14,4 +14,12 @@ export const NoticeBarContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.color.border};
   display: flex;
   align-items: center;
+  justify-content: space-between;
+`
+
+export const DivContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 `
