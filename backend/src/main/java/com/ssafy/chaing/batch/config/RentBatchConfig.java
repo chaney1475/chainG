@@ -3,10 +3,10 @@ package com.ssafy.chaing.batch.config;
 import static com.ssafy.chaing.payment.domain.PaymentStatus.COLLECTED;
 import static com.ssafy.chaing.payment.domain.PaymentStatus.PARTIALLY_PAID;
 import static com.ssafy.chaing.payment.domain.PaymentStatus.RETRY_PENDING;
+import static com.ssafy.chaing.payment.domain.PaymentStatus.STARTED;
 
 import com.ssafy.chaing.batch.service.RentBatchService;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
-import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -44,7 +44,7 @@ public class RentBatchConfig {
 
         // ✅ STARTED, COLLECTED, PARTIALLY_PAID, RETRY_PENDING 상태 모두 포함
         List<PaymentEntity> pendingPayments = paymentRepository.findByStatusIn(
-                List.of(PaymentStatus.STARTED, COLLECTED, PARTIALLY_PAID,
+                List.of(STARTED, COLLECTED, PARTIALLY_PAID,
                         RETRY_PENDING)
         );
 
@@ -110,7 +110,7 @@ public class RentBatchConfig {
         return (contribution, chunkContext) -> {
             log.info("💰 공동 계좌 송금 배치 시작");
 
-            List<PaymentEntity> payments = paymentRepository.findByStatus(PaymentStatus.STARTED);
+            List<PaymentEntity> payments = paymentRepository.findByStatus(STARTED);
             for (PaymentEntity payment : payments) {
                 rentBatchService.collectToJointAccount(payment.getId());
             }
