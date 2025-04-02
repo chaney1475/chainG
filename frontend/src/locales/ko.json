@@ -174,7 +174,7 @@
     "budget": "우리만의 생활비 계좌를\n자유롭게 관리해요",
     "awkward": "소중한 친구들과\n어색해지지 않도록\n도와드릴게요",
     "start": "새로운 동거 생활의\n시작을 환영해요",
-    "title": "ChainG와 함께 셰어하우스에 입주해요",
+    "title": "Cha:nG와 함께 셰어하우스에 입주해요",
     "create": {
       "title": "방 생성하기",
       "description": "방장이 되어 방을 만들고\n친구들을 초대할 수 있어요"
@@ -201,9 +201,9 @@
       "confirmText": "확인"
     }
   },
-  "home": "홈",
-  "contract": "서약",
-  "my": "마이",
+  "homePage": "홈",
+  "contractPage": "서약",
+  "myPage": "마이",
   "notice": {
     "title": "알림"
   },
@@ -238,12 +238,15 @@
     "codeCopy": {
       "title": "코드 복사",
       "label": "초대 코드",
-      "description": "같이 살 룸메들을\nChainG에 초대해주세요"
+      "description": "같이 살 룸메들을\nCha:nG에 초대해주세요"
     }
   },
   "goToHome": "홈으로",
   "confirm": "확인",
   "cancel": "취소",
+  "reset": "초기화",
+  "finish": "완료",
+  "logo": "Cha:nG",
   "error": {
     "400": {
       "title": "잘못된 요청이에요",
@@ -270,5 +273,88 @@
     "colon": ":",
     "am": "오전",
     "pm": "오후"
+  },
+  "contract": {
+    "title": "서약서",
+    "startDate": {
+      "title": "서약 기간",
+      "label": "서약 시작일을 입력해주세요",
+      "placeholder": "서약 시작일을 입력해주세요"
+    },
+    "endDate": {
+      "label": "서약 종료일을 입력해주세요",
+      "placeholder": "서약 종료일을 입력해주세요"
+    },
+    "rent": {
+      "title": "월세",
+      "label": "월세 + 관리비 포함된 금액을 입력해주세요",
+      "placeholder": "금액을 입력해주세요"
+    },
+    "totalRatio": {
+      "title": "분담 방식",
+      "switch": {
+        "ratio": "비율",
+        "money": "금액"
+      },
+      "unit": "원",
+      "total": "총합",
+      "modalTitle": "월세 비율을 정해주세요",
+      "label": "모자란 금액은 Cha:nG에서 지원해드릴게요"
+    },
+    "rentAccountNo": {
+      "title": "월세 계좌",
+      "validation": {
+        "leaderOnly": "방장만 월세 계좌를 개설할 수 있어요"
+      },
+      "label": "월세 계좌는 월세 자동이체에 사용됩니다",
+      "button": "월세 계좌 개설",
+      "afterLabel": "월세 계좌 개설이 완료되었어요"
+    },
+    "ownerAccountNo": {
+      "title": "집주인 계좌 번호",
+      "label": "계약한 집 주인의 월세 납부용 계좌 번호를 입력해주세요",
+      "placeholder": "계좌 번호를 입력해주세요"
+    },
+    "dueDate": {
+      "title": "월세 납부일",
+      "label": "월세 납부일을 입력해주세요",
+      "placeholder": "월세 납부일을 입력해주세요"
+    },
+    "utility": {
+      "switchTitle": "공과금",
+      "title": "공과금 신용 카드 개설",
+      "label": "신용 카드는 추후 공과금 자동이체에 사용됩니다",
+      "button": "공과금 신용 카드 개설",
+      "afterLabel": "공과금 신용 카드 개설이 완료되었어요",
+      "validation": {
+        "leaderOnly": "방장만 공과금용 신용카드를 개설할 수 있어요"
+      }
+    },
+    "draft": {
+      "title": "임시저장",
+      "content": "계약서를 임시저장할까요?\n계약서의 내용을 그룹원들이\n서로 확인할 수 있어요."
+    },
+    "update": {
+      "title": "최종제출",
+      "content": "계약서를 최종 제출하시겠어요?"
+    },
+    "pending": {
+      "title": "서약서 작성 완료!",
+      "description": "최종 서약서 검토 후\n모두의 승인이 완료되면 Cha:nG가 시작됩니다",
+      "contractDate": "계약 기간",
+      "userPaymentInfo": "계약자",
+      "totalAmount": "월세/관리비",
+      "dueDate": "월세 납부일",
+      "totalRatio": "분담 비율",
+      "rentAccountNo": "월세 계좌",
+      "ownerAccountNo": "집주인 계좌",
+      "utilityDescription": "*공과금은 동일한 비율로 계산됩니다.",
+      "utilityCard": "공과금 신용 카드",
+      "confirm": "최종 제출하기"
+    }
+  },
+  "fintech": {
+    "bankName": "한국",
+    "cardName": "SSAFY Cha:nG Life 카드"
   }
 }
