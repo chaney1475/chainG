@@ -1,12 +1,14 @@
 export interface Duty {
   id: number
   title: string
+  category: string
   dutyTime: string
-  dayOfWeek: string
+  dayOfWeek: DayKey
   useTime: boolean
   assignees: number[]
-  category: string
 }
+
+export type DutyRequest = Omit<Duty, 'id'>
 
 export interface DutyWeekList {
   monday: Duty[]

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { DayKey, SelectorVariant } from '@/types/duty'
@@ -9,13 +9,19 @@ import { Container, DateSelection } from './styles'
 
 interface WeekSelectorItemProps {
   day: DayKey
+  selectedWeek: DayKey
+  setSelectedWeek: (week: DayKey) => void
 }
 
-export function WeekSelectorItem({ day }: WeekSelectorItemProps) {
+export function WeekSelectorItem({
+  day,
+  selectedWeek,
+  setSelectedWeek,
+}: WeekSelectorItemProps) {
   const { t } = useTranslation()
-  const [selected, setSelected] = useState(false)
-  function checkSelect(select: boolean, day: DayKey): SelectorVariant {
-    if (select === true) {
+
+  function checkSelect(selectedWeek: DayKey, day: string): SelectorVariant {
+    if (selectedWeek === day) {
       return 'select'
     }
     return day === 'sunday' || day === 'saturday' ? day : 'default'
@@ -24,10 +30,10 @@ export function WeekSelectorItem({ day }: WeekSelectorItemProps) {
   return (
     <Container>
       <DateSelection
-        variant={checkSelect(
-          selected,
-          day,
-        )}>{`${t(`duty.week.${day}`)}`}</DateSelection>
+        variant={checkSelect(selectedWeek, day)}
+        onClick={() => setSelectedWeek(day)}>
+        {`${t(`duty.week.${day}`)}`}
+      </DateSelection>
     </Container>
   )
 }

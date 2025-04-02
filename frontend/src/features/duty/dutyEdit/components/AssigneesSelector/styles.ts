@@ -20,26 +20,25 @@ export const TopContainer = styled.div`
   color: ${({ theme }) => theme.color.text.regular}
 `
 
-export const TaskButtonContainer = styled.div`
+export const AssigneesButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: start;
   width: 100%;
-
-  > button {
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    width: 100%;
-    padding: 1rem;
-    flex-direction: column;
-
-    border: 1px solid ${({ theme }) => theme.color.border};
-    border-radius: 1rem;
-
-    color: ${({ theme }) => theme.color.text.disabled};
-    ${({ theme }) => theme.typography.styles.default};
-    background: ${({ theme }) => theme.color.secondary};
+  min-height: 50px;
+  border-radius: 1rem;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  background: ${({ theme }) => theme.color.secondary};
   }
+`
+export const Placeholder = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+  padding: 1rem;
+  flex-direction: column;
+  color: ${({ theme }) => theme.color.text.disabled};
+  ${({ theme }) => theme.typography.styles.default}
 `

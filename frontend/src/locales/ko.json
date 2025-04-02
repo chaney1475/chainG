@@ -2,7 +2,8 @@
   "duty": {
     "title": "당번 일정",
     "category": {
-      "clean": "청소"
+      "clean": "청소",
+      "string": "임시"
     },
     "week": {
       "monday": "월",
@@ -35,7 +36,7 @@
         "title": "할 일 입력",
         "placeholder": "할 일을 입력해주세요"
       },
-      "duty": {
+      "assignees": {
         "title": "당번 선택",
         "placeholder": "당번을 선택해주세요"
       }

@@ -2,22 +2,26 @@
 
 import React from 'react'
 
-import { DutyWeekList } from '@/types/duty'
+import { DayKey, DutyWeekList } from '@/types/duty'
+import { User } from '@/types/user'
 
 import { DutyListItem } from '../DutyListItem'
 import { Container } from './styles'
 
 interface DutyListProps {
   dutyList: DutyWeekList
+  selectedWeek: DayKey
+  userList: User[]
 }
 
-export function DutyList({ dutyList }: DutyListProps) {
+export function DutyList({ dutyList, selectedWeek, userList }: DutyListProps) {
   return (
     <Container>
-      {dutyList.monday.map((duty) => (
+      {dutyList[selectedWeek].map((duty) => (
         <DutyListItem
           key={duty.id}
           duty={duty}
+          userList={userList}
         />
       ))}
     </Container>

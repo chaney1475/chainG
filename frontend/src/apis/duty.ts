@@ -1,13 +1,19 @@
-/*
+import { Duty, DutyRequest, DutyWeekList } from '@/types/duty'
+
+import { deleteRequest, getRequest, patchRequest, postRequest } from './api'
+
 //getDuties
-GET / api / v1 / duty / { groupId }
+export const getDuties = async (groupId: number) =>
+  await getRequest<DutyWeekList>(`/duty/${groupId}`)
 
 //createDuty
-POST / api / v1 / duty / { groupId }
+export const createDuty = async (groupId: number, duty: DutyRequest) =>
+  await postRequest<Duty>(`/duty/${groupId}`, duty)
 
 //deleteDuty
-DELETE / api / v1 / duty / { dutyId }
+export const deleteDuty = async (dutyId: number) =>
+  await deleteRequest<{ deletedId: number }>(`/duty/${dutyId}`)
 
 //modifyDuty
-PATCH / api / v1 / duty / { dutyId }
-*/
+export const modifyDuty = async (dutyId: number, duty: DutyRequest) =>
+  await patchRequest<Duty>(`/duty/${dutyId}`, duty)

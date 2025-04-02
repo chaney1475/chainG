@@ -11,13 +11,21 @@ interface WeekSelectorItemProps {
   day: DayKey
   date: number
   duty: Duty[]
+  selectedWeek: DayKey
+  setSelectedWeek: (week: DayKey) => void
 }
 
-export function WeekSelectorItem({ day, date, duty }: WeekSelectorItemProps) {
+export function WeekSelectorItem({
+  day,
+  date,
+  duty,
+  selectedWeek,
+  setSelectedWeek,
+}: WeekSelectorItemProps) {
   const { t } = useTranslation()
-  const [selected, setSelected] = useState(false)
-  function checkSelect(select: boolean, day: string): SelectorVariant {
-    if (select === true) {
+
+  function checkSelect(selectedWeek: DayKey, day: string): SelectorVariant {
+    if (selectedWeek === day) {
       return 'select'
     }
     return day === 'sunday' || day === 'saturday' ? day : 'default'
@@ -26,8 +34,9 @@ export function WeekSelectorItem({ day, date, duty }: WeekSelectorItemProps) {
   return (
     <Container>
       <div>{`${t(`duty.week.${day}`)}`}</div>
-      <DateSelection variant={checkSelect(selected, day)}>
-        {' '}
+      <DateSelection
+        variant={checkSelect(selectedWeek, day)}
+        onClick={() => setSelectedWeek(day)}>
         {date}
       </DateSelection>
       <DutyContainer>

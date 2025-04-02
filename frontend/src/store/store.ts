@@ -7,6 +7,7 @@ import createWebStorage from 'redux-persist/lib/storage/createWebStorage'
 import appReducer from './slices/appSlice'
 import authReducer from './slices/authSlice'
 import contractReducer from './slices/contractSlice'
+import dutyReducer from './slices/dutySlice'
 import errorModalReducer from './slices/errorModalSlice'
 import groupReducer from './slices/groupSlice'
 import lifeRuleReducer from './slices/lifeRuleSlice'
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   lifeRule: lifeRuleReducer,
   contract: contractReducer,
+  duty: dutyReducer,
 })
 
 const reducer = (
