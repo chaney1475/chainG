@@ -14,9 +14,14 @@ import { CatrgoryIcon, Container, Content, DutyInfo } from './styles'
 interface DutyListItemProps {
   duty: Duty
   userList: User[]
+  onSelectDuty: (dutyId: number) => void
 }
 
-export const DutyListItem = ({ duty, userList }: DutyListItemProps) => {
+export const DutyListItem = ({
+  duty,
+  userList,
+  onSelectDuty,
+}: DutyListItemProps) => {
   const { t } = useTranslation()
 
   return (
@@ -51,6 +56,7 @@ export const DutyListItem = ({ duty, userList }: DutyListItemProps) => {
         alt={duty.category}
         width={12}
         height={12}
+        onClick={() => onSelectDuty(duty.id)}
       />
     </Container>
   )

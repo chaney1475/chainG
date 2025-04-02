@@ -14,7 +14,6 @@ export const Assignees = ({ assignees, userList }: AssigneesProps) => {
   const assigneeIdSet = new Set(assignees)
   const assigneesList = userList.filter((item) => assigneeIdSet.has(item.id))
 
-  console.log(assigneeIdSet)
   return (
     <Container>
       {assigneesList.map((item) => (

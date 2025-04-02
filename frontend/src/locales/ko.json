@@ -40,6 +40,10 @@
         "title": "당번 선택",
         "placeholder": "당번을 선택해주세요"
       }
+    },
+    "button": {
+      "edit": "수정",
+      "delete": "삭제"
     }
   },
   "login": {
