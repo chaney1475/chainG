@@ -112,7 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    @Transactional
+//    @Transactional
     @Async
     public void sendNotification(Long userId, String title, String content, NotificationCategory category) {
         userRepository.findById(userId).ifPresent(user -> {
