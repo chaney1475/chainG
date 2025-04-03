@@ -54,8 +54,6 @@ const dutySlice = createSlice({
 export const {
   setDutyWeekList,
   removeDutyFromList,
-  setEditDuty,
-  clearEditDuty,
   setCreateDayOfWeek,
   clearCreateDayOfWeek,
 } = dutySlice.actions

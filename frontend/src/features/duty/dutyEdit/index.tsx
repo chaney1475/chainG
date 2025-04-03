@@ -11,7 +11,7 @@ import { createDuty, modifyDuty } from '@/apis/duty'
 import { BottomSheet, TitleHeaderLayout } from '@/components'
 // import { userList } from '@/constants/userList'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { clearCreateDayOfWeek, clearEditDuty } from '@/store/slices/dutySlice'
+import { clearCreateDayOfWeek } from '@/store/slices/dutySlice'
 import { DutyRequest } from '@/types/duty'
 
 import useSelectWeek from '../hooks/useSelectWeek'
