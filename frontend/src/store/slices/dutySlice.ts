@@ -4,7 +4,7 @@ import { DayKey, Duty, DutyWeekList } from '@/types/duty'
 
 interface DutyState {
   dutyWeekList: DutyWeekList
-  editDuty: Duty | null
+  // editDuty: Duty | null
   createDayOfWeek: DayKey | null
 }
 
@@ -18,7 +18,7 @@ const initialState: DutyState = {
     saturday: [],
     sunday: [],
   },
-  editDuty: null,
+  // editDuty: null,
   createDayOfWeek: null,
 }
 
@@ -36,12 +36,12 @@ const dutySlice = createSlice({
         (duty) => duty.id !== id,
       )
     },
-    setEditDuty: (state, action: PayloadAction<Duty>) => {
-      state.editDuty = action.payload
-    },
-    clearEditDuty: (state) => {
-      state.editDuty = null
-    },
+    // setEditDuty: (state, action: PayloadAction<Duty>) => {
+    //   state.editDuty = action.payload
+    // },
+    // clearEditDuty: (state) => {
+    //   state.editDuty = null
+    // },
     setCreateDayOfWeek: (state, action: PayloadAction<DayKey>) => {
       state.createDayOfWeek = action.payload
     },

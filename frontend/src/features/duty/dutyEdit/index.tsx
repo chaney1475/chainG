@@ -3,14 +3,16 @@
 import React, { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { createDuty, modifyDuty } from '@/apis/duty'
 import { BottomSheet, TitleHeaderLayout } from '@/components'
 // import { userList } from '@/constants/userList'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { DayKey, DutyRequest } from '@/types/duty'
+import { clearCreateDayOfWeek, clearEditDuty } from '@/store/slices/dutySlice'
+import { DutyRequest } from '@/types/duty'
 
 import useSelectWeek from '../hooks/useSelectWeek'
 import { AssigneesSelectContent } from './components/AssigneesSelectContent'
@@ -19,29 +21,30 @@ import { TimeSelector } from './components/TimeSelector'
 import { TitleSelector } from './components/TitleSelector'
 import { WeekSelector } from './components/WeekSelector'
 import { FullMain } from './styles'
-import { useDispatch } from 'react-redux'
-import { clearEditDuty, clearCreateDayOfWeek } from '@/store/slices/dutySlice'
+
 export function DutyEdit() {
   const { t } = useTranslation()
   const router = useRouter()
   const dispatch = useDispatch()
 
-  const editDuty = useAppSelector((state) => state.duty.editDuty)
-  const createDayOfWeek = useAppSelector((state) => state.duty.createDayOfWeek)
-  const isEditMode = !!editDuty 
-  console.log('isEditMode 1111111', isEditMode)
+  // 수정모드 판단
+  const { id } = useParams()
+  const isEditMode = Boolean(id)
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearEditDuty())
-      dispatch(clearCreateDayOfWeek())
-    }
-  }, [dispatch]) // 페이지 unMount 시 EditDuty 비워주기
+  const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
+  const editDuty = isEditMode
+    ? Object.values(dutyWeekList)
+        .flat()
+        .find((duty) => String(duty.id) === id) || null
+    : null
 
+  // 요일 상태관리
+  const createDayOfWeek = useAppSelector((state) => state.duty.createDayOfWeek) // 요일 상태 가져오기
   const { selectedWeek, setSelectedWeek } = useSelectWeek(
-     createDayOfWeek || undefined
+    createDayOfWeek || undefined,
   )
 
+  // duty 생성 및 수정 폼
   const methods = useForm<DutyRequest>({
     defaultValues: {
       title: editDuty?.title || '',
@@ -61,11 +64,11 @@ export function DutyEdit() {
     setValue('dayOfWeek', selectedWeek)
   }, [selectedWeek, setValue])
 
-  if (dutyTime !== '') {
-    setValue('useTime', true)
-  } else {
-    setValue('useTime', false)
-  }
+  useEffect(() => {
+    return () => {
+      dispatch(clearCreateDayOfWeek())
+    }
+  }, [dispatch]) // 페이지 unMount 시 dayOfWeek 비워주기
 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const group = useAppSelector((state) => state.group.group)
@@ -84,10 +87,11 @@ export function DutyEdit() {
   }
 
   const onSubmit = async (data: DutyRequest) => {
+    data.useTime = dutyTime !== '' // useTime 값 처리
+
     console.log('data', data)
     console.log('isEditMode', isEditMode)
-    if(isEditMode){
-      console.log('==========수정요청보냄============')
+    if (isEditMode) {
       const response = await modifyDuty(editDuty.id, data)
       console.log(response)
       if (response.success) {
@@ -96,20 +100,16 @@ export function DutyEdit() {
       } else {
         console.log('error')
       }
-    }
-    else{
-      console.log('==========생성요청보냄============')
-
-    const response = await createDuty(group.id, data)
-    console.log(response)
-    if (response.success) {
-      console.log('success')
-      router.push('/duty')
     } else {
-      console.log('error')
+      const response = await createDuty(group.id, data)
+      console.log(response)
+      if (response.success) {
+        console.log('success')
+        router.push('/duty')
+      } else {
+        console.log('error')
+      }
     }
-    }
-
   }
 
   return (

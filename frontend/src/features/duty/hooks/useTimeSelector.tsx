@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 interface UseTimeSelectorProps {
   initialTime?: string
@@ -15,11 +15,11 @@ export const useTimeSelector = ({
   const [time, setTime] = useState(initialTime)
 
   useEffect(() => {
-    if (!isVisible) {
+    if (!isVisible && time !== '') {
       setTime('')
       onTimeChange('')
     }
-  }, [isVisible, onTimeChange])
+  }, [isVisible])
 
   useEffect(() => {
     if (initialTime) {
@@ -38,4 +38,4 @@ export const useTimeSelector = ({
     time,
     setTime: handleTimeChange,
   }
-} 
+}

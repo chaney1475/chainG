@@ -1,14 +1,16 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
 import { deleteDuty } from '@/apis/duty'
-import { useDispatch } from 'react-redux'
-
-import { removeDutyFromList, setEditDuty, setCreateDayOfWeek } from '@/store/slices/dutySlice'
-
+import {
+  removeDutyFromList,
+  setCreateDayOfWeek,
+  // setEditDuty,
+} from '@/store/slices/dutySlice'
 import { Duty } from '@/types/duty'
 
 import { Container, TextContainer } from './styles'
@@ -29,9 +31,9 @@ export const EditOrDeleteDuty = ({
 
   const handleEdit = () => {
     if (selectedDuty !== null) {
-      dispatch(setEditDuty(selectedDuty))
+      router.push(`/duty/edit/${selectedDuty.id}`)
+      // dispatch(setEditDuty(selectedDuty))
       dispatch(setCreateDayOfWeek(selectedDuty.dayOfWeek))
-      router.push('/duty/edit')
       setOpen(false)
     }
   }
@@ -43,7 +45,6 @@ export const EditOrDeleteDuty = ({
       if (response.success) {
         console.log(response.data)
         dispatch(removeDutyFromList(selectedDuty))
-        router.refresh()
         setOpen(false)
       } else {
         console.log('error')
