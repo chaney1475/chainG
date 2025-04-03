@@ -10,6 +10,7 @@ import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
 import com.ssafy.chaing.rule.controller.response.LifeRuleResponse;
+import com.ssafy.chaing.rule.controller.response.NotApproveUserResponse;
 import com.ssafy.chaing.rule.dto.LifeRuleUpdateDto;
 import com.ssafy.chaing.rule.service.RuleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,6 +111,18 @@ public class RuleController {
             @RequestBody RecommendRequest body
     ) {
         RecommendResponse response = recommendService.recommendLifeRuleCategory(body);
+        return ResponseEntity.ok(BaseResponse.success(response));
+    }
+
+    @Operation(
+            summary = "생활룰 승인 안한 명단 조회",
+            description = "생활룰 변경 사항에 대한 승인 안한 명단 조회"
+    )
+    @PostMapping("/not-approved/{groupId}")
+    public ResponseEntity<BaseResponse<NotApproveUserResponse>> recommendCategory(
+            @PathVariable("groupId") Long groupId
+    ) {
+        NotApproveUserResponse response = ruleService.getApprovedUserList(groupId);
         return ResponseEntity.ok(BaseResponse.success(response));
     }
 

@@ -43,4 +43,5 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
     Optional<PaymentEntity> findWithUsersByContractIdAndMonthAndFeeType(Long contractId, int month, FeeType feeType);
 
+    Optional<PaymentEntity> findTopByContractIdAndFeeTypeOrderByMonthDescWeekDesc(Long id, FeeType feeType);
 }

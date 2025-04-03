@@ -5,6 +5,7 @@ import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
 import com.ssafy.chaing.rule.controller.response.LifeRuleResponse;
+import com.ssafy.chaing.rule.controller.response.NotApproveUserResponse;
 import com.ssafy.chaing.rule.dto.LifeRuleUpdateDto;
 import java.util.List;
 
@@ -19,5 +20,9 @@ public interface RuleService {
     List<LifeRuleUpdateDto> getUpdateLifeRule(Long userId);
 
     void approveLifeRule(LifeRuleApproveRequest request, Long groupUserId);
+
+    NotApproveUserResponse getApprovedUserList(Long groupId);
+
+    boolean isLifeRuleChangeInProgress(Long userId);
 
 }

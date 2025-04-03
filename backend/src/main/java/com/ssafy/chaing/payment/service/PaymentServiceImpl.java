@@ -26,6 +26,7 @@ import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
 import com.ssafy.chaing.payment.service.command.TransferRentCommand;
 import com.ssafy.chaing.payment.service.dto.CurrentPaymentDTO;
 import com.ssafy.chaing.payment.service.dto.MonthPaymentDTO;
+import com.ssafy.chaing.payment.service.dto.PaymentOverviewDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
 import com.ssafy.chaing.payment.service.dto.WeekPaymentDTO;
@@ -130,6 +131,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (payment.getStatus().equals(PaymentStatus.PAID)) {
             throw new BadRequestException(ExceptionCode.ALREADY_PAID);
+        }
+
+        if (!payment.getStatus().equals(PaymentStatus.COLLECTED)) {
+            throw new BadRequestException(ExceptionCode.PAY_NOT_COLLECTED);
         }
 
         TransferCommand dto = new TransferCommand(
@@ -316,6 +321,100 @@ public class PaymentServiceImpl implements PaymentService {
 
     }
 
+    @Override
+    public PaymentOverviewDTO getPaymentOverview(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+
+        GroupEntity group = groupRepository.findById(user.getGroupId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+
+        boolean rentPaid = false;
+        boolean userRentPaid = false;
+        boolean utilityPaid = false;
+        boolean userUtilityPaid = false;
+
+        // contractId가 null이거나 조회 실패하면 기본 상태로 리턴
+        Long contractId = group.getContractId();
+        if (contractId == null) {
+            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+        }
+
+        ContractEntity contract = contractRepository.findById(contractId).orElse(null);
+        if (contract == null) {
+            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+        }
+
+        ContractUserEntity contractUser = contractUserRepository
+                .findByContractIdAndUserId(contract.getId(), userId)
+                .orElse(null);
+
+        if (contractUser == null) {
+            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+        }
+
+        int dueDate = contract.getDueDate();
+        int targetMonth = calculateTargetMonthByDueDate(dueDate);
+
+        PaymentEntity rentPayment = paymentRepository
+                .findWithUsersByContractIdAndMonthAndFeeType(contract.getId(), targetMonth, FeeType.RENT)
+                .orElse(null);
+
+        if (rentPayment != null && rentPayment.getStatus() == PaymentStatus.PAID) {
+            rentPaid = true;
+        }
+
+        UserPaymentEntity rentUserPayment = rentPayment != null
+                ? userPaymentRepository.findByPaymentIdAndContractMemberId(rentPayment.getId(), userId).orElse(null)
+                : null;
+
+        if (rentUserPayment != null && rentUserPayment.getStatus() == PaymentStatus.COLLECTED) {
+            userRentPaid = true;
+        }
+
+        PaymentEntity utilityPayment = paymentRepository
+                .findTopByContractIdAndFeeTypeOrderByMonthDescWeekDesc(contract.getId(), FeeType.UTILITY)
+                .orElse(null);
+
+        if (utilityPayment != null && utilityPayment.getStatus() == PaymentStatus.COLLECTED) {
+            utilityPaid = true;
+        }
+
+        UserPaymentEntity utilityUserPayment = utilityPayment != null
+                ? userPaymentRepository.findByPaymentIdAndContractMemberId(utilityPayment.getId(), userId).orElse(null)
+                : null;
+
+        if (utilityUserPayment != null && utilityUserPayment.getStatus() == PaymentStatus.COLLECTED) {
+            userUtilityPaid = true;
+        }
+
+        return new PaymentOverviewDTO(
+                group.getName(),
+                rentPaid,
+                userRentPaid,
+                utilityPaid,
+                userUtilityPaid
+        );
+    }
+
+    private int calculateTargetMonthByDueDate(int dueDateDay) {
+        ZonedDateTime nowKST = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        int year = nowKST.getYear();
+        int month = nowKST.getMonthValue();
+        int day = nowKST.getDayOfMonth();
+
+        if (day < dueDateDay) {
+            // 이전 달로 이동
+            month -= 1;
+            if (month == 0) {
+                month = 12;
+                year -= 1;
+            }
+        }
+
+        return year * 100 + month; // yyyyMM 형식으로 반환
+    }
 
     private UserEntity getUserEntity(Long userId) {
         return userRepository.findById(userId)

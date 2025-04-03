@@ -84,7 +84,7 @@ public class RentBatchConfig {
 
             if (payment.getNextExecutionDate().isBefore(now) && List.of(COLLECTED, PARTIALLY_PAID, RETRY_PENDING)
                     .contains(payment.getStatus())
-                    && payment.getRetryCount() < 5) {
+                    && payment.getRetryCount() <= 5) {
 
                 taskScheduler.schedule(() -> rentBatchService.payToOwner(payment.getId()),
                         retryExecution.toInstant());
