@@ -120,10 +120,18 @@ public class RuleServiceImpl implements RuleService {
                             .lifeRule(lifeRule)
                             .requestedAt(ZonedDateTime.now(ZoneOffset.UTC))
                             .approvalCount(1)
-                            .status(ChangeRequestStatus.PROGRESS)
+                            .status(ChangeRequestStatus.IDLE)
                             .build();
                     return lifeRuleChangeRequestRepository.save(newRequest);
                 });
+
+        // 진행 중 상태일 경우 예외 처리
+        if (changeRequest.getStatus() == ChangeRequestStatus.PROGRESS) {
+            throw new BadRequestException(ExceptionCode.LIFE_RULE_CHANGE_ALREADY_IN_PROGRESS);
+        }
+
+        // 변경 요청 상태를 PROGRESS로 갱신
+        changeRequest.inProgress();
 
         LifeRuleUserEntity lifeRuleUserEntity = lifeRuleUserRepository
                 .findByLifeRuleAndUserId(lifeRule, userId)
