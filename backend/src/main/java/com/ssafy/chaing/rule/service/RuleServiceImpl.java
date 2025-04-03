@@ -96,7 +96,7 @@ public class RuleServiceImpl implements RuleService {
                 .totalGroupMember(groupUsers.size())
                 .requestedAt(ZonedDateTime.now(ZoneOffset.UTC))
                 .approvalCount(1)
-                .status(ChangeRequestStatus.PROGRESS)
+                .status(ChangeRequestStatus.IDLE)
                 .build();
         lifeRuleChangeRequestRepository.save(changeRequest);
 
