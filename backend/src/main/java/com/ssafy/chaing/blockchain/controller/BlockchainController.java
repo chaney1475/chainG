@@ -14,6 +14,7 @@ import com.ssafy.chaing.blockchain.service.BlockchainService;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,5 +93,21 @@ public class BlockchainController {
     ) {
         boolean response = utilityHandler.addContract(input);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/test/contract/{contractId}")
+    public ResponseEntity<?> getContract(
+            @PathVariable("contractId") Long contractId
+    ) {
+        ContractPortfolio portfolio = blockchainService.getContractPortfolio(contractId);
+        return ResponseEntity.ok(portfolio);
+    }
+
+    @GetMapping("/test/payment/{contractId}")
+    public ResponseEntity<?> getTransfer(
+            @PathVariable("contractId") Long contractId
+    ) {
+        TransferPortfolioList portfolioList = blockchainService.getTransferPortfolio(contractId);
+        return ResponseEntity.ok(portfolioList);
     }
 }
