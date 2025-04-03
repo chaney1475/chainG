@@ -40,4 +40,13 @@ public interface LifeRuleChangeRequestRepository extends JpaRepository<LifeRuleC
             @Param("groupId") Long groupId,
             @Param("status") ChangeRequestStatus status
     );
+
+    @Query("""
+            select req
+            from LifeRuleChangeRequestEntity req
+            join fetch req.lifeRule lr
+            join fetch lr.group g
+            where g.id = :groupId and req.status = 'PROGRESS'
+            """)
+    Optional<LifeRuleChangeRequestEntity> findProgressingRequestByGroupId(@Param("groupId") Long groupId);
 }

@@ -2,6 +2,7 @@ package com.ssafy.chaing.rule.service;
 
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.common.exception.NotFoundException;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
@@ -28,6 +29,7 @@ import com.ssafy.chaing.rule.repository.LifeRuleItemRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleUserRepository;
 import com.ssafy.chaing.user.domain.UserEntity;
+import com.ssafy.chaing.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -45,6 +47,7 @@ import org.springframework.stereotype.Service;
 public class RuleServiceImpl implements RuleService {
 
     private final GroupUserRepository groupUserRepository;
+    private final UserRepository userRepository;
     private final LifeRuleRepository lifeRuleRepository;
     private final LifeRuleItemRepository lifeRuleItemRepository;
     private final LifeRuleChangeRequestRepository lifeRuleChangeRequestRepository;
@@ -301,4 +304,17 @@ public class RuleServiceImpl implements RuleService {
                 })
                 .orElseGet(() -> new NotApproveUserResponse(Collections.emptyList())); // 없으면 빈 배열
     }
+
+    public boolean isLifeRuleChangeInProgress(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
+
+        Long groupId = user.getGroupId();
+
+        return lifeRuleChangeRequestRepository.
+                findProgressingRequestByGroupId(groupId)
+                .isPresent(); // PROGRESS 상태면 true
+    }
+
+
 }
