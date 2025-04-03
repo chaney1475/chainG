@@ -133,6 +133,10 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BadRequestException(ExceptionCode.ALREADY_PAID);
         }
 
+        if (!payment.getStatus().equals(PaymentStatus.COLLECTED)) {
+            throw new BadRequestException(ExceptionCode.PAY_NOT_COLLECTED);
+        }
+
         TransferCommand dto = new TransferCommand(
                 contract.getRentAccountNo(),
                 contract.getOwnerAccountNo(),

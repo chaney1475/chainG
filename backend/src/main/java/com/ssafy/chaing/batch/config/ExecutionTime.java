@@ -34,11 +34,27 @@ public class ExecutionTime {
         }
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        ZonedDateTime baseDate = now.withDayOfMonth(baseDayOfMonth)
-                .withHour(hour).withMinute(minute).withSecond(0);
 
-        return baseDate.plusDays(dayOffset);
+        ZonedDateTime targetDateTime = now.withDayOfMonth(1)
+                .withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+
+        // day 설정을 안전하게 (존재하지 않는 날짜 방지)
+        int maxDayOfMonth = targetDateTime.getMonth().length(targetDateTime.toLocalDate().isLeapYear());
+        int safeDay = Math.min(baseDayOfMonth, maxDayOfMonth);
+
+        targetDateTime = targetDateTime.withDayOfMonth(safeDay);
+
+        // 이미 해당 날짜/시간이 지났다면 → 다음 달로
+        if (now.isAfter(targetDateTime)) {
+            targetDateTime = targetDateTime.plusMonths(1);
+            maxDayOfMonth = targetDateTime.getMonth().length(targetDateTime.toLocalDate().isLeapYear());
+            safeDay = Math.min(baseDayOfMonth, maxDayOfMonth);
+            targetDateTime = targetDateTime.withDayOfMonth(safeDay);
+        }
+
+        return targetDateTime.plusDays(dayOffset);
     }
+
 
     public ZonedDateTime calculateFromNow() {
         if (fixedTime != null) {
