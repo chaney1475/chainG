@@ -14,6 +14,7 @@ import { EditOrDeleteDuty } from './components/EditOrDeleteDuty'
 import { WeekList } from './components/WeekList'
 import useSelectWeek from './hooks/useSelectWeek'
 import { Container, FullMain, Navigator } from './styles'
+import { Duty } from '@/types/duty'
 
 export function DutyPage() {
   const { t } = useTranslation()
@@ -21,19 +22,20 @@ export function DutyPage() {
   const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
   const dispatch = useDispatch()
   const userList = group.members
+  
 
   const { selectedWeek, setSelectedWeek } = useSelectWeek()
 
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
-  const [selectedDutyId, setSelectedDutyId] = useState<number | null>(null)
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState<boolean>(false)
+  const [selectedDuty, setSelectedDuty] = useState<Duty | null>(null)
 
   const calculateMaxSnapPoint = () => {
     const windowHeight = window.innerHeight // 화면 높이
     return Math.min((0.3 * 740) / windowHeight, 0.9) // 최대 90%를 넘지 않도록 제한
   }
 
-  const handleSelectDuty = (dutyId: number) => {
-    setSelectedDutyId(dutyId)
+  const handleSelectDuty = (duty: Duty) => {
+    setSelectedDuty(duty)
     setIsBottomSheetOpen(true)
   }
 
@@ -72,7 +74,10 @@ export function DutyPage() {
             MID: calculateMaxSnapPoint(),
             MAX: calculateMaxSnapPoint(),
           }}>
-          <EditOrDeleteDuty selectedDutyId={selectedDutyId} />
+          <EditOrDeleteDuty
+            selectedDuty={selectedDuty}
+            setOpen={setIsBottomSheetOpen}
+          />
         </BottomSheet>
       </FullMain>
       <Navigator></Navigator>

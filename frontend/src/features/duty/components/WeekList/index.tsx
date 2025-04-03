@@ -2,10 +2,12 @@
 
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
 import { IconButton } from '@/components/IconButton'
+import { setCreateDayOfWeek } from '@/store/slices/dutySlice'
 import { DayKey, DutyWeekList } from '@/types/duty'
 
 import { WeekSelector } from '../WeekSelector'
@@ -24,10 +26,12 @@ export function WeekList({
 }: WeekListProps) {
   const { t } = useTranslation()
   const router = useRouter()
+  const dispatch = useDispatch()
   const week = 'second'
 
   const handleClick = () => {
-    router.push('/duty/edit')
+    router.push('/duty/create')
+    dispatch(setCreateDayOfWeek(selectedWeek))
   }
 
   return (

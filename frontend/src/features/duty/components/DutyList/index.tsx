@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { DayKey, DutyWeekList } from '@/types/duty'
+import { DayKey, DutyWeekList, Duty } from '@/types/duty'
 import { User } from '@/types/user'
 
 import { DutyListItem } from '../DutyListItem'
@@ -12,7 +12,7 @@ interface DutyListProps {
   dutyList: DutyWeekList
   selectedWeek: DayKey
   userList: User[]
-  onSelectDuty: (dutyId: number) => void
+  onSelectDuty: (duty: Duty) => void
 }
 
 export function DutyList({

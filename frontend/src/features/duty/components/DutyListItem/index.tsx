@@ -14,7 +14,7 @@ import { CatrgoryIcon, Container, Content, DutyInfo } from './styles'
 interface DutyListItemProps {
   duty: Duty
   userList: User[]
-  onSelectDuty: (dutyId: number) => void
+  onSelectDuty: (duty: Duty) => void
 }
 
 export const DutyListItem = ({
@@ -56,7 +56,7 @@ export const DutyListItem = ({
         alt={duty.category}
         width={12}
         height={12}
-        onClick={() => onSelectDuty(duty.id)}
+        onClick={() => onSelectDuty(duty)}
       />
     </Container>
   )
