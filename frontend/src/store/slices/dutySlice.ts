@@ -1,12 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { Duty, DutyWeekList, DayKey } from '@/types/duty'
+import { DayKey, Duty, DutyWeekList } from '@/types/duty'
 
 interface DutyState {
   dutyWeekList: DutyWeekList
   editDuty: Duty | null
   createDayOfWeek: DayKey | null
-
 }
 
 const initialState: DutyState = {
@@ -20,7 +19,7 @@ const initialState: DutyState = {
     sunday: [],
   },
   editDuty: null,
-  createDayOfWeek: null
+  createDayOfWeek: null,
 }
 
 const dutySlice = createSlice({
@@ -30,10 +29,12 @@ const dutySlice = createSlice({
     setDutyWeekList: (state, action: PayloadAction<DutyWeekList>) => {
       state.dutyWeekList = action.payload
     },
-    
+
     removeDutyFromList: (state, action: PayloadAction<Duty>) => {
       const { dayOfWeek, id } = action.payload
-      state.dutyWeekList[dayOfWeek].filter((duty) => duty.id !== id)
+      state.dutyWeekList[dayOfWeek] = state.dutyWeekList[dayOfWeek].filter(
+        (duty) => duty.id !== id,
+      )
     },
     setEditDuty: (state, action: PayloadAction<Duty>) => {
       state.editDuty = action.payload
@@ -46,9 +47,16 @@ const dutySlice = createSlice({
     },
     clearCreateDayOfWeek: (state) => {
       state.createDayOfWeek = null
-    }
+    },
   },
 })
 
-export const { setDutyWeekList, removeDutyFromList, setEditDuty, clearEditDuty, setCreateDayOfWeek, clearCreateDayOfWeek } = dutySlice.actions
+export const {
+  setDutyWeekList,
+  removeDutyFromList,
+  setEditDuty,
+  clearEditDuty,
+  setCreateDayOfWeek,
+  clearCreateDayOfWeek,
+} = dutySlice.actions
 export default dutySlice.reducer
