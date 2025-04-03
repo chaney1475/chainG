@@ -6,6 +6,7 @@ import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.service.command.RetrieveRentCommand;
 import com.ssafy.chaing.payment.service.command.RetrieveUtilityCommand;
 import com.ssafy.chaing.payment.service.command.TransferRentCommand;
+import com.ssafy.chaing.payment.service.dto.PaymentOverviewDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveRentDTO;
 import com.ssafy.chaing.payment.service.dto.RetrieveUtilityDTO;
 import java.time.ZonedDateTime;
@@ -23,4 +24,6 @@ public interface PaymentService {
     RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command);
 
     PaymentEntity createPayment(ContractEntity contract, ZonedDateTime ownerExecution);
+
+    PaymentOverviewDTO getPaymentOverview(Long userId);
 }
