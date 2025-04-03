@@ -23,4 +23,6 @@ public interface RuleService {
 
     NotApproveUserResponse getApprovedUserList(Long groupId);
 
+    boolean isLifeRuleChangeInProgress(Long userId);
+
 }

@@ -18,8 +18,7 @@ public class HomeFacade {
 
         // repository 호출 없이 유저 아이디를 넘겨서 service쪽에서 조회하도록 위임
         PaymentOverviewDTO paymentOverview = paymentService.getPaymentOverview(command.getUserId());
-
-        // 룰 서비스에서 true false 받아오기
+        boolean lifeRuleChangeInProgress = ruleService.isLifeRuleChangeInProgress(command.getUserId());
 
         return new HomeOverviewDTO(
                 paymentOverview.getGroupName(),
@@ -27,7 +26,7 @@ public class HomeFacade {
                 paymentOverview.getUserRentPaymentStatus(),
                 paymentOverview.getUtilityPaymentStatus(),
                 paymentOverview.getUserUtilityPaymentStatus(),
-                false
+                lifeRuleChangeInProgress
         );
 
     }
