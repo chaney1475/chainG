@@ -13,6 +13,7 @@ import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
 import com.ssafy.chaing.rule.controller.response.LifeRuleResponse;
+import com.ssafy.chaing.rule.controller.response.NotApproveUserResponse;
 import com.ssafy.chaing.rule.domain.ChangeRequestStatus;
 import com.ssafy.chaing.rule.domain.LifeRuleChangeItemEntity;
 import com.ssafy.chaing.rule.domain.LifeRuleChangeRequestEntity;
@@ -30,6 +31,7 @@ import com.ssafy.chaing.user.domain.UserEntity;
 import jakarta.transaction.Transactional;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -284,4 +286,19 @@ public class RuleServiceImpl implements RuleService {
         });
     }
 
+    @Override
+    @Transactional
+    public NotApproveUserResponse getApprovedUserList(Long groupId) {
+        return lifeRuleChangeRequestRepository.findProgressingRequestWithUsersByGroupId(
+                        groupId,
+                        ChangeRequestStatus.PROGRESS)
+                .map(changeRequest -> {
+                    List<Long> disapprovedIds = changeRequest.getLifeRule().getLifeRuleUsers().stream()
+                            .filter(lru -> !lru.isVoted()) // 투표 안 한 사용자만
+                            .map(lru -> lru.getUser().getId())
+                            .toList();
+                    return new NotApproveUserResponse(disapprovedIds);
+                })
+                .orElseGet(() -> new NotApproveUserResponse(Collections.emptyList())); // 없으면 빈 배열
+    }
 }

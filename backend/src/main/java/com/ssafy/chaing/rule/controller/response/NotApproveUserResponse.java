@@ -10,6 +10,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DisapproveUserResponse {
-    private List<Long> approvedIds;
+public class NotApproveUserResponse {
+    private List<Long> notApprovedIds;
 }
