@@ -1,6 +1,6 @@
 package com.ssafy.chaing.blockchain.handler.contract;
 
-import com.ssafy.chaing.blockchain.Web3jConnectionManager;
+import com.ssafy.chaing.blockchain.config.Web3jConnectionManager;
 import com.ssafy.chaing.blockchain.handler.contract.input.ContractInput;
 import com.ssafy.chaing.blockchain.handler.contract.input.LiveAccountInput;
 import com.ssafy.chaing.blockchain.handler.contract.output.ContractOutput;
@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
@@ -39,8 +40,9 @@ public class ContractHandler {
     @Autowired
     public ContractHandler(Web3jConnectionManager connectionManager,
                            Credentials credentials,
-                           long chainId, // Web3jConfig에서 빈으로 등록된 chainId 주입
+                           long chainId,
                            @Value("${web3j.contract-address}") String contractAddress) {
+        log.info("ContractHandler initialized for contract address: {}", contractAddress);
         this.connectionManager = connectionManager;
         this.credentials = credentials;
         this.chainId = chainId;
@@ -48,20 +50,14 @@ public class ContractHandler {
         this.gasProvider = new CustomGasProvider(); // 필요 시 빈으로 등록하여 주입받아도 됨
     }
 
-    // --- Helper Method to load ContractManager within execute context ---
-    private ContractManager loadContractManager(org.web3j.protocol.Web3j web3j) {
-        // execute 콜백 내에서 현재 활성 web3j 인스턴스로 TransactionManager 생성
-        // 중요: 매번 새 TransactionManager를 만드는 것이 일반적입니다.
+    private ContractManager loadContractManager(Web3j web3j) {
         TransactionManager txManager = new RawTransactionManager(web3j, credentials, chainId);
-        // ContractManager 로드
         return ContractManager.load(contractAddress, web3j, txManager, gasProvider);
     }
 
-    // --- Contract Methods adapted to use Web3jConnectionManager ---
-
-    @Async // Spring의 @Async 사용
+    @Async
     public CompletableFuture<Boolean> addContract(ContractInput input) {
-        // CompletableFuture.supplyAsync 사용하여 비동기 처리
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 TransactionReceipt receipt = connectionManager.execute(web3j -> {
@@ -74,18 +70,17 @@ public class ContractHandler {
                                     pi.getAmount(),
                                     pi.getRatio()
                             ))
-                            .toList(); // Java 16+ .toList(), 이전 버전은 .collect(Collectors.toList())
+                            .toList();
 
-                    // 실제 컨트랙트 함수 호출 (send() 포함)
                     return localContractManager.addContract(
                             input.getId(), input.getStartDate(), input.getEndDate(),
                             input.getRentTotalAmount(), input.getRentDueDate(), input.getRentAccountNo(),
                             input.getOwnerAccountNo(), input.getRentTotalRatio(), paymentInfos,
                             input.getLiveAccountNo(), input.getIsUtilityEnabled(), input.getUtilitySplitRatio(),
                             input.getCardId()
-                    ).send(); // send()는 execute 콜백 내에서 호출
+                    ).send();
                 });
-                // execute가 성공하고 트랜잭션이 성공적으로 완료되었는지 확인
+
                 boolean success = receipt != null && receipt.isStatusOK();
                 log.info("addContract Transaction status: {}", success);
                 return success;

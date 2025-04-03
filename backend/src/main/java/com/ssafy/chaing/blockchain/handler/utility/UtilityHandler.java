@@ -1,7 +1,7 @@
 package com.ssafy.chaing.blockchain.handler.utility; // 패키지 경로는 맞게 수정하세요
 
 // --- 필요한 Import 문들 ---
-import com.ssafy.chaing.blockchain.Web3jConnectionManager;
+import com.ssafy.chaing.blockchain.config.Web3jConnectionManager;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.handler.utility.output.UtilityOutput;
 import com.ssafy.chaing.blockchain.provider.CustomGasProvider; // 필요 시 CustomGasProvider 임포트
