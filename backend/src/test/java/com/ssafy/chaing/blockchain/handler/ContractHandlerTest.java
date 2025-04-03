@@ -10,7 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ssafy.chaing.blockchain.Web3jConnectionManager;
+import com.ssafy.chaing.blockchain.config.Web3jConnectionManager;
 import com.ssafy.chaing.blockchain.handler.contract.ContractHandler;
 import com.ssafy.chaing.blockchain.handler.contract.input.ContractInput;
 import com.ssafy.chaing.blockchain.handler.contract.input.LiveAccountInput;
