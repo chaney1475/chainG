@@ -115,8 +115,8 @@ public class RuleController {
     }
 
     @Operation(
-            summary = "생활룰 승인 명단 조회",
-            description = "생활룰 변경 사항에 대한 승인 명단 조회"
+            summary = "생활룰 승인 안한 명단 조회",
+            description = "생활룰 변경 사항에 대한 승인 안한 명단 조회"
     )
     @PostMapping("/not-approved/{groupId}")
     public ResponseEntity<BaseResponse<NotApproveUserResponse>> recommendCategory(
