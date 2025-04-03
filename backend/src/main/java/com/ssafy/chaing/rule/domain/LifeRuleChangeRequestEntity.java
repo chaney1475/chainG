@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -61,7 +60,7 @@ public class LifeRuleChangeRequestEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ChangeRequestStatus status = ChangeRequestStatus.PROGRESS;  // 초기값은 PENDING
+    private ChangeRequestStatus status = ChangeRequestStatus.IDLE;  // 초기값은 IDLE
 
     public void approve(int totalGroupMembers) {
         this.approvalCount++;
@@ -73,8 +72,13 @@ public class LifeRuleChangeRequestEntity extends BaseEntity {
     public void reject() {
         this.status = ChangeRequestStatus.PROGRESS;
     }
+
     public void clear() {
-        this.approvalCount =1;
+        this.approvalCount = 1;
+        this.status = ChangeRequestStatus.IDLE;
+    }
+
+    public void inProgress() {
         this.status = ChangeRequestStatus.PROGRESS;
     }
 }

@@ -2,6 +2,7 @@ package com.ssafy.chaing.rule.service;
 
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.common.exception.NotFoundException;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
@@ -13,6 +14,7 @@ import com.ssafy.chaing.rule.controller.request.LifeRuleApproveRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleFormRequest;
 import com.ssafy.chaing.rule.controller.request.LifeRuleUpdateRequest;
 import com.ssafy.chaing.rule.controller.response.LifeRuleResponse;
+import com.ssafy.chaing.rule.controller.response.NotApproveUserResponse;
 import com.ssafy.chaing.rule.domain.ChangeRequestStatus;
 import com.ssafy.chaing.rule.domain.LifeRuleChangeItemEntity;
 import com.ssafy.chaing.rule.domain.LifeRuleChangeRequestEntity;
@@ -27,9 +29,11 @@ import com.ssafy.chaing.rule.repository.LifeRuleItemRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleRepository;
 import com.ssafy.chaing.rule.repository.LifeRuleUserRepository;
 import com.ssafy.chaing.user.domain.UserEntity;
+import com.ssafy.chaing.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +47,7 @@ import org.springframework.stereotype.Service;
 public class RuleServiceImpl implements RuleService {
 
     private final GroupUserRepository groupUserRepository;
+    private final UserRepository userRepository;
     private final LifeRuleRepository lifeRuleRepository;
     private final LifeRuleItemRepository lifeRuleItemRepository;
     private final LifeRuleChangeRequestRepository lifeRuleChangeRequestRepository;
@@ -91,7 +96,7 @@ public class RuleServiceImpl implements RuleService {
                 .totalGroupMember(groupUsers.size())
                 .requestedAt(ZonedDateTime.now(ZoneOffset.UTC))
                 .approvalCount(1)
-                .status(ChangeRequestStatus.PROGRESS)
+                .status(ChangeRequestStatus.IDLE)
                 .build();
         lifeRuleChangeRequestRepository.save(changeRequest);
 
@@ -120,10 +125,18 @@ public class RuleServiceImpl implements RuleService {
                             .lifeRule(lifeRule)
                             .requestedAt(ZonedDateTime.now(ZoneOffset.UTC))
                             .approvalCount(1)
-                            .status(ChangeRequestStatus.PROGRESS)
+                            .status(ChangeRequestStatus.IDLE)
                             .build();
                     return lifeRuleChangeRequestRepository.save(newRequest);
                 });
+
+        // 진행 중 상태일 경우 예외 처리
+        if (changeRequest.getStatus() == ChangeRequestStatus.PROGRESS) {
+            throw new BadRequestException(ExceptionCode.LIFE_RULE_CHANGE_ALREADY_IN_PROGRESS);
+        }
+
+        // 변경 요청 상태를 PROGRESS로 갱신
+        changeRequest.inProgress();
 
         LifeRuleUserEntity lifeRuleUserEntity = lifeRuleUserRepository
                 .findByLifeRuleAndUserId(lifeRule, userId)
@@ -275,5 +288,33 @@ public class RuleServiceImpl implements RuleService {
             notificationService.publishNotification(command);
         });
     }
+
+    @Override
+    @Transactional
+    public NotApproveUserResponse getApprovedUserList(Long groupId) {
+        return lifeRuleChangeRequestRepository.findProgressingRequestWithUsersByGroupId(
+                        groupId,
+                        ChangeRequestStatus.PROGRESS)
+                .map(changeRequest -> {
+                    List<Long> disapprovedIds = changeRequest.getLifeRule().getLifeRuleUsers().stream()
+                            .filter(lru -> !lru.isVoted()) // 투표 안 한 사용자만
+                            .map(lru -> lru.getUser().getId())
+                            .toList();
+                    return new NotApproveUserResponse(disapprovedIds);
+                })
+                .orElseGet(() -> new NotApproveUserResponse(Collections.emptyList())); // 없으면 빈 배열
+    }
+
+    public boolean isLifeRuleChangeInProgress(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
+
+        Long groupId = user.getGroupId();
+
+        return lifeRuleChangeRequestRepository.
+                findProgressingRequestByGroupId(groupId)
+                .isPresent(); // PROGRESS 상태면 true
+    }
+
 
 }

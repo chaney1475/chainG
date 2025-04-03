@@ -21,4 +21,11 @@ public interface LifeRuleRepository extends JpaRepository<LifeRuleEntity, Long> 
 
     @EntityGraph(attributePaths = {"group", "items", "lifeRuleUsers"})
     Optional<LifeRuleEntity> findByGroup(GroupEntity group);
+
+    @Query("SELECT lr FROM LifeRuleEntity lr " +
+            "JOIN FETCH lr.lifeRuleUsers lru " +
+            "JOIN FETCH lru.user " +
+            "WHERE lr.group.id = :groupId")
+    Optional<LifeRuleEntity> findWithUsersByGroupId(@Param("groupId") Long groupId);
+
 }
