@@ -172,9 +172,9 @@ public class ContractServiceImpl implements ContractService {
             ContractInput input = ContractInput.from(contract, paymentInfos);
 
             log.info("▶️▶️▶️비동기 호출 시작");
-            // ❗❗❗❗❗반드시 프로모션 때 풀어줄 것.
-//            CompletableFuture<Boolean> future = contractHandler.addContract(input);
-            CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true);
+
+            CompletableFuture<Boolean> future = contractHandler.addContract(input);
+//            CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true); // ❗❗❗❗❗반드시 프로모션 때 풀어줄 것.
 
             future.thenAccept(success -> {
                 // 이 코드는 비동기 작업이 완료된 후 실행됩니다 (별도의 스레드에서)
@@ -213,7 +213,6 @@ public class ContractServiceImpl implements ContractService {
 
         return ContractDetailDTO.from(contract);
     }
-
 
     @Transactional
     @Override
