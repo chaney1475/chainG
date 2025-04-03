@@ -34,8 +34,20 @@ public class ExecutionTime {
         }
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        // baseDate 초기화: 오늘 날짜의 baseDayOfMonth, 지정된 시간
         ZonedDateTime baseDate = now.withDayOfMonth(baseDayOfMonth)
-                .withHour(hour).withMinute(minute).withSecond(0);
+                .withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+
+        // ✅ 오늘 baseDay이고, 아직 시간 안 지났으면 오늘
+        if (now.toLocalDate().equals(baseDate.toLocalDate()) && now.isBefore(baseDate)) {
+            return baseDate.plusDays(dayOffset);
+        }
+
+        // ✅ 오늘보다 이전 날짜거나, 오늘인데 시간 지났으면 → 다음 달
+        if (now.isAfter(baseDate)) {
+            baseDate = baseDate.plusMonths(1).withDayOfMonth(baseDayOfMonth);
+        }
 
         return baseDate.plusDays(dayOffset);
     }
