@@ -101,7 +101,9 @@ public class NotificationServiceImpl implements NotificationService {
                         .build();
 
                 String response = firebaseMessaging.send(message);
-                log.info("FCM 발송 성공 - response: {}", response);
+                StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+                log.info("✅ FCM 발송 성공 - response: {}, 호출 위치: {}.{}", response, caller.getClassName(),
+                        caller.getMethodName());
 
             } catch (Exception e) {
                 log.error("FCM 발송 실패 - {}", e.getMessage(), e);
@@ -129,7 +131,9 @@ public class NotificationServiceImpl implements NotificationService {
 
                 sendNotificationAsync(user.getFcmToken(), title, content);
             } else {
-                log.warn("FCM 토큰이 없어서 알림 발송 생략 - userId: {}", userId);
+                StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+                log.warn("FCM 토큰이 없어서 알림 발송 생략 - userId: {}, 호출 위치: {}.{}",
+                        userId, caller.getClassName(), caller.getMethodName());
             }
         });
     }
