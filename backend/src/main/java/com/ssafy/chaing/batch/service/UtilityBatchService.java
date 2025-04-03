@@ -17,6 +17,7 @@ import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +68,10 @@ public class UtilityBatchService {
 
     }
 
-    private void processContract(ContractEntity contract, List<PaymentEntity> paymentsToSave,
-                                 List<UserPaymentEntity> userPaymentsToSave) {
+    private void processContract(ContractEntity contract,
+                                 List<PaymentEntity> paymentsToSave,
+                                 List<UserPaymentEntity> userPaymentsToSave
+    ) {
         Long contractId = contract.getId();
         UtilityCardEntity card = contract.getUtilityCard();
 
@@ -207,7 +210,7 @@ public class UtilityBatchService {
                             payment.getContract().getRentAccountNo(),
                             member.getRentAmount(),
                             false,
-                            payment.getPaymentDate().toString(),
+                            ZonedDateTime.now().toString(),
                             payment.getFeeType(),
                             null,
                             member.getUser().getId()
