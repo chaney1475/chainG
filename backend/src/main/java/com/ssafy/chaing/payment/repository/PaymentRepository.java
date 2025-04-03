@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
-    List<PaymentEntity> findByStatusIn(List<PaymentStatus> started);
+    List<PaymentEntity> findByFeeTypeAndStatusIn(FeeType feeType, List<PaymentStatus> statuses);
 
     List<PaymentEntity> findByStatus(PaymentStatus paymentStatus);
 
