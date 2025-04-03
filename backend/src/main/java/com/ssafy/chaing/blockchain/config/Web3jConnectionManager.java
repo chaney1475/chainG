@@ -1,4 +1,4 @@
-package com.ssafy.chaing.blockchain;
+package com.ssafy.chaing.blockchain.config;
 
 import java.io.IOException;
 import java.net.ConnectException;

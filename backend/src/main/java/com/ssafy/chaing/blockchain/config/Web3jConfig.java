@@ -16,13 +16,13 @@ import org.web3j.crypto.Credentials;
 public class Web3jConfig {
     private static final Logger logger = LoggerFactory.getLogger(Web3jConfig.class);
 
-    @Value("${web3j.client-address}")
-    private String primaryClientAddress;
+//    @Value("${web3j.client-address}")
+    private String primaryClientAddress = "https://polygon-mainnet.infura.io/v3/324ef67223a04d93b31198da687c6523";
 
-    @Value("${web3j.fallback-client-addresses:}")
+    @Value("${web3j.fallback-client-address}")
     private String fallbackClientAddresses;
 
-    @Value("${web3j.connection-timeout:10}")
+    @Value("${web3j.connection-timeout}")
     private int connectionTimeout;
 
     @Value("${web3j.wallet-private-key}")
@@ -36,12 +36,17 @@ public class Web3jConfig {
     public List<String> rpcEndpoints() {
         List<String> endpoints = new ArrayList<>();
         endpoints.add(primaryClientAddress.trim());
-        if (fallbackClientAddresses != null && !fallbackClientAddresses.trim().isEmpty()) {
-            Arrays.stream(fallbackClientAddresses.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .forEach(endpoints::add);
-        }
+        logger.info("client-address: {}", primaryClientAddress);
+        logger.info("chain-id: {}", chainId);
+        logger.info("private-key: {}", privateKey);
+        logger.info("connection-timeout: {}", connectionTimeout);
+        logger.info("fallback-client-address: {}", fallbackClientAddresses);
+//        if (fallbackClientAddresses != null && !fallbackClientAddresses.trim().isEmpty()) {
+//            Arrays.stream(fallbackClientAddresses.split(","))
+//                    .map(String::trim)
+//                    .filter(s -> !s.isEmpty())
+//                    .forEach(endpoints::add);
+//        }
         logger.info("사용할 RPC 엔드포인트 목록: {}", endpoints);
         return endpoints;
     }
