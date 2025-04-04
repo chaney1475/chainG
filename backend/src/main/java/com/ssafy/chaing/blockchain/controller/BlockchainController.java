@@ -9,7 +9,7 @@ import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
 import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
-import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioList;
+import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioResponse;
 import com.ssafy.chaing.blockchain.service.BlockchainService;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class BlockchainController {
     public ResponseEntity<?> createTransferPDF(
             @PathVariable("contractId") Long contractId
     ) {
-        TransferPortfolioList portfolioList = blockchainService.getTransferPortfolio(contractId);
+        TransferPortfolioResponse portfolioList = blockchainService.getTransferPortfolio(contractId);
         PDFPathResponse response = PDFPathResponse.from(blockchainService.createTransferPDF(portfolioList));
         return ResponseEntity.ok(response);
     }
@@ -116,7 +116,7 @@ public class BlockchainController {
     public ResponseEntity<?> getTransfer(
             @PathVariable("contractId") Long contractId
     ) {
-        TransferPortfolioList portfolioList = blockchainService.getTransferPortfolio(contractId);
-        return ResponseEntity.ok(portfolioList);
+        TransferPortfolioResponse response = blockchainService.getTransferPortfolio(contractId);
+        return ResponseEntity.ok(response);
     }
 }

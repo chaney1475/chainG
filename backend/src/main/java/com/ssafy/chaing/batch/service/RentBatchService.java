@@ -179,7 +179,7 @@ public class RentBatchService {
             ContractEntity contract = payment.getContract();
             TransferDTO result = fintechService.rentTransfer(
                     new TransferCommand(
-                            userPayment.getId(),
+                            member.getUser().getId(),
                             contract.getId(),
                             (long) payment.getMonth(),
                             member.getUser().getName() + "의 계좌: " + member.getAccountNo().substring(0, 4),
