@@ -9,6 +9,7 @@ import com.ssafy.chaing.home.controller.response.HomeOverviewResponse;
 import com.ssafy.chaing.home.service.HomeFacade;
 import com.ssafy.chaing.home.service.command.HomeOverviewCommand;
 import com.ssafy.chaing.home.service.dto.HomeOverviewDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,8 +39,11 @@ public class HomeController {
                 .body(BaseResponse.success(response));
     }
 
-    @PostMapping("/integration-scenario")
-    public ResponseEntity<BaseResponse<ContractDTO>> getHomeOverview(
+    @PostMapping("/test-payment")
+    @Operation(
+            summary = "테스트용 계약 생성"
+    )
+    public ResponseEntity<BaseResponse<ContractDTO>> createTestPayment(
             @RequestBody TestPaymentRequest body
 
     ) {
