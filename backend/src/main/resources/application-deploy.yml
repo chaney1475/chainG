@@ -104,12 +104,14 @@ cloud:
       bucket: ${aws.bucket}
 
 web3j:
-  client-address: ${client-address}
-  wallet-private-key: ${wallet-private-key}
-  contract-address: ${contract-address} # DB 에 넣어야 함.
-  rent-contract-address: ${rent-contract-address}
-  utility-contract-address: ${utility-contract-address}
-  chain-id: ${chain-id}
+  client-address: ${web3j.client-address}
+  wallet-private-key: ${web3j.wallet-private-key}
+  connection-timeout: 15
+  contract-address: ${web3j.contract-address} # DB 에 넣어야 함.
+  fallback-client-address: ${web3j.fallback-client-address}
+  rent-contract-address: ${web3j.rent-contract-address}
+  utility-contract-address: ${web3j.utility-contract-address}
+  chain-id: ${web3j.chain-id}
 
 ssafy:
   fintech:
