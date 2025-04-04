@@ -8,8 +8,10 @@ import { useRouter } from 'next/navigation'
 
 import { BottomNavigation, TopHeader } from '@/components'
 import { resetStore } from '@/store/store'
-import { Container, HeaderContainer } from '@/styles/styles'
+import { Container } from '@/styles/styles'
 
+import { Account } from './component/Account'
+import { Profile } from './component/Profile'
 import { FullMain } from './styles'
 
 export function MyPage() {
@@ -22,12 +24,15 @@ export function MyPage() {
     router.push('/auth/login')
   }
   return (
-    <Container>
-      <TopHeader title={t('my')} />
-      <FullMain>
-        <HeaderContainer onClick={handleLogout}>로그아웃</HeaderContainer>
-      </FullMain>
-      <BottomNavigation />
-    </Container>
+    <>
+      <Container>
+        <TopHeader title={t('my.title')} />
+        <FullMain>
+          <Profile />
+          <Account handleLogout={handleLogout} />
+        </FullMain>
+        <BottomNavigation />
+      </Container>
+    </>
   )
 }

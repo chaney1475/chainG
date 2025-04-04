@@ -19,6 +19,8 @@ export const UserItem = ({
   showName = false,
   size = 'medium',
 }: UserItemProps) => {
+  console.log(showName)
+
   return (
     <ProfileContainer
       variant={variant}
