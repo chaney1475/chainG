@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, memo } from 'react'
+import { forwardRef, memo, useEffect, useState } from 'react'
 import { FieldError } from 'react-hook-form'
 
 import Image from 'next/image'
@@ -41,12 +41,74 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
       disabled,
       required,
       validations,
+      type,
+      value,
+      onChange,
       ...props
     },
     ref,
   ) => {
     const isError = !!error
     const message = error?.message
+    const [displayValue, setDisplayValue] = useState(value || '')
+    const [isFocused, setIsFocused] = useState(false)
+
+    useEffect(() => {
+      if (type === 'money' && value) {
+        const numericValue = value.replace(/[^0-9]/g, '')
+        if (isFocused) {
+          setDisplayValue(numericValue)
+        } else {
+          const formattedValue = new Intl.NumberFormat('ko-KR').format(
+            Number(numericValue),
+          )
+          setDisplayValue(`${formattedValue} 원`)
+        }
+      } else {
+        setDisplayValue(value || '')
+      }
+    }, [value, type, isFocused])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (type === 'money') {
+        const numericValue = e.target.value.replace(/[^0-9]/g, '')
+        setDisplayValue(numericValue)
+
+        // 실제 값은 숫자만 전달
+        if (onChange) {
+          const event = {
+            ...e,
+            target: {
+              ...e.target,
+              value: numericValue,
+            },
+          }
+          onChange(event)
+        }
+      } else {
+        setDisplayValue(e.target.value)
+        onChange?.(e)
+      }
+    }
+
+    const handleFocus = () => {
+      setIsFocused(true)
+      if (type === 'money' && value) {
+        const numericValue = value.replace(/[^0-9]/g, '')
+        setDisplayValue(numericValue)
+      }
+    }
+
+    const handleBlur = () => {
+      setIsFocused(false)
+      if (type === 'money' && value) {
+        const numericValue = value.replace(/[^0-9]/g, '')
+        const formattedValue = new Intl.NumberFormat('ko-KR').format(
+          Number(numericValue),
+        )
+        setDisplayValue(`${formattedValue} 원`)
+      }
+    }
 
     return (
       <InputContainer className={className}>
@@ -61,10 +123,14 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
           ref={ref}
           disabled={disabled}
           required={required}
-          {...props}
+          value={displayValue}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           placeholder={placeholder}
           aria-invalid={isError}
           aria-describedby={message ? `${id}-error` : undefined}
+          {...props}
         />
         {!isError && validations && (
           <ValidationWrapper>

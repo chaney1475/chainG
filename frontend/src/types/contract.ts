@@ -28,7 +28,7 @@ export interface Rent {
 }
 
 export interface UserPaymentInfo {
-  id: number
+  userId: number
   amount: number
   ratio: number
 }
@@ -57,4 +57,15 @@ export interface ContractUser extends User {
 export interface Card {
   accountNo: string
   cardId: string
+}
+
+export interface CreateAccountResponse {
+  data: {
+    accountNo: string
+    bankCode: string
+    currency: {
+      currency: string
+      currencyName: string
+    }
+  }
 }

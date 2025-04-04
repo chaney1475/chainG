@@ -24,9 +24,11 @@ export const CustomPicker = <T extends Record<string, string>>({
         value={pickerValue}
         onChange={handleChange}
         wheelMode="natural">
-        {(Object.keys(selections) as Array<keyof T>).map((name) => (
+        {(Object.keys(selections) as Array<keyof T>).map((name, index) => (
           <>
-            {name === 'minute' && <Colon>{t('picker.colon')}</Colon>}
+            {index != 0 && name != 'ampm' && (
+              <Colon key={index + 'colon'}>{t('picker.colon')}</Colon>
+            )}
             <Picker.Column
               key={String(name)}
               name={String(name)}>
