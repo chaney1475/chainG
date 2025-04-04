@@ -118,7 +118,7 @@ public class RentBatchServiceWithSchedulerTest {
     @Test
     void retryTaskShouldBeExecutedAutomatically() throws InterruptedException {
         // fintech 실패 세팅
-        when(fintechService.transfer(any())).thenReturn(new TransferDTO(false));
+        when(fintechService.rentTransfer(any())).thenReturn(new TransferDTO(false));
 
         // 전날 작업, 당일 작업, retry 작업 모두 짧은 시간 간격으로 바로 확인하기
         ZonedDateTime now = ZonedDateTime.now().plusSeconds(2);

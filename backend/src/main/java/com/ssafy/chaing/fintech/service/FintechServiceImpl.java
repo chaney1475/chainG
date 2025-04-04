@@ -2,6 +2,8 @@ package com.ssafy.chaing.fintech.service;
 
 import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
 import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
+import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
+import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.contract.domain.ContractEntity;
@@ -35,15 +37,12 @@ import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.payment.domain.FeeType;
-import com.ssafy.chaing.payment.domain.PaymentEntity;
-import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -67,6 +66,7 @@ public class FintechServiceImpl implements FintechService {
     private final ContractRepository contractRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final UtilityHandler utilityHandler;
 
     public FintechServiceImpl(
             RestTemplateBuilder builder,
@@ -77,7 +77,8 @@ public class FintechServiceImpl implements FintechService {
             GroupUserRepository groupUserRepository,
             ContractRepository contractRepository,
             GroupRepository groupRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            UtilityHandler utilityHandler) {
         this.restTemplate = builder.build();
         this.headerUtil = headerUtil;
         this.config = ssafyApiConfig;
@@ -87,6 +88,7 @@ public class FintechServiceImpl implements FintechService {
         this.contractRepository = contractRepository;
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
+        this.utilityHandler = utilityHandler;
     }
 
     @Override
@@ -121,27 +123,10 @@ public class FintechServiceImpl implements FintechService {
         ContractEntity contract = getContractEntity(group);
 
         return new TransferDTO(false);
-//        return transfer(
-//                new TransferCommand(
-//                        userId,
-//                        contract.getId(),
-//                        (long) payment.getMonth(),
-//                        member.getUser().getName() + "의 계좌: " + member.getAccountNo().substring(0, 4),
-//                        member.getAccountNo(),
-//                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
-//                        payment.getContract().getRentAccountNo(),
-//                        member.getRentAmount(),
-//                        payment.getStatus() == PaymentStatus.COLLECTED,
-//                        payment.getPaymentDate().toString(),
-//                        payment.getFeeType(),
-//                        null,
-//                        member.getUser().getId()
-//                )
-//        );
     }
 
     @Override
-    public TransferDTO transfer(TransferCommand command) {
+    public TransferDTO rentTransfer(TransferCommand command) {
         try {
             if (command.getAmount() <= 0) {
                 log.info("송금할 금액이 없습니다. Transaction Balance : {}", command.getAmount());
@@ -189,6 +174,142 @@ public class FintechServiceImpl implements FintechService {
                                     "월세 납부 완료!",
                                     "최종적으로 집주인께 월세 납부를 마쳤어요!"
                                     );
+                        }
+
+                        if (command.getGroupId() == null) {
+                            sendRentNotificationToUser(
+                                    command.getUserId(),
+                                    "월세 이체 완료!",
+                                    "이번 달 납부하실 월세를 공동 계좌로 보냈어요!"
+                            );
+                        }
+                    } else {
+                        sendUtilityNotificationToUser(
+                                command.getUserId(),
+                                "공과금 이체 완료!",
+                                "이번 주 납부하실 카드 대납급을 공동 계좌로 보냈어요!"
+                        );
+                    }
+                } else {
+                    log.error("❗ 스마트 컨트랙트 등록 실패 ❗");
+
+                    if (command.getFeeType() == FeeType.RENT) {
+                        if (command.getUserId() == null) {
+                            sendRentNotificationToGroup(
+                                    command.getGroupId(),
+                                    "월세 납부 실패",
+                                    "집주인께 보내는 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                            );
+                        }
+
+                        if (command.getGroupId() == null) {
+                            sendRentNotificationToUser(
+                                    command.getUserId(),
+                                    "월세 이체 실패",
+                                    "납부하실 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                            );
+                        }
+                    } else {
+                        sendUtilityNotificationToUser(
+                                command.getUserId(),
+                                "공과금 이체 실패",
+                                "납부하실 카드 내역 트랜잭션 등록 중 문제가 발생했어요."
+                        );
+                    }
+                }
+            }).exceptionally(ex -> {
+                log.error("❗ 스마트 컨트랙트 등록 실패 ❗");
+
+                if (command.getFeeType() == FeeType.RENT) {
+                    if (command.getUserId() == null) {
+                        sendRentNotificationToGroup(
+                                command.getGroupId(),
+                                "월세 납부 실패",
+                                "집주인께 보내는 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                        );
+                    }
+
+                    if (command.getGroupId() == null) {
+                        sendRentNotificationToUser(
+                                command.getUserId(),
+                                "월세 이체 실패",
+                                "납부하실 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                        );
+                    }
+                } else {
+                    sendUtilityNotificationToUser(
+                            command.getUserId(),
+                            "공과금 이체 실패",
+                            "납부하실 카드 내역 트랜잭션 등록 중 문제가 발생했어요."
+                    );
+                }
+                return null;
+            });
+            return new TransferDTO(true);
+
+        } catch (HttpClientErrorException e) {
+            log.error("송금 실패 - 상태 코드: {}, 응답 내용: {}", e.getStatusCode(), e.getResponseBodyAsString());
+
+            // 🔥 에러 응답 파싱 및 처리
+            ClientErrorResponse errorResponse = ClientErrorParser.parseErrorResponse(e.getResponseBodyAsString());
+            return new TransferDTO(false);
+
+        } catch (Exception e) {
+            log.error("송금 중 알 수 없는 오류 발생: {}", e.getMessage());
+            return new TransferDTO(false);
+        }
+
+    }
+
+    @Override
+    public TransferDTO utilityTransfer(TransferCommand command) {
+        try {
+            if (command.getAmount() <= 0) {
+                log.info("송금할 금액이 없습니다. Transaction Balance : {}", command.getAmount());
+                return new TransferDTO(true);
+            }
+            HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
+                    "updateDemandDepositAccountTransfer", "updateDemandDepositAccountTransfer"
+            );
+
+            ClientTransferRequest request = new ClientTransferRequest(
+                    requestHeader, command
+            );
+
+            ResponseEntity<FintechBaseResponse<List<ClientResponseRec>>> responseEntity =
+                    restTemplate.exchange(
+                            config.getBaseUrl() + "/demandDeposit/updateDemandDepositAccountTransfer",
+                            HttpMethod.POST,
+                            new HttpEntity<>(request),
+                            new ParameterizedTypeReference<>() {
+                            }
+                    );
+
+            FintechBaseResponse<List<ClientResponseRec>> response = responseEntity.getBody();
+
+            if (response == null || response.rec() == null) {
+                return new TransferDTO(false);
+            }
+
+            log.info("송금 성공: {}", response);
+            command.setStatus(true);
+
+            log.info("▶️▶️▶️Smart Contract[Rent] 비동기 호출 시작");
+            UtilityInput input = UtilityInput.from(command);
+            CompletableFuture<Boolean> future = utilityHandler.addContract(input);
+
+            future.thenAccept(success -> {
+                // 이 코드는 비동기 작업이 완료된 후 실행됩니다 (별도의 스레드에서)
+                if (success) {
+                    log.info("✨ 스마트 컨트랙트 등록 성공! 🚀");
+
+                    if (command.getFeeType() == FeeType.RENT) {
+                        if (command.getUserId() == null) {
+                            sendRentNotificationToGroup(
+                                    command.getGroupId(),
+                                    "월세 납부 완료!",
+                                    "최종적으로 집주인께 월세 납부를 마쳤어요!"
+                            );
                         }
 
                         if (command.getGroupId() == null) {
