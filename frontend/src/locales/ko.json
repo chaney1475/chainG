@@ -207,7 +207,22 @@
   },
   "home": "홈",
   "contract": "서약",
-  "my": "마이",
+  "my": {
+    "title": "마이",
+    "profile": {
+      "name": "이름",
+      "email": "이메일",
+      "group": "그룹원",
+      "introduce": "님 안녕하세요"
+    },
+    "account": {
+      "title": "계좌 목록",
+      "myAccount": "내 계좌",
+      "rentAccount": "월세 / 공과금 계좌",
+      "liveAccount": "생활비  계좌",
+      "ownerAccount": "집주인 계좌"
+    }
+  },
   "notice": {
     "title": "알림"
   },
