@@ -10,6 +10,9 @@ type StepContent = {
 
 const stepContent: StepContent[] = [
   {
+    dueDate: 'customPicker',
+  },
+  {
     startDate: 'calendar',
     endDate: 'calendar',
   },
@@ -22,7 +25,6 @@ const stepContent: StepContent[] = [
   },
   {
     ownerAccountNo: 'inputBox',
-    dueDate: 'customPicker',
   },
   {
     utility: 'card',

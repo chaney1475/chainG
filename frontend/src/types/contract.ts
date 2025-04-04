@@ -38,12 +38,12 @@ export interface Utility {
 }
 
 export const ContractStatus = {
-  none: 'none',
-  draft: 'draft',
-  isContractApproved: 'isContractApproved',
-  pending: 'pending',
-  reviewRequired: 'reviewRequired',
-  confirm: 'confirm',
+  none: 'NONE',
+  draft: 'DRAFT',
+  isContractApproved: 'IS_CONTRACT_APPROVED',
+  pending: 'PENDING',
+  reviewRequired: 'REVIEW_REQUIRED',
+  confirm: 'CONFIRMED',
 } as const
 
 export type ContractStatus =
@@ -59,13 +59,7 @@ export interface Card {
   cardId: string
 }
 
-export interface CreateAccountResponse {
-  data: {
-    accountNo: string
-    bankCode: string
-    currency: {
-      currency: string
-      currencyName: string
-    }
-  }
+export interface RentUser extends User {
+  amount: number
+  ratio: number
 }

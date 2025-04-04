@@ -2,7 +2,6 @@ import { useDispatch } from 'react-redux'
 
 import {
   AccountInput,
-  Calendar,
   Card,
   CustomPicker,
   InputBox,
@@ -10,7 +9,12 @@ import {
   RentRatio,
 } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { updateRent } from '@/store/slices/contractSlice'
+import {
+  updateContractRequestField,
+  updateRent,
+} from '@/store/slices/contractSlice'
+import { RegularLabel } from '@/styles/styles'
+import { ShowBox } from '@/styles/styles'
 
 import {
   FormValuesInputProps,
@@ -62,46 +66,164 @@ export const AccountInputWrapper: React.FC<ValueInputProps> = (props) => (
   <AccountInput
     value={props.value ? String(props.value) : undefined}
     onChange={props.onChange}
-    isConfirmed={props.isAfter}
-    onConfirm={() => {}}
   />
 )
 
-export const CalendarInput: React.FC<ValueInputProps> = (props) => (
-  <Calendar
-    value={props.value ? new Date(props.value as string) : new Date()}
-    onChange={(newDate) => {
-      props.onChange(newDate?.toISOString() || '')
-    }}
-  />
-)
+export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
+  const dispatch = useDispatch()
+  const item = props.item as 'startDate' | 'endDate'
+  const rent = useAppSelector((state) => state.contract.contractRequest.rent)
+
+  const handleDateChange = (value: { year: string; month: string }) => {
+    // KST로 날짜 생성
+    const kstDate = new Date(
+      Number(value.year),
+      Number(value.month) - 1,
+      rent?.dueDate ?? 1,
+    )
+    const currentDate = new Date(props.value as string)
+    const today = new Date()
+
+    // startDate인 경우 오늘 날짜보다 작으면 오늘 날짜로 설정
+    if (item === 'startDate' && kstDate < today) {
+      kstDate.setFullYear(today.getFullYear())
+      kstDate.setMonth(today.getMonth())
+      kstDate.setDate(rent?.dueDate ?? today.getDate())
+    }
+
+    // UTC로 변환하여 저장
+    const utcDate = new Date(
+      Date.UTC(kstDate.getFullYear(), kstDate.getMonth(), kstDate.getDate()),
+    )
+    const formattedDate = utcDate.toISOString()
+
+    dispatch(
+      updateContractRequestField({
+        field: item,
+        value: formattedDate,
+      }),
+    )
+
+    const shouldUpdateOtherDate =
+      (item === 'startDate' && kstDate > currentDate) ||
+      (item === 'endDate' && kstDate < currentDate)
+
+    if (shouldUpdateOtherDate) {
+      dispatch(
+        updateContractRequestField({
+          field: item === 'startDate' ? 'endDate' : 'startDate',
+          value: formattedDate,
+        }),
+      )
+    }
+  }
+
+  return (
+    <div>
+      <ShowBox>
+        <RegularLabel>
+          {new Date(props.value as string).toLocaleDateString()}
+        </RegularLabel>
+      </ShowBox>
+      <CustomPicker
+        handleChange={handleDateChange}
+        pickerValue={{
+          year: props.value
+            ? new Date(props.value as string).getFullYear().toString()
+            : '',
+          month: props.value
+            ? (new Date(props.value as string).getMonth() + 1).toString()
+            : '',
+        }}
+        selections={{
+          year: Array.from({ length: 27 }, (_, i) => String(i + 2025)),
+          month: Array.from({ length: 12 }, (_, i) => String(i + 1)),
+        }}
+      />
+    </div>
+  )
+}
 
 export const CardInput: React.FC<ValueInputProps> = (props) => (
   <Card
-    value={props.value ? String(props.value) : undefined}
+    value={props.value ? String(props.value) : null}
     onChange={props.onChange}
-    isConfirmed={props.isAfter}
-    onConfirm={() => {}}
   />
 )
 
 export const CustomPickerInput: React.FC<FormValuesInputProps> = () => {
   const dispatch = useDispatch()
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
+  const contractRequest = useAppSelector(
+    (state) => state.contract.contractRequest,
+  )
+
+  const handleDueDateChange = (value: { value: string }) => {
+    const newDueDate = Number(value.value)
+
+    // rent.dueDate 업데이트
+    dispatch(
+      updateRent({
+        ...rent,
+        dueDate: newDueDate,
+      }),
+    )
+
+    // startDate와 endDate 업데이트
+    if (contractRequest.startDate && contractRequest.endDate) {
+      const startDate = new Date(contractRequest.startDate)
+      const endDate = new Date(contractRequest.endDate)
+
+      // KST로 날짜 생성
+      const newStartDate = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        newDueDate,
+      )
+      const newEndDate = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        newDueDate,
+      )
+
+      // UTC로 변환하여 저장
+      const utcStartDate = new Date(
+        Date.UTC(
+          newStartDate.getFullYear(),
+          newStartDate.getMonth(),
+          newStartDate.getDate(),
+        ),
+      )
+      const utcEndDate = new Date(
+        Date.UTC(
+          newEndDate.getFullYear(),
+          newEndDate.getMonth(),
+          newEndDate.getDate(),
+        ),
+      )
+
+      dispatch(
+        updateContractRequestField({
+          field: 'startDate',
+          value: utcStartDate.toISOString(),
+        }),
+      )
+
+      dispatch(
+        updateContractRequestField({
+          field: 'endDate',
+          value: utcEndDate.toISOString(),
+        }),
+      )
+    }
+  }
 
   return (
     <CustomPicker
-      handleChange={(value) => {
-        dispatch(
-          updateRent({
-            ...rent,
-            dueDate: Number(value.value),
-          }),
-        )
-      }}
+      handleChange={handleDueDateChange}
       pickerValue={{ value: rent?.dueDate ? String(rent.dueDate) : '' }}
       selections={{
-        value: Array.from({ length: 31 }, (_, i) => String(i + 1)),
+        value: Array.from({ length: 27 }, (_, i) => String(i + 2)),
       }}
     />
   )

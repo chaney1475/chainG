@@ -7,7 +7,7 @@ import styled from '@emotion/styled'
 import ko from 'date-fns/locale/ko'
 
 import { ConfirmButton } from '@/components'
-import { ShowBox } from '@/styles/styles'
+import { RegularLabel, ShowBox } from '@/styles/styles'
 
 import { BottomSheet } from '../BottomSheet'
 
@@ -29,7 +29,7 @@ export const Calendar = ({ value, onChange, onConfirm }: Props) => {
   return (
     <>
       <ShowBox onClick={() => setIsOpen(!isOpen)}>
-        {value?.toLocaleDateString()}
+        <RegularLabel>{value?.toLocaleDateString()}</RegularLabel>
       </ShowBox>
       <BottomSheet
         open={isOpen}

@@ -9,7 +9,6 @@ export interface FormValues {
 
 export interface ValueInputProps {
   onChange: (value: FieldValue) => void
-  isAfter: boolean
   item: string
   value: FormValue
   watch?: (field: string) => FormValue
@@ -31,9 +30,9 @@ export type InputType =
 export type InputComponentMap = {
   moneyInputBox: React.ComponentType<FormValuesInputProps>
   switch: React.ComponentType<FormValuesInputProps>
-  inputBox: React.ComponentType<ValueInputProps>
+  inputBox: React.ComponentType<FormValuesInputProps>
   account: React.ComponentType<ValueInputProps>
-  calendar: React.ComponentType<ValueInputProps>
-  customPicker: React.ComponentType<ValueInputProps>
+  calendar: React.ComponentType<FormValuesInputProps>
+  customPicker: React.ComponentType<FormValuesInputProps>
   card: React.ComponentType<ValueInputProps>
 }

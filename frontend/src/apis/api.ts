@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { store } from '@/store/store'
 import { RootState } from '@/store/store'
-import { ApiResponse } from '@/types/api'
+import { ApiErrorResponse, ApiResponse } from '@/types/api'
 import { handleDefaultError } from '@/utils/error/handleDefaultError'
 
 const api = axios.create({
@@ -18,7 +18,7 @@ api.interceptors.request.use(
   (config) => {
     const state: RootState = store.getState()
     const accessToken = state.auth.loginToken.accessToken
-    console.log('accessToken🔥', accessToken)
+    console.log('accessToken', accessToken)
     if (accessToken) {
       config.headers = config.headers || {}
       config.headers.Authorization = accessToken
@@ -29,7 +29,6 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
-    console.error('🚨 요청 오류:', error)
     return Promise.reject(error)
   },
 )
@@ -47,15 +46,14 @@ export const getRequest = async <T>(url: string): Promise<ApiResponse<T>> => {
   try {
     const response = await api.get<ApiResponse<T>>(url)
     return response.data
-  } catch {
-    return {
-      success: false,
-      error: {
-        code: '500',
-        message: '네트워크 오류가 발생했습니다.',
-      },
-    }
+  } catch (error) {
+    return error as ApiErrorResponse
   }
+}
+
+export const getBooleanRequest = async (url: string): Promise<boolean> => {
+  const response = await getRequest<unknown>(url)
+  return response.success
 }
 
 export const postRequest = async <T>(
@@ -64,16 +62,9 @@ export const postRequest = async <T>(
 ): Promise<ApiResponse<T>> => {
   try {
     const response = await api.post<ApiResponse<T>>(url, data)
-    console.log('response🔥', response.data)
     return response.data
-  } catch {
-    return {
-      success: false,
-      error: {
-        code: '500',
-        message: '네트워크 오류가 발생했습니다.',
-      },
-    }
+  } catch (error) {
+    return error as ApiErrorResponse
   }
 }
 
@@ -89,21 +80,33 @@ export const putRequest = async <T>(
   url: string,
   data: object,
 ): Promise<ApiResponse<T>> => {
-  const response = await api.put<ApiResponse<T>>(url, data)
-  return response.data
+  try {
+    const response = await api.put<ApiResponse<T>>(url, data)
+    return response.data
+  } catch (error) {
+    return error as ApiErrorResponse
+  }
 }
 
 export const patchRequest = async <T>(
   url: string,
   data: object,
 ): Promise<ApiResponse<T>> => {
-  const response = await api.patch<ApiResponse<T>>(url, data)
-  return response.data
+  try {
+    const response = await api.patch<ApiResponse<T>>(url, data)
+    return response.data
+  } catch (error) {
+    return error as ApiErrorResponse
+  }
 }
 
 export const deleteRequest = async <T>(
   url: string,
 ): Promise<ApiResponse<T>> => {
-  const response = await api.delete<ApiResponse<T>>(url)
-  return response.data
+  try {
+    const response = await api.delete<ApiResponse<T>>(url)
+    return response.data
+  } catch (error) {
+    return error as ApiErrorResponse
+  }
 }

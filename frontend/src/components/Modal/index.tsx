@@ -17,15 +17,17 @@ interface ModalProps {
   title?: string
   description?: string
   confirmText?: string
+  children?: React.ReactNode
 }
 
-export default function Modal({
+export function Modal({
   open,
   onOpenChange,
   onConfirm,
   title = '당번 삭제',
-  description = '계약서를 임시저장할까요?\n계약서의 내용을 그룹원들이 서로 확인할 수 있어요.',
+  description = '서약서를 임시저장할까요?\n서약서의 내용을 그룹원들이 서로 확인할 수 있어요.',
   confirmText = '확인',
+  children,
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -35,9 +37,14 @@ export default function Modal({
         <Dialog.Overlay css={overlayStyle} />
         <Dialog.Content css={contentStyle}>
           <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
+          {children}
           <Dialog.Description css={descStyle}>
             {description.split('\n').map((line, idx) => (
-              <p key={idx}>{line}</p>
+              <span
+                key={idx}
+                style={{ display: 'block' }}>
+                {line}
+              </span>
             ))}
           </Dialog.Description>
           <ButtonWrapper>

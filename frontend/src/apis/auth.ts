@@ -55,3 +55,5 @@ export const getRefreshToken = async () =>
 
 export const registerFCMToken = async (params: { fcmToken: string }) =>
   await postBooleanRequest('/auth/fcm', params)
+
+export const logout = async () => await postBooleanRequest('/auth/logout')

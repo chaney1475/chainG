@@ -61,8 +61,8 @@ export function InviteCodePage() {
 
   return (
     <TitleHeaderLayout
-      title={t('inviteCode.title')}
-      header={t('inviteCode.header')}
+      title={t('inviteCode.label')}
+      header={t('inviteCode.placeholder')}
       onClick={handleSubmit(onSubmit)}
       label={t('next')}
       buttonVariant={
@@ -71,7 +71,7 @@ export function InviteCodePage() {
       <InputBox
         {...register('inviteCode')}
         id="inviteCode"
-        label={t('inviteCode.inviteCode.label')}
+        label={t('inviteCode.label')}
         placeholder={t('inviteCode.inviteCode.placeholder')}
         error={errors.inviteCode}
       />

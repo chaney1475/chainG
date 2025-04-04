@@ -5,6 +5,8 @@ export interface User {
   profileImage: string | null
 }
 
+export type UserUpdateRequest = Pick<User, 'nickname' | 'profileImage'>
+
 export interface UserSummary extends User {
   emailAddress: string
 }
@@ -12,4 +14,13 @@ export interface UserSummary extends User {
 export interface LoginUser extends User {
   groupId: number | null
   contractId: number | null
+}
+
+export interface HomeOverview {
+  groupName: string
+  isRentPaid: boolean
+  isMyRentPaid: boolean
+  isUtilityPaid: boolean
+  isMyUtilityPaid: boolean
+  isLifeRuleApproved: boolean
 }

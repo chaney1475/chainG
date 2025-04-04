@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
+import Image from 'next/image'
 
 import {
   BottomSheet,
@@ -13,7 +14,15 @@ import {
 } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowRentRatio, updateRent } from '@/store/slices/contractSlice'
-import { Label, ShowBox, Title } from '@/styles/styles'
+import {
+  HeaderTitle,
+  Label,
+  RegularLabel,
+  ShowBox,
+  Title,
+  ValidationContainer,
+  ValidationMessage,
+} from '@/styles/styles'
 
 import { Colon } from '../CustomPicker/style'
 import { Switch } from '../Switch'
@@ -69,6 +78,11 @@ const MoneyContainer = styled.div`
   & div:nth-of-type(2) {
     padding-top: 16px;
   }
+  & div:nth-of-type(2) {
+    > input {
+      text-align: right !important;
+    }
+  }
 `
 export function RentRatio() {
   const [open, setOpen] = useState(false)
@@ -77,6 +91,16 @@ export function RentRatio() {
   const showRentRatio = useAppSelector((state) => state.contract.showRentRatio)
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
   const { t } = useTranslation()
+
+  const [pickerValue, setPickerValue] = useState<Record<string, string>>(
+    group.members.reduce(
+      (acc, member) => {
+        acc[member.id] = '1'
+        return acc
+      },
+      {} as Record<string, string>,
+    ),
+  )
 
   const [totalUserAmount, setTotalUserAmount] = useState(
     rent.userPaymentInfo.reduce((sum, info) => sum + info.amount, 0),
@@ -90,44 +114,31 @@ export function RentRatio() {
           0,
         )
 
+        const newUserPaymentInfo = Object.entries(pickerValue).map(
+          ([userId, ratio]) => ({
+            id: Number(userId),
+            userId: Number(userId),
+            amount: Math.floor(rent.totalAmount * (Number(ratio) / totalRatio)),
+            ratio: Number(ratio),
+          }),
+        )
+
         dispatch(
           updateRent({
             ...rent,
             totalRatio,
-            userPaymentInfo: Object.entries(pickerValue).map(
-              ([userId, ratio]) => ({
-                id: Number(userId),
-                userId: Number(userId),
-                amount: Math.floor(
-                  rent.totalAmount * (Number(ratio) / totalRatio),
-                ),
-                ratio: Number(ratio),
-              }),
-            ),
+            userPaymentInfo: newUserPaymentInfo,
           }),
         )
       }
-    } else {
-      dispatch(
-        updateRent({
-          ...rent,
-          userPaymentInfo: rent.userPaymentInfo.map((info) => {
-            return {
-              userId: info.userId,
-              amount: info.amount,
-              ratio: Math.round(Number(info.amount) / rent.totalAmount),
-            }
-          }),
-        }),
-      )
     }
-  }, [rent.totalAmount, totalUserAmount, showRentRatio])
+  }, [rent.totalAmount, showRentRatio, pickerValue])
 
   useEffect(() => {
     setTotalUserAmount(
       rent.userPaymentInfo.reduce((sum, info) => sum + info.amount, 0),
     )
-  }, [rent])
+  }, [rent.userPaymentInfo])
   const handleChange = (value: Record<string, string>, key: string) => {
     const newPickerValue = { ...pickerValue, [key]: value[key] }
     setPickerValue(newPickerValue)
@@ -138,31 +149,24 @@ export function RentRatio() {
       0,
     )
 
-    // onChange를 통해 totalRatio 업데이트
+    // userPaymentInfo 업데이트
+    const newUserPaymentInfo = Object.entries(newPickerValue).map(
+      ([userId, ratio]) => ({
+        id: Number(userId),
+        userId: Number(userId),
+        amount: Math.floor(rent.totalAmount * (Number(ratio) / totalRatio)),
+        ratio: Number(ratio),
+      }),
+    )
+
     dispatch(
       updateRent({
         ...rent,
         totalRatio,
-        userPaymentInfo: Object.entries(newPickerValue).map(
-          ([userId, ratio]) => ({
-            userId: Number(userId),
-            amount: Math.floor(rent.totalAmount * (Number(ratio) / totalRatio)),
-            ratio: Number(ratio),
-          }),
-        ),
+        userPaymentInfo: newUserPaymentInfo,
       }),
     )
   }
-
-  const [pickerValue, setPickerValue] = useState<Record<string, string>>(
-    group.members.reduce(
-      (acc, member) => {
-        acc[member.id] = '1'
-        return acc
-      },
-      {} as Record<string, string>,
-    ),
-  )
 
   const selections = group.members.reduce(
     (acc, member) => {
@@ -199,12 +203,12 @@ export function RentRatio() {
               <TileContainer>
                 {Object.entries(pickerValue).map(([key, value], index) => {
                   return (
-                    <>
+                    <React.Fragment key={key}>
                       {index != 0 && (
                         <Colon key={index + 'colon'}>{t('picker.colon')}</Colon>
                       )}
                       <Label key={key}>{value}</Label>
-                    </>
+                    </React.Fragment>
                   )
                 })}
               </TileContainer>
@@ -217,20 +221,20 @@ export function RentRatio() {
                     user={user}
                     variant="bar"
                   />
-                  <Label id={user.id.toString()}>
+                  <RegularLabel id={user.id.toString()}>
                     {formatMoney(
                       rent?.userPaymentInfo
                         .find((info) => info.userId === user.id)
                         ?.amount?.toString() ?? '',
                     )}
-                  </Label>
+                  </RegularLabel>
                 </TitleContainer>
               ))}
               <Total>
                 총합
-                <Label>
+                <HeaderTitle>
                   {formatMoney(rent?.totalAmount?.toString() ?? '')}
-                </Label>
+                </HeaderTitle>
               </Total>
             </RentRatioContainer>
             {totalUserAmount != rent.totalAmount && (
@@ -254,25 +258,44 @@ export function RentRatio() {
                       .find((info) => info.userId === user.id)
                       ?.amount?.toString() ?? ''
                   }
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newAmount = Number(e.target.value)
+                    const newUserPaymentInfo = rent.userPaymentInfo.map(
+                      (info) =>
+                        info.userId === user.id
+                          ? { ...info, amount: newAmount }
+                          : info,
+                    )
                     dispatch(
                       updateRent({
                         ...rent,
-                        userPaymentInfo: rent.userPaymentInfo.map((info) =>
-                          info.userId === user.id
-                            ? { ...info, amount: Number(e.target.value) }
-                            : info,
-                        ),
+                        userPaymentInfo: newUserPaymentInfo,
                       }),
                     )
-                  }
+                  }}
                 />
               </MoneyContainer>
             ))}
             <Total>
               총합
-              <Label>{formatMoney(totalUserAmount?.toString() ?? '')}</Label>
+              <HeaderTitle>
+                {formatMoney(totalUserAmount?.toString() ?? '')}
+              </HeaderTitle>
             </Total>
+
+            {totalUserAmount != rent.totalAmount && (
+              <ValidationContainer>
+                <Image
+                  src={`/icons/validation-false.svg`}
+                  alt={'message'}
+                  width={14}
+                  height={14}
+                />
+                <ValidationMessage isValid={false}>
+                  {t('contract.rentTotalRatio.validation.match')}
+                </ValidationMessage>
+              </ValidationContainer>
+            )}
           </RentRatioContainer>
         )}
       </RentRatioContainer>
