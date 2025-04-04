@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import Image from 'next/image'
 
 import { User } from '@/types/user'
@@ -19,6 +21,15 @@ export const UserItem = ({
   showName = false,
   size = 'medium',
 }: UserItemProps) => {
+  const [imgSrc, setImgSrc] = useState(
+    `/images/profile/${user.profileImage}.png`,
+  )
+
+  const handleImageError = () => {
+    const imgSrc = `/images/profile/user${user.id % 10}.png`
+    setImgSrc(imgSrc)
+  }
+
   console.log(showName)
 
   return (
@@ -26,13 +37,11 @@ export const UserItem = ({
       variant={variant}
       size={size}>
       <Image
-        src={
-          `/images/profile/${user.profileImage}.png` ||
-          '/images/profile/user1.png'
-        }
+        src={imgSrc}
         alt={user.name}
         width={size === 'small' ? 36 : size === 'medium' ? 40 : 50}
         height={size === 'small' ? 36 : size === 'medium' ? 40 : 50}
+        onError={handleImageError}
       />
       {showName ? user.name : user.nickname}
     </ProfileContainer>
