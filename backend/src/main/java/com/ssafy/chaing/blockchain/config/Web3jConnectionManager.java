@@ -6,6 +6,7 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.PostConstruct;
+import lombok.Getter;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,8 @@ public class Web3jConnectionManager {
     private final ReentrantLock connectionLock = new ReentrantLock(); // 동시 재연결 시도 방지용 락
     private volatile Web3j currentWeb3j; // 현재 활성 Web3j 인스턴스 (volatile 중요)
     private volatile int currentEndpointIndex = 0; // 현재 사용 중인 엔드포인트 인덱스
+    // 현재 연결된 RPC 엔드포인트 주소 반환 (디버깅/로깅용)
+    @Getter
     private volatile String currentRpcEndpoint = ""; // 현재 사용중인 엔드포인트 주소 (로깅/디버깅용)
 
     @Autowired
@@ -54,11 +57,6 @@ public class Web3jConnectionManager {
             }
         }
         return currentWeb3j;
-    }
-
-    // 현재 연결된 RPC 엔드포인트 주소 반환 (디버깅/로깅용)
-    public String getCurrentRpcEndpoint() {
-        return this.currentRpcEndpoint;
     }
 
     // 핵심 로직: 연결 시도 및 Web3j 인스턴스 교체

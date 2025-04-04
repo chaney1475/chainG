@@ -14,7 +14,9 @@ public interface FintechService {
     CreateFintechCardRec createFintechCard(CreateCardCommand createCardCommand);
 
     TransferDTO manualTransfer(ManualTransferCommand command, Long userId);
-    TransferDTO transfer(TransferCommand command);
+    TransferDTO rentTransfer(TransferCommand command);
+
+    TransferDTO utilityTransfer(TransferCommand command);
 
     List<InquireBillingStatementsRec> inquireBillingStatements(InquireBillingCommand command);
 

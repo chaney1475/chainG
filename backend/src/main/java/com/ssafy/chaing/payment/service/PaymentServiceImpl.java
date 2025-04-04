@@ -153,7 +153,7 @@ public class PaymentServiceImpl implements PaymentService {
                 null
         );
 
-        TransferDTO result = fintechService.transfer(dto);
+        TransferDTO result = fintechService.rentTransfer(dto);
 
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
@@ -204,7 +204,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // 송금: 요청자가 본인 계좌에서 → 월세 계좌로 송금
-        TransferDTO result = fintechService.transfer(
+        TransferDTO result = fintechService.rentTransfer(
                 new TransferCommand(
                         userPayment.getId(),
                         contract.getId(),
