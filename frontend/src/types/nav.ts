@@ -4,4 +4,5 @@ export const NavItemVariant = {
   my: 'myPage',
 } as const
 
-export type NavItemVariant = keyof typeof NavItemVariant
+export type NavItemKey = keyof typeof NavItemVariant // 'home' | 'contract' | 'my'
+export type NavItemVariant = (typeof NavItemVariant)[NavItemKey] // 'homePage' | ...

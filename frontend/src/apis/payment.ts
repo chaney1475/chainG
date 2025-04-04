@@ -1,19 +1,34 @@
-import { CreateAccountResponse } from '@/types/contract'
+import {
+  DepositToRentAccountRequest,
+  RetrieveRentResponse,
+  TransferToOwnerRequest,
+} from '@/types/budget'
 
-import { postRequest, putRequest } from './api'
+import { getRequest, postBooleanRequest, postRequest } from './api'
 
-//transfer
-//POST / api / v1 / fintech / transfer
+//transferToOwner
+export const transferToOwner = async (params: TransferToOwnerRequest) =>
+  await postBooleanRequest('/payment/withdraw', params)
 
-//createAccount
-export const createAccount = async () =>
-  await postRequest<CreateAccountResponse>('/fintech/account')
+//depositToRentAccount
+export const depositToRentAccount = async (
+  params: DepositToRentAccountRequest,
+) => await postBooleanRequest('/payment/deposit', params)
 
-//createCard
-export const createCard = async ({ accountNo }: { accountNo: string }) =>
-  await postRequest<{ id: string }>('/card', {
-    accountNo,
-  })
+//retrieveUtility 공과금 월별 통계 조회
+export const retrieveUtility = async (month: string) =>
+  await getRequest<RetrieveRentResponse>(`/payment/utility?month=${month}`)
 
-//retrieveRent
-//GET / api / v1 / payment / rent
+//retrieveRent 월세 월별 통계 조회
+export const retrieveRent = async (month: string) =>
+  await getRequest<RetrieveRentResponse>(`/payment/rent?month=${month}`)
+
+//getRentAccountNo 공과금 계좌 정보 조회
+export const getRentAccountNo = async () =>
+  await getRequest<{ accountNo: string }>(`/payment/account`)
+
+//createTransferPDF
+export const createTransferPDF = async (contractId: number) =>
+  await postRequest<{ presignedUrl: string }>(
+    `/blockchain/payment/${contractId}/pdf`,
+  )

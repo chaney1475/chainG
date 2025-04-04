@@ -1,16 +1,28 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import { updateContract } from '@/apis/group'
-import { ConfirmButton, IconButton, ProgressBar, UserItem } from '@/components'
+import { useRouter } from 'next/navigation'
+
+import { createEmptyContract, updateContract } from '@/apis/group'
+import {
+  ConfirmButton,
+  IconButton,
+  Modal,
+  ProgressBar,
+  UserItem,
+} from '@/components'
 import { HeaderButton } from '@/components/TopHeader/styles'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import {
   updateContractRequestField,
   updateRent,
+  validateContractRequest,
 } from '@/store/slices/contractSlice'
+import { setContract } from '@/store/slices/contractSlice'
+import { setContractId } from '@/store/slices/userSlice'
 import {
   BottomContainer,
   Container,
@@ -20,7 +32,6 @@ import {
 } from '@/styles/styles'
 import { ContractRequest } from '@/types/contract'
 
-import { InputWrapper } from '../component/InputWrapper'
 import { useContractSteps } from '../hooks/useContractSteps'
 import {
   FieldValue,
@@ -36,6 +47,7 @@ import {
   SwitchInput,
   TextInput,
 } from './components/InputComponents'
+import { InputWrapper } from './components/InputWrapper'
 
 const InputComponents: InputComponentMap = {
   moneyInputBox: MoneyInput,
@@ -50,13 +62,16 @@ const InputComponents: InputComponentMap = {
 export function ContractCreatePage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const router = useRouter()
   const group = useAppSelector((state) => state.group.group)
+  const [openModal, setOpenModal] = useState(false)
   const contractRequest = useAppSelector(
     (state) => state.contract.contractRequest,
   )
   const rentAccountConfirm = useAppSelector(
     (state) => state.contract.rentAccountConfirm,
   )
+
   const cardConfirm = useAppSelector((state) => state.contract.cardConfirm)
   const {
     step,
@@ -66,6 +81,7 @@ export function ContractCreatePage() {
     handleBack,
     isLastStep,
   } = useContractSteps()
+
   const isAfter = (item: string) => {
     return item === 'rentAccountNo'
       ? rentAccountConfirm
@@ -73,6 +89,22 @@ export function ContractCreatePage() {
         ? cardConfirm
         : false
   }
+  const user = useAppSelector((state) => state.user.user)
+  useEffect(() => {
+    const createContract = async () => {
+      if (!user.contractId) {
+        console.log('createContract', user)
+        const response = await createEmptyContract({
+          groupId: user.groupId as number,
+        })
+        if (response.success) {
+          dispatch(setContractId(response.data.id))
+        }
+      }
+    }
+    createContract()
+  }, [contractRequest])
+
   const handleChange = (field: string, value: FieldValue) => {
     if (field === 'rent') {
       dispatch(updateRent(value as ContractRequest['rent']))
@@ -85,28 +117,92 @@ export function ContractCreatePage() {
       )
     }
   }
-
   const renderInputComponent = (type: InputType, item: string) => {
     const Component = InputComponents[type]
+
     if (!Component) return null
+
+    let value: FieldValue
+
+    if (item === 'utility') {
+      value = contractRequest.utility.cardId?.toString() ?? ''
+    } else if (item === 'rent') {
+      value = contractRequest.rent.rentAccountNo ?? ''
+    } else {
+      value = contractRequest[item as keyof ContractRequest] as FieldValue
+    }
 
     const valueProps = {
       onChange: (value: FieldValue) => handleChange(item, value),
-      isAfter: false, // TODO: Redux에서 가져오도록 수정
-      value: contractRequest[item as keyof ContractRequest],
-      formValues: contractRequest,
+      value,
+      formValues: {
+        ...contractRequest,
+        utility: contractRequest.utility.cardId?.toString() ?? '',
+      },
       item,
     }
+
     return <Component {...valueProps} />
   }
+  const validations = useAppSelector((state) => state.contract.validations)
+  const [isFinalSubmit, setIsFinalSubmit] = useState(false)
 
-  const onSubmit = async () => {
-    console.log(contractRequest)
+  useEffect(() => {
+    console.log('isFinalSubmit', isFinalSubmit)
+    if (isFinalSubmit) {
+      setOpenModal(true)
+    }
+  }, [isFinalSubmit])
+
+  const handleUpdate = async () => {
+    if (isValid) {
+      setIsFinalSubmit(true)
+      setShouldUpdate(true)
+    }
+  }
+  useEffect(() => {
+    dispatch(validateContractRequest())
+  }, [contractRequest, dispatch])
+
+  const handleModalConfirm = async () => {
+    setOpenModal(false)
+    setShouldUpdate(true)
+  }
+  const isValid = Object.values(validations).every((v) => v.isValid)
+  const [shouldUpdate, setShouldUpdate] = useState(false)
+
+  useEffect(() => {
+    const handleDraft = async () => {
+      if (shouldUpdate) {
+        await draftContractRequest()
+        setShouldUpdate(false)
+      }
+    }
+    handleDraft()
+  }, [shouldUpdate])
+
+  const handleConfirm = () => (isLastStep ? handleUpdate() : handleNext())
+  const handleDraft = async () => {
+    setIsFinalSubmit(false)
+    setOpenModal(true)
+  }
+
+  const draftContractRequest = async () => {
+    setOpenModal(false)
+    if (!user.contractId) {
+      return
+    }
+
     const response = await updateContract({
-      contractId: '5',
+      contractId: user.contractId,
       contract: contractRequest,
     })
-    console.log(response)
+    if (response.success) {
+      dispatch(setContract(response.data))
+    }
+    if (isFinalSubmit) {
+      router.push('/contract/detail')
+    }
   }
 
   return (
@@ -120,7 +216,7 @@ export function ContractCreatePage() {
           />
         </HeaderButton>
         {t('contract.title')}
-        <HeaderButton onClick={onSubmit}>
+        <HeaderButton onClick={handleDraft}>
           <IconButton
             src="/icons/save.svg"
             alt={t('contract.draft.title')}
@@ -139,6 +235,7 @@ export function ContractCreatePage() {
             <UserItem
               key={user.id}
               user={user}
+              showName={true}
             />
           ))}
         </UserTileContainer>
@@ -155,10 +252,24 @@ export function ContractCreatePage() {
       </FullMain>
       <BottomContainer>
         <ConfirmButton
-          onClick={handleNext}
+          onClick={handleConfirm}
           label={isLastStep ? t('finish') : t('next')}
+          variant={isValid || !isLastStep ? 'next' : 'disabled'}
         />
       </BottomContainer>
+      <Modal
+        open={openModal}
+        onOpenChange={setOpenModal}
+        onConfirm={handleModalConfirm}
+        title={
+          isFinalSubmit ? t('contract.update.title') : t('contract.draft.title')
+        }
+        description={
+          isFinalSubmit
+            ? t('contract.update.content')
+            : t('contract.draft.content')
+        }
+      />
     </Container>
   )
 }

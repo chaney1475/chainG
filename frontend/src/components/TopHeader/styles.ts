@@ -21,3 +21,7 @@ export const HeaderButton = styled.button`
   width: 24px;
   height: 24px;
 `
+export const HeaderTitle = styled.div`
+  ${({ theme }) => theme.typography.styles.topHeader};
+  color: ${({ theme }) => theme.color.text.low};
+`

@@ -66,28 +66,34 @@ export const SwitcherContainer = styled.div`
   align-items: center;
 `
 
-export const ShowBox = styled.div`
+export const ShowBox = styled.div<{ isDisabled?: boolean }>`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   width: 100%;
   padding: 1rem;
-  border: 1px solid ${({ theme }) => theme.color.border};
+  background-color: ${({ isDisabled, theme }) =>
+    isDisabled ? theme.color.background.white : theme.color.secondary};
+  ${({ theme }) => theme.typography.styles.button};
+  border: ${({ isDisabled, theme }) =>
+    isDisabled ? `1px solid ${theme.color.border}` : 'none'};
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
-  cursor: pointer;
-  background-color: ${({ theme }) => theme.color.background.white};
+  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
 
   &:focus {
-    outline: 1px solid ${({ theme }) => theme.color.primary};
+    outline: ${({ isDisabled, theme }) =>
+      isDisabled ? 'none' : `1px solid ${theme.color.primary}`};
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.color.primary}10;
+    background-color: ${({ isDisabled, theme }) =>
+      isDisabled ? 'white' : `${theme.color.primary}10`};
+    outline: ${({ isDisabled, theme }) =>
+      isDisabled ? 'none' : `1px solid ${theme.color.primary}`};
   }
 `
+
 export const Label = styled.label`
   display: block;
   margin-bottom: 8px;
@@ -95,12 +101,14 @@ export const Label = styled.label`
   color: ${({ theme }) => theme.color.text.regular};
   white-space: nowrap;
 `
+
 export const ImageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 `
+
 export const UserTileContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -127,4 +135,83 @@ export const Title = styled.div`
       transform: translateY(0);
     }
   }
+`
+
+export const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`
+
+export const HeaderTitle = styled.div`
+  ${({ theme }) => theme.typography.styles.topHeader};
+  color: ${({ theme }) => theme.color.text.regular};
+`
+export const RegularLabel = styled.div`
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.regular};
+`
+
+export const ValidationMessage = styled.div<{ isValid: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  ${({ theme }) => theme.typography.styles.description};
+  color: ${({ isValid, theme }) =>
+    isValid ? theme.color.text.regular : theme.color.text.distructive};
+`
+
+export const ValidationContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0.5rem 0;
+`
+
+export const ShowCenterBox = styled.div<{ isDisabled?: boolean }>`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  padding: 1rem;
+  color: ${({ isDisabled, theme }) =>
+    isDisabled ? theme.color.text.disabled : theme.color.text.regular};
+  background-color: ${({ isDisabled, theme }) =>
+    isDisabled ? theme.color.background.white : theme.color.secondary};
+  ${({ theme }) => theme.typography.styles.button};
+  border: ${({ isDisabled, theme }) =>
+    isDisabled ? `1px solid ${theme.color.border}` : 'none'};
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
+
+  &:focus {
+    outline: ${({ isDisabled, theme }) =>
+      isDisabled ? 'none' : `1px solid ${theme.color.primary}`};
+  }
+
+  &:hover {
+    background-color: ${({ isDisabled, theme }) =>
+      isDisabled ? 'white' : `${theme.color.primary}10`};
+    outline: ${({ isDisabled, theme }) =>
+      isDisabled ? 'none' : `1px solid ${theme.color.primary}`};
+  }
+`
+export const DefaultContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+`
+export const SlimContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
 `

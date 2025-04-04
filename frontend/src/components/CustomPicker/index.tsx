@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import Picker from 'react-mobile-picker'
 
@@ -25,9 +26,9 @@ export const CustomPicker = <T extends Record<string, string>>({
         onChange={handleChange}
         wheelMode="natural">
         {(Object.keys(selections) as Array<keyof T>).map((name, index) => (
-          <>
-            {index != 0 && name != 'ampm' && (
-              <Colon key={index + 'colon'}>{t('picker.colon')}</Colon>
+          <React.Fragment key={String(name)}>
+            {index !== 0 && String(name) !== 'ampm' && (
+              <Colon key={`${String(name)}-colon`}>{t('picker.colon')}</Colon>
             )}
             <Picker.Column
               key={String(name)}
@@ -43,7 +44,7 @@ export const CustomPicker = <T extends Record<string, string>>({
                 )
               })}
             </Picker.Column>
-          </>
+          </React.Fragment>
         ))}
       </Picker>
     </PickerWrapper>

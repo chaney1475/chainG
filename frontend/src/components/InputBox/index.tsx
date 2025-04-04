@@ -6,6 +6,7 @@ import { FieldError } from 'react-hook-form'
 import Image from 'next/image'
 
 import { ValidationItem } from '@/types/ui'
+import { formatMoney, parseMoney } from '@/utils/format'
 
 import {
   InputContainer,
@@ -55,14 +56,10 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
 
     useEffect(() => {
       if (type === 'money' && value) {
-        const numericValue = value.replace(/[^0-9]/g, '')
         if (isFocused) {
-          setDisplayValue(numericValue)
+          setDisplayValue(parseMoney(value))
         } else {
-          const formattedValue = new Intl.NumberFormat('ko-KR').format(
-            Number(numericValue),
-          )
-          setDisplayValue(`${formattedValue} 원`)
+          setDisplayValue(formatMoney(value))
         }
       } else {
         setDisplayValue(value || '')
@@ -71,10 +68,9 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (type === 'money') {
-        const numericValue = e.target.value.replace(/[^0-9]/g, '')
+        const numericValue = parseMoney(e.target.value)
         setDisplayValue(numericValue)
 
-        // 실제 값은 숫자만 전달
         if (onChange) {
           const event = {
             ...e,
@@ -94,19 +90,14 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
     const handleFocus = () => {
       setIsFocused(true)
       if (type === 'money' && value) {
-        const numericValue = value.replace(/[^0-9]/g, '')
-        setDisplayValue(numericValue)
+        setDisplayValue(parseMoney(value))
       }
     }
 
     const handleBlur = () => {
       setIsFocused(false)
       if (type === 'money' && value) {
-        const numericValue = value.replace(/[^0-9]/g, '')
-        const formattedValue = new Intl.NumberFormat('ko-KR').format(
-          Number(numericValue),
-        )
-        setDisplayValue(`${formattedValue} 원`)
+        setDisplayValue(formatMoney(value))
       }
     }
 

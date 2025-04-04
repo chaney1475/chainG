@@ -19,10 +19,8 @@ export const useContractForm = () => {
 
   const handleChange = (field: string, value: FieldValue) => {
     if (field === 'rent') {
-      // rent 객체 전체를 업데이트
       setValue('rent', value as Rent)
     } else if (field.startsWith('rent.')) {
-      // rent 객체의 특정 필드만 업데이트
       const rentField = field.split('.')[1]
       const currentRent = watch('rent')
       const updatedRent = {

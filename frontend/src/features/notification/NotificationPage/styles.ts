@@ -42,11 +42,7 @@ export const NotificationHeader = styled.div`
 
 export const NotificationTitle = styled.div`
   color: ${({ theme }) => theme.color.text.disabled};
-  font-family: Paperlogy;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+  ${({ theme }) => theme.typography.styles.inputBoxTitle}
 `
 
 export const NotificationDate = styled.div`

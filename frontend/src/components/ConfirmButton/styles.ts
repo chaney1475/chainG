@@ -22,10 +22,14 @@ export const StyledButton = styled.button<StyledButtonProps>`
   &:focus {
     outline: 1px solid ${({ theme }) => theme.color.primary};
     outline-offset: 1px;
-
     border-color: ${({ theme }) => theme.color.primary};
     outline: none;
     box-shadow: 0 0 0 2px ${({ theme }) => theme.color.primary}33;
+  }
+  &:hover {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    outline: 1px solid ${({ theme }) => theme.color.primary};
   }
 
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
