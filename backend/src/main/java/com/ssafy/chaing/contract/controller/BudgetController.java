@@ -6,6 +6,7 @@ import com.ssafy.chaing.contract.controller.request.CreateLivingBudgetRequest;
 import com.ssafy.chaing.contract.controller.response.budget.LivingBudgetAccountResponse;
 import com.ssafy.chaing.contract.service.BudgetService;
 import com.ssafy.chaing.contract.service.dto.CreateLivingBudgetDto;
+import com.ssafy.chaing.contract.service.dto.LivingBudgetAccountDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -40,14 +41,22 @@ public class BudgetController {
 
 
     @Operation(
-            summary = "생활비 계좌 조회",
+            summary = "생활비 계좌 및 개인 계좌 조회",
             description = "현재 로그인한 사용자의 생활비 계좌 정보를 조회합니다."
     )
     @GetMapping("/account")
     public ResponseEntity<BaseResponse<LivingBudgetAccountResponse>> getLivingAccount(
             @AuthenticationPrincipal UserPrincipal principal) {
-        LivingBudgetAccountResponse livingAccount = budgetService.getLivingAccount(principal.getId());
-        return ResponseEntity.ok(BaseResponse.success(livingAccount));
+
+        LivingBudgetAccountDTO dto = budgetService.getLivingAccount(
+                principal.getId()
+        );
+        
+        LivingBudgetAccountResponse response = LivingBudgetAccountResponse.from(dto);
+
+        return ResponseEntity.ok(
+                BaseResponse.success(response)
+        );
     }
 
     @Operation(
