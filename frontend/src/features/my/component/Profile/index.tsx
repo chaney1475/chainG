@@ -21,6 +21,7 @@ import { Container, TextContainer } from './styles'
 export function Profile() {
   const { t } = useTranslation()
   const user = useAppSelector((state) => state.user)
+  console.log(user)
   return (
     <Container>
       <TopContainer>

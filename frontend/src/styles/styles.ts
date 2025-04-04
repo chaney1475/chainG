@@ -7,7 +7,6 @@ export const Container = styled.div`
   justify-content: space-between;
   height: 100dvh;
   width: 100%;
-  border: 1px solid green;
   @media (min-width: 768px) {
     width: 50%;
     justify-content: center;
@@ -42,7 +41,6 @@ export const Main = styled.main`
 `
 
 export const FullMain = styled.div`
-  padding: 0 1.25rem;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -50,6 +48,8 @@ export const FullMain = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  background-color: ${({ theme }) => theme.color.secondary};
+  gap: 8px;
 `
 
 export const Form = styled.form`

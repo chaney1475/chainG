@@ -20,6 +20,7 @@ export function MyPage() {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const router = useRouter()
+  
   useEffect(() => {
     const fetchMySummary = async () => {
       try {
@@ -45,7 +46,6 @@ export function MyPage() {
   return (
     <>
       <Container>
-        <div> 왜이래 </div>
         <TopHeader title={t('my.title')} />
         <FullMain>
           <Profile />
