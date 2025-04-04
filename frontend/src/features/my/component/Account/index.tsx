@@ -1,14 +1,10 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
 
-import { getMySummary } from '@/apis/user'
 import { ConfirmButton } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { setDutyWeekList } from '@/store/slices/dutySlice'
-import { setSummary } from '@/store/slices/userSlice'
 import { ButtonVariant } from '@/types/ui'
 
 import {
@@ -25,31 +21,13 @@ interface AccountProps {
 
 export function Account({ handleLogout }: AccountProps) {
   const { t } = useTranslation()
-  const dispatch = useDispatch()
   const approve: ButtonVariant = 'next'
-
   const livingBudget = useAppSelector((state) => state.livingBudget)
   const contract = useAppSelector((state) => state.contract)
 
-  console.log(livingBudget)
-
-  // useEffect(() => {
-  //   const fetchMySummary = async () => {
-  //     try {
-  //       const response = await getMySummary()
-  //       if (response && 'data' in response) {
-  //         dispatch(setSummary(response.data))
-  //       }
-  //     } catch (error) {
-  //       console.error('Failed to fetch my summary:', error)
-  //     }
-  //   }
-  //   fetchMySummary()
-  // }, [dispatch])
-
   return (
     <Container>
-      {/* <TopContainer>
+      <TopContainer>
         <TitleTextContainer>{t('my.account.title')}</TitleTextContainer>
         <ContentContainer>
           <TextContainer>
@@ -80,7 +58,7 @@ export function Account({ handleLogout }: AccountProps) {
         label="로그아웃"
         onClick={handleLogout}
         variant={approve}
-      /> */}
+      />
     </Container>
   )
 }

@@ -20,20 +20,10 @@ import { Container, TextContainer } from './styles'
 
 export function Profile() {
   const { t } = useTranslation()
-
-  // const user: User = {
-  //   id: 1,
-  //   name: '김이름',
-  //   nickname: '닉네임',
-  //   profileImage: 'user1',
-  // }
-
-  // const user = useAppSelector((state) => state.user)
-  // console.log(user)
-
+  const user = useAppSelector((state) => state.user)
   return (
     <Container>
-      {/* <TopContainer>
+      <TopContainer>
         <LeftContainer>
           <Image
             src={
@@ -68,7 +58,7 @@ export function Profile() {
           <div>{t('my.profile.email')}</div>
           <div>{user.summary.emailAddress}</div>
         </TextContainer>
-      </BottomContainer> */}
+      </BottomContainer>
     </Container>
   )
 }
