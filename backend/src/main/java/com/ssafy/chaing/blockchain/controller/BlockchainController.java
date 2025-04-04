@@ -91,7 +91,8 @@ public class BlockchainController {
     public ResponseEntity<?> createUtility(
             @RequestBody UtilityInput input
     ) {
-        boolean response = utilityHandler.addContract(input);
+        CompletableFuture<Boolean> future = utilityHandler.addContract(input);
+        boolean response = future.join();
         return ResponseEntity.ok(response);
     }
 
