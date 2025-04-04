@@ -110,7 +110,7 @@ public class RentBatchService {
                         contract.getOwnerAccountNo(),
                         payment.getTotalAmount(),
                         false,
-                        ZonedDateTime.now().toString(),
+                        ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString(),
                         payment.getFeeType(),
                         group.getId(),
                         null

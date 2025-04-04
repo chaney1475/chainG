@@ -146,8 +146,8 @@ public class PaymentServiceImpl implements PaymentService {
                 group.getName() + "의 집주인 계좌: " + contract.getOwnerAccountNo().substring(0, 4),
                 contract.getOwnerAccountNo(),
                 payment.getTotalAmount(),
-                payment.getStatus() == PaymentStatus.PAID,
-                payment.getPaymentDate().toString(),
+                false,
+                ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString(),
                 payment.getFeeType(),
                 group.getId(),
                 null
@@ -215,7 +215,7 @@ public class PaymentServiceImpl implements PaymentService {
                         payment.getContract().getRentAccountNo(),
                         command.getBalance(),
                         payment.getStatus() == PaymentStatus.COLLECTED,
-                        payment.getPaymentDate().toString(),
+                        ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString(),
                         payment.getFeeType(),
                         null,
                         user.getId()

@@ -17,6 +17,7 @@ import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,7 +211,7 @@ public class UtilityBatchService {
                             payment.getContract().getRentAccountNo(),
                             member.getRentAmount(),
                             false,
-                            ZonedDateTime.now().toString(),
+                            ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString(),
                             payment.getFeeType(),
                             null,
                             member.getUser().getId()
