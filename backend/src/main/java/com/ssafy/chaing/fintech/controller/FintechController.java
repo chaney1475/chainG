@@ -5,9 +5,16 @@ import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
+import com.ssafy.chaing.fintech.dto.CreateAccountRec;
+import com.ssafy.chaing.fintech.dto.InquireDemandDepositAccountRec;
 import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
+import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,14 +50,42 @@ public class FintechController {
                 .body(BaseResponse.success(dto));
     }
 
+    @Operation(summary = "계좌 상세 조회", description = "계좌 번호를 이용하여 상세 정보를 조회합니다.") // API 설명 추가
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            // 성공 시 응답 구조 명시
+                            schema = @Schema(implementation = InquireDemandDepositAccountRec.class))),
+            @ApiResponse(responseCode = "400", description = "조회 실패 또는 잘못된 요청",
+                    content = @Content(mediaType = "application/json",
+                            // 실패 시 응답 구조 명시
+                            schema = @Schema(implementation = ClientErrorResponse.class)))
+            // 필요한 다른 응답 코드 (e.g., 404 Not Found, 500 Internal Server Error) 도 추가 가능
+    })
     @GetMapping("/account/{accountNo}")
-    public ResponseEntity<?> getAccountDetail(
+    public ResponseEntity<BaseResponse<FintechResponse<?>>> getAccountDetail(
             @PathVariable String accountNo
     ) {
         FintechResponse<?> response = fintechService.inquireDemandDepositAccount(accountNo);
-        return ResponseEntity.ok(BaseResponse.success(response));
+
+        if(response.getData() instanceof InquireDemandDepositAccountRec){
+            return ResponseEntity.ok(BaseResponse.success(response));
+        }
+        return ResponseEntity.badRequest().body(BaseResponse.error(response));
     }
 
+    @Operation(summary = "계좌 생성", description = "핀테크 API를 사용해서 계좌를 생성합니다.") // API 설명 추가
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "생성 성공",
+                    content = @Content(mediaType = "application/json",
+                            // 성공 시 응답 구조 명시
+                            schema = @Schema(implementation = CreateAccountRec.class))),
+            @ApiResponse(responseCode = "400", description = "조회 실패 또는 잘못된 요청",
+                    content = @Content(mediaType = "application/json",
+                            // 실패 시 응답 구조 명시
+                            schema = @Schema(implementation = ClientErrorResponse.class)))
+            // 필요한 다른 응답 코드 (e.g., 404 Not Found, 500 Internal Server Error) 도 추가 가능
+    })
     @PostMapping("/account")
     public ResponseEntity<?> createAccount() {
         FintechResponse<?> response = fintechService.createAccount();
