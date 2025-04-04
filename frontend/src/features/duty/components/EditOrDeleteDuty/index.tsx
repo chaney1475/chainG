@@ -32,7 +32,6 @@ export const EditOrDeleteDuty = ({
   const handleEdit = () => {
     if (selectedDuty !== null) {
       router.push(`/duty/edit/${selectedDuty.id}`)
-      // dispatch(setEditDuty(selectedDuty))
       dispatch(setCreateDayOfWeek(selectedDuty.dayOfWeek))
       setOpen(false)
     }

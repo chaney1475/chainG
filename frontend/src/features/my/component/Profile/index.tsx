@@ -28,12 +28,12 @@ export function Profile() {
   //   profileImage: 'user1',
   // }
 
-  const user = useAppSelector((state) => state.user)
-  console.log(user)
+  // const user = useAppSelector((state) => state.user)
+  // console.log(user)
 
   return (
     <Container>
-      <TopContainer>
+      {/* <TopContainer>
         <LeftContainer>
           <Image
             src={
@@ -66,9 +66,9 @@ export function Profile() {
         </TextContainer>
         <TextContainer>
           <div>{t('my.profile.email')}</div>
-          <div>{user.user.email}</div>
+          <div>{user.summary.emailAddress}</div>
         </TextContainer>
-      </BottomContainer>
+      </BottomContainer> */}
     </Container>
   )
 }
