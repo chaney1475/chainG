@@ -57,9 +57,9 @@ public class BlockchainServiceImpl implements BlockchainService {
         List<TransferPortfolio> result = new ArrayList<>();
 
         for(ContractUserEntity contractUser : contractUsers) {
-            BigInteger aid = BigInteger.valueOf(contractUser.getId());
-            List<RentOutput> rentOutput = rentHandler.getTransactionsByAccountId(aid);
-            List<UtilityOutput> utilityOutputs = utilityHandler.getTransactionsByAccountId(aid);
+            BigInteger cid = BigInteger.valueOf(contractId);
+            List<RentOutput> rentOutput = rentHandler.getTransactionsByAccountId(cid);
+            List<UtilityOutput> utilityOutputs = utilityHandler.getTransactionsByAccountId(cid);
 
             result.add(new TransferPortfolio(
                     contractUser.getId(),

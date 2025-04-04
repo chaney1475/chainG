@@ -38,8 +38,8 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @Operation(
-            summary = "계약 ID로 송금 내역 조회",
-            description = "해당 계약의 전체 송금 내역을 조회합니다."
+            summary = "월세 통계 조회",
+            description = "해당 달까지의 월세 통계 내역을 조회합니다."
     )
     @GetMapping("/rent")
     public ResponseEntity<BaseResponse<RetrieveRentResponse>> retrieveRent(
@@ -52,8 +52,8 @@ public class PaymentController {
     }
 
     @Operation(
-            summary = "생활비 송금 내역 조회",
-            description = "생활비 항목의 송금 내역을 조회합니다. 로그인한 사용자 기준으로 월별 검색합니다."
+            summary = "공과금 통계 조회",
+            description = "해당 달까지의 공과금 통계 내역을 조회합니다."
     )
     @GetMapping("/utility")
     public ResponseEntity<BaseResponse<RetrieveUtilityResponse>> retrieveUtility(
