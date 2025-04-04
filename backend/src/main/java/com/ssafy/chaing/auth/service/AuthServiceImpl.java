@@ -126,4 +126,18 @@ public class AuthServiceImpl implements AuthService {
         user.setFcmToken(command.getFcmToken());
     }
 
+    @Override
+    @Transactional
+    public void logout(Long userId, HttpServletResponse response) {
+        // 쿠키에서 Refresh Token 제거
+        jwtService.removeRefreshTokenCookie(response);
+
+        // 유저의 FCM 토큰 제거
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
+
+        user.setFcmToken(null);
+    }
+
+
 }
