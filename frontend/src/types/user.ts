@@ -9,6 +9,8 @@ export type UserUpdateRequest = Pick<User, 'nickname' | 'profileImage'>
 
 export interface UserSummary extends User {
   emailAddress: string
+  myAccountNo: string
+  livingAccountNo: string
 }
 
 export interface LoginUser extends User {

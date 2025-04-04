@@ -8,10 +8,17 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { getGroup } from '@/apis/group'
+import { getLivingAccount } from '@/apis/livingBudget'
 import { getUnreadNotificationCount } from '@/apis/notification'
+import { getHomeOverview } from '@/apis/user'
 import { CardButton, IconButton, UserItem } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setGroup } from '@/store/slices/groupSlice'
+import {
+  setLivingAccountNo,
+  setMyAccountNo,
+} from '@/store/slices/livingBudgetSlice'
+import { setHomeOverview } from '@/store/slices/userSlice'
 import {
   Container,
   ImageContainer,
@@ -40,6 +47,7 @@ export function HomePage() {
   )
   const user = useAppSelector((state) => state.user.user)
   const group = useAppSelector((state) => state.group.group)
+  const livingBudget = useAppSelector((state) => state.livingBudget)
   const [hasUnreadNotification, setHasUnreadNotification] = useState(false)
   useEffect(() => {
     setIsMounted(true)
@@ -47,6 +55,25 @@ export function HomePage() {
 
   useEffect(() => {
     if (!user.id) return
+
+    const fetchHomeOverView = async () => {
+      const response = await getHomeOverview()
+      if (response.success) {
+        dispatch(setHomeOverview(response.data))
+      }
+    }
+    fetchHomeOverView()
+
+    const fetchAccount = async () => {
+      if (livingBudget.livingAccountNo) {
+        const response = await getLivingAccount()
+        if (response.success) {
+          dispatch(setMyAccountNo(response.data.myAccountNo))
+          dispatch(setLivingAccountNo(response.data.liveAccountNo))
+        }
+      }
+    }
+    fetchAccount()
 
     console.log('유저', user)
     const fetchUnreadNotificationCount = async () => {
@@ -64,7 +91,7 @@ export function HomePage() {
     if (!user.contractId) {
       setContractStatus(ContractStatus.none)
     }
-  }, [user, router])
+  }, [user, router, livingBudget.livingAccountNo])
 
   useEffect(() => {
     const fetchGroup = async () => {

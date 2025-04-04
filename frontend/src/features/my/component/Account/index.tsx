@@ -1,9 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { getMySummary } from '@/apis/user'
 import { ConfirmButton } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setDutyWeekList } from '@/store/slices/dutySlice'
+import { setSummary } from '@/store/slices/userSlice'
 import { ButtonVariant } from '@/types/ui'
 
 import {
@@ -21,7 +25,23 @@ interface AccountProps {
 export function Account({ handleLogout }: AccountProps) {
   const { t } = useTranslation()
   const approve: ButtonVariant = 'next'
-  const Account = '싸피 939-302-1423155'
+
+  const livingBudget = useAppSelector((state) => state.livingBudget)
+  const contract = useAppSelector((state) => state.contract)
+
+  console.log(livingBudget)
+
+  useEffect(() => {
+    const getMySummary = async () => {
+      const response = await getMySummary()
+      console.log(response)
+      if (response.success) {
+        console.log('듀티 리스트', response.data)
+        dispatch(setSummary(response.data))
+      }
+    }
+    getMySummary()
+  }, [])
 
   return (
     <Container>
@@ -30,24 +50,24 @@ export function Account({ handleLogout }: AccountProps) {
         <ContentContainer>
           <TextContainer>
             <div>{t('my.account.myAccount')}</div>
-            <div>{Account}</div>
+            <div>{livingBudget.myAccountNo}</div>
           </TextContainer>
           <hr />
           <TextContainer>
             <div>{t('my.account.rentAccount')}</div>
-            <div>{Account}</div>
+            <div>{contract.contract.rent.rentAccountNo}</div>
           </TextContainer>
           <hr />
 
           <TextContainer>
             <div>{t('my.account.liveAccount')}</div>
-            <div>{Account}</div>
+            <div>{livingBudget.livingAccountNo}</div>
           </TextContainer>
           <hr />
 
           <TextContainer>
             <div>{t('my.account.ownerAccount')}</div>
-            <div>{Account}</div>
+            <div>{contract.contract.rent.ownerAccountNo}</div>
           </TextContainer>
         </ContentContainer>
       </TopContainer>
