@@ -8,7 +8,12 @@ import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { approveContract, createContractPDF, getContract } from '@/apis/group'
+import {
+  approveContract,
+  confirmContract,
+  createContractPDF,
+  getContract,
+} from '@/apis/group'
 import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
@@ -22,7 +27,6 @@ import {
   Title,
 } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
-import { MenuContent } from '@/types/ui'
 
 import { ContractViewer } from './component/ContractViewer'
 import { Container, HeaderContainer } from './styles'
@@ -73,14 +77,7 @@ export function ContractDetail() {
   const [description, setDescription] = useState(
     'contract.detail.none.description',
   )
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [menuContents, setMenuContents] = useState<MenuContent[]>([])
   const { t } = useTranslation()
-  const handleButton = () => {
-    if (status === ContractStatus.confirm) {
-      setIsMenuOpen(false)
-    }
-  }
   const savePdf = async () => {
     const response = await createContractPDF(contract.id)
     if (response.success) {
@@ -94,19 +91,7 @@ export function ContractDetail() {
     setLabel(`contract.detail.${status.toLowerCase()}.label`)
     setButton(`contract.detail.${status.toLowerCase()}.button`)
     setDescription(`contract.detail.${status.toLowerCase()}.description`)
-    const menuContents = createMenuContents()
-    setMenuContents(menuContents)
   }, [status])
-
-  const createMenuContents = () => {
-    return [
-      {
-        title: t(label),
-        onSelect: handleButton,
-        color: 'regular',
-      },
-    ]
-  }
 
   const approveContractWithAccountNo = async (data: { accountNo: string }) => {
     console.log('approveContractWithAccountNo')
@@ -157,6 +142,19 @@ export function ContractDetail() {
     }
   }, [contractMembers, contract.status])
 
+  const updateContractRequest = async () => {
+    if (!user.contractId) {
+      return
+    }
+    const response = await confirmContract({
+      contractId: user.contractId,
+      contract: contract,
+    })
+    if (response.success) {
+      dispatch(setContract(response.data))
+      router.push('/contract/detail')
+    }
+  }
   const updateStatus = async () => {
     switch (status) {
       case ContractStatus.none:
@@ -164,6 +162,7 @@ export function ContractDetail() {
         break
       case ContractStatus.draft:
         console.log(t('contract.detail.draft.title'))
+        await updateContractRequest()
         break
       case ContractStatus.isContractApproved:
         console.log(t('contract.detail.is_contract_approved.title'))

@@ -6,6 +6,3 @@ import { ContractDetail } from '@/features/contract/detail'
 // contract를 읽어야 함
 
 export default ContractDetail
-export const ContractStatus = {
-  confirm: 'confirm',
-} as const

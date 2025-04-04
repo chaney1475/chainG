@@ -6,11 +6,7 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import {
-  confirmContract,
-  createEmptyContract,
-  updateContract,
-} from '@/apis/group'
+import { createEmptyContract, updateContract } from '@/apis/group'
 import {
   ConfirmButton,
   IconButton,
@@ -126,12 +122,26 @@ export function ContractCreatePage() {
 
     if (!Component) return null
 
+    let value: FieldValue
+
+    if (item === 'utility') {
+      value = contractRequest.utility.cardId?.toString() ?? ''
+    } else if (item === 'rent') {
+      value = contractRequest.rent.rentAccountNo ?? ''
+    } else {
+      value = contractRequest[item as keyof ContractRequest] as FieldValue
+    }
+
     const valueProps = {
       onChange: (value: FieldValue) => handleChange(item, value),
-      value: contractRequest[item as keyof ContractRequest],
-      formValues: contractRequest,
+      value,
+      formValues: {
+        ...contractRequest,
+        utility: contractRequest.utility.cardId?.toString() ?? '',
+      },
       item,
     }
+
     return <Component {...valueProps} />
   }
   const validations = useAppSelector((state) => state.contract.validations)
@@ -195,19 +205,6 @@ export function ContractCreatePage() {
     }
   }
 
-  const updateContractRequest = async () => {
-    if (!user.contractId) {
-      return
-    }
-    const response = await confirmContract({
-      contractId: user.contractId,
-      contract: contractRequest,
-    })
-    if (response.success) {
-      dispatch(setContract(response.data))
-      router.push('/contract/detail')
-    }
-  }
   return (
     <Container>
       <HeaderContainer>

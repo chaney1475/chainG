@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import styled from '@emotion/styled'
 import Image from 'next/image'
 
 import { createCard } from '@/apis/fintech'
@@ -17,7 +16,7 @@ import {
 } from '@/styles/styles'
 
 interface AccountInputProps {
-  value?: string
+  value?: string | null
   onChange?: (value: string) => void
   label?: string
   isConfirmed?: boolean

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { IconButton } from '@/components'
 import { setSelectedNavItem } from '@/store/slices/uiSlice'
 import { RootState } from '@/store/store'
-import { NavItemVariant } from '@/types/nav'
+import { NavItemKey, NavItemVariant } from '@/types/nav'
 
 import { Container, IconName, NavItem } from './styles'
 
@@ -18,28 +18,33 @@ export const BottomNavigation = () => {
 
   const { t } = useTranslation()
 
-  const handleClick = (variant: NavItemVariant) => {
+  const handleClick = (variant: (typeof NavItemVariant)[NavItemKey]) => {
     dispatch(setSelectedNavItem(variant))
   }
-  const navItems = Object.keys(NavItemVariant) as NavItemVariant[]
 
-  const isActive = (variant: NavItemVariant) => variant === selectedNavItem
-  const getIconSrc = (variant: NavItemVariant) =>
-    `/icons/nav/nav-${variant}-${isActive(variant) ? '' : 'in'}active.svg`
+  const navKeys = Object.keys(NavItemVariant) as NavItemKey[]
+
+  const isActive = (variant: (typeof NavItemVariant)[NavItemKey]) =>
+    variant === selectedNavItem
+
+  const getIconSrc = (variant: NavItemKey) =>
+    `/icons/nav/nav-${variant}-${isActive(NavItemVariant[variant]) ? '' : 'in'}active.svg`
+
   return (
     <Container>
-      {navItems.map((item) => {
+      {navKeys.map((key) => {
+        const variant = NavItemVariant[key]
         return (
           <NavItem
-            key={item}
-            onClick={() => handleClick(item)}
-            isActive={isActive(item)}
-            href={`/${item === 'home' ? '' : item}`}>
+            key={key}
+            onClick={() => handleClick(variant)}
+            isActive={isActive(variant)}
+            href={`/${key === 'home' ? '' : key}`}>
             <IconButton
-              src={getIconSrc(item)}
-              alt={t(NavItemVariant[item])}
+              src={getIconSrc(key)}
+              alt={t(variant)}
             />
-            <IconName>{t(NavItemVariant[item])}</IconName>
+            <IconName>{t(variant)}</IconName>
           </NavItem>
         )
       })}

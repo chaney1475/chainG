@@ -129,11 +129,13 @@ export const contractSlice = createSlice({
       state,
       action: PayloadAction<{
         field: keyof Rent
-        value: Rent[keyof Rent]
+        value: unknown
+        // value: Rent[keyof Rent]
       }>,
     ) => {
       const { field, value } = action.payload
       if (state.contractRequest.rent[field] != undefined) {
+        // @ts-expect-error 나중에해
         state.contractRequest.rent[field] = value
       }
     },
@@ -141,11 +143,13 @@ export const contractSlice = createSlice({
       state,
       action: PayloadAction<{
         field: keyof ContractRequest
-        value: ContractRequest[keyof ContractRequest]
+        value: unknown
+        // value: ContractRequest[keyof ContractRequest]
       }>,
     ) => {
       const { field, value } = action.payload
       if (state.contractRequest[field] != undefined) {
+        // @ts-expect-error 나중에해
         state.contractRequest[field] = value
       }
     },
