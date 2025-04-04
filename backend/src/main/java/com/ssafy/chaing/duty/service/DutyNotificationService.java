@@ -57,7 +57,7 @@ public class DutyNotificationService {
         boolean isNoticeTime = (hour == 8 || hour == 23);
 
         if (isNoticeTime) {
-            String targetDay = (hour == 23) ? todayDayOfWeek : todayDayOfWeek;
+            String targetDay = (hour == 23) ? kstNow.plusDays(1).getDayOfWeek().toString() : todayDayOfWeek;
             List<DutyEntity> allDuties = dutyRepository.findAllWithAssigneesAndUsers(); // fetch join all
             for (DutyEntity duty : allDuties) {
                 if (duty.isUseTime()) {
