@@ -2,10 +2,10 @@ package com.ssafy.chaing.contract.service;
 
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
-import com.ssafy.chaing.contract.controller.response.budget.LivingBudgetAccountResponse;
 import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
 import com.ssafy.chaing.contract.service.dto.CreateLivingBudgetDto;
+import com.ssafy.chaing.contract.service.dto.LivingBudgetAccountDTO;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
@@ -46,10 +46,14 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public LivingBudgetAccountResponse getLivingAccount(Long userId) {
+    public LivingBudgetAccountDTO getLivingAccount(Long userId) {
         ContractUserEntity contractUser = contractUserRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
-        return LivingBudgetAccountResponse.from(contractUser.getContract().getLiveAccountNo());
+
+        return new LivingBudgetAccountDTO(
+                contractUser.getContract().getLiveAccountNo(),
+                contractUser.getAccountNo()
+        );
     }
 
     @Override
