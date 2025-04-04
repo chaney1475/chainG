@@ -4,6 +4,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ConfirmButton } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
 import { ButtonVariant } from '@/types/ui'
 
 import {
@@ -21,7 +22,13 @@ interface AccountProps {
 export function Account({ handleLogout }: AccountProps) {
   const { t } = useTranslation()
   const approve: ButtonVariant = 'next'
-  const Account = '싸피 939-302-1423155'
+  const livingBudget = useAppSelector((state) => state.livingBudget)
+  const contract = useAppSelector((state) => state.contract)
+  console.log('livingBudget', livingBudget)
+  console.log('contract', contract)
+
+  const isLivingBudgetConnected: boolean =
+  !!livingBudget.myAccountNo && !!livingBudget.livingAccountNo;
 
   return (
     <Container>
@@ -30,24 +37,29 @@ export function Account({ handleLogout }: AccountProps) {
         <ContentContainer>
           <TextContainer>
             <div>{t('my.account.myAccount')}</div>
-            <div>{Account}</div>
+            <div>{livingBudget.myAccountNo ? livingBudget.myAccountNo : '아직 연결되지 않았습니다.'}</div>
           </TextContainer>
           <hr />
           <TextContainer>
             <div>{t('my.account.rentAccount')}</div>
-            <div>{Account}</div>
+            <div>{contract.contract.rent.rentAccountNo ? contract.contract.rent.rentAccountNo : '아직 연결되지 않았습니다.'}</div>
           </TextContainer>
           <hr />
-
-          <TextContainer>
-            <div>{t('my.account.liveAccount')}</div>
-            <div>{Account}</div>
-          </TextContainer>
-          <hr />
+          {isLivingBudgetConnected && (
+            <>
+              <TextContainer>
+                <div>{t('my.account.rentAccount')}</div>
+                <div>
+                {livingBudget.myAccountNo}
+              </div>
+              </TextContainer>
+              <hr />
+            </>
+          )}
 
           <TextContainer>
             <div>{t('my.account.ownerAccount')}</div>
-            <div>{Account}</div>
+            <div>{contract.contract.rent.ownerAccountNo ? contract.contract.rent.ownerAccountNo : '아직 연결되지 않았습니다.'}</div>
           </TextContainer>
         </ContentContainer>
       </TopContainer>

@@ -11,6 +11,7 @@ import dutyReducer from './slices/dutySlice'
 import errorModalReducer from './slices/errorModalSlice'
 import groupReducer from './slices/groupSlice'
 import lifeRuleReducer from './slices/lifeRuleSlice'
+import livingBudgetReducer from './slices/livingBudgetSlice'
 import uiReducer from './slices/uiSlice'
 import userReducer from './slices/userSlice'
 
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   lifeRule: lifeRuleReducer,
   contract: contractReducer,
   duty: dutyReducer,
+  livingBudget: livingBudgetReducer,
 })
 
 const reducer = (

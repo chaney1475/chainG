@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
 
 import { IconButton } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
 import { User } from '@/types/user'
 
 import {
@@ -19,31 +20,25 @@ import { Container, TextContainer } from './styles'
 
 export function Profile() {
   const { t } = useTranslation()
-
-  const user: User = {
-    id: 1,
-    name: '김이름',
-    nickname: '닉네임',
-    profileImage: 'user1',
-  }
-
+  const user = useAppSelector((state) => state.user)
+  console.log(user)
   return (
     <Container>
       <TopContainer>
         <LeftContainer>
           <Image
             src={
-              `/images/profile/${user.profileImage}.png` ||
+              `/images/profile/${user.user.profileImage}.png` ||
               '/images/profile/user1.png'
             }
-            alt={user.name}
+            alt={user.user.name}
             width={60}
             height={60}
           />
           <IntroduceContainer>
             <div>{t('my.profile.group')}</div>
             <IntroduceBottomContainer>
-              <div>닉네임</div>
+              <div>{user.user.nickname}</div>
               <div>{t('my.profile.introduce')}</div>
             </IntroduceBottomContainer>
           </IntroduceContainer>
@@ -58,11 +53,11 @@ export function Profile() {
       <BottomContainer>
         <TextContainer>
           <div>{t('my.profile.name')}</div>
-          <div>김이름</div>
+          <div>{user.user.name}</div>
         </TextContainer>
         <TextContainer>
           <div>{t('my.profile.email')}</div>
-          <div>hyunrae@gmail.com</div>
+          <div>{user.summary.emailAddress}</div>
         </TextContainer>
       </BottomContainer>
     </Container>

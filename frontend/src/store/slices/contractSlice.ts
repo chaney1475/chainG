@@ -36,8 +36,8 @@ const initialState: ContractState = {
     rent: {
       totalAmount: 0,
       dueDate: 0,
-      rentAccountNo: '',
-      ownerAccountNo: '',
+      rentAccountNo: '', // 월세 계좌 번호
+      ownerAccountNo: '', // 집주인 계좌 번호
       totalRatio: 0,
       userPaymentInfo: [],
     },

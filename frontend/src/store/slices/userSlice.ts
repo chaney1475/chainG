@@ -1,20 +1,32 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { HomeOverview, LoginUser } from '@/types/user'
+import { HomeOverview, LoginUser, UserSummary } from '@/types/user'
 
 interface UserState {
   user: LoginUser
+  summary: UserSummary
   homeOverview: HomeOverview
 }
 
 const initialState: UserState = {
   user: {
+    // 내정보들
     id: 0,
     name: '',
     nickname: '',
     profileImage: '',
     groupId: 0,
     contractId: 0,
+  },
+  summary: {
+    // 내정보들
+    id: 0,
+    emailAddress: '',
+    name: '',
+    nickname: '',
+    profileImage: '',
+    myAccountNo: '',
+    livingAccountNo: '',
   },
   homeOverview: {
     groupName: '',
@@ -48,6 +60,9 @@ const userSlice = createSlice({
     setHomeOverview: (state, action: PayloadAction<HomeOverview>) => {
       state.homeOverview = action.payload
     },
+    setSummary: (state, action: PayloadAction<UserSummary>) => {
+      state.summary = action.payload
+    },
   },
 })
 
@@ -58,6 +73,7 @@ export const {
   setGroupId,
   setContractId,
   setHomeOverview,
+  setSummary,
 } = userSlice.actions
 
 export default userSlice.reducer

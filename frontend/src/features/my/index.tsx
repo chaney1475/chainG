@@ -1,28 +1,48 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { BottomNavigation, TopHeader } from '@/components'
+import { logout } from '@/apis/auth'
+import { getMySummary } from '@/apis/user'
+import { BottomNavigation } from '@/components/BottomNavigation'
+import { TopHeader } from '@/components/TopHeader'
+import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
-import { Container } from '@/styles/styles'
+import { Container, FullMain } from '@/styles/styles'
 
-import { Account } from './component/Account'
-import { Profile } from './component/Profile'
-import { FullMain } from './styles'
+import { Account, Profile } from './component'
 
 export function MyPage() {
+  const dispatch = useDispatch()
   const { t } = useTranslation()
   const router = useRouter()
-  const dispatch = useDispatch()
-  const handleLogout = () => {
-    console.log('로그아웃')
-    dispatch(resetStore())
-    router.push('/auth/login')
+  
+  useEffect(() => {
+    const fetchMySummary = async () => {
+      try {
+        const response = await getMySummary()
+        if (response && 'data' in response) {
+          dispatch(setSummary(response.data))
+        }
+      } catch (error) {
+        console.error('Failed to fetch my summary:', error)
+      }
+    }
+    fetchMySummary()
+  }, [dispatch])
+
+  const handleLogout = async () => {
+    const success = await logout()
+    if (success) {
+      dispatch(resetStore())
+      router.push('/auth/login')
+    }
   }
+
   return (
     <>
       <Container>

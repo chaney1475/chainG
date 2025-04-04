@@ -9,7 +9,7 @@ export const getMySummary = async () =>
 
 //getHomeOverview
 export const getHomeOverview = async () =>
-  await getRequest<HomeOverview>('/users/home')
+  await getRequest<HomeOverview>('/home')
 
 //getMySummary
 export const updateProfile = async (params: UserUpdateRequest) =>
