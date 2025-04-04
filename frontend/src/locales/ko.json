@@ -206,7 +206,7 @@
     }
   },
   "homePage": "홈",
-  "contractPage": "서약",
+  "contractPage": "서약관리",
   "myPage": "마이",
   "notice": {
     "title": "알림"
@@ -216,29 +216,6 @@
   },
   "main": {
     "description": "입주 준비중이에요",
-    "contract": {
-      "title": "서약서",
-      "none": {
-        "title": "서약서 생성하기",
-        "description": "{{value}}만의 월세,\n공과금 서약서를 작성해주세요."
-      },
-      "draft": {
-        "title": "서약서 완성하기",
-        "description": "서약서를 완성하고\n모두의 승인을 받아보세요"
-      },
-      "isContractApproved": {
-        "title": "서약서 승인하기",
-        "description": "서약서를 확인하고\n승인해보세요"
-      },
-      "pending": {
-        "title": "서약서 확인하기",
-        "description": "서약서를 확인해보세요"
-      },
-      "reviewRequired": {
-        "title": "서약서 재승인하기",
-        "description": "서약서가 수정되어서\n재승인이 필요해요"
-      }
-    },
     "codeCopy": {
       "title": "코드 복사",
       "label": "초대 코드",
@@ -271,6 +248,10 @@
     "999": {
       "title": "알 수 없는 오류",
       "content": "알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해 주세요."
+    },
+    "ERR_NETWORK": {
+      "title": "네트워크 에러",
+      "content": "네트워크 에러가 발생했어요. 인터넷 연결을 확인해주세요."
     }
   },
   "picker": {
@@ -282,11 +263,12 @@
     "title": "서약서",
     "startDate": {
       "title": "서약 기간",
-      "label": "서약 시작일을 입력해주세요",
+      "label": "서약 시작연월을 입력해주세요.",
       "placeholder": "서약 시작일을 입력해주세요"
     },
     "endDate": {
-      "label": "서약 종료일을 입력해주세요",
+      "title": "서약 기간",
+      "label": "서약 종료연월을 입력해주세요",
       "placeholder": "서약 종료일을 입력해주세요"
     },
     "rentTotalAmount": {
@@ -300,10 +282,13 @@
         "ratio": "비율",
         "money": "금액"
       },
-      "unit": "원",
       "total": "총합",
       "modalTitle": "월세 비율을 정해주세요",
-      "label": "모자란 금액은 Cha:nG에서 지원해드릴게요"
+      "label": "모자란 금액은 Cha:nG에서 지원해드릴게요",
+      "validation": {
+        "valid": "올바른 금액을 입력해주세요.",
+        "match": "분담 금액의 총합은 월세와 같아야 해요."
+      }
     },
     "rentAccountNo": {
       "title": "월세 계좌",
@@ -316,12 +301,12 @@
     },
     "ownerAccountNo": {
       "title": "집주인 계좌 번호",
-      "label": "계약한 집 주인의 월세 납부용 계좌 번호를 입력해주세요",
+      "label": "서약한 집 주인의 월세 납부용 계좌 번호를 입력해주세요",
       "placeholder": "계좌 번호를 입력해주세요"
     },
     "dueDate": {
       "title": "월세 납부일",
-      "label": "월세 납부일을 입력해주세요",
+      "label": "2일 ~28일 사이로 월세 납부일을 입력해주세요",
       "placeholder": "월세 납부일을 입력해주세요"
     },
     "utility": {
@@ -336,25 +321,77 @@
     },
     "draft": {
       "title": "임시저장",
-      "content": "계약서를 임시저장할까요?\n계약서의 내용을 그룹원들이\n서로 확인할 수 있어요."
+      "content": "서약서를 임시저장할까요?\n서약서의 내용을 그룹원들이\n서로 확인할 수 있어요."
     },
     "update": {
       "title": "최종제출",
-      "content": "계약서를 최종 제출하시겠어요?"
+      "content": "서약서를 최종 제출하시겠어요?"
     },
     "pending": {
       "title": "서약서 작성 완료!",
       "description": "최종 서약서 검토 후\n모두의 승인이 완료되면 Cha:nG가 시작됩니다",
-      "contractDate": "계약 기간",
-      "userPaymentInfo": "계약자",
+
+      "confirmText": "최종 제출하기"
+    },
+    "modify": {
+      "title": "서약서 수정",
+      "description": "서약서를 수정하면, 이전에 다른 사용자들이\n승인한 내용이 초기화되어요.\n수정하시겠어요?",
+      "confirmText": "수정"
+    },
+    "approve": {
+      "title": "계약서 최종 승인",
+      "description": "계약서를 최종 승인하시겠어요?\n한 번 완료한 승인은 취소할 수 없어요.",
+      "confirmText": "승인"
+    },
+    "detail": {
+      "title": "서약서",
+      "modify": "수정",
+      "savePdf": "PDF로 저장",
+      "none": {
+        "title": "서약서 생성",
+        "button": "서약서 생성하기",
+        "description": "{{value}}만의 월세,\n공과금 서약서를 작성해주세요.",
+        "label": "서약서를 생성해주세요"
+      },
+      "draft": {
+        "title": "서약서 완성",
+        "button": "서약서 완성하기",
+        "description": "서약서 초안을 완성하고\n모두의 승인을 받아보세요",
+        "label": "초안 서약서"
+      },
+      "is_contract_approved": {
+        "title": "서약서 확인",
+        "button": "서약서 수정하기",
+        "description": "서약서를 확인해보세요",
+        "label": "룸메의 승인을 기다리는 서약서"
+      },
+      "pending": {
+        "title": "서약서 승인",
+        "button": "서약서 승인하기",
+        "description": "서약서를 확인하고\n승인해보세요",
+        "label": "승인이 필요한 서약서"
+      },
+      "review_required": {
+        "title": "서약서 재승인",
+        "button": "서약서 재승인하기",
+        "description": "서약서가 수정되어서\n재승인이 필요해요",
+        "label": "재승인이 필요한 서약서"
+      },
+      "confirmed": {
+        "title": "서약서",
+        "button": "PDF로 저장하기",
+        "description": "서약서를 확인해보세요",
+        "label": "모든 사람이 승인한 서약서"
+      },
+      "contractDate": "서약 기간",
+      "userPaymentInfo": "서약자",
       "totalAmount": "월세/관리비",
       "dueDate": "월세 납부일",
       "totalRatio": "분담 비율",
       "rentAccountNo": "월세 계좌",
       "ownerAccountNo": "집주인 계좌",
-      "utilityDescription": "*공과금은 동일한 비율로 계산됩니다.",
-      "utilityCard": "공과금 신용 카드",
-      "confirm": "최종 제출하기"
+      "utilityDescription": "*공과금은 모든 인원이 동일한 비율로 계산됩니다.",
+      "utilityCard": "공과금 신용 카드"
     }
   },
   "fintech": {

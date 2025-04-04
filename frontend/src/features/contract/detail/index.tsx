@@ -1,0 +1,242 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
+
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+
+import { approveContract, createContractPDF, getContract } from '@/apis/group'
+import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setShowContractApprovedModal } from '@/store/slices/appSlice'
+import { setContract } from '@/store/slices/contractSlice'
+import { setContractId } from '@/store/slices/userSlice'
+import {
+  BottomContainer,
+  FullMain,
+  ImageContainer,
+  Label,
+  Title,
+} from '@/styles/styles'
+import { ContractStatus, RentUser } from '@/types/contract'
+import { MenuContent } from '@/types/ui'
+
+import { ContractViewer } from './component/ContractViewer'
+import { Container, HeaderContainer } from './styles'
+
+export function ContractDetail() {
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const { register, handleSubmit } = useForm<{ accountNo: string }>({
+    defaultValues: { accountNo: '' },
+  })
+  const user = useAppSelector((state) => state.user.user)
+  const group = useAppSelector((state) => state.group.group)
+
+  const contractMembers = useAppSelector(
+    (state) => state.contract.contractMembers,
+  )
+  const [status, setStatus] = useState<ContractStatus>(
+    ContractStatus.none as ContractStatus,
+  )
+  const contract = useAppSelector((state) => state.contract.contract)
+  const fetchContract = async () => {
+    if (user.contractId) {
+      const response = await getContract(user.contractId)
+      if (response.success) {
+        dispatch(setContract(response.data))
+      }
+    }
+  }
+  useEffect(() => {
+    fetchContract()
+  }, [user.contractId, dispatch, setContractId])
+
+  const rentUserList: RentUser[] = group.members.map((member) => {
+    return {
+      ...member,
+      amount:
+        contract.rent.userPaymentInfo.find((info) => info.userId === member.id)
+          ?.amount ?? 0,
+      ratio:
+        contract.rent.userPaymentInfo.find((info) => info.userId === member.id)
+          ?.ratio ?? 0,
+    }
+  })
+
+  const [title, setTitle] = useState('contract.detail.none.title')
+  const [label, setLabel] = useState('contract.detail.none.label')
+  const [button, setButton] = useState('contract.detail.none.button')
+  const [description, setDescription] = useState(
+    'contract.detail.none.description',
+  )
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [menuContents, setMenuContents] = useState<MenuContent[]>([])
+  const { t } = useTranslation()
+  const handleButton = () => {
+    if (status === ContractStatus.confirm) {
+      setIsMenuOpen(false)
+    }
+  }
+  const savePdf = async () => {
+    const response = await createContractPDF(contract.id)
+    if (response.success) {
+      const url = response.data.presignedUrl
+      window.open(url, '_blank')
+      // router.push('/contract')
+    }
+  }
+  useEffect(() => {
+    setTitle(`contract.detail.${status.toLowerCase()}.title`)
+    setLabel(`contract.detail.${status.toLowerCase()}.label`)
+    setButton(`contract.detail.${status.toLowerCase()}.button`)
+    setDescription(`contract.detail.${status.toLowerCase()}.description`)
+    const menuContents = createMenuContents()
+    setMenuContents(menuContents)
+  }, [status])
+
+  const createMenuContents = () => {
+    return [
+      {
+        title: t(label),
+        onSelect: handleButton,
+        color: 'regular',
+      },
+    ]
+  }
+
+  const approveContractWithAccountNo = async (data: { accountNo: string }) => {
+    console.log('approveContractWithAccountNo')
+    console.log(data)
+    const success = await approveContract(contract.id, {
+      accountNo: data.accountNo,
+    })
+    if (success) {
+      await fetchContract()
+      dispatch(setShowContractApprovedModal(true))
+    }
+    setOpenModal(false)
+    router.push('/contract')
+  }
+
+  const confirmModal = async () => {
+    if (status === ContractStatus.pending) {
+      await handleSubmit(approveContractWithAccountNo)()
+    }
+  }
+  const [shouldConfirm, setShouldConfirm] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [modalTitle, setModalTitle] = useState('')
+  const [modalDescription, setModalDescription] = useState('')
+  const [modalConfirmText, setModalConfirmText] = useState('')
+
+  useEffect(() => {
+    const handleConfirm = async () => {
+      if (shouldConfirm) {
+        console.log('handleConfirm')
+        console.log(contract.status)
+        await updateStatus()
+      }
+    }
+    handleConfirm()
+  }, [shouldConfirm])
+
+  useEffect(() => {
+    const member = contractMembers.find((member) => member.id === user.id)
+    if (
+      member &&
+      member?.status === ContractStatus.confirm &&
+      contract.status === ContractStatus.pending
+    ) {
+      setStatus(ContractStatus.isContractApproved)
+    } else {
+      setStatus(contract.status)
+    }
+  }, [contractMembers, contract.status])
+
+  const updateStatus = async () => {
+    switch (status) {
+      case ContractStatus.none:
+        console.log(t('contract.detail.none.title'))
+        break
+      case ContractStatus.draft:
+        console.log(t('contract.detail.draft.title'))
+        break
+      case ContractStatus.isContractApproved:
+        console.log(t('contract.detail.is_contract_approved.title'))
+        router.push('/contract')
+        break
+      case ContractStatus.pending:
+        setModalTitle(t('contract.approve.title'))
+        setModalDescription(t('contract.approve.description'))
+        setModalConfirmText(t('contract.approve.confirmText'))
+        setOpenModal(true)
+        break
+      case ContractStatus.reviewRequired:
+        console.log(t('contract.detail.review_required.title'))
+        setModalTitle(t('contract.detail.review_required.title'))
+        setModalDescription(t('contract.detail.review_required.description'))
+        setModalConfirmText(t('contract.detail.review_required.confirmText'))
+        setOpenModal(true)
+        break
+      case ContractStatus.confirm:
+        console.log(t('contract.detail.confirmed.title'))
+        await savePdf()
+        break
+    }
+  }
+
+  return (
+    <Container>
+      <TopHeader title={t(title)} />
+      <FullMain>
+        <HeaderContainer>
+          <ImageContainer>
+            <Image
+              src="/images/contract/contract-detail.png"
+              alt="contract"
+              width={68}
+              height={87}
+            />
+          </ImageContainer>
+          <Title>{t(label)}</Title>
+          <Label>{t(description)}</Label>
+        </HeaderContainer>
+        {user.contractId && rentUserList && (
+          <ContractViewer
+            contract={contract}
+            rentUserList={rentUserList}
+          />
+        )}
+      </FullMain>
+      <Modal
+        open={openModal}
+        onOpenChange={setOpenModal}
+        onConfirm={confirmModal}
+        title={modalTitle}
+        description={modalDescription}
+        confirmText={modalConfirmText}>
+        {status === ContractStatus.pending && (
+          <BottomContainer>
+            <InputBox
+              label="자동이체용 계좌번호"
+              id="accountNo"
+              type="number"
+              {...register('accountNo')}
+              placeholder="자동이체용 계좌번호를 입력해주세요"
+            />
+          </BottomContainer>
+        )}
+      </Modal>
+      <BottomContainer>
+        <ConfirmButton
+          label={button}
+          onClick={() => setShouldConfirm(true)}
+        />
+      </BottomContainer>
+    </Container>
+  )
+}

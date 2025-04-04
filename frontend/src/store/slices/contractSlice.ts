@@ -3,10 +3,17 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import {
   Contract,
   ContractRequest,
+  ContractStatus,
+  ContractUser,
   CreateContractResponse,
   Rent,
   Utility,
 } from '@/types/contract'
+
+interface ValidationItem {
+  isValid: boolean
+  message: string
+}
 
 interface ContractState {
   contract: Contract
@@ -15,6 +22,10 @@ interface ContractState {
   showRentRatio: boolean
   rentAccountConfirm: boolean
   cardConfirm: boolean
+  validations: {
+    [key: string]: ValidationItem
+  }
+  contractMembers: ContractUser[]
 }
 
 const initialState: ContractState = {
@@ -33,7 +44,7 @@ const initialState: ContractState = {
     utility: {
       cardId: null,
     },
-    status: 'pending',
+    status: ContractStatus.none,
     createdAt: '',
     updatedAt: '',
   },
@@ -51,19 +62,42 @@ const initialState: ContractState = {
     utility: {
       cardId: null,
     },
-    status: 'pending',
+    status: ContractStatus.none,
   },
   createContractResponse: {
     id: 0,
     createdAt: '',
     updatedAt: '',
   },
-  showRentRatio: false,
+  showRentRatio: true,
   rentAccountConfirm: false,
   cardConfirm: false,
+  validations: {
+    requiredFields: {
+      isValid: false,
+      message: '필수 항목을 모두 입력해주세요',
+    },
+    startDate: {
+      isValid: false,
+      message: '시작일은 오늘 이후여야 합니다',
+    },
+    endDate: {
+      isValid: false,
+      message: '종료일은 시작일 이후여야 합니다',
+    },
+    rent: {
+      isValid: false,
+      message: '임대료 정보를 모두 입력해주세요',
+    },
+    utility: {
+      isValid: false,
+      message: '유틸리티 정보를 입력해주세요',
+    },
+  },
+  contractMembers: [],
 }
 
-const contractSlice = createSlice({
+export const contractSlice = createSlice({
   name: 'contract',
   initialState,
   reducers: {
@@ -82,8 +116,14 @@ const contractSlice = createSlice({
     setShowRentRatio: (state, action: PayloadAction<boolean>) => {
       state.showRentRatio = action.payload
     },
-    updateRent: (state, action: PayloadAction<Rent>) => {
-      state.contractRequest.rent = action.payload
+    updateRent: (state, action: PayloadAction<Partial<Rent>>) => {
+      if (!state.contractRequest) return
+      state.contractRequest.rent = {
+        ...state.contractRequest.rent,
+        ...action.payload,
+      }
+      // validation 상태만 업데이트하고 값 저장에는 관여하지 않음
+      contractSlice.caseReducers.validateContractRequest(state)
     },
     updateRentField: (
       state,
@@ -93,7 +133,9 @@ const contractSlice = createSlice({
       }>,
     ) => {
       const { field, value } = action.payload
-      state.contractRequest.rent[field] = value
+      if (state.contractRequest.rent[field] != undefined) {
+        state.contractRequest.rent[field] = value
+      }
     },
     updateContractRequestField: (
       state,
@@ -103,7 +145,9 @@ const contractSlice = createSlice({
       }>,
     ) => {
       const { field, value } = action.payload
-      state.contractRequest[field] = value
+      if (state.contractRequest[field] != undefined) {
+        state.contractRequest[field] = value
+      }
     },
     setRentAccountConfirm: (state, action: PayloadAction<boolean>) => {
       state.rentAccountConfirm = action.payload
@@ -113,6 +157,83 @@ const contractSlice = createSlice({
     },
     updateUtility: (state, action: PayloadAction<Utility>) => {
       state.contractRequest.utility = action.payload
+    },
+    validateContractRequest: (state) => {
+      try {
+        // contractRequest가 없으면 모든 validation을 false로 설정
+        if (!state.contractRequest) {
+          state.validations.requiredFields.isValid = false
+          state.validations.startDate.isValid = false
+          state.validations.endDate.isValid = false
+          state.validations.rent.isValid = false
+          state.validations.utility.isValid = false
+          return
+        }
+
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        // 필수 필드 검증
+        const hasEmptyFields = (() => {
+          try {
+            // startDate, endDate 검증
+            if (
+              !state.contractRequest?.startDate ||
+              !state.contractRequest?.endDate
+            ) {
+              return true
+            }
+
+            // rent 객체 검증 (userPaymentInfo 제외)
+            const rent = state.contractRequest?.rent
+            if (
+              !rent?.totalAmount ||
+              !rent?.dueDate ||
+              !rent?.rentAccountNo ||
+              !rent?.ownerAccountNo ||
+              !rent?.totalRatio
+            ) {
+              return true
+            }
+
+            // utility 객체 검증 (cardId는 null 허용)
+            const utility = state.contractRequest?.utility
+            if (utility?.cardId === undefined) {
+              return true
+            }
+
+            return false
+          } catch {
+            return true
+          }
+        })()
+
+        // 시작일 검증
+        const startDate = new Date(state.contractRequest.startDate)
+        const isStartDateValid =
+          !isNaN(startDate.getTime()) && startDate > today
+
+        // 종료일 검증
+        const endDate = new Date(state.contractRequest.endDate)
+        const isEndDateValid =
+          !isNaN(endDate.getTime()) && endDate > today && endDate > startDate
+
+        state.validations.requiredFields.isValid = !hasEmptyFields
+        state.validations.startDate.isValid = isStartDateValid
+        state.validations.endDate.isValid = isEndDateValid
+        state.validations.rent.isValid = !hasEmptyFields
+        state.validations.utility.isValid = !hasEmptyFields
+      } catch {
+        // 최상위 에러 처리
+        state.validations.requiredFields.isValid = false
+        state.validations.startDate.isValid = false
+        state.validations.endDate.isValid = false
+        state.validations.rent.isValid = false
+        state.validations.utility.isValid = false
+      }
+    },
+    setContractMembers: (state, action: PayloadAction<ContractUser[]>) => {
+      state.contractMembers = action.payload
     },
   },
 })
@@ -128,6 +249,8 @@ export const {
   setRentAccountConfirm,
   setCardConfirm,
   updateUtility,
+  validateContractRequest,
+  setContractMembers,
 } = contractSlice.actions
 
 export default contractSlice.reducer

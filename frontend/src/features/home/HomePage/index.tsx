@@ -47,6 +47,7 @@ export function HomePage() {
 
   useEffect(() => {
     if (!user.id) return
+
     console.log('유저', user)
     const fetchUnreadNotificationCount = async () => {
       const response = await getUnreadNotificationCount(user.id)
@@ -93,7 +94,7 @@ export function HomePage() {
     {
       url: '/contract/create',
       image: '/images/group/group-create.svg',
-      title: '계약서 생성하기',
+      title: '서약서 생성하기',
       description: t('onboarding.create.description'),
     },
     {
