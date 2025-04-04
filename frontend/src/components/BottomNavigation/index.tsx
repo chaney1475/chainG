@@ -21,7 +21,7 @@ export const BottomNavigation = () => {
   const handleClick = (variant: NavItemVariant) => {
     dispatch(setSelectedNavItem(variant))
   }
-  const navItems = Object.values(NavItemVariant) as NavItemVariant[]
+  const navItems = Object.keys(NavItemVariant) as NavItemVariant[]
 
   const isActive = (variant: NavItemVariant) => variant === selectedNavItem
   const getIconSrc = (variant: NavItemVariant) =>
@@ -37,9 +37,9 @@ export const BottomNavigation = () => {
             href={`/${item === 'home' ? '' : item}`}>
             <IconButton
               src={getIconSrc(item)}
-              alt={t(item)}
+              alt={t(NavItemVariant[item])}
             />
-            <IconName>{t(item)}</IconName>
+            <IconName>{t(NavItemVariant[item])}</IconName>
           </NavItem>
         )
       })}

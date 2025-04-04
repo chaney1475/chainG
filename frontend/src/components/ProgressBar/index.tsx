@@ -9,14 +9,14 @@ import {
 } from './styles'
 
 export const ProgressBar = ({ step, steps }: ProgressBarProps) => {
-  const percent = Math.min(100, (step / steps) * 100)
+  const percent = Math.min(100, ((step + 1) / steps) * 100)
 
   return (
     <ProgressContainer>
       <BarWrapper>
         <Bar percent={percent} />
       </BarWrapper>
-      <StepText>{step}</StepText>
+      <StepText>{step + 1}</StepText>
       <StepsText>{`/${steps}`}</StepsText>
     </ProgressContainer>
   )

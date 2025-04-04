@@ -6,7 +6,6 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  border: 1px solid red;
   width: 100%;
   background-color: ${({ theme }) => theme.color.background.white};
 `
