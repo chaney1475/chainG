@@ -95,6 +95,10 @@ public class BlockchainController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "[테스트] 서약서 스마트 컨트랙트 내용 조회",
+            description = "등록된 서약서 스마트 컨트랙트 내용을 조회합니다. 테스트용으로 사용됩니다."
+    )
     @GetMapping("/test/contract/{contractId}")
     public ResponseEntity<?> getContract(
             @PathVariable("contractId") Long contractId
@@ -103,6 +107,10 @@ public class BlockchainController {
         return ResponseEntity.ok(portfolio);
     }
 
+    @Operation(
+            summary = "[테스트] 이체 관련 스마트 컨트랙트 내용 조회",
+            description = "이체 관련 스마트 컨트랙트 내용을 조회합니다. 테스트용으로 사용됩니다."
+    )
     @GetMapping("/test/payment/{contractId}")
     public ResponseEntity<?> getTransfer(
             @PathVariable("contractId") Long contractId

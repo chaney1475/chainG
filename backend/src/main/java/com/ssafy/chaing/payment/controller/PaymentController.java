@@ -57,7 +57,7 @@ public class PaymentController {
     )
     @GetMapping("/utility")
     public ResponseEntity<?> retrieveUtility(
-            @Valid @RequestBody RetrieveUtilityRequest body,
+            @Valid @RequestParam RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         RetrieveUtilityCommand command = body.toCommand(principal);
