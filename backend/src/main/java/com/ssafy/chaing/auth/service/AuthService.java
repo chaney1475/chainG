@@ -14,4 +14,6 @@ public interface AuthService {
     AuthDTO reissueTokens(HttpServletRequest request, HttpServletResponse response);
 
     void updateFcmToken(FcmCommand command);
+
+    void logout(Long userId, HttpServletResponse response);
 }
