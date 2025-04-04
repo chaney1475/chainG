@@ -69,6 +69,7 @@ public class AuthController {
                 .body(BaseResponse.success(result));
     }
 
+    @Operation(summary = "fcm 설정", description = "사용자가 fcm토큰을 설정합니다.")
     @PostMapping("/fcm")
     public ResponseEntity<BaseResponse<Void>> registerFcmToken(@Valid @RequestBody FcmRequest request,
                                                                @AuthenticationPrincipal UserPrincipal user) {
@@ -77,5 +78,14 @@ public class AuthController {
         return ResponseEntity.ok().body(BaseResponse.success(null));
     }
 
+    @Operation(summary = "로그아웃", description = "사용자가 로그아웃하여 토큰과 fcm을 지웁니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponse<Void>> logout(
+            @AuthenticationPrincipal UserPrincipal user,
+            HttpServletResponse response
+    ) {
+        authService.logout(user.getId(), response);
+        return ResponseEntity.ok().body(BaseResponse.success(null));
+    }
 
 }
