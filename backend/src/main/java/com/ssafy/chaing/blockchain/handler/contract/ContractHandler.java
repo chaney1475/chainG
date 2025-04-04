@@ -17,8 +17,10 @@ import com.ssafy.chaing.common.exception.ExceptionCode;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -36,15 +38,16 @@ public class ContractHandler {
     private final long chainId;
     private final String contractAddress;
     private final CustomGasProvider gasProvider;
+    private final ConcurrentHashMap<String, Object> accountLocks = new ConcurrentHashMap<>();
 
     @Autowired
     public ContractHandler(Web3jConnectionManager connectionManager,
-                           Credentials credentials,
+                           @Qualifier("contractCredentials") Credentials contractsCredentials,
                            long chainId,
                            @Value("${web3j.contract-address}") String contractAddress) {
         log.info("ContractHandler initialized for contract address: {}", contractAddress);
         this.connectionManager = connectionManager;
-        this.credentials = credentials;
+        this.credentials = contractsCredentials;
         this.chainId = chainId;
         this.contractAddress = contractAddress;
         this.gasProvider = new CustomGasProvider(); // 필요 시 빈으로 등록하여 주입받아도 됨
@@ -59,34 +62,49 @@ public class ContractHandler {
     public CompletableFuture<Boolean> addContract(ContractInput input) {
 
         return CompletableFuture.supplyAsync(() -> {
+            String accountAddress = credentials.getAddress();
+            Object accountLock = accountLocks.computeIfAbsent(accountAddress, k -> new Object());
+
+            TransactionReceipt receipt;
+            boolean success = false;
+
+            log.info("🔒 [CONTRACT] 계정 [{}] 락 획득 시도...", accountAddress);
+
             try {
-                TransactionReceipt receipt = connectionManager.execute(web3j -> {
-                    ContractManager localContractManager = loadContractManager(web3j);
-                    log.info("Executing addContract on: {}", connectionManager.getCurrentRpcEndpoint());
+                synchronized (accountLock) {
+                    log.info("🔑 [CONTRACT] 계정 [{}] 락 획득 성공! (이제 트랜잭션 보냅니다)", accountAddress);
 
-                    List<ContractManager.PaymentInfo> paymentInfos = input.getPaymentInfos().stream()
-                            .map(pi -> new ContractManager.PaymentInfo(
-                                    pi.getUserId(),
-                                    pi.getAmount(),
-                                    pi.getRatio()
-                            ))
-                            .toList();
+                    receipt = connectionManager.execute(web3j -> {
+                        ContractManager localContractManager = loadContractManager(web3j);
+                        log.info("🚀 [CONTRACT] 트랜잭션 실행 요청! 계정: {}, 노드: {}", accountAddress,
+                                connectionManager.getCurrentRpcEndpoint());
 
-                    return localContractManager.addContract(
-                            input.getId(), input.getStartDate(), input.getEndDate(),
-                            input.getRentTotalAmount(), input.getRentDueDate(), input.getRentAccountNo(),
-                            input.getOwnerAccountNo(), input.getRentTotalRatio(), paymentInfos,
-                            input.getLiveAccountNo(), input.getIsUtilityEnabled(), input.getUtilitySplitRatio(),
-                            input.getCardId()
-                    ).send();
-                });
+                        List<ContractManager.PaymentInfo> paymentInfos = input.getPaymentInfos().stream()
+                                .map(pi -> new ContractManager.PaymentInfo(
+                                        pi.getUserId(),
+                                        pi.getAmount(),
+                                        pi.getRatio()
+                                ))
+                                .toList();
 
-                boolean success = receipt != null && receipt.isStatusOK();
-                log.info("addContract Transaction status: {}", success);
+                        return localContractManager.addContract(
+                                input.getId(), input.getStartDate(), input.getEndDate(),
+                                input.getRentTotalAmount(), input.getRentDueDate(), input.getRentAccountNo(),
+                                input.getOwnerAccountNo(), input.getRentTotalRatio(), paymentInfos,
+                                input.getLiveAccountNo(), input.getIsUtilityEnabled(), input.getUtilitySplitRatio(),
+                                input.getCardId()
+                        ).send();
+                    });
+                }
+
+                log.info("🔓 [CONTRACT] 계정 [{}] 락 해제됨. (트랜잭션 결과 처리 시작)", accountAddress);
+
+                success = receipt != null && receipt.isStatusOK();
+                String resultEmoji = success ? "😄 성공" : "😥 실패";
+                log.info("✅ [CONTRACT] 트랜잭션 전송 결과 - 계정 {}: {}", accountAddress, resultEmoji);
                 return success;
             } catch (Exception e) {
-                // connectionManager.execute 에서 최종적으로 던져진 예외 처리
-                log.error("❗addContract error during execution: {}❗", e.getMessage(), e);
+                log.error("🚨 [CONTRACT] 트랜잭션 처리 중 에러 발생! 계정: {}, 이유: {}", accountAddress, e.getMessage(), e);
                 return false; // 비동기 작업 실패 시 false 반환
             }
         });

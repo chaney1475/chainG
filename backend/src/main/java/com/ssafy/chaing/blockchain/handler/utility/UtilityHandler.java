@@ -1,29 +1,31 @@
 package com.ssafy.chaing.blockchain.handler.utility; // 패키지 경로는 맞게 수정하세요
 
 // --- 필요한 Import 문들 ---
+
 import com.ssafy.chaing.blockchain.config.Web3jConnectionManager;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.handler.utility.output.UtilityOutput;
-import com.ssafy.chaing.blockchain.provider.CustomGasProvider; // 필요 시 CustomGasProvider 임포트
-import com.ssafy.chaing.blockchain.web3j.UtilityManager; // Web3j-codegen으로 생성된 클래스
+import com.ssafy.chaing.blockchain.provider.CustomGasProvider;
+import com.ssafy.chaing.blockchain.web3j.UtilityManager;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.concurrent.CompletableFuture; // 이 클래스에서는 사용 안 함
-import lombok.extern.slf4j.Slf4j; // Slf4j 임포트 추가
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.scheduling.annotation.Async; // 이 클래스에서는 사용 안 함
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.datatypes.DynamicStruct;
-import org.web3j.crypto.Credentials; // 수정: Credentials 임포트
-import org.web3j.protocol.Web3j; // 수정: Web3j는 execute 콜백에서 사용
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tx.RawTransactionManager; // 수정: RawTransactionManager 임포트
-import org.web3j.tx.TransactionManager; // TransactionManager 인터페이스 임포트
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
 
 
 @Slf4j // 로깅을 위해 추가
@@ -35,20 +37,21 @@ public class UtilityHandler {
     private final long chainId;
     private final String utilityAddress;
     private final CustomGasProvider gasProvider;
+    private final ConcurrentHashMap<String, Object> accountLocks = new ConcurrentHashMap<>();
 
     // UtilityManager 인스턴스는 더 이상 final 필드가 아님
 
     @Autowired
     public UtilityHandler(Web3jConnectionManager connectionManager, // 수정
-                          Credentials credentials, // 수정
+                          @Qualifier("utilityCredentials") Credentials utilityCredentials, // 수정
                           long chainId, // 수정 (Web3jConfig에서 빈으로 등록된 것 주입)
                           @Value("${web3j.utility-contract-address}") String utilityAddress) { // 수정: Value 키 변경
         this.connectionManager = connectionManager;
-        this.credentials = credentials;
+        this.credentials = utilityCredentials;
         this.chainId = chainId;
         this.utilityAddress = utilityAddress;
         this.gasProvider = new CustomGasProvider(); // 필요 시 빈으로 등록하여 주입
-        log.info("UtilityHandler initialized for contract address: {}", utilityAddress);
+        log.info("✅ UtilityHandler 초기화 완료! 계약 주소: {}", utilityAddress);
     }
 
     // --- Helper Method to load UtilityManager within execute context ---
@@ -61,37 +64,53 @@ public class UtilityHandler {
 
     // --- Utility Contract Methods adapted to use Web3jConnectionManager ---
 
-    // CompletableFuture 제거, boolean 반환 유지
-    public boolean addContract(UtilityInput input) {
-        try {
-            TransactionReceipt receipt = connectionManager.execute(web3j -> {
-                UtilityManager localUtilityManager = loadUtilityManager(web3j);
-                log.info("Executing addTransaction (Utility) on: {}", connectionManager.getCurrentRpcEndpoint());
+    @Async
+    public CompletableFuture<Boolean> addContract(UtilityInput input) {
+        return CompletableFuture.supplyAsync(() -> {
+            String accountAddress = credentials.getAddress();
+            Object accountLock = accountLocks.computeIfAbsent(accountAddress, k -> new Object());
 
-                // 실제 컨트랙트 함수 호출 (send() 포함)
-                return localUtilityManager.addTransaction(
-                        input.getId(),
-                        input.getAccountId(),
-                        input.getMonth(),
-                        input.getFrom(),
-                        input.getTo(),
-                        input.getAmount(),
-                        input.getStatus(),
-                        input.getTime()
-                ).send(); // send()는 execute 콜백 내에서 호출
-            });
-            // execute가 성공하고 트랜잭션이 성공적으로 완료되었는지 확인
-            boolean success = receipt != null && receipt.isStatusOK();
-            log.info("addTransaction (Utility) status: {}", success);
-            // 원본 로직은 성공 시 무조건 true 반환했으므로, 트랜잭션 상태를 반환하도록 변경하거나
-            // return true; 를 유지할 수 있음. 여기서는 트랜잭션 상태 반환으로 변경.
+            TransactionReceipt receipt;
+            boolean success;
+
+            log.info("🔒 [UTILITY] 계정 [{}] 락 획득 시도...", accountAddress);
+
+            try {
+                synchronized (accountLock) {
+                    log.info("🔑 [UTILITY] 계정 [{}] 락 획득 성공! (이제 트랜잭션 보냅니다)", accountAddress);
+
+                    receipt = connectionManager.execute(web3j -> {
+                        UtilityManager localRentManager = loadUtilityManager(web3j);
+                        log.info("🚀 [UTILITY] 트랜잭션 실행 요청! 계정: {}, 노드: {}", accountAddress,
+                                connectionManager.getCurrentRpcEndpoint());
+
+                        // 실제 트랜잭션 전송 (이 부분이 Nonce를 사용)
+                        return localRentManager.addTransaction(
+                                input.getId(),
+                                input.getContractId(),
+                                input.getMonth(),
+                                input.getFrom(),
+                                input.getTo(),
+                                input.getAmount(),
+                                input.getStatus(),
+                                input.getTime()
+                        ).send();
+                    });
+                }
+
+                log.info("🔓 [UTILITY] 계정 [{}] 락 해제됨. (트랜잭션 결과 처리 시작)", accountAddress);
+
+                success = receipt != null && receipt.isStatusOK();
+                String resultEmoji = success ? "😄 성공" : "😥 실패";
+                log.info("✅ [Utility] 트랜잭션 전송 결과 - 계정 {}: {}", accountAddress, resultEmoji);
+
+            } catch (Exception e) {
+                log.error("🚨 [Utility] 트랜잭션 처리 중 에러 발생! 계정: {}, 이유: {}", accountAddress, e.getMessage(), e);
+                success = false;
+            }
+
             return success;
-        } catch (Exception e) {
-            // connectionManager.execute 에서 최종적으로 던져진 예외 처리
-            log.error("❗Error during addTransaction (Utility) execution: {}❗", e.getMessage(), e);
-            // e.printStackTrace(); // 실제 운영에서는 로깅 프레임워크 사용 권장
-            return false; // 예외 발생 시 false 반환
-        }
+        });
     }
 
     public List<?> getAllTransactions() {
@@ -116,7 +135,8 @@ public class UtilityHandler {
             // connectionManager.execute를 사용하여 블록체인 호출
             List<?> rawList = connectionManager.execute(web3j -> {
                 UtilityManager localUtilityManager = loadUtilityManager(web3j);
-                log.info("Executing getTransactionsByAccount (Utility) for Account ID {} on: {}", accountId, connectionManager.getCurrentRpcEndpoint());
+                log.info("Executing getTransactionsByAccount (Utility) for Account ID {} on: {}", accountId,
+                        connectionManager.getCurrentRpcEndpoint());
                 // 실제 컨트랙트 읽기 함수 호출
                 return localUtilityManager.getTransactionsByAccount(accountId).send();
             });
@@ -141,8 +161,9 @@ public class UtilityHandler {
                                     (String) values.get(7)      // time
                             );
                             dtoList.add(dto);
-                        } catch(Exception castingException){
-                            log.error("Error casting DynamicStruct to UtilityOutput: Struct={}, Error={}", struct, castingException.getMessage());
+                        } catch (Exception castingException) {
+                            log.error("Error casting DynamicStruct to UtilityOutput: Struct={}, Error={}", struct,
+                                    castingException.getMessage());
                             // 오류 발생 시 해당 항목은 건너뛰거나 기본값 처리 가능
                         }
                     } else {

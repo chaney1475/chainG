@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -38,11 +39,11 @@ public class RentHandler {
 
     @Autowired
     public RentHandler(Web3jConnectionManager connectionManager,
-                       Credentials credentials,
+                       @Qualifier("rentCredentials") Credentials rentCredentials,
                        long chainId,
                        @Value("${web3j.rent-contract-address}") String rentAddress) {
         this.connectionManager = connectionManager;
-        this.credentials = credentials;
+        this.credentials = rentCredentials;
         this.chainId = chainId;
         this.rentAddress = rentAddress;
         this.gasProvider = new CustomGasProvider();
@@ -64,11 +65,11 @@ public class RentHandler {
             TransactionReceipt receipt = null;
             boolean success = false;
 
-            log.info("🔒 계정 [{}] 락 획득 시도...", accountAddress);
+            log.info("🔒 [RENT] 계정 [{}] 락 획득 시도...", accountAddress);
 
             try {
                 synchronized (accountLock) {
-                    log.info("🔑 계정 [{}] 락 획득 성공! (이제 트랜잭션 보냅니다)", accountAddress);
+                    log.info("🔑 [RENT] 계정 [{}] 락 획득 성공! (이제 트랜잭션 보냅니다)", accountAddress);
 
                     receipt = connectionManager.execute(web3j -> {
                         RentManager localRentManager = loadRentManager(web3j);
@@ -88,7 +89,7 @@ public class RentHandler {
                     });
                 }
 
-                log.info("🔓 계정 [{}] 락 해제됨. (트랜잭션 결과 처리 시작)", accountAddress);
+                log.info("🔓 [RENT] 계정 [{}] 락 해제됨. (트랜잭션 결과 처리 시작)", accountAddress);
 
                 success = receipt != null && receipt.isStatusOK();
                 String resultEmoji = success ? "😄 성공" : "😥 실패";
