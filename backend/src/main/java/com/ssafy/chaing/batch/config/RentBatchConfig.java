@@ -47,8 +47,7 @@ public class RentBatchConfig {
         // ✅ STARTED, COLLECTED, PARTIALLY_PAID, RETRY_PENDING 상태 모두 포함
         List<PaymentEntity> pendingPayments = paymentRepository.findByFeeTypeAndStatusIn(
                 FeeType.RENT,
-                List.of(STARTED, COLLECTED, PARTIALLY_PAID,
-                        RETRY_PENDING)
+                List.of(STARTED, COLLECTED, PARTIALLY_PAID, RETRY_PENDING)
         );
 
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
@@ -114,6 +113,7 @@ public class RentBatchConfig {
 
             List<PaymentEntity> payments = paymentRepository.findByStatus(STARTED);
             for (PaymentEntity payment : payments) {
+                if(payment.getFeeType() == FeeType.UTILITY) continue;
                 rentBatchService.collectToJointAccount(payment.getId());
             }
 
@@ -138,6 +138,7 @@ public class RentBatchConfig {
 
             List<PaymentEntity> payments = paymentRepository.findByStatus(COLLECTED);
             for (PaymentEntity payment : payments) {
+                if(payment.getFeeType() == FeeType.UTILITY) continue;
                 rentBatchService.payToOwner(payment.getId());
             }
 
