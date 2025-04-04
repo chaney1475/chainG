@@ -17,6 +17,8 @@ import com.ssafy.chaing.payment.domain.PaymentStatus;
 import com.ssafy.chaing.payment.domain.UserPaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import com.ssafy.chaing.payment.repository.UserPaymentRepository;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +69,10 @@ public class UtilityBatchService {
 
     }
 
-    private void processContract(ContractEntity contract, List<PaymentEntity> paymentsToSave,
-                                 List<UserPaymentEntity> userPaymentsToSave) {
+    private void processContract(ContractEntity contract,
+                                 List<PaymentEntity> paymentsToSave,
+                                 List<UserPaymentEntity> userPaymentsToSave
+    ) {
         Long contractId = contract.getId();
         UtilityCardEntity card = contract.getUtilityCard();
 
@@ -195,11 +199,22 @@ public class UtilityBatchService {
                 continue;
             }
 
+            ContractEntity contract = payment.getContract();
             TransferDTO result = fintechService.transfer(
                     new TransferCommand(
+                            userPayment.getId(),
+                            contract.getId(),
+                            (long) payment.getMonth(),
+                            member.getUser().getName() + "의 계좌: " + member.getAccountNo().substring(0, 4),
                             member.getAccountNo(),
+                            payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
                             payment.getContract().getRentAccountNo(),
-                            userPayment.getAmount()
+                            member.getRentAmount(),
+                            false,
+                            ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString(),
+                            payment.getFeeType(),
+                            null,
+                            member.getUser().getId()
                     )
             );
 

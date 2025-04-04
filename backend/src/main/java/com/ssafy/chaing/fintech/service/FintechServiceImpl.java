@@ -1,8 +1,15 @@
 package com.ssafy.chaing.fintech.service;
 
+import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
+import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
+import com.ssafy.chaing.common.exception.BadRequestException;
+import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.contract.domain.ContractEntity;
+import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.config.SsafyApiConfig;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
+import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.ClientResponseRec;
@@ -21,9 +28,22 @@ import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
 import com.ssafy.chaing.fintech.service.response.FintechBaseResponse;
 import com.ssafy.chaing.fintech.util.ClientErrorParser;
 import com.ssafy.chaing.fintech.util.HeaderUtil;
+import com.ssafy.chaing.group.domain.GroupEntity;
+import com.ssafy.chaing.group.domain.GroupUserEntity;
+import com.ssafy.chaing.group.repository.GroupRepository;
+import com.ssafy.chaing.group.repository.GroupUserRepository;
+import com.ssafy.chaing.notification.domain.NotificationCategory;
+import com.ssafy.chaing.notification.service.NotificationService;
+import com.ssafy.chaing.payment.domain.FeeType;
+import com.ssafy.chaing.payment.domain.PaymentEntity;
+import com.ssafy.chaing.payment.domain.PaymentStatus;
+import com.ssafy.chaing.user.domain.UserEntity;
+import com.ssafy.chaing.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -41,11 +61,32 @@ public class FintechServiceImpl implements FintechService {
     private final SsafyApiConfig config;
     private final RestTemplate restTemplate;
     private final HeaderUtil headerUtil;
+    private final RentHandler rentHandler;
+    private final NotificationService notificationService;
+    private final GroupUserRepository groupUserRepository;
+    private final ContractRepository contractRepository;
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
 
-    public FintechServiceImpl(RestTemplateBuilder builder, HeaderUtil headerUtil, SsafyApiConfig ssafyApiConfig) {
+    public FintechServiceImpl(
+            RestTemplateBuilder builder,
+            HeaderUtil headerUtil,
+            SsafyApiConfig ssafyApiConfig,
+            RentHandler rentHandler,
+            NotificationService notificationService,
+            GroupUserRepository groupUserRepository,
+            ContractRepository contractRepository,
+            GroupRepository groupRepository,
+            UserRepository userRepository) {
         this.restTemplate = builder.build();
         this.headerUtil = headerUtil;
         this.config = ssafyApiConfig;
+        this.rentHandler = rentHandler;
+        this.notificationService = notificationService;
+        this.groupUserRepository = groupUserRepository;
+        this.contractRepository = contractRepository;
+        this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -71,6 +112,32 @@ public class FintechServiceImpl implements FintechService {
 
         FintechBaseResponse<CreateFintechCardRec> response = responseEntity.getBody();
         return Objects.requireNonNull(response).rec();
+    }
+
+    @Override
+    public TransferDTO manualTransfer(ManualTransferCommand command, Long userId) {
+        UserEntity user = getUserEntity(userId);
+        GroupEntity group = getGroupEntity(user);
+        ContractEntity contract = getContractEntity(group);
+
+        return new TransferDTO(false);
+//        return transfer(
+//                new TransferCommand(
+//                        userId,
+//                        contract.getId(),
+//                        (long) payment.getMonth(),
+//                        member.getUser().getName() + "의 계좌: " + member.getAccountNo().substring(0, 4),
+//                        member.getAccountNo(),
+//                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
+//                        payment.getContract().getRentAccountNo(),
+//                        member.getRentAmount(),
+//                        payment.getStatus() == PaymentStatus.COLLECTED,
+//                        payment.getPaymentDate().toString(),
+//                        payment.getFeeType(),
+//                        null,
+//                        member.getUser().getId()
+//                )
+//        );
     }
 
     @Override
@@ -104,6 +171,95 @@ public class FintechServiceImpl implements FintechService {
             }
 
             log.info("송금 성공: {}", response);
+            command.setStatus(true);
+
+            log.info("▶️▶️▶️Smart Contract[Rent] 비동기 호출 시작");
+            RentInput input = RentInput.from(command);
+            CompletableFuture<Boolean> future = rentHandler.addContract(input);
+
+            future.thenAccept(success -> {
+                // 이 코드는 비동기 작업이 완료된 후 실행됩니다 (별도의 스레드에서)
+                if (success) {
+                    log.info("✨ 스마트 컨트랙트 등록 성공! 🚀");
+
+                    if (command.getFeeType() == FeeType.RENT) {
+                        if (command.getUserId() == null) {
+                            sendRentNotificationToGroup(
+                                    command.getGroupId(),
+                                    "월세 납부 완료!",
+                                    "최종적으로 집주인께 월세 납부를 마쳤어요!"
+                                    );
+                        }
+
+                        if (command.getGroupId() == null) {
+                            sendRentNotificationToUser(
+                                    command.getUserId(),
+                                    "월세 이체 완료!",
+                                    "이번 달 납부하실 월세를 공동 계좌로 보냈어요!"
+                            );
+                        }
+                    } else {
+                        sendUtilityNotificationToUser(
+                                command.getUserId(),
+                                "공과금 이체 완료!",
+                                "이번 주 납부하실 카드 대납급을 공동 계좌로 보냈어요!"
+                        );
+                    }
+                } else {
+                    log.error("❗ 스마트 컨트랙트 등록 실패 ❗");
+
+                    if (command.getFeeType() == FeeType.RENT) {
+                        if (command.getUserId() == null) {
+                            sendRentNotificationToGroup(
+                                    command.getGroupId(),
+                                    "월세 납부 실패",
+                                    "집주인께 보내는 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                            );
+                        }
+
+                        if (command.getGroupId() == null) {
+                            sendRentNotificationToUser(
+                                    command.getUserId(),
+                                    "월세 이체 실패",
+                                    "납부하실 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                            );
+                        }
+                    } else {
+                        sendUtilityNotificationToUser(
+                                command.getUserId(),
+                                "공과금 이체 실패",
+                                "납부하실 카드 내역 트랜잭션 등록 중 문제가 발생했어요."
+                        );
+                    }
+                }
+            }).exceptionally(ex -> {
+                log.error("❗ 스마트 컨트랙트 등록 실패 ❗");
+
+                if (command.getFeeType() == FeeType.RENT) {
+                    if (command.getUserId() == null) {
+                        sendRentNotificationToGroup(
+                                command.getGroupId(),
+                                "월세 납부 실패",
+                                "집주인께 보내는 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                        );
+                    }
+
+                    if (command.getGroupId() == null) {
+                        sendRentNotificationToUser(
+                                command.getUserId(),
+                                "월세 이체 실패",
+                                "납부하실 월세 내역 트랜잭션 등록 중 문제가 발생했어요."
+                        );
+                    }
+                } else {
+                    sendUtilityNotificationToUser(
+                            command.getUserId(),
+                            "공과금 이체 실패",
+                            "납부하실 카드 내역 트랜잭션 등록 중 문제가 발생했어요."
+                    );
+                }
+                return null;
+            });
             return new TransferDTO(true);
 
         } catch (HttpClientErrorException e) {
@@ -221,4 +377,48 @@ public class FintechServiceImpl implements FintechService {
         }
     }
 
+    private void sendRentNotificationToGroup(Long groupId, String title, String content) {
+        List<GroupUserEntity> members = groupUserRepository.findByGroupId(groupId);
+        members.forEach(member -> {
+            notificationService.sendNotification(
+                    member.getUser().getId(),
+                    title,
+                    content,
+                    NotificationCategory.RENT
+            );
+        });
+    }
+
+    private void sendRentNotificationToUser(Long userId, String title, String content) {
+        notificationService.sendNotification(
+                userId,
+                title,
+                content,
+                NotificationCategory.RENT
+        );
+    }
+
+    private void sendUtilityNotificationToUser(Long userId, String title, String content) {
+        notificationService.sendNotification(
+                userId,
+                title,
+                content,
+                NotificationCategory.UTILITY
+        );
+    }
+
+    private UserEntity getUserEntity(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    private GroupEntity getGroupEntity(UserEntity user) {
+        return groupRepository.findById(user.getGroupId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+    }
+
+    private ContractEntity getContractEntity(GroupEntity group) {
+        return contractRepository.findById(group.getContractId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND));
+    }
 }

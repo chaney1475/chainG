@@ -6,6 +6,7 @@ import static com.ssafy.chaing.payment.domain.PaymentStatus.RETRY_PENDING;
 import static com.ssafy.chaing.payment.domain.PaymentStatus.STARTED;
 
 import com.ssafy.chaing.batch.service.RentBatchService;
+import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.repository.PaymentRepository;
 import java.time.ZoneId;
@@ -44,7 +45,8 @@ public class RentBatchConfig {
     public void registerExistingPayments() {
 
         // ✅ STARTED, COLLECTED, PARTIALLY_PAID, RETRY_PENDING 상태 모두 포함
-        List<PaymentEntity> pendingPayments = paymentRepository.findByStatusIn(
+        List<PaymentEntity> pendingPayments = paymentRepository.findByFeeTypeAndStatusIn(
+                FeeType.RENT,
                 List.of(STARTED, COLLECTED, PARTIALLY_PAID,
                         RETRY_PENDING)
         );

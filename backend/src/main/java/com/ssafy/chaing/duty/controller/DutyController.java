@@ -1,6 +1,5 @@
 package com.ssafy.chaing.duty.controller;
 
-import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.duty.controller.request.DutyFormRequest;
 import com.ssafy.chaing.duty.controller.response.DutyDetailResponse;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -88,7 +86,7 @@ public class DutyController {
             description = "당번 카테고리를 추천합니다."
     )
     @PostMapping("/category")
-    public ResponseEntity<BaseResponse<RecommendResponse>> deleteDuty(
+    public ResponseEntity<BaseResponse<RecommendResponse>> recommendCategory(
             @RequestBody RecommendRequest body) {
         RecommendResponse response = recommendService.recommendDutyCategory(body);
         return ResponseEntity.ok(BaseResponse.success(response));

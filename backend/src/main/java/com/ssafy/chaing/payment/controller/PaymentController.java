@@ -42,7 +42,7 @@ public class PaymentController {
             description = "해당 계약의 전체 송금 내역을 조회합니다."
     )
     @GetMapping("/rent")
-    public ResponseEntity<?> retrieveRent(
+    public ResponseEntity<BaseResponse<RetrieveRentResponse>> retrieveRent(
             @Valid @RequestParam RetrieveRentRequest month,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
@@ -56,8 +56,8 @@ public class PaymentController {
             description = "생활비 항목의 송금 내역을 조회합니다. 로그인한 사용자 기준으로 월별 검색합니다."
     )
     @GetMapping("/utility")
-    public ResponseEntity<?> retrieveUtility(
-            @Valid @RequestBody RetrieveUtilityRequest body,
+    public ResponseEntity<BaseResponse<RetrieveUtilityResponse>> retrieveUtility(
+            @Valid @RequestParam RetrieveUtilityRequest body,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         RetrieveUtilityCommand command = body.toCommand(principal);
