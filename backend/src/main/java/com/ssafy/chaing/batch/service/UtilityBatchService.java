@@ -200,7 +200,7 @@ public class UtilityBatchService {
             }
 
             ContractEntity contract = payment.getContract();
-            TransferDTO result = fintechService.transfer(
+            TransferDTO result = fintechService.rentTransfer(
                     new TransferCommand(
                             userPayment.getId(),
                             contract.getId(),
