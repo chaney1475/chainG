@@ -12,7 +12,7 @@ import {
   InputBox,
   UserItem,
 } from '@/components'
-import { useAppSelector } from '@/hooks/useAppSelector'
+import { useAppSelector } from '@/hooks'
 import { setShowRentRatio, updateRent } from '@/store/slices/contractSlice'
 import {
   HeaderTitle,

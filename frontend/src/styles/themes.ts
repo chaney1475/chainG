@@ -19,6 +19,7 @@ export type CustomTheme = {
       delete: string
       create: string
       white: string
+      notice: string
     }
     border: string
   }
@@ -112,6 +113,7 @@ const theme: CustomTheme = {
       delete: '#ffe6e6',
       create: '#ddffd4',
       white: '#ffffff',
+      notice: '#a7a7a7',
     },
     border: '#d9d9d9',
   },

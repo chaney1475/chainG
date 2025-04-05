@@ -1,5 +1,9 @@
-import { BottomNavigation } from '@/components'
-import { Container, FullMain, HeaderContainer } from '@/styles/styles'
+import { BottomNavigation } from '@/components';
+import { Container, HeaderContainer , SimpleMain} from '@/styles/styles'
+
+
+
+
 
 export function HomeLayout({
   header,
@@ -19,7 +23,7 @@ export function HomeLayout({
           {header}
           {headerRightButton}
         </HeaderContainer>
-        <FullMain>{children}</FullMain>
+        <SimpleMain>{children}</SimpleMain>
         <BottomNavigation />
       </Container>
     </>

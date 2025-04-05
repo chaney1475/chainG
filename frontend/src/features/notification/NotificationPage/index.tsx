@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import { getNotifications } from '@/apis/notification'
 import { NavLayout } from '@/components/layouts/NavLayout'
-import { useAppSelector } from '@/hooks/useAppSelector'
-import useFormattedTime from '@/hooks/useFormattedTime'
+import { useAppSelector, useFormattedTime } from '@/hooks'
 import { Notification } from '@/types/notification'
 
 import {

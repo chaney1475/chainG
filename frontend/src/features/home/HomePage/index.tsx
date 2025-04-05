@@ -8,18 +8,12 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { getContract, getContractMembers, getGroup } from '@/apis/group'
-import { getLivingAccount } from '@/apis/livingBudget'
 import { getUnreadNotificationCount } from '@/apis/notification'
 import { getHomeOverview } from '@/apis/user'
 import { CardButton, IconButton, UserItem } from '@/components'
-import { useAppSelector } from '@/hooks/useAppSelector'
-import useCopyInviteCode from '@/hooks/useCopyInviteCode'
+import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
-import {
-  setLivingAccountNo,
-  setMyAccountNo,
-} from '@/store/slices/livingBudgetSlice'
 import { setHomeOverview } from '@/store/slices/userSlice'
 import {
   Container,
@@ -30,26 +24,40 @@ import {
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
 
-import { DashBoard } from '../components/DashBoard'
-import { HomeLayout } from '../components/HomeLayout'
-import { LifeBudgetPreview } from '../components/LifeBudgetPreview'
+import { ConfirmedHomeContents, HomeLayout } from '../components'
 import { Description, GroupName, ImageContainer, Main } from './styles'
 
 export function HomePage() {
+  const [isMounted, setIsMounted] = useState(false)
+  const router = useRouter()
+  const accessToken = useAppSelector(
+    (state) => state.auth.loginToken.accessToken,
+  )
+  useEffect(() => {
+    if (!isMounted) return
+
+    if (!accessToken) {
+      router.push('/auth/login')
+      return
+    }
+  }, [accessToken, router, isMounted])
+
+  const user = useAppSelector((state) => state.user.user)
+  useEffect(() => {
+    if (!user.id) return
+    if (!user.groupId) {
+      router.push('/onboarding')
+    }
+  }, [user, router])
+
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
   const contract = useAppSelector((state) => state.contract.contract)
   const [status, setStatus] = useState<ContractStatus>(contract.status)
   const homeOverview = useAppSelector((state) => state.user.homeOverview)
-  const router = useRouter()
-  const [isMounted, setIsMounted] = useState(false)
-  const accessToken = useAppSelector(
-    (state) => state.auth.loginToken.accessToken,
-  )
-  const user = useAppSelector((state) => state.user.user)
+
   const group = useAppSelector((state) => state.group.group)
-  const livingBudget = useAppSelector((state) => state.livingBudget)
   const shouldInvite = useMemo(() => {
     return group ? group?.members?.length < group?.maxParticipants : false
   }, [group])
@@ -83,40 +91,6 @@ export function HomePage() {
     setIsMounted(true)
   }, [])
 
-  useEffect(() => {
-    if (!isMounted) return
-
-    if (!accessToken) {
-      router.push('/auth/login')
-      return
-    }
-  }, [accessToken, router, isMounted])
-
-  const fetchAccount = useCallback(async () => {
-    console.log('fetchAccount 호출됨')
-    if (!user.id) return
-    if (!livingBudget.livingAccountNo || !livingBudget.myAccountNo) {
-      const response = await getLivingAccount()
-      if (response.success) {
-        console.log(
-          'fetchAccount 당연히 값이 없어요 저장을 안 했으니까',
-          response,
-        )
-        dispatch(setMyAccountNo(response.data.myAccountNo))
-        dispatch(setLivingAccountNo(response.data.liveAccountNo))
-      }
-    }
-  }, [
-    user.id,
-    livingBudget.livingAccountNo,
-    livingBudget.myAccountNo,
-    dispatch,
-  ])
-
-  useEffect(() => {
-    fetchAccount()
-  }, [user.id, fetchAccount])
-
   const confirmedCount = useMemo(() => {
     return contractMembers?.filter(
       (member) => member.status === ContractStatus.confirmed,
@@ -147,11 +121,12 @@ export function HomePage() {
 
   const fetchHomeOverView = useCallback(async () => {
     console.log('fetchHomeOverView 호출됨')
+    if (!user.groupId) return
     const response = await getHomeOverview()
     if (response.success) {
       dispatch(setHomeOverview(response.data))
     }
-  }, [dispatch])
+  }, [dispatch, user.id])
 
   const fetchUnreadNotificationCount = useCallback(async () => {
     console.log('fetchUnreadNotificationCount 호출됨')
@@ -162,6 +137,7 @@ export function HomePage() {
   }, [user.id])
 
   useEffect(() => {
+    if (!user.id) return
     fetchUnreadNotificationCount()
     const interval = setInterval(
       () => {
@@ -171,14 +147,6 @@ export function HomePage() {
     )
     return () => clearInterval(interval)
   }, [fetchUnreadNotificationCount])
-
-  useEffect(() => {
-    console.log('onboarding으로 가나 안 가나 확인해야 해요 ', user.groupId)
-    if (!user.id) return
-    if (!user.groupId) {
-      router.push('/onboarding')
-    }
-  }, [user, router])
 
   const copyInviteCode = useCopyInviteCode(
     group.inviteCode,
@@ -191,12 +159,6 @@ export function HomePage() {
   }
 
   useEffect(() => {
-    console.log(
-      'status 설정을 해야 해요 ',
-      user.id,
-      user.contractId,
-      contract.status,
-    )
     if (!user.id) return
     if (shouldInvite) {
       setStatus(ContractStatus.shouldInvite)
@@ -209,7 +171,6 @@ export function HomePage() {
   }, [user, fetchHomeOverView, shouldInvite, contract.status])
 
   const fetchGroup = useCallback(async () => {
-    console.log('fetchGroup 호출됨')
     if (user.groupId == null || user.groupId === 0) return
     const response = await getGroup(user.groupId)
     if (response.success) {
@@ -219,7 +180,7 @@ export function HomePage() {
 
   useEffect(() => {
     fetchGroup()
-  }, [user.groupId, fetchGroup])
+  }, [user.groupId])
 
   const fetchContractMembers = useCallback(async () => {
     if (!user.contractId) return
@@ -236,7 +197,7 @@ export function HomePage() {
     ) {
       fetchContractMembers()
     }
-  }, [status, fetchContractMembers])
+  }, [status])
 
   const cardItems: { key: ContractStatus; item: CardItem[] }[] = [
     {
@@ -318,17 +279,13 @@ export function HomePage() {
         },
       ],
     },
-    {
-      key: ContractStatus.confirmed,
-      item: [],
-    },
   ]
 
   if (!isMounted) {
     return null
   }
 
-  if (!accessToken) {
+  if (!accessToken || !user.groupId) {
     return (
       <Container>
         <Main>
@@ -384,13 +341,17 @@ export function HomePage() {
             ))}
         </UserTileContainer>
       </ImageContainer>
-
-      <CardButton
-        cardItems={
-          cardItems.find((item) => item.key === status)?.item ?? []
-        }></CardButton>
-      <DashBoard />
-      <LifeBudgetPreview />
+      {status == ContractStatus.confirmed ? (
+        <ConfirmedHomeContents />
+      ) : (
+        <>
+          <Title>{t('contract.title')}</Title>
+          <CardButton
+            cardItems={
+              cardItems.find((item) => item.key === status)?.item ?? []
+            }></CardButton>
+        </>
+      )}
     </HomeLayout>
   )
 }
