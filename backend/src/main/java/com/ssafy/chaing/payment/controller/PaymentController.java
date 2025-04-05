@@ -57,10 +57,10 @@ public class PaymentController {
     )
     @GetMapping("/utility")
     public ResponseEntity<BaseResponse<RetrieveUtilityResponse>> retrieveUtility(
-            @Valid @RequestParam RetrieveUtilityRequest body,
+            @Valid @RequestParam RetrieveUtilityRequest month,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        RetrieveUtilityCommand command = body.toCommand(principal);
+        RetrieveUtilityCommand command = month.toCommand(principal);
         RetrieveUtilityResponse response = RetrieveUtilityResponse.from(paymentService.retrieveUtility(command));
         return ResponseEntity.ok(BaseResponse.success(response));
     }
