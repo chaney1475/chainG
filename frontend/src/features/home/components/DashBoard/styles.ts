@@ -46,12 +46,11 @@ export const CardContainer = styled.div`
 `
 
 export const StyledButton = styled.button<{ isSelected: boolean }>`
-  padding: 20px;
-  margin: 20px 0;
+  padding: 4px;
+  margin: 4px 0;
   border-radius: 16px;
   border: none;
   text-align: center;
-  width: 100%;
 
   ${({ theme }) => theme.typography.styles.button};
   cursor: pointer;

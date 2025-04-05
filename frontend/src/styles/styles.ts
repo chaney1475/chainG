@@ -229,3 +229,11 @@ export const SimpleMain = styled.div`
   background-color: ${({ theme }) => theme.color.background.white};
   gap: 1rem;
 `
+export const PaddingContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 20px;
+`

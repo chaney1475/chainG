@@ -66,7 +66,7 @@ const reducer = (
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'group', 'user', 'contract', 'app'],
+  whitelist: ['auth', 'group', 'user', 'contract', 'app', 'livingBudget'],
 }
 
 const persistedReducer = persistReducer(persistConfig, reducer)

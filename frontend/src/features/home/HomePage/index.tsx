@@ -45,6 +45,7 @@ export function HomePage() {
   const user = useAppSelector((state) => state.user.user)
   useEffect(() => {
     if (!user.id) return
+    console.log('user', user)
     if (!user.groupId) {
       router.push('/onboarding')
     }
@@ -61,7 +62,14 @@ export function HomePage() {
   const shouldInvite = useMemo(() => {
     return group ? group?.members?.length < group?.maxParticipants : false
   }, [group])
-
+  const contractMembers = useAppSelector(
+    (state) => state.contract.contractMembers,
+  )
+  const confirmedCount = useMemo(() => {
+    return contractMembers?.filter(
+      (member) => member.status === ContractStatus.confirmed,
+    ).length
+  }, [contractMembers])
   const homeDescription = useMemo(() => {
     switch (status) {
       case ContractStatus.confirmed:
@@ -83,19 +91,10 @@ export function HomePage() {
     }
   }, [status, t, group])
 
-  const contractMembers = useAppSelector(
-    (state) => state.contract.contractMembers,
-  )
   const [hasUnreadNotification, setHasUnreadNotification] = useState(false)
   useEffect(() => {
     setIsMounted(true)
   }, [])
-
-  const confirmedCount = useMemo(() => {
-    return contractMembers?.filter(
-      (member) => member.status === ContractStatus.confirmed,
-    ).length
-  }, [contractMembers])
 
   const showMemberStatus = useMemo(() => {
     return (

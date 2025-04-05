@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation'
+
 import {
   DefaultContainer,
   SlimContainer,
@@ -8,8 +10,9 @@ import {
 import { CardDescription } from './styles'
 
 export function LifeBudgetPreview() {
+  const router = useRouter()
   return (
-    <DefaultContainer>
+    <DefaultContainer onClick={() => router.push('/budget/living')}>
       <SlimContainer>
         <TitleContainer>
           <Title>생활비</Title>
