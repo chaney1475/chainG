@@ -1,5 +1,5 @@
 'use client'
 
-import { ContractPage } from '@/features/contract'
+import { BudgetLivingPage } from '@/features/budget/living'
 
-export default ContractPage
+export default BudgetLivingPage

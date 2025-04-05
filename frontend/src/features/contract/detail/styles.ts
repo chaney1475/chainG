@@ -13,11 +13,11 @@ export const Container = styled.div`
     #d9deeb 66.78%,
     #c6def2 99.55%
   );
-  gap: 20px;
 `
 
 export const HeaderContainer = styled.div`
   padding: 40px 20px;
+  margin: 1rem 0;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -32,13 +32,15 @@ export const HeaderContainer = styled.div`
 `
 
 export const FullMain = styled.div`
-  padding: 1.25rem;
+  padding: 0 1.25rem;
   display: flex;
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: 60px;
   width: 100%;
+  padding-bottom: 6.625rem;
+  overflow-y: auto;
 `
 
 export const Navigator = styled.div`
@@ -48,5 +50,13 @@ export const Navigator = styled.div`
   border: 1px solid;
   height: 75px;
   gap: 60px;
+  width: 100%;
+`
+export const BottomContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  padding: 0 20px;
   width: 100%;
 `

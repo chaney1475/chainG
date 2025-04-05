@@ -1,10 +1,17 @@
 import axios from 'axios'
 
 import { ApiErrorResponse, ApiResponse } from '@/types/api'
-import { Account, AccountDetail, TransferRequest } from '@/types/fintech'
+import {
+  Account,
+  AccountDetail,
+  AccountPaymentHistoryRequest,
+  AccountPaymentHistoryResponse,
+  FintechResponseError,
+  TransferRequest,
+} from '@/types/fintech'
 import { handleFintechError } from '@/utils/error/handleFintechError'
 
-import { postBooleanRequest, postRequest } from './api'
+import { getRequest, postBooleanRequest, postRequest } from './api'
 
 const fintechApi = axios.create({
   baseURL: `https://finopenapi.ssafy.io/ssafy/api/v1/edu`,
@@ -44,31 +51,18 @@ export const getFintechRequest = async <T>(
   }
 }
 
-export const getFintechBooleanRequest = async (
-  url: string,
-): Promise<boolean> => {
-  const response = await getFintechRequest<unknown>(url)
-  return response.success
-}
-
-export const postFintechRequest = async <T>(
-  url: string,
-  data?: object,
-): Promise<ApiResponse<T>> => {
+export const getAccountPaymentHistory = async <AccountPaymentHistoryResponse>(
+  data: AccountPaymentHistoryRequest,
+): Promise<AccountPaymentHistoryResponse | FintechResponseError> => {
   try {
-    const response = await fintechApi.post<ApiResponse<T>>(url, data)
+    const response = await fintechApi.post<AccountPaymentHistoryResponse>(
+      'demandDeposit/inquireTransactionHistoryList',
+      data,
+    )
     return response.data
   } catch (error) {
-    return error as ApiErrorResponse
+    return error as FintechResponseError
   }
-}
-
-export const postFintechBooleanRequest = async (
-  url: string,
-  data?: object,
-): Promise<boolean> => {
-  const response = await postFintechRequest<unknown>(url, data)
-  return response.success
 }
 
 export const putFintechRequest = async <T>(
@@ -115,8 +109,8 @@ export const createAccount = async () =>
   await postRequest<{ data: Account }>('/fintech/account')
 
 //getAccountDetail 계좌 조회(단건)
-export const getAccountDetail = async () =>
-  await postRequest<{ data: AccountDetail }>('/fintech/account')
+export const getAccountDetail = async (accountNo: string) =>
+  await getRequest<{ data: AccountDetail }>(`/fintech/account/${accountNo}`)
 
 //createCard 카드 생성
 export const createCard = async ({ accountNo }: { accountNo: string }) =>

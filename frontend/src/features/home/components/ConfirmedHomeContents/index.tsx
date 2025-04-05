@@ -40,7 +40,7 @@ export function ConfirmedHomeContents() {
       <Notice />
       <ContentsContainer>
         <DashBoard />
-        <LifeBudgetPreview />
+        {livingBudget.livingAccountNo && <LifeBudgetPreview />}
       </ContentsContainer>
     </Container>
   )

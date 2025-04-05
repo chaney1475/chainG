@@ -18,17 +18,11 @@ import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
-import {
-  BottomContainer,
-  FullMain,
-  ImageContainer,
-  Label,
-  Title,
-} from '@/styles/styles'
+import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
 import { ContractViewer } from './component/ContractViewer'
-import { Container, HeaderContainer } from './styles'
+import { BottomContainer, Container, FullMain, HeaderContainer } from './styles'
 
 export function ContractDetail() {
   const dispatch = useDispatch()
@@ -219,7 +213,7 @@ export function ContractDetail() {
         description={modalDescription}
         confirmText={modalConfirmText}>
         {status === ContractStatus.pending && (
-          <BottomContainer>
+          <PaddingContainer>
             <InputBox
               label="자동이체용 계좌번호"
               id="accountNo"
@@ -227,7 +221,7 @@ export function ContractDetail() {
               {...register('accountNo')}
               placeholder="자동이체용 계좌번호를 입력해주세요"
             />
-          </BottomContainer>
+          </PaddingContainer>
         )}
       </Modal>
       <BottomContainer>

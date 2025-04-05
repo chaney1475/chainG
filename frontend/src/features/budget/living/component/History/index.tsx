@@ -4,15 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import { getAccountDetail, getAccountPaymentHistory } from '@/apis/fintech'
-import { BudgetCalendar, NavLayout } from '@/components'
+import { Button } from '@headlessui/react'
+
+import { getAccountPaymentHistory } from '@/apis/fintech'
 import { useFintechTime } from '@/hooks'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import {
-  setLivingAccountDetail,
-  setLivingAccountPaymentHistory,
-} from '@/store/slices/livingBudgetSlice'
-import { FullMain } from '@/styles/styles'
+import { setLivingAccountPaymentHistory } from '@/store/slices/livingBudgetSlice'
 import {
   AccountPaymentHistory,
   AccountPaymentHistoryRequest,
@@ -21,17 +18,11 @@ import {
 } from '@/types/fintech'
 import { formatMoney } from '@/utils/format'
 
-import { FloatingSwitchMenu, History } from './component'
-import { Account, AccountInfo, AccountTitle } from './styles'
-
-export function BudgetLivingPage() {
+export function History() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const livingAccountNo = useAppSelector(
     (state) => state.livingBudget.livingAccountNo,
-  )
-  const livingAccountDetail = useAppSelector(
-    (state) => state.livingBudget.livingAccountDetail,
   )
   const livingAccountPaymentHistory = useAppSelector(
     (state) => state.livingBudget.livingAccountPaymentHistory,
@@ -42,11 +33,6 @@ export function BudgetLivingPage() {
   const [formattedHistory, setFormattedHistory] = useState<
     AccountPaymentHistory[]
   >([])
-
-  useEffect(() => {
-    fetchAccountDetail()
-    fetchAccountPaymentHistory()
-  }, [livingAccountNo])
 
   useEffect(() => {
     let transactionDate = ''
@@ -65,8 +51,7 @@ export function BudgetLivingPage() {
     })
     setFormattedHistory(paymentHistory)
   }, [livingAccountPaymentHistory])
-
-  const fetchAccountPaymentHistory = async () => {
+  const handleClick = async () => {
     const Request: AccountPaymentHistoryRequest = {
       Header: {
         apiName: 'inquireTransactionHistoryList',
@@ -95,36 +80,22 @@ export function BudgetLivingPage() {
       dispatch(setLivingAccountPaymentHistory(response.REC.list))
     }
   }
-
-  const fetchAccountDetail = async () => {
-    const response = await getAccountDetail(livingAccountNo)
-    if (response.success) {
-      dispatch(setLivingAccountDetail(response.data.data))
-    }
-  }
-  const menuList = [
-    { id: 'calendar', name: '달력' },
-    { id: 'history', name: '내역' },
-  ]
-  const [menu, setMenu] = useState<'calendar' | 'history'>('calendar')
   return (
-    <NavLayout title={'생활비'}>
-      <FullMain>
-        <Account>
-          <AccountTitle>생활비 계좌</AccountTitle>
-          <AccountInfo>
-            <span>{t('fintech.bankName') + ' ' + livingAccountNo}</span>
-            <div>{formatMoney(livingAccountDetail.accountBalance)}</div>
-          </AccountInfo>
-        </Account>
-        {menu === 'calendar' && <BudgetCalendar />}
-        {menu === 'history' && <History />}
-      </FullMain>
-      <FloatingSwitchMenu
-        selectedMenu={menu}
-        onSwitch={(menu) => setMenu(menu as 'calendar' | 'history')}
-        menuList={menuList}
-      />
-    </NavLayout>
+    <div>
+      <Button onClick={handleClick}>
+        {t('contract.rentAccountNo.button')}
+      </Button>
+      <div>
+        {formattedHistory &&
+          formattedHistory.map((item) => (
+            <div key={item.transactionUniqueNo}>
+              {item.transactionDate}: {item.transactionTime} -
+              {formatMoney(item.transactionAfterBalance)}-
+              {formatMoney(item.transactionBalance)}-{item.transactionMemo}-
+              {item.transactionTypeName}
+            </div>
+          ))}
+      </div>
+    </div>
   )
 }

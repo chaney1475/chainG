@@ -13,13 +13,14 @@ export type CustomTheme = {
       confirm: string
       saturday: string
       sunday: string
+      account: string
     }
     background: {
       update: string
       delete: string
       create: string
       white: string
-      notice: string
+      account: string
     }
     border: string
   }
@@ -107,13 +108,14 @@ const theme: CustomTheme = {
       confirm: '#3bce6e',
       saturday: '#74bcff',
       sunday: '#ff9494',
+      account: '#448fd4',
     },
     background: {
       update: '#fffcc4',
       delete: '#ffe6e6',
       create: '#ddffd4',
       white: '#ffffff',
-      notice: '#a7a7a7',
+      account: '#d2ebff',
     },
     border: '#d9d9d9',
   },

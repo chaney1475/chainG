@@ -11,8 +11,8 @@ export const getLivingAccount = async () =>
   )
 
 // saveAccountAndNotify 생활비 계좌 저장 및 알림 전송
-export const saveAccountAndNotify = async () =>
-  await postBooleanRequest('/budget/living/account')
+export const saveAccountAndNotify = async (accountNo: string) =>
+  await postBooleanRequest('/budget/living/account', { accountNo })
 
 //notifyLivingDeposit 입금 알림 트리거
 export const notifyLivingDeposit = async () =>
