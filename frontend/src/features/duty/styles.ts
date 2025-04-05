@@ -2,15 +2,18 @@ import styled from '@emotion/styled'
 
 export const Container = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  flex: 1;
+  justify-content: space-between;
+  height: 100dvh;
   width: 100%;
   gap: 50px;
-  background-color: ${({ theme }) => theme.color.background.white};
-`
+  @media (min-width: 768px) {
+    width: 50%;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  `
 
 export const FullMain = styled.div`
   display: flex;
@@ -22,11 +25,4 @@ export const FullMain = styled.div`
   background-color: ${({ theme }) => theme.color.secondary};
 `
 
-export const Navigator = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  height: 10px;
-  gap: 60px;
-  width: 100%;
-`
+

@@ -4,8 +4,8 @@ import { DayKey, Duty, DutyWeekList } from '@/types/duty'
 
 interface DutyState {
   dutyWeekList: DutyWeekList
-  // editDuty: Duty | null
   createDayOfWeek: DayKey | null
+  completeDayOfWeek: DayKey | null
 }
 
 const initialState: DutyState = {
@@ -18,8 +18,8 @@ const initialState: DutyState = {
     saturday: [],
     sunday: [],
   },
-  // editDuty: null,
   createDayOfWeek: null,
+  completeDayOfWeek: null,
 }
 
 const dutySlice = createSlice({
@@ -36,17 +36,17 @@ const dutySlice = createSlice({
         (duty) => duty.id !== id,
       )
     },
-    // setEditDuty: (state, action: PayloadAction<Duty>) => {
-    //   state.editDuty = action.payload
-    // },
-    // clearEditDuty: (state) => {
-    //   state.editDuty = null
-    // },
     setCreateDayOfWeek: (state, action: PayloadAction<DayKey>) => {
       state.createDayOfWeek = action.payload
     },
     clearCreateDayOfWeek: (state) => {
       state.createDayOfWeek = null
+    },
+    setCompleteDayOfWeek: (state, action: PayloadAction<DayKey>) => {
+      state.completeDayOfWeek = action.payload
+    },
+    clearCompleteDayOfWeek: (state) => {
+      state.completeDayOfWeek = null
     },
   },
 })
@@ -56,5 +56,7 @@ export const {
   removeDutyFromList,
   setCreateDayOfWeek,
   clearCreateDayOfWeek,
+  setCompleteDayOfWeek,
+  clearCompleteDayOfWeek,
 } = dutySlice.actions
 export default dutySlice.reducer

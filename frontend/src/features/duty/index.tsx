@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { getDuties } from '@/apis/duty'
-import { BottomSheet, TopHeader } from '@/components'
+import { BottomNavigation, BottomSheet, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setDutyWeekList } from '@/store/slices/dutySlice'
 
@@ -13,8 +13,9 @@ import { DutyList } from './components/DutyList'
 import { EditOrDeleteDuty } from './components/EditOrDeleteDuty'
 import { WeekList } from './components/WeekList'
 import useSelectWeek from './hooks/useSelectWeek'
-import { Container, FullMain, Navigator } from './styles'
+import { Container, FullMain } from './styles'
 import { Duty } from '@/types/duty'
+import { clearCompleteDayOfWeek } from '@/store/slices/dutySlice'
 
 export function DutyPage() {
   const { t } = useTranslation()
@@ -23,7 +24,7 @@ export function DutyPage() {
   const dispatch = useDispatch()
   const userList = group.members
   
-
+  const completeDayOfWeek = useAppSelector((state) => state.duty.completeDayOfWeek)
   const { selectedWeek, setSelectedWeek } = useSelectWeek()
 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState<boolean>(false)
@@ -40,6 +41,13 @@ export function DutyPage() {
   }
 
   useEffect(() => {
+    if(completeDayOfWeek) {
+      setSelectedWeek(completeDayOfWeek)
+      dispatch(clearCompleteDayOfWeek())
+    }
+  }, [completeDayOfWeek, dispatch, setSelectedWeek])
+
+  useEffect(() => {
     const fetchDuties = async () => {
       const response = await getDuties(group.id) // dutyList
       console.log(response)
@@ -53,7 +61,9 @@ export function DutyPage() {
 
   return (
     <Container>
-      <TopHeader title={t('duty.title')} />
+      <TopHeader
+        title={t('duty.title')}
+      />
       <FullMain>
         <WeekList
           dutyList={dutyWeekList}
@@ -80,7 +90,8 @@ export function DutyPage() {
           />
         </BottomSheet>
       </FullMain>
-      <Navigator></Navigator>
-    </Container>
+      <BottomNavigation />
+      </Container>
+
   )
 }

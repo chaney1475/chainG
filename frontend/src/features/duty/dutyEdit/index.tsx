@@ -11,7 +11,7 @@ import { createDuty, modifyDuty } from '@/apis/duty'
 import { BottomSheet, TitleHeaderLayout } from '@/components'
 // import { userList } from '@/constants/userList'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { clearCreateDayOfWeek } from '@/store/slices/dutySlice'
+import { clearCreateDayOfWeek, setCompleteDayOfWeek } from '@/store/slices/dutySlice'
 import { DutyRequest } from '@/types/duty'
 
 import useSelectWeek from '../hooks/useSelectWeek'
@@ -48,7 +48,7 @@ export function DutyEdit() {
   const methods = useForm<DutyRequest>({
     defaultValues: {
       title: editDuty?.title || '',
-      category: editDuty?.category || 'RENT',
+      category: editDuty?.category || 'CLEAN',
       dutyTime: editDuty?.dutyTime || '',
       dayOfWeek: editDuty?.dayOfWeek || selectedWeek,
       useTime: editDuty?.useTime || false,
@@ -97,6 +97,7 @@ export function DutyEdit() {
       if (response.success) {
         console.log('success')
         router.push('/duty')
+        dispatch(setCompleteDayOfWeek(data.dayOfWeek))
       } else {
         console.log('error')
       }
@@ -106,6 +107,7 @@ export function DutyEdit() {
       if (response.success) {
         console.log('success')
         router.push('/duty')
+        dispatch(setCompleteDayOfWeek(data.dayOfWeek))
       } else {
         console.log('error')
       }
@@ -130,7 +132,7 @@ export function DutyEdit() {
             useTime={editDuty?.useTime || false}
           />
 
-          <TitleSelector />
+          <TitleSelector title={editDuty?.title}/>
 
           <AssigneesSelector
             setIsBottomSheetOpen={setIsBottomSheetOpen}
