@@ -5,6 +5,8 @@ import com.ssafy.chaing.blockchain.handler.contract.output.PaymentInfoOutput;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.user.domain.UserEntity;
+import com.ssafy.chaing.user.repository.UserRepository;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.time.ZoneId;
@@ -12,12 +14,17 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
+
+    private final UserRepository userRepository;
+
     private static final DateTimeFormatter KST_DATE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy년 M월 d일").withZone(ZoneId.of("Asia/Seoul"));
 
@@ -207,6 +214,41 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                         .page:last-child {
                             page-break-after: auto !important;
                         }
+                        .payment-table {
+                             width: 98%; /* ← 100%에서 살짝 줄임 */
+                             border-collapse: collapse;
+                             margin: 10px auto 20px auto; /* 가운데 정렬 */
+                             font-size: 14px;
+                             table-layout: fixed;
+                             box-sizing: border-box; 
+                         }
+                
+                         .payment-table th,
+                         .payment-table td {
+                             border: 1px solid #ccc;
+                             padding: 10px 12px;
+                             word-break: break-word; /* 긴 단어 줄바꿈 */
+                         }
+                
+                         .payment-table th {
+                             background-color: #edf0f4;
+                             font-weight: bold;
+                         }
+                
+                         .payment-table th:nth-child(1),
+                         .payment-table td:nth-child(1) {
+                             width: 45%;
+                         }
+                
+                         .payment-table th:nth-child(2),
+                         .payment-table td:nth-child(2) {
+                             width: 25%;
+                         }
+                
+                         .payment-table th:nth-child(3),
+                         .payment-table td:nth-child(3) {
+                             width: 30%;
+                         }
                     </style>
                 """;
 
@@ -214,13 +256,26 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
         BigInteger totalAmount = BigInteger.ZERO;
         int totalRatio = 0;
         List<PaymentInfoOutput> infos = portfolio.getPaymentInfos();
+
+        paymentInfoHtml.append("""
+                    <table class='payment-table'>
+                        <thead>
+                            <tr>
+                                <th class='align-left'>월세 지불 정보</th>
+                                <th class='align-center'>분배 비율(%)</th>
+                                <th class='align-right'>지불액(원)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                """);
+
         if (infos != null) {
             for (PaymentInfoOutput info : infos) {
-                paymentInfoHtml.append("<div class='user'>")
-                        .append("<div>").append(safe(info.getUserId())).append("</div>")
-                        .append("<div>").append(safe(info.getRatio())).append("</div>")
-                        .append("<div>").append(safe(info.getAmount())).append("원</div>")
-                        .append("</div>");
+                paymentInfoHtml.append("<tr>")
+                        .append("<td class='align-left'>").append(getUserName(info.getUserId())).append("</td>")
+                        .append("<td class='align-center'>").append(safe(info.getRatio())).append("</td>")
+                        .append("<td class='align-right'>").append(safe(info.getAmount())).append("원</td>")
+                        .append("</tr>");
                 if (info.getAmount() != null) {
                     totalAmount = totalAmount.add(info.getAmount());
                 }
@@ -230,11 +285,13 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
             }
         }
 
+        paymentInfoHtml.append("</tbody></table>");
         String signatureTableHtml = """
                     <div class='signature-area'>
                         <table class='signature-table'>
                             <tr class='signature-name-row'>
-                """ + infos.stream().map(info -> "<td class='signature-name'>" + safe(info.getUserId()) + "</td>")
+                """ + infos.stream()
+                .map(info -> "<td class='signature-name'>" + getUserName(info.getUserId()) + "</td>")
                 .collect(Collectors.joining()) +
                 """
                                 </tr>
@@ -285,7 +342,6 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                                         <div class="section-row">월세 지불일: 매월 %s일</div>
                                     </div>
                         
-                                    <div class="user-title">월세 지불 정보</div>
                                     %s
                                     <div class="user user-total">
                                         <div class="total">총</div>
@@ -377,6 +433,20 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
     }
 
     private String safe(Object o) {
-        return o != null ? o.toString() : "N/A";
+        if (o == null) {
+            return "N/A";
+        }
+        String value = o.toString();
+        if ("0".equals(value)) {
+            return "N/A";  // 0도 표시 안 하려면 유지
+        }
+        return value;
     }
+
+    private String getUserName(BigInteger userId) {
+        return userRepository.findById(userId.longValue())
+                .map(UserEntity::getName)
+                .orElse("알 수 없음");
+    }
+
 }
