@@ -12,15 +12,16 @@ import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/components/TopHeader'
 import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
-import { Container, FullMain } from '@/styles/styles'
+import { Container } from '@/styles/styles'
 
 import { Account, Profile } from './component'
+import { FullMain } from './styles'
 
 export function MyPage() {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const router = useRouter()
-  
+
   useEffect(() => {
     const fetchMySummary = async () => {
       try {

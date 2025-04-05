@@ -48,8 +48,9 @@ export const FullMain = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  background-color: ${({ theme }) => theme.color.secondary};
+  background-color: ${({ theme }) => theme.color.background.white};
   gap: 8px;
+  padding: 0 20px;
 `
 
 export const Form = styled.form`
@@ -116,6 +117,7 @@ export const UserTileContainer = styled.div`
   gap: 1rem;
   margin: auto;
   flex: 0;
+  background-color: rgba(256, 256, 256, 0.8) !important;
 `
 
 export const Title = styled.div`

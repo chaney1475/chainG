@@ -16,6 +16,7 @@ export interface CardItem {
   image: string
   title: string
   description: string
+  children?: React.ReactNode
 }
 export interface SnapPoints {
   MIN: number

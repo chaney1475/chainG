@@ -26,7 +26,8 @@ export const Navigator = styled.div`
 
 export const HeaderTitle = styled.div`
   ${({ theme }) => theme.typography.styles.topHeader};
-  color: ${({ theme }) => theme.color.text.low};
+  color: ${({ theme }) => theme.color.text.regular};
+  white-space: nowrap;
 `
 export const DefaultLabel = styled.div`
   ${({ theme }) => theme.typography.styles.default};

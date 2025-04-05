@@ -346,7 +346,6 @@
     "pending": {
       "title": "서약서 작성 완료!",
       "description": "최종 서약서 검토 후\n모두의 승인이 완료되면 Cha:nG가 시작됩니다",
-
       "confirmText": "최종 제출하기"
     },
     "modify": {
@@ -378,31 +377,37 @@
       "is_contract_approved": {
         "title": "서약서 확인",
         "button": "서약서 수정하기",
+        "cardButton": "서약서 확인하기",
         "description": "서약서를 확인해보세요",
-        "label": "룸메의 승인을 기다리는 서약서"
+        "label": "룸메의 승인을 기다리는 서약서",
+        "status": "대기중"
       },
       "pending": {
         "title": "서약서 승인",
         "button": "서약서 승인하기",
         "description": "서약서를 확인하고\n승인해보세요",
-        "label": "승인이 필요한 서약서"
+        "label": "승인이 필요한 서약서",
+        "status": "승인 필요"
       },
       "review_required": {
         "title": "서약서 재승인",
         "button": "서약서 재승인하기",
         "description": "서약서가 수정되어서\n재승인이 필요해요",
-        "label": "재승인이 필요한 서약서"
+        "label": "재승인이 필요한 서약서",
+        "status": "재승인 필요"
       },
       "confirmed": {
         "title": "서약서",
         "button": "PDF로 저장하기",
         "description": "서약서를 확인해보세요",
-        "label": "모든 사람이 승인한 서약서"
+        "label": "모든 사람이 승인한 서약서",
+        "status": "승인"
       },
       "contractDate": "서약 기간",
       "userPaymentInfo": "서약자",
-      "totalAmount": "월세/관리비",
+      "totalAmount": "월세 / 관리비",
       "dueDate": "월세 납부일",
+      "dueDateFormat": "매월 {{value}}일",
       "totalRatio": "분담 비율",
       "rentAccountNo": "월세 계좌",
       "ownerAccountNo": "집주인 계좌",

@@ -10,7 +10,8 @@ import { IconButton } from '@/components/IconButton'
 import { Label } from '@/components/InputBox/styles'
 import { HeaderButton } from '@/components/TopHeader/styles'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { ImageContainer, ShowBox, ShowCenterBox } from '@/styles/styles'
+import useCopyInviteCode from '@/hooks/useCopyInviteCode'
+import { ImageContainer, ShowCenterBox } from '@/styles/styles'
 
 export function ShareInviteCodePage() {
   const { t } = useTranslation()
@@ -18,13 +19,15 @@ export function ShareInviteCodePage() {
   const group = useAppSelector((state) => state.group.group)
   const user = useAppSelector((state) => state.user.user)
 
+  // 훅을 컴포넌트의 최상위 레벨에서 호출
+  const copyInviteCode = useCopyInviteCode(
+    group.inviteCode,
+    user.name,
+    group.name,
+  )
+
   const handleCopy = () => {
-    console.log(user)
-    const message = `[chainG] ${user.name}님이 ${group.name}에 초대했어요.
-    초대코드 : ${group.inviteCode}
-    링크 : https://chaing.site/group/join?inviteCode=${encodeURIComponent(group.inviteCode)}
-    `
-    navigator.clipboard.writeText(message)
+    copyInviteCode()
   }
   return (
     <TitleHeaderLayout

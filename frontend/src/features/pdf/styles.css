@@ -1,384 +1,144 @@
-* {
+body {
+  font-family: 'Paperlogy5', sans-serif;
   margin: 0;
   padding: 0;
 }
 
+h1 {
+  font-family: 'Paperlogy7', sans-serif;
+  font-size: 40px;
+}
+
+.subtitle,
+.description,
+.section-row,
+.agreement-list,
+.page-number {
+  font-family: 'Paperlogy5', sans-serif;
+}
+
+.user-title,
+.total,
+.agreement-first-title {
+  font-family: 'Paperlogy7', sans-serif;
+}
+
 .container {
   width: 210mm;
+  height: 297mm;
   background-color: white;
-  border: 1px solid red;
-  display: flex;
-  padding: 60px 46px 20px 46px;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  height: 297mm; /* A4 높이 */
   box-sizing: border-box;
+  padding: 50px 46px 20px 46px;
 }
 
 .page {
   width: 100%;
   height: 257mm;
-  padding: 10mm;
   position: relative;
   page-break-after: always;
 }
 
-.toptop-container {
-  display: flex;
-  padding: 0px 20px;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-  align-self: stretch;
-}
-
-.subtitle {
-  font-size: 18px;
-  font-weight: 500;
-  padding-left: 10px;
-}
-
-h1 {
-  font-size: 40px;
-  font-weight: 700;
-  padding-left: 10px;
-}
-
-.header-text-top {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  flex: 1 0 0;
-}
-
-.header-text-blockchain {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-}
-.contract-id {
-  font-size: 18px;
-  padding-left: 10px;
-}
-.description {
-  font-size: 16px;
-  font-weight: 500;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-  /* border: 10px solid blue; */
-}
-
-.logo {
-  position: absolute;
-  top: 20mm;
-  right: 20mm;
-  width: 58px;
-  height: 58px;
-  background-color: #ddd;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding-right: 10px;
-}
-
-.bottom-logo {
-  position: absolute;
-  bottom: 10mm; /* 페이지 하단에서 20mm 여백을 두고 고정 */
-  font-size: 30px;
-  font-weight: 700;
-  width: 85%; /* chainG */
-  padding-top: 40px;
-  text-align: right;
-  /* border: 1px solid green; */
-
-  > span {
-    display: inline-block;
-  }
-}
-
-.bottom-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  align-self: stretch;
-}
-
-.content-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-self: stretch;
-  /* border: 10px solid yellow; */
-}
-
-.middle-section {
-  width: 100%;
-}
-
-.second-section {
-  display: flex;
-  flex: 1;
-  padding: 50px 10px;
-  font-size: 16px;
-  align-items: center;
-  /* border: 10px solid purple; */
-  > div {
-    flex: 1;
-  }
-}
-
-.payment-table-twice {
-  display: flex;
-  width: 232px;
-  align-items: center;
-}
-
-.contract-section {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.section-left {
-  color: #000;
-  font-family: Paperlogy;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  align-self: stretch;
-}
-
+.user,
+.user-title,
 .user-total {
-  border-top: 1px solid #000 !important;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  text-align: center;
-  padding: 18px;
-  padding-left: 10px;
-  > div {
-    font-size: 16px;
-    /* border: 1px solid blue; */
-  }
-  > div:first-child {
-    width: 48%;
-    text-align: left;
-    align-items: flex-start;
-    flex-direction: column;
-    /* border: 1px solid red; */
-  }
-  > div:nth-child(2) {
-    width: 25%;
-  }
-  > div:nth-child(3) {
-    width: 25%;
-  }
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-bottom: 10px;
 }
 
 .user-title {
   background-color: #edf0f4;
-  font-weight: 700;
   padding: 18px;
   padding-left: 10px;
   border-bottom: 1px solid #000;
 }
 
-.name-container1 {
-  display: flex;
-  width: 221px;
-  justify-content: space-between;
-  align-items: center;
+.user > div,
+.user-title > div,
+.user-total > div {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 
-.name-container2 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.agreement-section,
+.agreement-first,
+.signature-box,
+.signature-names {
+  display: block;
+  margin-bottom: 10px;
 }
-
-.total {
-  font-weight: 700;
-}
-
-.bottom-down {
-  display: flex;
-  width: 437px;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.section-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  align-self: stretch;
-}
-
-.section-row {
-  font-family: Paperlogy;
-  font-size: 16px;
-
-  flex: 1;
-  display: flex;
-}
-
-.agreement-section {
+.signature-stamp {
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
   width: 100%;
   margin-bottom: 10px;
-  /* border: 10px solid red; */
-
-  border-bottom: 1px solid black !important;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.agreement-first {
-  /* border: 10px solid blue; */
-  border-bottom: 1px solid rgb(189, 188, 192);
-  display: flex;
-  gap: 10px;
-  margin-left: 20px;
-  margin-right: 20px;
-  flex: 1;
-}
-
-.agreement-first-title {
-  font-size: 15px;
-  font-weight: 700;
-  /* border: 1px solid blue; */
-  flex: 0 0 26%;
-  padding-left: 10px;
-  box-sizing: border-box;
 }
 
 .agreement-list {
   list-style-type: decimal;
   margin-left: 20px;
-  font-weight: 500;
   font-size: 14px;
-  /* border: 1px solid red; */
-  /* flex: 0 0 60%; */
   width: 92%;
-  padding-bottom: 40px;
-}
-
-.line {
-  border-bottom: 1px solid black;
-  margin-bottom: 10px;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-.agreement-list li {
-  margin-bottom: 10px;
 }
 
 .signature-section {
-  margin-top: 40px;
   text-align: center;
+  margin-top: 40px;
 }
 
 .signature-date {
   margin-bottom: 20px;
   font-size: 16px;
-  /* border: 1px solid red; */
   padding-bottom: 100px;
 }
 
-.signature-box {
-  display: inline-block;
-  padding: 15px 20px;
-  border: 1px solid black;
-  margin-bottom: 20px;
+.signature-area {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  margin-top: 30px;
 }
 
-.signature-names {
-  display: flex;
-  justify-content: space-between;
-  width: 200px;
-  /* border: 1px solid blue; */
-}
-
-.signature-names span {
-  /* border: 1px solid red; */
-  padding: 0px 10px;
-}
-
-.signature-stamp {
-  display: flex;
-  justify-content: space-between;
-  width: 200px;
-  margin: 10px auto;
-}
-
+.signature-name,
 .stamp {
   width: 60px;
   height: 60px;
+  display: inline-block;
   border-radius: 50%;
   background-color: #ffeeee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0 auto;
   font-size: 12px;
   color: #ff0000;
-  /* border: 1px solid #ff0000; */
+  border: 1px solid #cc0000;
 }
 
-.footer-text {
-  font-size: 12px;
-  margin-top: 30px;
+.stamp > span {
+  display: table-cell;
+  vertical-align: middle;
   text-align: center;
+  height: 60px;
+}
+
+.bottom-logo {
+  position: absolute;
+  bottom: 10mm;
+  font-size: 30px;
+  font-family: 'Paperlogy7', sans-serif;
+  width: 85%;
+  text-align: right;
+  padding-top: 40px;
 }
 
 .page-number {
   position: absolute;
   bottom: 0mm;
-  text-align: center;
   width: 100%;
-  left: 0;
-  color: #000;
-  font-family: Paperlogy;
+  text-align: center;
   font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  /* border: 1px solid blue; */
-  margin-top: 20mm;
-}
-
-#generate-pdf {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-#generate-pdf:hover {
-  background-color: #45a049;
-}
-
-.error {
-  background-color: red;
 }
