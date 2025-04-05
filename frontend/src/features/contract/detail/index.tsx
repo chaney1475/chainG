@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -18,7 +18,6 @@ import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
-import { setContractId } from '@/store/slices/userSlice'
 import {
   BottomContainer,
   FullMain,
@@ -47,17 +46,18 @@ export function ContractDetail() {
     ContractStatus.none as ContractStatus,
   )
   const contract = useAppSelector((state) => state.contract.contract)
-  const fetchContract = async () => {
+  const fetchContract = useCallback(async () => {
     if (user.contractId) {
       const response = await getContract(user.contractId)
       if (response.success) {
         dispatch(setContract(response.data))
       }
     }
-  }
+  }, [user.contractId, dispatch])
+
   useEffect(() => {
     fetchContract()
-  }, [user.contractId, dispatch, setContractId])
+  }, [user.contractId, fetchContract])
 
   const rentUserList: RentUser[] = group.members.map((member) => {
     return {
@@ -127,20 +127,20 @@ export function ContractDetail() {
       }
     }
     handleConfirm()
-  }, [shouldConfirm])
+  }, [contract.status, shouldConfirm])
 
   useEffect(() => {
     const member = contractMembers.find((member) => member.id === user.id)
     if (
       member &&
-      member?.status === ContractStatus.confirm &&
+      member?.status === ContractStatus.confirmed &&
       contract.status === ContractStatus.pending
     ) {
       setStatus(ContractStatus.isContractApproved)
     } else {
       setStatus(contract.status)
     }
-  }, [contractMembers, contract.status])
+  }, [user.id, contractMembers, contract.status])
 
   const updateContractRequest = async () => {
     if (!user.contractId) {
@@ -181,7 +181,7 @@ export function ContractDetail() {
         setModalConfirmText(t('contract.detail.review_required.confirmText'))
         setOpenModal(true)
         break
-      case ContractStatus.confirm:
+      case ContractStatus.confirmed:
         console.log(t('contract.detail.confirmed.title'))
         await savePdf()
         break

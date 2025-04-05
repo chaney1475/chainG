@@ -4,15 +4,18 @@ import { useState } from 'react'
 
 import Image from 'next/image'
 
+import { ContractStatus } from '@/types/contract'
 import { User } from '@/types/user'
 
-import { ProfileContainer } from './styles'
+import { StatusLabel } from '../StatusLabel'
+import { ProfileContainer} from './styles'
 
 interface UserItemProps {
   user: User
   variant?: 'bar' | 'tile'
   showName?: boolean
   size?: 'small' | 'medium' | 'large'
+  contractStatus?: ContractStatus
 }
 
 export const UserItem = ({
@@ -20,6 +23,7 @@ export const UserItem = ({
   variant = 'tile',
   showName = false,
   size = 'medium',
+  contractStatus,
 }: UserItemProps) => {
   const [imgSrc, setImgSrc] = useState(
     `/images/profile/${user.profileImage}.png`,
@@ -29,8 +33,6 @@ export const UserItem = ({
     const imgSrc = `/images/profile/user${user.id % 10}.png`
     setImgSrc(imgSrc)
   }
-
-  console.log(showName)
 
   return (
     <ProfileContainer
@@ -43,7 +45,9 @@ export const UserItem = ({
         height={size === 'small' ? 36 : size === 'medium' ? 40 : 50}
         onError={handleImageError}
       />
-      {showName ? user.name : user.nickname}
+      <span>{showName ? user.name : user.nickname}</span>
+
+      {contractStatus && <StatusLabel contractStatus={contractStatus} />}
     </ProfileContainer>
   )
 }

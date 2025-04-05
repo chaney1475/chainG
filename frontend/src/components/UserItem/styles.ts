@@ -7,6 +7,9 @@ const getVariantStyles = (variant: 'bar' | 'tile') => css`
   flex-direction: ${variant === 'bar' ? 'row' : 'column'};
   gap: ${variant === 'bar' ? '1rem' : '0.5rem'};
 `
+const getNameStyles = (size: 'small' | 'medium' | 'large') => css`
+  ${size === 'small' ? '60px' : size === 'medium' ? '77px' : '80px'};
+`
 
 const getSizeStyles = (size: 'small' | 'medium' | 'large', theme: Theme) =>
   size === 'small'
@@ -22,4 +25,8 @@ export const ProfileContainer = styled.div<{
   white-space: nowrap;
   ${({ variant }) => getVariantStyles(variant)}
   ${({ size, theme }) => getSizeStyles(size, theme)}
+  > span {
+    text-align: ${({ variant }) => (variant === 'bar' ? 'left' : 'center')};
+    width: ${({ size }) => getNameStyles(size)};
+  }
 `

@@ -20,6 +20,7 @@ export const CardButton = ({ cardItems }: { cardItems: CardItem[] }) => {
                 height={46}
               />
               {item.title}
+              {item.children}
             </Card>
             <CardDescription>{item.description}</CardDescription>
           </CardContainer>

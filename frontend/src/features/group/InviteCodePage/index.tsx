@@ -72,7 +72,7 @@ export function InviteCodePage() {
         {...register('inviteCode')}
         id="inviteCode"
         label={t('inviteCode.label')}
-        placeholder={t('inviteCode.inviteCode.placeholder')}
+        placeholder={t('join.inviteCode.placeholder')}
         error={errors.inviteCode}
       />
     </TitleHeaderLayout>

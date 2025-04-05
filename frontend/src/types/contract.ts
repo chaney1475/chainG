@@ -43,8 +43,15 @@ export const ContractStatus = {
   isContractApproved: 'IS_CONTRACT_APPROVED',
   pending: 'PENDING',
   reviewRequired: 'REVIEW_REQUIRED',
-  confirm: 'CONFIRMED',
+  confirmed: 'CONFIRMED',
+  shouldInvite: 'SHOULD_INVITE',
 } as const
+
+export type MemberContractStatus =
+  | (typeof ContractStatus)['isContractApproved']
+  | (typeof ContractStatus)['pending']
+  | (typeof ContractStatus)['reviewRequired']
+  | (typeof ContractStatus)['confirmed']
 
 export type ContractStatus =
   (typeof ContractStatus)[keyof typeof ContractStatus]

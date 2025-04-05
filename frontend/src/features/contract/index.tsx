@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -15,27 +15,26 @@ import { Container, FullMain } from '@/styles/styles'
 export function ContractPage() {
   const { t } = useTranslation()
   const user = useAppSelector((state) => state.user.user)
-  const contract = useAppSelector((state) => state.contract.contract)
   const contractMembers = useAppSelector(
     (state) => state.contract.contractMembers,
   )
   const dispatch = useDispatch()
 
-  const fetchContract = async () => {
+  const fetchContract = useCallback(async () => {
     if (!user.contractId) return
     const response = await getContract(user.contractId)
     if (response.success) {
       dispatch(setContract(response.data))
     }
-    const response2 = await getContractMembers(user.contractId)
-    if (response2.success) {
-      dispatch(setContractMembers(response2.data))
+    const memberResponse = await getContractMembers(user.contractId)
+    if (memberResponse.success) {
+      dispatch(setContractMembers(memberResponse.data))
     }
-  }
+  }, [user.contractId, dispatch])
 
   useEffect(() => {
     fetchContract()
-  }, [])
+  }, [fetchContract])
 
   return (
     <Container>
