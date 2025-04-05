@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 
 import { InputBox, TitleHeaderLayout } from '@/components'
-import { useAppSelector } from '@/hooks/useAppSelector'
+import { useAppSelector } from '@/hooks'
 import { setSignUpEmail } from '@/store/slices/authSlice'
 import { ButtonVariant } from '@/types/ui'
 

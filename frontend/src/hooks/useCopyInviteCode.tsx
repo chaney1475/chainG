@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-const useCopyInviteCode = (
+export const useCopyInviteCode = (
   inviteCode: string,
   name: string,
   groupName: string,
@@ -15,5 +15,3 @@ const useCopyInviteCode = (
     navigator.clipboard.writeText(message)
   }, [inviteCode, name, groupName])
 }
-
-export default useCopyInviteCode

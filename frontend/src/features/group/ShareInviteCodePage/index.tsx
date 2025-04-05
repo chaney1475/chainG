@@ -9,8 +9,7 @@ import { TitleHeaderLayout } from '@/components'
 import { IconButton } from '@/components/IconButton'
 import { Label } from '@/components/InputBox/styles'
 import { HeaderButton } from '@/components/TopHeader/styles'
-import { useAppSelector } from '@/hooks/useAppSelector'
-import useCopyInviteCode from '@/hooks/useCopyInviteCode'
+import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { ImageContainer, ShowCenterBox } from '@/styles/styles'
 
 export function ShareInviteCodePage() {

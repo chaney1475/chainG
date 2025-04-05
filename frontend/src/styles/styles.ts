@@ -218,3 +218,14 @@ export const SlimContainer = styled.div`
   gap: 0.5rem;
   width: 100%;
 `
+export const SimpleMain = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: ${({ theme }) => theme.color.background.white};
+  gap: 1rem;
+`

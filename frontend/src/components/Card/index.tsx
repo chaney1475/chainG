@@ -1,12 +1,11 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import Image from 'next/image'
 
 import { createCard } from '@/apis/fintech'
-import { useAppSelector } from '@/hooks/useAppSelector'
+import { useAppSelector, useIsLeader } from '@/hooks'
 import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import {
   ShowCenterBox,
@@ -28,9 +27,7 @@ export function Card({ onChange }: AccountInputProps) {
   const dispatch = useDispatch()
   const cardConfirm = useAppSelector((state) => state.contract.cardConfirm)
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
-  const user = useAppSelector((state) => state.user.user)
-  const group = useAppSelector((state) => state.group.group)
-  const isLeader = group?.leaderId === user.id
+  const isLeader = useIsLeader()
   const [next, setNext] = useState(false)
   const disabled = cardConfirm || !isLeader
   const [buttonText, setButtonText] = useState(t('contract.utility.button'))

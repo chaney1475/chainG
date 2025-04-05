@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 import Image from 'next/image'
 
 import { createAccount } from '@/apis/fintech'
-import { useAppSelector } from '@/hooks/useAppSelector'
+import { useAppSelector, useIsLeader } from '@/hooks'
 import { setRentAccountConfirm, updateRent } from '@/store/slices/contractSlice'
 import {
   ShowCenterBox,
@@ -33,9 +33,8 @@ export function AccountInput({ onChange }: AccountInputProps) {
     (state) => state.contract.rentAccountConfirm,
   )
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
-  const user = useAppSelector((state) => state.user.user)
   const group = useAppSelector((state) => state.group.group)
-  const isLeader = group?.leaderId === user.id
+  const isLeader = useIsLeader()
   const [next, setNext] = useState(false)
   const disabled = rentAccountConfirm || !isLeader
 

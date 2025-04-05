@@ -5,6 +5,7 @@ export const Container = styled.div`
   padding: 1.25rem;
   display: flex;
   gap: 16px;
+  width: 50vh;
 `
 
 export const CardContainer = styled.div`
