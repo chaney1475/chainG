@@ -5,7 +5,7 @@ import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 public record CreateCardRequest(
         String accountNo
 ) {
-    public CreateCardCommand toCommand() { // del static
-        return new CreateCardCommand(accountNo);
+    public CreateCardCommand toCommand(Long userId) { // del static
+        return new CreateCardCommand(accountNo, userId);
     }
 }

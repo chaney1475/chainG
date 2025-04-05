@@ -1,5 +1,6 @@
 package com.ssafy.chaing.contract.controller;
 
+import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.contract.controller.request.CreateCardRequest;
 import com.ssafy.chaing.contract.controller.response.CreateCardResponse;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +30,10 @@ public class CardController {
     )
     @PostMapping
     public ResponseEntity<BaseResponse<CreateCardResponse>> createCard(
-            @RequestBody CreateCardRequest body) {
-        CreateCardCommand command = body.toCommand();
+            @RequestBody CreateCardRequest body,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        CreateCardCommand command = body.toCommand(principal.getId());
 
         CreateCardResponse response = CreateCardResponse.from(cardService.registerUtilityCard(command));
         return ResponseEntity.ok(
