@@ -204,6 +204,9 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                         .width-63 {
                             width: 63%;
                         }
+                        .page:last-child {
+                            page-break-after: auto !important;
+                        }
                     </style>
                 """;
 
