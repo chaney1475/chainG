@@ -2,6 +2,7 @@
   "duty": {
     "title": "당번 일정",
     "category": {
+      "CLEAN": "대문자",
       "clean": "청소",
       "string": "임시"
     },

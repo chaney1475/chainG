@@ -8,7 +8,11 @@ import { InputBox } from '@/components'
 
 import { Container, TopContainer } from './styles'
 
-export function TitleSelector() {
+interface TitleSelectorProps {
+  title: string | undefined
+}
+
+export function TitleSelector({ title }: TitleSelectorProps) {
   const { register } = useFormContext()
   const { t } = useTranslation()
 
@@ -21,6 +25,7 @@ export function TitleSelector() {
         id="title"
         placeholder="할 일을 입력해주세요"
         type="text"
+        value={title}
         {...register('title', {
           required: t('signUp.password.error.required'),
         })}
