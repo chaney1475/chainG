@@ -55,13 +55,19 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                         }
                         .subtitle,
                         .description,
-                        .section-row,
+                        .section-row {
+                            margin: 0;
+                            padding: 2px 0; 
+                        }
                         .agreement-list,
                         .page-number {
                             font-family: 'Paperlogy5', sans-serif;
                         }
                         .user-title,
-                        .total,
+                        .total {
+                            padding-top: 6px; 
+                            margin: 0;         
+                        }
                         .agreement-first-title {
                             font-family: 'Paperlogy7', sans-serif;
                             vertical-align: top;
@@ -69,16 +75,15 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                         }
                         .container {
                             width: 210mm;
-                            height: 297mm;
                             background-color: white;
                             box-sizing: border-box;
-                            padding: 50px 46px 20px 46px;
+                            padding: 30px 36px 6px 36px;
                         }
                         .page {
                             width: 100%;
-                            height: 257mm;
+                            height: 240mm;
                             position: relative;
-                            padding-bottom: 30mm;
+                            padding-bottom: 20mm; 
                             page-break-after: always;
                         }
                         .user,
@@ -173,7 +178,8 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                             font-family: 'Paperlogy7', sans-serif;
                             width: 85%;
                             text-align: right;
-                            padding-top: 40px;
+                            padding-top: 0;
+                            margin:0;
                         }
                         .page-number {
                             position: absolute;
