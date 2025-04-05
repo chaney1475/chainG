@@ -38,7 +38,10 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.useFont(() -> getClass().getResourceAsStream("/font/Paperlogy-7Bold.ttf"), "Paperlogy7");
             builder.useFont(() -> getClass().getResourceAsStream("/font/Paperlogy-5Medium.ttf"), "Paperlogy5");
-            builder.withHtmlContent(html, null);
+//            builder.withHtmlContent(html, null);
+//            builder.withHtmlContent(html, getClass().getResource("/").toExternalForm());
+            builder.withHtmlContent(html, new java.io.File("build/resources/main/").toURI().toString());
+
             builder.toStream(os);
             builder.run();
             return os.toByteArray();
@@ -165,9 +168,9 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                             height: 60px;
                             line-height: 60px;
                             border-radius: 50%;
-                            background-color: #ffeeee;
+                            background-color: transparent;
                             color: #ff0000;
-                            border: 1px solid #cc0000;
+                            border: 1px solid;
                             font-size: 12px;
                             text-align: center;
                             vertical-align: middle;
@@ -294,14 +297,15 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                 .map(info -> "<td class='signature-name'>" + getUserName(info.getUserId()) + "</td>")
                 .collect(Collectors.joining()) +
                 """
-                                </tr>
-                                <tr class='signature-stamp-row'>
-                        """ + infos.stream().map(i -> "<td class='stamp'><span>인</span></td>")
+                                    </tr>
+                                    <tr class='signature-stamp-row'>
+                        """ + infos.stream()
+                .map(i -> "<td class='stamp'><img src='logo/ChainG_Sign.png' alt='도장' style='max-width:60px; max-height:60px; display:block; margin:0 auto;'/></td>")
                 .collect(Collectors.joining()) +
                 """
-                                    </tr>
-                                </table>
-                            </div>
+                                </tr>
+                            </table>
+                        </div>
                         """;
 
         String currentDateKST = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
