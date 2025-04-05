@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
 
-import { IconButton } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { User } from '@/types/user'
+import { useRouter } from 'next/navigation'
 
 import {
   BottomContainer,
@@ -15,13 +14,21 @@ import {
   IntroduceContainer,
   LeftContainer,
   TopContainer,
+  ImageContainer,
 } from './styles'
 import { Container, TextContainer } from './styles'
 
 export function Profile() {
   const { t } = useTranslation()
+  const router = useRouter()
   const user = useAppSelector((state) => state.user)
+
   console.log(user)
+
+  const handleEdit = () => {
+    router.push('/my/edit')
+  }
+
   return (
     <Container>
       <TopContainer>
@@ -43,12 +50,14 @@ export function Profile() {
             </IntroduceBottomContainer>
           </IntroduceContainer>
         </LeftContainer>
+        <ImageContainer onClick={handleEdit}>
         <Image
           src="/icons/arrow-right.svg"
           alt="edit"
           width={24}
           height={24}
         />
+        </ImageContainer>
       </TopContainer>
       <BottomContainer>
         <TextContainer>

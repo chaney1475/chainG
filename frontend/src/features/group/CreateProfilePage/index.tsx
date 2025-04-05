@@ -153,7 +153,7 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
         {...register('nickname', {
           required: t('createProfile.nickname.error.required'),
         })}
-        placeholder={t('createGroup.groupName.placeholder')}
+        placeholder={t('createProfile.nickname.placeholder')}
         error={errors.nickname}
       />
     </TitleHeaderLayout>
