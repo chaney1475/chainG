@@ -14,7 +14,7 @@ import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
 import { Container } from '@/styles/styles'
 
-import { Account, Profile } from './component'
+import { Account, Profile } from './components'
 import { FullMain } from './styles'
 
 export function MyPage() {

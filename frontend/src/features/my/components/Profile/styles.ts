@@ -27,6 +27,14 @@ export const LeftContainer = styled.div`
   gap: 20px;
 `
 
+export const ImageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  height: 100%;
+`
+
 export const IntroduceContainer = styled.div`
   display: flex;
   flex-direction: column;

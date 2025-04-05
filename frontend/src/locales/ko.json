@@ -219,6 +219,12 @@
       "rentAccount": "월세 / 공과금 계좌",
       "liveAccount": "생활비  계좌",
       "ownerAccount": "집주인 계좌"
+    },
+    "edit": {
+      "title": "프로필 수정",
+      "header": "프로필을\n수정해주세요",
+      "description": "프로필 이미지 선택",
+      "confirm": "수정 완료"
     }
   },
   "homePage": "홈",
