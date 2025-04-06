@@ -379,7 +379,7 @@ public class PaymentServiceImpl implements PaymentService {
                 ? userPaymentRepository.findByPaymentIdAndContractMemberId(rentPayment.getId(), userId).orElse(null)
                 : null;
 
-        if (rentUserPayment == null && rentUserPayment.getStatus() == PaymentStatus.FAILED) {
+        if (rentUserPayment != null && rentUserPayment.getStatus() == PaymentStatus.FAILED) {
             userRentPaid = false;
         }
 
