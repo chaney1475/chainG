@@ -211,7 +211,8 @@ public class PaymentServiceImpl implements PaymentService {
                         (long) payment.getMonth(),
                         user.getName() + "의 계좌: " + contractUser.getAccountNo().substring(0, 4),
                         contractUser.getAccountNo(),
-                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
+                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract()
+                                .getRentAccountNo().substring(0, 4),
                         payment.getContract().getRentAccountNo(),
                         command.getBalance(),
                         payment.getStatus() == PaymentStatus.COLLECTED,
@@ -353,7 +354,12 @@ public class PaymentServiceImpl implements PaymentService {
             return new PaymentOverviewDTO(group.getName(), false, false, false, false);
         }
 
-        int dueDate = contract.getDueDate();
+        Integer dueDate = contract.getDueDate();
+
+        if (dueDate == null) {
+            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+        }
+
         int targetMonth = calculateTargetMonthByDueDate(dueDate);
 
         PaymentEntity rentPayment = paymentRepository
