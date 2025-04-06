@@ -1,9 +1,5 @@
-import { BottomNavigation } from '@/components';
-import { Container, HeaderContainer , SimpleMain} from '@/styles/styles'
-
-
-
-
+import { BottomNavigation } from '@/components'
+import { Container, HeaderContainer, SimpleMain } from '@/styles/styles'
 
 export function HomeLayout({
   header,

@@ -243,6 +243,12 @@
       "title": "코드 복사",
       "label": "초대 코드",
       "description": "같이 살 룸메들을\nCha:nG에 초대해주세요"
+    },
+    "issues": {
+      "all": "전체",
+      "duty": "당번",
+      "rent": "월세",
+      "utility": "공과금"
     }
   },
   "goToHome": "홈으로",
@@ -385,7 +391,7 @@
         "title": "서약서 확인",
         "button": "서약서 수정하기",
         "cardButton": "서약서 확인하기",
-        "description": "서약서를 확인해보세요",
+        "description": "룸메의 승인을 기다리는 서약서를 확인해보세요",
         "label": "룸메의 승인을 기다리는 서약서",
         "status": "대기중"
       },
@@ -425,5 +431,46 @@
   "fintech": {
     "bankName": "한국",
     "cardName": "SSAFY Cha:nG Life 카드"
+  },
+  "livingBudget": {
+    "deposit": {
+      "titile": "생활비",
+      "header": "개인 계좌에서\n생활비 계좌로 돈 채우기",
+      "label": "채우기",
+      "myAccountNo": {
+        "label": "생활비 계좌를 채우기 위한 내 계좌를 입력해주세요",
+        "placeholder": "계좌 번호를 입력해주세요",
+        "error": {
+          "required": "계좌 번호를 입력해주세요",
+          "same": "같은 계좌끼리는 채울 수 없어요"
+        }
+      },
+      "balance": {
+        "label": "생활비 계좌로 보낼 금액을 입력해주세요",
+        "placeholder": "금액을 입력해주세요",
+        "error": {
+          "required": "금액을 입력해주세요"
+        }
+      }
+    },
+    "withdraw": {
+      "title": "생활비 계좌에서\n개인 계좌로 돈 꺼내기",
+      "myAccountNo": {
+        "label": "생활비 계좌에서 꺼내기 위한 내 계좌를 입력해주세요",
+        "placeholder": "계좌 번호를 입력해주세요",
+        "error": {
+          "required": "계좌 번호를 입력해주세요",
+          "same": "같은 계좌끼리는 꺼낼 수 없어요"
+        }
+      },
+      "balance": {
+        "label": "생활비 계좌에서 꺼낼 금액을 입력해주세요",
+        "placeholder": "금액을 입력해주세요",
+        "error": {
+          "required": "금액을 입력해주세요",
+          "min": "생활비 계좌에 있는 금액보다 많은 금액을 입력했어요."
+        }
+      }
+    }
   }
 }

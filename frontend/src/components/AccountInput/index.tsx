@@ -14,6 +14,8 @@ import {
   ValidationMessage,
 } from '@/styles/styles'
 
+import { AccountText } from './styles'
+
 interface AccountInputProps {
   value?: string
   onChange?: (value: string) => void
@@ -32,6 +34,7 @@ export function AccountInput({ onChange }: AccountInputProps) {
   const rentAccountConfirm = useAppSelector(
     (state) => state.contract.rentAccountConfirm,
   )
+
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
   const group = useAppSelector((state) => state.group.group)
   const isLeader = useIsLeader()
@@ -73,12 +76,18 @@ export function AccountInput({ onChange }: AccountInputProps) {
     setButtonText(content)
   }, [rentAccountConfirm, rent.rentAccountNo, leaderName, t])
 
+  useEffect(() => {
+    if (rent.rentAccountNo) {
+      dispatch(setRentAccountConfirm(true))
+    }
+  }, [rent.rentAccountNo])
+
   return (
     <Container>
       <ShowCenterBox
         onClick={() => setNext(true)}
         isDisabled={disabled}>
-        {buttonText}
+        <AccountText>{buttonText}</AccountText>
       </ShowCenterBox>
       {!isLeader && !rentAccountConfirm && (
         <ValidationContainer>

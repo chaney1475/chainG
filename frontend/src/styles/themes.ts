@@ -152,7 +152,7 @@ const theme: CustomTheme = {
         fontSize: '0.875rem',
       },
       button: {
-        fontFamily: 'var(--font-paperlogy-medium)',
+        fontFamily: 'var(--font-paperlogy-regular)',
         fontSize: '1.25rem',
       },
       heading: {

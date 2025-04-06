@@ -17,6 +17,8 @@ import {
 import { HeaderButton } from '@/components/TopHeader/styles'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import {
+  initContractRequest,
+  setContractRequest,
   updateContractRequestField,
   updateRent,
   validateContractRequest,
@@ -64,6 +66,7 @@ export function ContractCreatePage() {
   const dispatch = useDispatch()
   const router = useRouter()
   const group = useAppSelector((state) => state.group.group)
+  const contract = useAppSelector((state) => state.contract.contract)
   const [openModal, setOpenModal] = useState(false)
   const contractRequest = useAppSelector(
     (state) => state.contract.contractRequest,
@@ -81,6 +84,30 @@ export function ContractCreatePage() {
     handleBack,
     isLastStep,
   } = useContractSteps()
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => {
+    const createContract = async () => {
+      if (isMounted) return
+      console.log('createContract', user)
+      if (!user.contractId || !user.groupId) {
+        console.log('createContract', user)
+        const response = await createEmptyContract({
+          groupId: user.groupId as number,
+        })
+        console.log('createContract response', response)
+        if (response.success) {
+          dispatch(setContractId(response.data.id))
+          dispatch(initContractRequest(group.members))
+        }
+      } else {
+        //값이 있는 거자나
+        console.log('컨트랙터', contract)
+        dispatch(setContractRequest(contract))
+      }
+      setIsMounted(true)
+    }
+    createContract()
+  }, [contractRequest])
 
   const isAfter = (item: string) => {
     return item === 'rentAccountNo'
@@ -90,20 +117,6 @@ export function ContractCreatePage() {
         : false
   }
   const user = useAppSelector((state) => state.user.user)
-  useEffect(() => {
-    const createContract = async () => {
-      if (!user.contractId) {
-        console.log('createContract', user)
-        const response = await createEmptyContract({
-          groupId: user.groupId as number,
-        })
-        if (response.success) {
-          dispatch(setContractId(response.data.id))
-        }
-      }
-    }
-    createContract()
-  }, [contractRequest])
 
   const handleChange = (field: string, value: FieldValue) => {
     if (field === 'rent') {

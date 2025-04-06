@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: 'https://chaing.site/api/v1/:path*',
+      },
+    ]
+  },
 }
 
 const withPWA = require('next-pwa')({

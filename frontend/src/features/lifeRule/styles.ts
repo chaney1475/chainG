@@ -41,7 +41,6 @@ export const EmptyContainer = styled.div`
   height: 100%;
   justify-content: center;
   align-items: center;
-  border: 1px solid red;
 `
 
 export const TitleContainer = styled.div`
@@ -53,5 +52,4 @@ export const Description = styled.p`
   color: ${({ theme }) => theme.color.text.disabled};
   ${({ theme }) => theme.typography.styles.description};
   text-align: center;
-  border: 1px solid blue;
 `

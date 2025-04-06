@@ -43,7 +43,7 @@ export const SwitchButton = styled.div<{ step: number }>`
   left: ${({ step }) => `calc(${0.5 + step * 6}rem)`};
   width: 5rem;
   height: 2.25rem;
-  background-color: ${({ theme }) => theme.color.text.low};
+  background-color: ${({ theme }) => theme.color.primary};
   border-radius: 1.5rem;
   transition: left 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);

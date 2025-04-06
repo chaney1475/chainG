@@ -17,6 +17,7 @@ import { setGroup } from '@/store/slices/groupSlice'
 import { setHomeOverview } from '@/store/slices/userSlice'
 import {
   Container,
+  PaddingContainer,
   Title,
   TitleContainer,
   UserTileContainer,
@@ -75,7 +76,14 @@ export function HomePage() {
       case ContractStatus.confirmed:
         return (
           <Description>
-            함께한지<Title>333</Title>일째
+            함께한지
+            <Title>
+              {Math.floor(
+                (new Date().getTime() - new Date(contract.updatedAt).getTime()) /
+                  (1000 * 60 * 60 * 24),
+              ) + 1}
+            </Title>
+            일째
           </Description>
         )
       case ContractStatus.pending:
@@ -110,6 +118,7 @@ export function HomePage() {
       const response = await getContract(user.contractId)
       if (response.success) {
         dispatch(setContract(response.data))
+        console.log('fetchContract 호출됨', response.data)
       }
     }
   }, [user.contractId, dispatch])
@@ -119,7 +128,6 @@ export function HomePage() {
   }, [user.contractId, fetchContract])
 
   const fetchHomeOverView = useCallback(async () => {
-    console.log('fetchHomeOverView 호출됨')
     if (!user.groupId) return
     const response = await getHomeOverview()
     if (response.success) {
@@ -163,11 +171,18 @@ export function HomePage() {
       setStatus(ContractStatus.shouldInvite)
     } else if (!user.contractId) {
       setStatus(ContractStatus.none)
+    } else if (contract.status === ContractStatus.pending) {
+      const isApproved =
+        contractMembers.find((item) => item.id === user.id)?.status ===
+        ContractStatus.confirmed
+      setStatus(
+        isApproved ? ContractStatus.isContractApproved : ContractStatus.pending,
+      )
     } else {
       setStatus(contract.status)
     }
     fetchHomeOverView()
-  }, [user, fetchHomeOverView, shouldInvite, contract.status])
+  }, [user, shouldInvite, contract.status, contractMembers])
 
   const fetchGroup = useCallback(async () => {
     if (user.groupId == null || user.groupId === 0) return
@@ -251,8 +266,8 @@ export function HomePage() {
         {
           url: '/contract/detail',
           image: '/images/group/group-create.svg',
-          title: t('contract.detail.is_contract_approved.button'),
-          description: t('contract.detail.is_contract_approved.cardButton'),
+          title: t('contract.detail.is_contract_approved.cardButton'),
+          description: t('contract.detail.is_contract_approved.description'),
         },
       ],
     },
@@ -343,13 +358,13 @@ export function HomePage() {
       {status == ContractStatus.confirmed ? (
         <ConfirmedHomeContents />
       ) : (
-        <>
+        <PaddingContainer>
           <Title>{t('contract.title')}</Title>
           <CardButton
             cardItems={
               cardItems.find((item) => item.key === status)?.item ?? []
             }></CardButton>
-        </>
+        </PaddingContainer>
       )}
     </HomeLayout>
   )

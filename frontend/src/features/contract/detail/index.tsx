@@ -102,8 +102,13 @@ export function ContractDetail() {
   }
 
   const confirmModal = async () => {
+    console.log('confirmModal status', status)
     if (status === ContractStatus.pending) {
       await handleSubmit(approveContractWithAccountNo)()
+    } else if (status === ContractStatus.isContractApproved) {
+      router.push('/contract/create')
+      
+      // await handleSubmit(modifyContract)()
     }
   }
   const [shouldConfirm, setShouldConfirm] = useState(false)
@@ -153,14 +158,20 @@ export function ContractDetail() {
     switch (status) {
       case ContractStatus.none:
         console.log(t('contract.detail.none.title'))
+        router.push('/contract/create')
         break
       case ContractStatus.draft:
         console.log(t('contract.detail.draft.title'))
         await updateContractRequest()
+        setShouldConfirm(false)
         break
       case ContractStatus.isContractApproved:
         console.log(t('contract.detail.is_contract_approved.title'))
-        router.push('/contract')
+        setModalTitle(t('contract.modify.title'))
+        setModalDescription(t('contract.modify.description'))
+        setModalConfirmText(t('contract.modify.confirmText'))
+        setOpenModal(true)
+        // router.push('/contract/create')
         break
       case ContractStatus.pending:
         setModalTitle(t('contract.approve.title'))
@@ -196,7 +207,7 @@ export function ContractDetail() {
             />
           </ImageContainer>
           <Title>{t(label)}</Title>
-          <Label>{t(description)}</Label>
+          <Label>{t(description, { value: group.name })}</Label>
         </HeaderContainer>
         {user.contractId && rentUserList && (
           <ContractViewer

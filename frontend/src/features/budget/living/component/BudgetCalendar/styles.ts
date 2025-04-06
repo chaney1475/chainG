@@ -1,26 +1,26 @@
 import styled from '@emotion/styled'
 
-// Styled Components
 export const Container = styled.div`
-  width: 100%;
   ${({ theme }) => theme.typography.styles.description} !important;
-  margin: 0 auto;
+  background-color: ${({ theme }) => theme.color.background.white};
 `
 
 export const MonthSummary = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #eee;
+  border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 16px 20px;
+  margin: 20px;
 `
 
 export const MonthNavigation = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-right: 30px;
+  border-right: 1px solid ${({ theme }) => theme.color.border};
 `
 
 export const NavArrow = styled.span`
@@ -30,31 +30,35 @@ export const NavArrow = styled.span`
 `
 
 export const CurrentMonth = styled.span`
-  font-size: 16px;
-  font-weight: 500;
+  ${({ theme }) => theme.typography.styles.title};
+  color: ${({ theme }) => theme.color.text.low};
+  white-space: nowrap;
 `
 
 export const ExpenseSummary = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 30px;
+  width: 100%;
 `
 
 export const ExpenseLabel = styled.div`
-  font-size: 12px;
-  color: #666;
+  color: ${({ theme }) => theme.color.text.disabled};
+  ${({ theme }) => theme.typography.styles.default};
+  padding-right: 0.5rem;
 `
 
 export const ExpenseAmount = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
+  color: ${({ theme }) => theme.color.text.low};
+  ${({ theme }) => theme.typography.styles.topHeader};
 `
 
 export const StyledFullCalendar = styled.div`
   .fc {
-    width: 100%;
-    font-family: inherit;
+    font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
     border: none;
     background: none;
   }
@@ -73,17 +77,25 @@ export const StyledFullCalendar = styled.div`
     border-right-width: 0;
   }
 
+  .fc .fc-daygrid-day-events {
+    max-height: 1.5rem;
+    min-height: 0.5rem;
+    overflow: hidden;
+  }
+  .fc .fc-h-event {
+    border: none;
+    background-color: transparent;
+  }
   .fc .fc-scrollgrid-section > * {
     border-bottom-width: 0;
   }
 
   .fc .fc-col-header-cell {
-    padding: 1rem;
+    padding: 1rem 0;
   }
 
   .fc .fc-col-header-cell-cushion {
-    font-size: 14px;
-    font-weight: 500;
+    font-family: ${({ theme }) => theme.typography.fonts.paperlogySemiBold};
     color: #666;
     width: 50px;
     display: inline-block;
@@ -108,13 +120,7 @@ export const StyledFullCalendar = styled.div`
 
   .fc .fc-daygrid-day.fc-day-today {
     background-color: transparent;
-  }
-
-  .fc .fc-daygrid-day.fc-day-today .day-number {
-    background-color: #0066cc;
-    color: white !important;
-    font-weight: 600;
-    border-radius: 50%;
+    color: ${({ theme }) => theme.color.primary} !important;
   }
 
   /* 이전/다음 달 날짜 스타일 */
@@ -124,7 +130,10 @@ export const StyledFullCalendar = styled.div`
 
   /* 날짜 셀 크기 조정 */
   .fc-daygrid-day-frame {
-    min-height: 50px;
+    text-align: center;
+    > div {
+      justify-content: center;
+    }
   }
 
   .fc .fc-daygrid-body-balanced .fc-daygrid-day-events {
@@ -150,18 +159,17 @@ export const DayNumber = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  color: #333;
+  ${({ theme }) => theme.typography.styles.name}
+  color: ${({ theme }) => theme.color.text.regular};
   margin-bottom: 5px;
 `
 
-export const EventContent = styled.div`
-  padding: 2px 0;
-  text-align: center;
-`
-
 export const EventAmount = styled.div`
-  font-size: 12px;
-  color: #e74c3c;
-  font-weight: 500;
+  font-size: 0.5625rem;
+  font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
+  color: ${({ theme }) => theme.color.text.regular};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
 `

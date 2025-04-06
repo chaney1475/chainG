@@ -8,18 +8,13 @@ export const Container = styled.div`
   gap: 8px;
 `
 
-export const SwitchContainer = styled.div<{ checked: boolean }>`
+export const SwitchContainer = styled.div`
   position: relative;
-  width: 120px;
-  height: 38px;
   border-radius: 16px;
-  background-color: ${({ theme }) => theme.color.border};
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  margin: auto;
+  justify-content: center;
 `
 
 export const SwitchText = styled.span<{ checked: boolean }>`
@@ -32,26 +27,28 @@ export const SwitchText = styled.span<{ checked: boolean }>`
 
 export const StatusLabelContainer = styled.div<{ variant: ContractStatus }>`
   position: absolute;
-  top: 3px;
-  width: 57px;
-  height: 32px;
+  font-size: 10px;
+  padding: 2px 3px;
+  color: ${({ theme }) => theme.color.background.white};
+  font-family: ${({ theme }) => theme.typography.fonts.paperlogySemiBold};
   ${({ variant, theme }) => {
     switch (variant) {
       case ContractStatus.pending:
         return `
-          background-color: ${theme.color.primary};
-          color: white;
+          background-color: #9E6AFF;
+          
         `
       case ContractStatus.confirmed:
         return `
-          background-color: ${theme.color.background.create};
-          color: ${theme.color.background.white};
-          cursor: not-allowed;
+          background-color: #00D80B;
+        `
+      case ContractStatus.reviewRequired:
+        return `
+          background-color: ${theme.color.text.distructive};
         `
       case ContractStatus.shouldInvite:
         return `
-          background-color: ${theme.color.secondary};
-          color: ${theme.color.text.low};
+          background-color: ${theme.color.text.low};
         `
       default:
         return ''

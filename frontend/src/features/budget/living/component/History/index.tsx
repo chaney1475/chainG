@@ -1,101 +1,136 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
 
-import { Button } from '@headlessui/react'
+import { useRouter } from 'next/navigation'
 
-import { getAccountPaymentHistory } from '@/apis/fintech'
-import { useFintechTime } from '@/hooks'
-import { useAppSelector } from '@/hooks/useAppSelector'
-import { setLivingAccountPaymentHistory } from '@/store/slices/livingBudgetSlice'
+import { ConfirmButton } from '@/components/ConfirmButton'
+import { DefaultLabel } from '@/features/contract/detail/component/ContractViewer/styles'
+import { useFormattedDuration } from '@/hooks'
 import {
-  AccountPaymentHistory,
-  AccountPaymentHistoryRequest,
-  AccountPaymentHistoryResponse,
-  FintechResponseError,
-} from '@/types/fintech'
-import { formatMoney } from '@/utils/format'
+  Description,
+  HeaderTitle,
+  PaddingContainer,
+  SlimContainer,
+  TitleContainer,
+} from '@/styles/styles'
+import { FormattedAccountPaymentHistory } from '@/types/fintech'
+import { ButtonVariant } from '@/types/ui'
 
-export function History() {
-  const { t } = useTranslation()
-  const dispatch = useDispatch()
-  const livingAccountNo = useAppSelector(
-    (state) => state.livingBudget.livingAccountNo,
-  )
-  const livingAccountPaymentHistory = useAppSelector(
-    (state) => state.livingBudget.livingAccountPaymentHistory,
-  )
-  const [transmissionDate, transmissionTime, institutionTransactionUniqueNo] =
-    useFintechTime(new Date())
+import {
+  AccountHistoryContainer,
+  AccountHistoryContent,
+  ButtonContainer,
+  Container,
+  ContentContainer,
+  DateContainer,
+  EmptyContainer,
+  SelectButton,
+  SelectContainer,
+} from './styles'
 
-  const [formattedHistory, setFormattedHistory] = useState<
-    AccountPaymentHistory[]
-  >([])
+export function History({
+  paymentHistory,
+  startDate,
+  endDate,
+}: {
+  paymentHistory: FormattedAccountPaymentHistory[]
+  startDate: string
+  endDate: string
+}) {
+  type Filter = 'ALL' | '1' | '2'
+  const [selectedFilter, setSelectedFilter] = useState<Filter>('ALL')
 
-  useEffect(() => {
-    let transactionDate = ''
-    const paymentHistory = livingAccountPaymentHistory.map((item) => {
-      let showDate = ''
-      if (item.transactionDate !== transactionDate) {
-        showDate = item.transactionDate
-        transactionDate = item.transactionDate
-      }
-      return {
-        ...item,
-        transactionBalance: formatMoney(item.transactionBalance),
-        transactionAfterBalance: formatMoney(item.transactionAfterBalance),
-        transactionDate: showDate,
-      }
-    })
-    setFormattedHistory(paymentHistory)
-  }, [livingAccountPaymentHistory])
-  const handleClick = async () => {
-    const Request: AccountPaymentHistoryRequest = {
-      Header: {
-        apiName: 'inquireTransactionHistoryList',
-        transmissionDate: transmissionDate,
-        transmissionTime: transmissionTime,
-        institutionCode: '00100',
-        fintechAppNo: '001',
-        apiServiceCode: 'inquireTransactionHistoryList',
-        institutionTransactionUniqueNo: institutionTransactionUniqueNo,
-        apiKey: 'a57e58879de94373856c981706ca1056',
-        userKey: 'ed638cf5-675b-4e37-91c5-1ea6f5a92f67',
-      },
-      accountNo: livingAccountNo,
-      startDate: '20250301',
-      endDate: transmissionDate,
-      transactionType: 'A',
-      orderByType: 'ASC',
-    }
-    const response: AccountPaymentHistoryResponse | FintechResponseError =
-      await getAccountPaymentHistory(Request)
-    if (
-      'Header' in response &&
-      'REC' in response &&
-      response.Header?.responseCode === 'H0000'
-    ) {
-      dispatch(setLivingAccountPaymentHistory(response.REC.list))
-    }
+  const selectItem: { label: string; value: Filter }[] = [
+    {
+      label: '전체',
+      value: 'ALL',
+    },
+    {
+      label: '입금',
+      value: '1',
+    },
+    {
+      label: '출금',
+      value: '2',
+    },
+  ]
+  const filteredHistory = useMemo(() => {
+    if (selectedFilter === 'ALL') return paymentHistory
+    return paymentHistory.filter(
+      (item) => item.transactionType === selectedFilter,
+    )
+  }, [paymentHistory, selectedFilter])
+
+  const formatDate = (date: string) => {
+    const month = Number(date.slice(5, 7))
+    const day = Number(date.slice(8, 10))
+    return `${month}.${day}`
   }
+
+  const duration = useFormattedDuration(startDate, endDate)
+  const router = useRouter()
   return (
-    <div>
-      <Button onClick={handleClick}>
-        {t('contract.rentAccountNo.button')}
-      </Button>
-      <div>
-        {formattedHistory &&
-          formattedHistory.map((item) => (
-            <div key={item.transactionUniqueNo}>
-              {item.transactionDate}: {item.transactionTime} -
-              {formatMoney(item.transactionAfterBalance)}-
-              {formatMoney(item.transactionBalance)}-{item.transactionMemo}-
-              {item.transactionTypeName}
-            </div>
+    <Container>
+      <ButtonContainer>
+        <ConfirmButton
+          onClick={() => {
+            router.push('/budget/living/deposit')
+          }}
+          variant={ButtonVariant.prev}
+          label="채우기"
+        />
+        <ConfirmButton
+          onClick={() => {
+            router.push('/budget/living/withdraw')
+          }}
+          variant={ButtonVariant.next}
+          label="꺼내기"
+        />
+      </ButtonContainer>
+      <ContentContainer>
+        <DateContainer>{duration}</DateContainer>
+
+        <SelectContainer>
+          {selectItem.map((item) => (
+            <SelectButton
+              key={item.value}
+              isSelected={selectedFilter === item.value}
+              onClick={() => setSelectedFilter(item.value)}>
+              {item.label}
+            </SelectButton>
           ))}
-      </div>
-    </div>
+        </SelectContainer>
+        <PaddingContainer>
+          {filteredHistory &&
+            filteredHistory.map((item) => (
+              <SlimContainer key={item.transactionUniqueNo}>
+                <AccountHistoryContainer>
+                  <span>{item.showDate && formatDate(item.date)}</span>
+                  <AccountHistoryContent>
+                    <TitleContainer>
+                      <HeaderTitle>
+                        {item.transactionMemo + item.transactionSummary}
+                      </HeaderTitle>
+                      <DefaultLabel>{item.title}</DefaultLabel>
+                    </TitleContainer>
+                    <TitleContainer>
+                      <Description>{item.time}</Description>
+                      <Description>{item.transactionAfterBalance}</Description>
+                    </TitleContainer>
+                  </AccountHistoryContent>
+                </AccountHistoryContainer>
+              </SlimContainer>
+            ))}
+        </PaddingContainer>
+        {filteredHistory.length === 0 && (
+          <EmptyContainer>
+            <HeaderTitle>해당 계좌 거래 내역이 없어요</HeaderTitle>
+            <Description>범위를 변경해보세요</Description>
+          </EmptyContainer>
+        )}
+      </ContentContainer>
+    </Container>
   )
 }

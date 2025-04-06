@@ -26,6 +26,9 @@ export function Card({ onChange }: AccountInputProps) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const cardConfirm = useAppSelector((state) => state.contract.cardConfirm)
+  const utility = useAppSelector(
+    (state) => state.contract.contractRequest.utility,
+  )
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
   const isLeader = useIsLeader()
   const [next, setNext] = useState(false)
@@ -50,6 +53,11 @@ export function Card({ onChange }: AccountInputProps) {
       dispatch(setCardConfirm(true))
     }
   }
+  useEffect(() => {
+    if (utility.cardId) {
+      dispatch(setCardConfirm(true))
+    }
+  }, [utility.cardId])
   useEffect(() => {
     const content = cardConfirm
       ? t('fintech.bankName') + ' ' + t('fintech.cardName')

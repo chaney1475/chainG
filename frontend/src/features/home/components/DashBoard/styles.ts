@@ -38,6 +38,7 @@ export const Description = styled.div`
 
 export const Category = styled.div`
   ${({ theme }) => theme.typography.styles.cardDescription}
+  color: ${({ theme }) => theme.color.text.disabled};
 `
 export const CardContainer = styled.div`
   display: flex;
@@ -46,21 +47,19 @@ export const CardContainer = styled.div`
 `
 
 export const StyledButton = styled.button<{ isSelected: boolean }>`
-  padding: 4px;
-  margin: 4px 0;
+  padding: 0.5rem 1rem;
   border-radius: 16px;
   border: none;
   text-align: center;
 
-  ${({ theme }) => theme.typography.styles.button};
+  ${({ theme }) => theme.typography.styles.description};
   cursor: pointer;
   outline: none;
 
   &:focus {
-    outline: 1px solid ${({ theme }) => theme.color.primary};
-    outline-offset: 1px;
     border-color: ${({ theme }) => theme.color.primary};
     outline: none;
+    transition: opacity 0.3s ease;
     box-shadow: 0 0 0 2px ${({ theme }) => theme.color.primary}33;
   }
   &:hover {
@@ -74,13 +73,14 @@ export const StyledButton = styled.button<{ isSelected: boolean }>`
       case true:
         return `
           background-color: ${theme.color.primary};
+          border: 1px solid ${theme.color.primary};
           color: white;
         `
       case false:
         return `
-          background-color: ${theme.color.border};
-          color: ${theme.color.text.disabled};
-          cursor: not-allowed;
+          background-color: ${theme.color.background.white};
+          border: 1px solid ${theme.color.primary};
+          color: ${theme.color.text.regular};
         `
       default:
         return ''
@@ -91,31 +91,72 @@ export const IssueContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
   position: relative;
   margin: 1rem;
   border: none;
+`
+export const ImageContainer = styled.div`
+  flex: 0;
+  width: 144px;
+  display: flex;
+  justify-content: center;
   > img {
     position: absolute;
-    top: 12px;
-    left: 0;
+    top: -16px;
+    justify-content: center;
     z-index: 1;
-    width: 100%;
-    height: 30px;
+    height: 40px;
+    width: 40px;
   }
 `
-
 export const IssueContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 100%;
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 1rem;
   border-radius: 16px;
+  padding-top: 2rem;
   background-color: ${({ theme }) => theme.color.background.white};
   box-shadow: 0px 0px 20px 0px rgba(118, 118, 118, 0.25);
+  width: 144px;
+  height: 120px;
+`
+
+export const ScrollContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  width: calc(100vw - 40px);
+  overflow-y: hidden;
+  height: 200px;
+  justify-content: flex-start;
+`
+export const IssueTitle = styled.div`
+  ${({ theme }) => theme.typography.styles.topHeader};
+  color: ${({ theme }) => theme.color.text.regular};
+  width: 100%;
+  opacity: 0;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1rem;
+  transform: translateY(20px);
+  animation: fadeInUp 0.2s ease-out forwards;
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
 `

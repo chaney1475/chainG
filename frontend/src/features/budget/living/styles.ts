@@ -1,8 +1,7 @@
 import styled from '@emotion/styled'
 
 export const Account = styled.div`
-  background-color: ${({ theme }) => theme.color.background.account};
-  padding: 20px;
+  padding: 0 20px;
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
@@ -35,4 +34,18 @@ export const AccountInfo = styled.div`
     color: ${({ theme }) => theme.color.text.regular};
     width: 100%;
   }
+`
+export const CalendarContainer = styled.div`
+  padding: 8px 0 50 0;
+  margin: 0px 0px 50px 0px;
+  background: linear-gradient(
+    to bottom,
+    ${({ theme }) => theme.color.secondary},
+    ${({ theme }) => theme.color.background.white}
+  );
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-top: 8px solid ${({ theme }) => theme.color.secondary};
 `

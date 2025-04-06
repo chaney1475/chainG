@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -8,6 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { getGroupByInviteCode } from '@/apis/group'
 import { InputBox, TitleHeaderLayout } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
 import {
   setGroup,
   setInviteCode,
@@ -25,7 +27,7 @@ export function InviteCodePage() {
   const dispatch = useDispatch()
   //params에서 inviteCode 가져오기
   const searchParams = useSearchParams()
-  const inviteCode = searchParams.get('inviteCode') || ''
+  const defaultInviteCode = searchParams.get('inviteCode') || ''
   const {
     register,
     handleSubmit,
@@ -35,10 +37,18 @@ export function InviteCodePage() {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      inviteCode: inviteCode,
+      inviteCode: defaultInviteCode,
     },
   })
-
+  const accessToken = useAppSelector(
+    (state) => state.auth.loginToken.accessToken,
+  )
+  useEffect(() => {
+    if (!accessToken) {
+      router.push('/auth/login')
+      return
+    }
+  }, [accessToken, router])
   const currentInviteCode = watch('inviteCode')
 
   const onSubmit = async (data: FormValues) => {
@@ -74,6 +84,7 @@ export function InviteCodePage() {
         label={t('inviteCode.label')}
         placeholder={t('join.inviteCode.placeholder')}
         error={errors.inviteCode}
+        value={currentInviteCode}
       />
     </TitleHeaderLayout>
   )

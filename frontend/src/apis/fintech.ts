@@ -11,7 +11,7 @@ import {
 } from '@/types/fintech'
 import { handleFintechError } from '@/utils/error/handleFintechError'
 
-import { getRequest, postBooleanRequest, postRequest } from './api'
+import { getRequest, postRequest } from './api'
 
 const fintechApi = axios.create({
   baseURL: `https://finopenapi.ssafy.io/ssafy/api/v1/edu`,
@@ -100,9 +100,19 @@ export const deleteFintechRequest = async <T>(
   }
 }
 
-//transfer 생활비 송금
-export const transfer = async (params: TransferRequest) =>
-  await postBooleanRequest('/fintech/transfer', params)
+export const transfer = async <TransferResponse>(
+  data: TransferRequest,
+): Promise<TransferResponse | FintechResponseError> => {
+  try {
+    const response = await fintechApi.post<TransferResponse>(
+      'demandDeposit/updateDemandDepositAccountTransfer',
+      data,
+    )
+    return response.data
+  } catch (error) {
+    return error as FintechResponseError
+  }
+}
 
 //createAccount 계좌 생성
 export const createAccount = async () =>
