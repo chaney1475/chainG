@@ -79,17 +79,16 @@ export function BudgetLivingCreatePage() {
   return (
     <TitleHeaderLayout
       title="생활비"
-      label="생활비 송금"
+      label="완료"
       onClick={handleNext}
       buttonVariant={ButtonVariant.next}>
-      <div>생활비 송금</div>
       <Container>
         <ShowCenterBox
           onClick={() => setNext(true)}
           isDisabled={disabled}>
           {buttonText}
-        </ShowCenterBox>{' '}
-        {group.leaderId}
+        </ShowCenterBox>
+
         {!isLeader && !livingAccountNo && (
           <ValidationContainer>
             <Image
