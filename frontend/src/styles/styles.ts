@@ -82,16 +82,17 @@ export const SwitcherContainer = styled.div`
 
 export const ShowBox = styled.div<{ isDisabled?: boolean }>`
   display: flex;
+  justify-content: center;
   gap: 1rem;
   width: 100%;
-  padding: 1rem;
-  background-color: ${({ isDisabled, theme }) =>
-    isDisabled ? theme.color.background.white : theme.color.secondary};
-  ${({ theme }) => theme.typography.styles.button};
-  border: ${({ isDisabled, theme }) =>
-    isDisabled ? `1px solid ${theme.color.border}` : 'none'};
+  padding: 1rem;  
+  overflow: hidden;  
   border-radius: 16px;
-  overflow: hidden;
+  ${({ theme }) => theme.typography.styles.accountAndCardNum};
+  color: ${({ theme }) => theme.color.text.low};
+  border: 1px solid ${({ theme }) => theme.color.border};
+
+
   transition: all 0.2s ease-in-out;
   cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
 

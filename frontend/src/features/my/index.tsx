@@ -12,10 +12,9 @@ import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/components/TopHeader'
 import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
-import { Container } from '@/styles/styles'
 
 import { Account, Profile } from './components'
-import { FullMain } from './styles'
+import { Container, FullMain } from './styles'
 
 export function MyPage() {
   const dispatch = useDispatch()
@@ -39,8 +38,8 @@ export function MyPage() {
   const handleLogout = async () => {
     const success = await logout()
     if (success) {
-      dispatch(resetStore())
       router.push('/auth/login')
+      dispatch(resetStore())
     }
   }
 

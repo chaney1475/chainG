@@ -10,3 +10,16 @@ export const FullMain = styled.div`
   background-color: ${({ theme }) => theme.color.secondary};
   overflow-y: auto;
 `
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  height: 100dvh;
+  width: 100%;
+  @media (min-width: 768px) {
+    width: 50%;
+    justify-content: center;
+    margin: 0 auto;
+  }
+`

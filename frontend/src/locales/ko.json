@@ -1,4 +1,13 @@
 {
+  "pledge": {
+    "status": {
+      "complete": "완료",
+      "debt": "미납",
+      "expected": "예정"
+    }
+    
+  },
+
   "duty": {
     "title": "당번 일정",
     "category": {
@@ -229,7 +238,7 @@
     }
   },
   "homePage": "홈",
-  "contractPage": "서약관리",
+  "pledgePage": "서약관리",
   "myPage": "마이",
   "notice": {
     "title": "알림"

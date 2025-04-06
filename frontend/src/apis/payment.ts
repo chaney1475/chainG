@@ -1,6 +1,7 @@
 import {
   DepositToRentAccountRequest,
   RetrieveRentResponse,
+  RetrieveUtilityResponse,
   TransferToOwnerRequest,
 } from '@/types/budget'
 
@@ -17,7 +18,7 @@ export const depositToRentAccount = async (
 
 //retrieveUtility 공과금 월별 통계 조회
 export const retrieveUtility = async (month: string) =>
-  await getRequest<RetrieveRentResponse>(`/payment/utility?month=${month}`)
+  await getRequest<RetrieveUtilityResponse>(`/payment/utility?month=${month}`)
 
 //retrieveRent 월세 월별 통계 조회
 export const retrieveRent = async (month: string) =>

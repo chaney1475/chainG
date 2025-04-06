@@ -9,7 +9,6 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { createDuty, modifyDuty } from '@/apis/duty'
 import { BottomSheet, TitleHeaderLayout } from '@/components'
-// import { userList } from '@/constants/userList'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { clearCreateDayOfWeek, setCompleteDayOfWeek } from '@/store/slices/dutySlice'
 import { DutyRequest } from '@/types/duty'
@@ -21,6 +20,7 @@ import { TimeSelector } from './components/TimeSelector'
 import { TitleSelector } from './components/TitleSelector'
 import { WeekSelector } from './components/WeekSelector'
 import { FullMain } from './styles'
+import { ButtonVariant } from '@/types/ui'
 
 export function DutyEdit() {
   const { t } = useTranslation()
