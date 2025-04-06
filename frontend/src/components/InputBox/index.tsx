@@ -29,6 +29,7 @@ interface InputBoxProps {
   disabled?: boolean
   required?: boolean
   validations?: { [key: string]: ValidationItem }
+  name?: string
 }
 
 const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
@@ -45,6 +46,7 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
       type,
       value,
       onChange,
+      name,
       ...props
     },
     ref,
@@ -121,6 +123,7 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
           placeholder={placeholder}
           aria-invalid={isError}
           aria-describedby={message ? `${id}-error` : undefined}
+          name={name}
           {...props}
         />
         {!isError && validations && (

@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ContractStatus, MemberContractStatus } from '@/types/contract'
 
 import { Container, StatusLabelContainer, SwitchContainer } from './styles'
-
-interface StatusLabelProps {
+ interface StatusLabelProps {
   contractStatus?: ContractStatus
 }
 
@@ -33,7 +32,7 @@ export function StatusLabel({ contractStatus }: StatusLabelProps) {
   return (
     isMemberStatus(contractStatus) && (
       <Container>
-        <SwitchContainer checked={!!displayStatus}>
+        <SwitchContainer>
           <StatusLabelContainer variant={displayStatus}>
             {displayStatus
               ? t(`contract.detail.${displayStatus.toLowerCase()}.status`)

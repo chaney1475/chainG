@@ -9,6 +9,7 @@ import {
   Rent,
   Utility,
 } from '@/types/contract'
+import { User } from '@/types/user'
 
 interface ValidationItem {
   isValid: boolean
@@ -239,6 +240,37 @@ export const contractSlice = createSlice({
     setContractMembers: (state, action: PayloadAction<ContractUser[]>) => {
       state.contractMembers = action.payload
     },
+
+    initContractRequest: (state, actions: PayloadAction<User[]>) => {
+      const startDate = new Date().toISOString()
+      const endDate = new Date()
+      endDate.setFullYear(endDate.getFullYear() + 1)
+
+      const newUserPaymentInfo = actions.payload.map((member) => {
+        return {
+          userId: member.id,
+          amount: 100000,
+          ratio: 1,
+        }
+      })
+
+      state.contractRequest = {
+        startDate: startDate,
+        endDate: endDate.toISOString(),
+        rent: {
+          totalAmount: 100000 * actions.payload.length,
+          dueDate: 15,
+          rentAccountNo: '',
+          ownerAccountNo: '',
+          totalRatio: actions.payload.length,
+          userPaymentInfo: newUserPaymentInfo,
+        },
+        utility: {
+          cardId: null,
+        },
+        status: ContractStatus.draft,
+      }
+    },
   },
 })
 
@@ -255,6 +287,7 @@ export const {
   updateUtility,
   validateContractRequest,
   setContractMembers,
+  initContractRequest,
 } = contractSlice.actions
 
 export default contractSlice.reducer

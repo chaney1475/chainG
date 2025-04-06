@@ -67,7 +67,6 @@ export function StartPage() {
       description: t('onboarding.join.description'),
     },
   ]
-  // 현재 step의 id가 start면 confirm 버튼 의 레이블을 onBoarding.confirm 변경
   const isConfirmButtonVisible = stepContent[step].id === 'start'
 
   const handleNext = () => {

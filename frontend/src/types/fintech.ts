@@ -1,9 +1,3 @@
-export interface TransferRequest {
-  fromAccountNo: string
-  toAccountNo: string
-  amount: number
-}
-
 export interface AccountDetail {
   bankCode: string
   bankName: string
@@ -57,7 +51,17 @@ export interface AccountPaymentHistory {
   transactionSummary: string
   transactionMemo: string
 }
-
+export interface FormattedAccountPaymentHistory {
+  transactionUniqueNo: string
+  showDate: boolean
+  date: string
+  time: string
+  title: string
+  transactionType: string
+  transactionAfterBalance: string
+  transactionSummary: string
+  transactionMemo: string
+}
 export interface FintechResponseHeader {
   responseCode: string
   responseMessage: string
@@ -85,4 +89,34 @@ export interface FintechRequestHeader {
 export interface FintechResponseError {
   responseCode: string
   responseMessage: string
+}
+
+export interface TransferRequest {
+  Header: FintechRequestHeader
+  depositAccountNo: string
+  depositTransactionSummary: string
+  transactionBalance: string
+  withdrawalAccountNo: string
+  withdrawalTransactionSummary: string
+}
+
+export interface Transfer {
+  depositAccountNo: string
+  depositTransactionSummary?: string
+  transactionBalance: string
+  withdrawalAccountNo: string
+  withdrawalTransactionSummary?: string
+}
+
+export interface TranferItem {
+  transactionUniqueNo: string
+  accountNo: string
+  transactionDate: string
+  transactionType: string
+  transactionTypeName: string
+  transactionAccountNo: string
+}
+export interface TransferResponse {
+  Header: FintechResponseHeader
+  REC: TranferItem[]
 }

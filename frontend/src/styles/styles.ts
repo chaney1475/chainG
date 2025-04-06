@@ -1,4 +1,8 @@
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
+
+
+
+
 
 export const Container = styled.div`
   display: flex;
@@ -52,7 +56,15 @@ export const FullMain = styled.div`
   gap: 8px;
   padding: 0 20px;
 `
-
+export const FullWidthMain = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+`
 export const Form = styled.form`
   width: 100%;
   gap: 1rem;
@@ -236,4 +248,9 @@ export const PaddingContainer = styled.div`
   gap: 1rem;
   width: 100%;
   padding: 20px;
+`
+export const Description = styled.p`
+  color: ${({ theme }) => theme.color.text.disabled};
+  ${({ theme }) => theme.typography.styles.description};
+  text-align: center;
 `

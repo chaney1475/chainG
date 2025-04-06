@@ -43,7 +43,7 @@ export const useContractSteps = () => {
     if (step > 0) {
       setStep(step - 1)
     } else {
-      router.back()
+      router.push('/')
     }
   }
 

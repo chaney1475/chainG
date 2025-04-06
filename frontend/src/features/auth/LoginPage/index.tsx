@@ -103,10 +103,6 @@ export function LoginPage() {
             label={'login.title'}
           />
           <SignupLinkContainer>
-            <StyledLink href="/group/create/createProfile">
-              createProfile
-            </StyledLink>
-            <StyledLink href="/group/create/inviteCode">invite</StyledLink>
             <StyledLink href="/auth/signup">{t('signUp.title')}</StyledLink>
           </SignupLinkContainer>
         </Form>

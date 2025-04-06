@@ -1,24 +1,27 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
 
-import {
-  DefaultContainer,
-  SlimContainer,
-  Title,
-  TitleContainer,
-} from '@/styles/styles'
+import { useAppSelector } from '@/hooks'
+import { DefaultContainer, SlimContainer, Title } from '@/styles/styles'
+import { Duty } from '@/types/duty'
+import { formatHourMinuteTime } from '@/utils/formatTime'
 
 import {
   Card,
   CardContainer,
   Category,
   Description,
+  ImageContainer,
   IssueContainer,
   IssueContent,
+  IssueTitle,
+  ScrollContainer,
   StyledButton,
+  ButtonContainer
 } from './styles'
 
 interface Issue {
@@ -27,84 +30,97 @@ interface Issue {
   description: string
 }
 
-export function DashBoard() {
-  const [issues, setIssues] = useState<Issue[]>([])
+export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
   const [dutyIssues, setDutyIssues] = useState<Issue[]>([])
-  const [rentIssues, setRentIssues] = useState<Issue[]>([])
+  // const [rentIssues, setRentIssues] = useState<Issue[]>([])
   const [utilityIssues, setUtilityIssues] = useState<Issue[]>([])
-  const [selectedIssue, setSelectedIssue] = useState<Issue[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const contract = useAppSelector((state) => state.contract.contract)
+  type Category = 'all' | 'duty' | 'rent' | 'utility'
+  const [selectedCategory, setSelectedCategory] = useState<Category>('all')
+  const { t } = useTranslation()
+  const now = new Date()
+  const dueRentDate = contract.rent.dueDate
+  const dueCardDay = 5
+  const nowDay = now.getDay()
+  const nowDate = now.getDate()
+  const isDueRentDate = nowDate === dueRentDate
+  const isDueCardDay = nowDay === dueCardDay
+  const isDueRentDateYesterday = nowDate === dueRentDate - 1
+  const isDueCardDayYesterday = nowDay === dueCardDay - 1
+
+  const homeOverview = useAppSelector((state) => state.user.homeOverview)
 
   useEffect(() => {
-    // 모든 이슈를 한 번에 추가
-    const initialIssues: Issue[] = [
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '월세 미납 시 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '월세 납부 전날 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '월세 미납 여부 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '월세 납부일 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '공과급 미납 시 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '공과금 계좌로 납부 전날 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '공과금 납부일 안내',
-      },
-      {
-        category: 'rent',
-        title: '미납 납부하기',
-        description: '오늘 나의 당번 안내',
-      },
-    ]
+    if (todayMyDutyList.length > 0) {
+      const dutyIssues = todayMyDutyList.map((duty) => ({
+        category: 'duty',
+        title: duty.title,
+        description: duty.useTime ? formatHourMinuteTime(duty.dutyTime) : '',
+      }))
+      setDutyIssues(dutyIssues)
+    }
+  }, [todayMyDutyList])
 
-    setIssues(initialIssues)
+  useEffect(() => {
+    const utilityIssues = []
+    if (!homeOverview.isUtilityPaid) {
+      utilityIssues.push({
+        category: 'utility',
+        title: '공과금 카드 대납 실패',
+        description: '공과급 미납 시 안내',
+      })
+    }
+    if (isDueCardDay) {
+      utilityIssues.push({
+        category: 'utility',
+        title: '공과금 카드 납부일',
+        description: '금요일',
+      })
+    }
+    if (isDueCardDayYesterday) {
+      utilityIssues.push({
+        category: 'utility',
+        title: '공과금 카드 전날',
+        description: '목요일',
+      })
+    }
+    setUtilityIssues(utilityIssues)
   }, [])
 
-  useEffect(() => {
-    setDutyIssues(issues.filter((issue) => issue.category === 'duty'))
-    setRentIssues(issues.filter((issue) => issue.category === 'rent'))
-    setUtilityIssues(issues.filter((issue) => issue.category === 'utility'))
-  }, [issues])
-
-  useEffect(() => {
-    switch (selectedCategory) {
-      case 'duty':
-        setSelectedIssue(dutyIssues)
-        break
-      case 'rent':
-        setSelectedIssue(rentIssues)
-        break
-      case 'utility':
-        setSelectedIssue(utilityIssues)
-        break
-      default:
-        setSelectedIssue(issues)
-        break
+  const rentIssues = useMemo(() => {
+    const newRentissues = []
+    if (!homeOverview.isRentPaid) {
+      newRentissues.push({
+        category: 'rent',
+        title: '월세 미납',
+        description: '우리모두 월세를 못냈어요',
+      })
     }
-  }, [selectedCategory])
+    if (isDueRentDate) {
+      newRentissues.push({
+        category: 'rent',
+        title: '월세 납부일',
+        description: contract.rent.dueDate + '일',
+      })
+    }
+    if (isDueRentDateYesterday) {
+      newRentissues.push({
+        category: 'rent',
+        title: '월세 납부 전날',
+        description: contract.rent.dueDate - 1 + '일',
+      })
+    }
+    return newRentissues
+  }, [homeOverview, dueRentDate])
+
+  const issues = useMemo(() => {
+    return [...dutyIssues, ...rentIssues, ...utilityIssues]
+  }, [dutyIssues, rentIssues, utilityIssues])
+
+  const filteredIssues = useMemo(() => {
+    if (selectedCategory === 'all') return issues
+    return issues.filter((item) => item.category === selectedCategory)
+  }, [issues, selectedCategory])
 
   return (
     <DefaultContainer>
@@ -113,80 +129,82 @@ export function DashBoard() {
           <DefaultContainer>
             <Title>오늘 나의 이슈</Title>
             <SlimContainer>
-              <div>
+              <ButtonContainer>
                 {issues.length != 0 && (
                   <StyledButton
                     isSelected={selectedCategory === 'all'}
                     onClick={() => setSelectedCategory('all')}>
-                    전체
+                    {t('main.issues.all')}
                   </StyledButton>
                 )}
                 {dutyIssues.length != 0 && (
                   <StyledButton
                     isSelected={selectedCategory === 'duty'}
                     onClick={() => setSelectedCategory('duty')}>
-                    당번
+                    {t('main.issues.duty')}
                   </StyledButton>
                 )}
                 {rentIssues.length != 0 && (
                   <StyledButton
                     isSelected={selectedCategory === 'rent'}
                     onClick={() => setSelectedCategory('rent')}>
-                    월세
+                    {t('main.issues.rent')}
                   </StyledButton>
                 )}
                 {utilityIssues.length != 0 && (
                   <StyledButton
                     isSelected={selectedCategory === 'utility'}
                     onClick={() => setSelectedCategory('utility')}>
-                    공과금
+                    {t('main.issues.utility')}
                   </StyledButton>
                 )}
-              </div>
+              </ButtonContainer>
             </SlimContainer>
-            <TitleContainer>
-              {selectedIssue.map((issue) => (
+            <ScrollContainer>
+              {filteredIssues.map((issue) => (
                 <IssueContainer key={issue.title}>
-                  <Image
-                    src={`/images/home/home-${issue.category === 'duty' ? 'duty' : 'unpaid'}.png`}
-                    alt={`${issue.category} 이미지`}
-                    width={50}
-                    height={50}
-                  />
+                  <ImageContainer>
+                    <Image
+                      src={`/images/home/home-${issue.category === 'duty' ? 'duty' : 'unpaid'}.png`}
+                      alt={`${issue.category} 이미지`}
+                      width={50}
+                      height={50}
+                    />
+                  </ImageContainer>
                   <IssueContent>
-                    <Category>{issue.category}</Category>
-                    <Title>{issue.title}</Title>
+                    <Category>{t(`main.issues.${issue.category}`)}</Category>
+                    <IssueTitle>{issue.title}</IssueTitle>
                     <Description>{issue.description}</Description>
                   </IssueContent>
                 </IssueContainer>
               ))}
-            </TitleContainer>
-          </DefaultContainer>
-          <DefaultContainer>
-            <Title>생활 관리</Title>
-            <CardContainer>
-              <Card href="/lifeRule">
-                생활 규칙
-                <Image
-                  src={'/images/home/home-life-rule.png'}
-                  alt="생활 규칙"
-                  width={50}
-                  height={50}
-                />
-              </Card>
-              <Card href="/duty">
-                당번
-                <Image
-                  src={'/images/home/home-duty.png'}
-                  alt="당번"
-                  width={50}
-                  height={50}
-                />
-              </Card>
-            </CardContainer>
+            </ScrollContainer>
           </DefaultContainer>
         </>
       )}
+      <DefaultContainer>
+        <Title>생활 관리</Title>
+        <CardContainer>
+          <Card href="/lifeRule">
+            생활 규칙
+            <Image
+              src={'/images/home/home-life-rule.png'}
+              alt="생활 규칙"
+              width={50}
+              height={50}
+            />
+          </Card>
+          <Card href="/duty">
+            당번
+            <Image
+              src={'/images/home/home-duty.png'}
+              alt="당번"
+              width={50}
+              height={50}
+            />
+          </Card>
+        </CardContainer>
+      </DefaultContainer>
     </DefaultContainer>
   )
 }

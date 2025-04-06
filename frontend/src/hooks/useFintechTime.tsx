@@ -9,8 +9,16 @@ import { ko } from 'date-fns/locale'
  * @param uniqueSuffix 고유번호 생성시 사용할 추가 6자리 숫자(선택사항)
  * @returns [transmissionDate, transmissionTime, institutionTransactionUniqueNo] 배열
  */
-export const useFintechTime = (date: Date, uniqueSuffix?: string) => {
+export const useFintechTime = (
+  date: Date,
+  budgetStartDate?: Date,
+  budgetEndDate?: Date,
+  uniqueSuffix?: string,
+) => {
   return useMemo(() => {
+    const startDate = formatTransmissionMonthDate(budgetStartDate ?? date)
+    const endDate = formatTransmissionMonthDate(budgetEndDate ?? date)
+
     // YYYYMMDD 형식 날짜
     const formattedDate = formatTransmissionDate(date)
 
@@ -25,8 +33,8 @@ export const useFintechTime = (date: Date, uniqueSuffix?: string) => {
       uniqueSuffix,
     )
 
-    return [formattedDate, formattedTime, uniqueNo] as const
-  }, [date, uniqueSuffix])
+    return [formattedDate, formattedTime, uniqueNo, startDate, endDate] as const
+  }, [date, budgetStartDate, budgetEndDate, uniqueSuffix])
 }
 
 /**
@@ -59,7 +67,13 @@ const formatTransmissionDate = (date: Date): string => {
 
   return `${year}${month}${day}`
 }
+const formatTransmissionMonthDate = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = '01'
 
+  return `${year}${month}${day}`
+}
 /**
  * 시간을 'HHMMSS' 형식으로 변환 (예: 154100)
  */
