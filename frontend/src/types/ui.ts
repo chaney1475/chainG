@@ -24,6 +24,11 @@ export interface SnapPoints {
   MAX: number
 }
 
+export interface Menu {
+  id: string
+  name: string
+}
+
 export type MenuContent = {
   title: string
   onSelect: () => void
@@ -35,3 +40,6 @@ export interface ProgressBarProps {
   step: number
   steps: number
 }
+
+export type PledgeMenu = 'contract' | 'account' | 'rent' | 'utility'
+export type LivingMenu = 'calendar' | 'history'

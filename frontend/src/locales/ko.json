@@ -1,4 +1,13 @@
 {
+  "pledge": {
+    "status": {
+      "complete": "완료",
+      "debt": "미납",
+      "expected": "예정"
+    }
+    
+  },
+
   "duty": {
     "title": "당번 일정",
     "category": {

@@ -39,8 +39,8 @@ export function MyPage() {
   const handleLogout = async () => {
     const success = await logout()
     if (success) {
-      dispatch(resetStore())
       router.push('/auth/login')
+      dispatch(resetStore())
     }
   }
 
