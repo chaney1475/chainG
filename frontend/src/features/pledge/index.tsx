@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -15,13 +15,17 @@ import { setRent, setUtility } from '@/store/slices/plegeSlice'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { RentPage } from './rent'
 import { UtilityPage } from './utility'
+import { getContract } from '@/apis/group'
+import { setContract } from '@/store/slices/contractSlice'
+import { ContractDetail } from './contract'
 
 export function PledgePage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const rentInfo = useAppSelector((state) => state.pledge.rent)
   const utilityInfo = useAppSelector((state) => state.pledge.utility)
-
+  const contract = useAppSelector((state) => state.contract.contract)
+  const user = useAppSelector((state) => state.user.user)
   
 
 
@@ -54,13 +58,27 @@ export function PledgePage() {
   }, [utilityInfo, dispatch])
 
 
+  useEffect(() => {
+    const fetchContract =  async () => {
+      if (!contract){
+        if (user.contractId) {
+          const response = await getContract(user.contractId)
+          if (response.success) {
+          dispatch(setContract(response.data))
+        }
+      }
+    }
+    fetchContract()
+  } 
+  }, [contract, user.contractId, dispatch])
+
   const menuList = PledgeMenuList
   const [menu, setMenu] = useState<PledgeMenu>('contract')
   return (
-    <Container>
+    <Container variant={menu}>
          <TopHeader title={'서약 관리'}/>
          <FullMain>
-          {menu === 'contract' && <RentPage/>}
+          {menu === 'contract' && <ContractDetail/>}
           {menu === 'account' && <div>account</div>}
         {menu === 'rent' && <RentPage/>}
         {menu === 'utility' && <UtilityPage/>}

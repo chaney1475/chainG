@@ -88,6 +88,10 @@ export type CustomTheme = {
         fontFamily: string
         fontSize: string
       }
+      accountAndCardNum :{
+        fontFamily: string
+        fontSize: string
+      }
     }
   }
 }
@@ -182,6 +186,10 @@ const theme: CustomTheme = {
       cardDescription: {
         fontFamily: 'var(--font-paperlogy-regular)',
         fontSize: '0.75rem',
+      },
+      accountAndCardNum: {
+        fontFamily: 'var(--font-paperlogy-regular)',
+        fontSize: '1rem',
       },
     },
   },
