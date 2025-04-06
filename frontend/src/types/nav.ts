@@ -1,8 +1,8 @@
 export const NavItemVariant = {
   home: 'homePage',
-  contract: 'contractPage',
+  pledge: 'pledgePage',
   my: 'myPage',
 } as const
 
-export type NavItemKey = keyof typeof NavItemVariant // 'home' | 'contract' | 'my'
+export type NavItemKey = keyof typeof NavItemVariant // 'home' | 'pledge' | 'my'
 export type NavItemVariant = (typeof NavItemVariant)[NavItemKey] // 'homePage' | ...
