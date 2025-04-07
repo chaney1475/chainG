@@ -268,7 +268,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (allUtilityPayments.isEmpty()) {
             // 공과금 내역이 없으면 빈 응답 반환 또는 기본값 처리
             return new RetrieveUtilityDTO(
-                    contract.getRentTotalAmount(), // 또는 0
+                    0, // 또는 0
                     0, // myAmount
                     Collections.emptyList(), // currentWeekPayments
                     Collections.emptyList()  // weekList
@@ -282,6 +282,10 @@ public class PaymentServiceImpl implements PaymentService {
         List<CurrentPaymentDTO> currentWeekPayments = getCurrentWeekUtilityPayments(
                 allUtilityPayments, userPaymentsByPaymentId); // 이제 전체 리스트를 받아서 내부에서 최신 주 필터링
 
+        int totalAmount = currentWeekPayments.stream()
+                .map(CurrentPaymentDTO::getAmount)
+                .reduce(0, Integer::sum);
+
         // 내 금액 계산 (현재 주에 대해)
         int myAmount = currentWeekPayments.stream()
                 .filter(payment -> payment.getUserId().equals(userId))
@@ -293,11 +297,10 @@ public class PaymentServiceImpl implements PaymentService {
                 userPaymentsByPaymentId); // 전체 리스트와 userPayment 맵 전달
 
         return new RetrieveUtilityDTO(
-                contract.getRentTotalAmount(), // 필요시 공과금 총액 필드 추가 고려
+                totalAmount, // 필요시 공과금 총액 필드 추가 고려
                 myAmount,
                 currentWeekPayments,
                 weekList
-                // "dueDayOfWeek" 필드가 DTO에 있다면 계산 로직 추가 필요 (contract 정보 등 활용)
         );
     }
 
