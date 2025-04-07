@@ -1,11 +1,13 @@
 package com.ssafy.chaing.user.controller;
 
 
+import com.ssafy.chaing.auth.controller.response.UserInfoResponse;
 import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
 import com.ssafy.chaing.user.controller.request.UpdateUserProfileRequest;
 import com.ssafy.chaing.user.service.UserService;
 import com.ssafy.chaing.user.service.command.UpdateUserProfileCommand;
+import com.ssafy.chaing.user.service.dto.UserDetailInfoDTO;
 import com.ssafy.chaing.user.service.dto.UserProfileDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,6 +58,21 @@ public class UserController {
                 UpdateUserProfileCommand.from(principal.getId(), body)
         );
         return ResponseEntity.ok().body(BaseResponse.success(dto));
+    }
+
+    @Operation(
+            summary = "나의 계약, 그룹 정보 조회"
+    )
+    @GetMapping("/me/info")
+    public ResponseEntity<BaseResponse<UserInfoResponse>> getUserInfo(
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        // 나의 프로필 정보 업데이트
+        UserDetailInfoDTO dto = userService.getUserInfo(
+                principal.getId()
+        );
+        UserInfoResponse response = UserInfoResponse.from(dto);
+        return ResponseEntity.ok().body(BaseResponse.success(response));
     }
 
 }

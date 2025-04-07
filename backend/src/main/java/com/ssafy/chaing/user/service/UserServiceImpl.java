@@ -14,6 +14,7 @@ import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import com.ssafy.chaing.user.service.command.UpdateUserProfileCommand;
 import com.ssafy.chaing.user.service.dto.UserDTO;
+import com.ssafy.chaing.user.service.dto.UserDetailInfoDTO;
 import com.ssafy.chaing.user.service.dto.UserProfileDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -103,8 +104,26 @@ public class UserServiceImpl implements UserService {
         user.setNickname(command.getNickname());
         user.setProfileImage(command.getProfileImage());
         userRepository.save(user);
-        
+
         return UserProfileDTO.from(user);
 
+    }
+
+    @Override
+    public UserDetailInfoDTO getUserInfo(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.USER_NOT_FOUND));
+
+        Long contractId = null;
+        if (user.getGroupId() != null) {
+            contractId = groupRepository.findById(user.getGroupId())
+                    .map(GroupEntity::getContractId)
+                    .orElse(null);
+        }
+
+        UserDetailInfoDTO dto = new UserDetailInfoDTO(user.getId(), user.getName(), user.getNickname(),
+                user.getProfileImage(), user.getGroupId(), contractId);
+
+        return dto;
     }
 }
