@@ -7,7 +7,6 @@ export const Container = styled.div`
   justify-content: start;
   align-items: center;
   width: 100%;
-  gap: 8px;
   background-color: ${({ theme }) => theme.color.background.white};
   padding: 20px;
 `

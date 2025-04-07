@@ -40,7 +40,7 @@ export const DutyListItem = ({
       <DutyInfo>
         <Content>
           <div>
-            {t(`duty.category.${duty.category}`)} {duty.dutyTime}
+            {t(`duty.category.${duty.category}`)} {duty.dutyTime?.slice(0, -1)}
           </div>
           <div>{duty.title}</div>
         </Content>

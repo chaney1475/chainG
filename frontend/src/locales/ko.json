@@ -10,9 +10,16 @@
   "duty": {
     "title": "당번 일정",
     "category": {
-      "CLEAN": "대문자",
-      "clean": "청소",
-      "string": "임시"
+      "CLEAN": "청소",
+      "COOKING": "요리",
+      "SHOPPING": "장보기",
+      "MAINTENANCE": "수리",
+      "GARBAGE": "쓰레기",
+      "LAUNDRY": "세탁",
+      "PET_CARE": "반려동물",
+      "PLANT_CARE": "반려식물",
+      "SETTLEMENT": "금전",
+      "OTHER": "기타"
     },
     "week": {
       "monday": "월",
