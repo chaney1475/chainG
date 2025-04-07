@@ -6,21 +6,13 @@ import Image from 'next/image'
 
 import { createCard } from '@/apis/fintech'
 import { useAppSelector, useIsLeader } from '@/hooks'
-import {
-  setCardConfirm,
-  setUseUtilityCard,
-  updateUtility,
-} from '@/store/slices/contractSlice'
+import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import {
   DefaultContainer,
-  Label,
   ShowCenterBox,
-  TitleContainer,
   ValidationContainer,
   ValidationMessage,
 } from '@/styles/styles'
-
-import { ToggleSwitch } from '../ToggleSwitch'
 
 interface AccountInputProps {
   value?: string | null
