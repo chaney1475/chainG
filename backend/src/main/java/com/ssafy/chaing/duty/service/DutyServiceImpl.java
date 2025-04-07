@@ -108,9 +108,15 @@ public class DutyServiceImpl implements DutyService {
         DutyEntity dutyEntity = dutyRepository.findById(dutyId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.DUTY_NOT_FOUND));
 
-        dutyEntity.update(request.getTitle(), request.getCategory(), request.getDutyTime().toString(),
+        String dutyTimeRaw = request.getDutyTime() != null ? request.getDutyTime().toString() : null;
+
+        dutyEntity.update(
+                request.getTitle(),
+                request.getCategory(),
+                dutyTimeRaw,
                 request.getDayOfWeek(),
-                request.isUseTime());
+                request.isUseTime()
+        );
 
         dutyEntity.clearAssignees();
 
