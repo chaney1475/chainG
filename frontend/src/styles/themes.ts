@@ -107,7 +107,7 @@ const theme: CustomTheme = {
     text: {
       regular: '#292f35',
       low: '#586575',
-      disabled: '#586575',
+      disabled: '#A4B6CC',
       distructive: '#c84620',
       confirm: '#2dbd99',
       saturday: '#74bcff',
