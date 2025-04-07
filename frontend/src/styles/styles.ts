@@ -81,13 +81,12 @@ export const ShowBox = styled.div<{ isDisabled?: boolean }>`
   justify-content: center;
   gap: 1rem;
   width: 100%;
-  padding: 1rem;  
-  overflow: hidden;  
+  padding: 1rem;
+  overflow: hidden;
   border-radius: 16px;
   ${({ theme }) => theme.typography.styles.accountAndCardNum};
   color: ${({ theme }) => theme.color.text.low};
   border: 1px solid ${({ theme }) => theme.color.border};
-
 
   transition: all 0.2s ease-in-out;
   cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
@@ -153,6 +152,13 @@ export const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+`
+
+export const CenterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
 `
 
