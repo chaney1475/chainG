@@ -12,9 +12,9 @@ import errorModalReducer from './slices/errorModalSlice'
 import groupReducer from './slices/groupSlice'
 import lifeRuleReducer from './slices/lifeRuleSlice'
 import livingBudgetReducer from './slices/livingBudgetSlice'
+import pledgeReducer from './slices/pledgeSlice'
 import uiReducer from './slices/uiSlice'
 import userReducer from './slices/userSlice'
-import pledgeReducer from './slices/plegeSlice'
 
 export const RESET_STORE = 'RESET_STORE'
 
@@ -68,7 +68,15 @@ const reducer = (
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'group', 'user', 'contract', 'app', 'livingBudget', 'pledge'],
+  whitelist: [
+    'auth',
+    'group',
+    'user',
+    'contract',
+    'app',
+    'livingBudget',
+    'pledge',
+  ],
 }
 
 const persistedReducer = persistReducer(persistConfig, reducer)

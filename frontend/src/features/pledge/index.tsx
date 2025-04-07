@@ -19,7 +19,7 @@ import {
   setRent,
   setSelectedMenu,
   setUtility,
-} from '@/store/slices/plegeSlice'
+} from '@/store/slices/pledgeSlice'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
 import { PledgeMenu } from '@/types/ui'
 import {
