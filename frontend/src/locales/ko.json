@@ -5,7 +5,6 @@
       "debt": "미납",
       "expected": "예정"
     }
-    
   },
 
   "duty": {
@@ -348,8 +347,8 @@
       "placeholder": "월세 납부일을 입력해주세요"
     },
     "utility": {
-      "switchTitle": "공과금",
-      "title": "공과금 신용 카드 개설",
+      "switchTitle": "공과금 사용",
+      "title": "공과금",
       "label": "신용 카드는 추후 공과금 자동이체에 사용됩니다",
       "button": "공과금 신용 카드 개설",
       "afterLabel": "공과금 신용 카드 개설이 완료되었어요",

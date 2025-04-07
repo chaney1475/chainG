@@ -8,8 +8,8 @@ import { createCard } from '@/apis/fintech'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import {
+  DefaultContainer,
   ShowCenterBox,
-  SlimContainer,
   ValidationContainer,
   ValidationMessage,
 } from '@/styles/styles'
@@ -28,6 +28,9 @@ export function Card({ onChange }: AccountInputProps) {
   const cardConfirm = useAppSelector((state) => state.contract.cardConfirm)
   const utility = useAppSelector(
     (state) => state.contract.contractRequest.utility,
+  )
+  const useUtilityCard = useAppSelector(
+    (state) => state.contract.useUtilityCard,
   )
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
   const isLeader = useIsLeader()
@@ -65,25 +68,29 @@ export function Card({ onChange }: AccountInputProps) {
     setButtonText(content)
   }, [cardConfirm, t])
   return (
-    <SlimContainer>
-      <ShowCenterBox
-        onClick={() => setNext(true)}
-        isDisabled={disabled}>
-        {buttonText}
-      </ShowCenterBox>
-      {!isLeader && !cardConfirm && (
-        <ValidationContainer>
-          <Image
-            src={`/icons/validation-false.svg`}
-            alt={'message'}
-            width={14}
-            height={14}
-          />
-          <ValidationMessage isValid={false}>
-            {t('contract.utility.validation.leaderOnly')}
-          </ValidationMessage>
-        </ValidationContainer>
+    <>
+      {useUtilityCard && (
+        <DefaultContainer>
+          <ShowCenterBox
+            onClick={() => setNext(true)}
+            isDisabled={disabled}>
+            {buttonText}
+          </ShowCenterBox>
+          {!isLeader && !cardConfirm && (
+            <ValidationContainer>
+              <Image
+                src={`/icons/validation-false.svg`}
+                alt={'message'}
+                width={14}
+                height={14}
+              />
+              <ValidationMessage isValid={false}>
+                {t('contract.utility.validation.leaderOnly')}
+              </ValidationMessage>
+            </ValidationContainer>
+          )}
+        </DefaultContainer>
       )}
-    </SlimContainer>
+    </>
   )
 }

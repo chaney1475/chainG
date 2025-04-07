@@ -77,9 +77,7 @@ export function AccountInput({ onChange }: AccountInputProps) {
   }, [rentAccountConfirm, rent.rentAccountNo, leaderName, t])
 
   useEffect(() => {
-    if (rent.rentAccountNo) {
-      dispatch(setRentAccountConfirm(true))
-    }
+    dispatch(setRentAccountConfirm(!!rent.rentAccountNo))
   }, [rent.rentAccountNo])
 
   return (
