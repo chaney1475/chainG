@@ -25,7 +25,8 @@ export interface CurrentWeek {
 export interface WeekList {
   month: string
   week: number
-  piadUserIds: number[]
+  amount: number
+  paidUserIds: number[]
   debtUserIds: number[]
 }
 
