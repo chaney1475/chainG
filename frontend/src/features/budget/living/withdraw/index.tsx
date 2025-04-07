@@ -8,8 +8,9 @@ import { useDispatch } from 'react-redux'
 import styled from '@emotion/styled'
 import { useRouter } from 'next/navigation'
 
+import { notifyLivingWithdraw } from '@/apis/livingBudget'
 import { getMySummary } from '@/apis/user'
-import { InputBox, TitleHeaderLayout } from '@/components'
+import { InputBox, Modal, TitleHeaderLayout } from '@/components'
 import { useAppSelector, useTransfer } from '@/hooks'
 import { setSummary } from '@/store/slices/userSlice'
 import { ButtonVariant } from '@/types/ui'
@@ -70,7 +71,7 @@ export function BudgetLivingWithdrawPage() {
   const userName = useAppSelector((state) => state.user.user.nickname)
   const myAccountNo = watch('myAccountNo')
   const balance = watch('balance')
-
+  const [success, setSuccess] = useState(false)
   const transfer = useTransfer({
     depositAccountNo: myAccountNo,
     transactionBalance: balance,
@@ -88,6 +89,7 @@ export function BudgetLivingWithdrawPage() {
     !balance ||
     !myAccountNo ||
     livingAccountDetail.accountBalance < balance
+
   useEffect(() => {
     if (next && !disabled) {
       handleSubmit(onSubmit)()
@@ -103,9 +105,8 @@ export function BudgetLivingWithdrawPage() {
     hasTransfered.current = true
 
     const response = await transfer()
-    console.log('success', response)
     if (response) {
-      router.push('/budget/living')
+      setSuccess(await notifyLivingWithdraw())
     }
   }
 
@@ -163,6 +164,20 @@ export function BudgetLivingWithdrawPage() {
           error={errors.balance}
         />
       </Container>
+      <Modal
+        open={success}
+        onOpenChange={setSuccess}
+        title={t('livingBudget.withdraw.success.title')}
+        description={t('livingBudget.withdraw.success.description', {
+          userName,
+          balance,
+        })}
+        confirmText={t('confirm')}
+        onConfirm={() => {
+          setSuccess(false)
+          router.push('/budget/living')
+        }}
+      />
     </TitleHeaderLayout>
   )
 }
