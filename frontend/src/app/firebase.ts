@@ -56,6 +56,6 @@ export const onForegroundMessage = () => {
   if (!messaging) return
 
   onMessage(messaging, (payload) => {
-    console.log('포그라운드 메시지 수신:', payload)
+    console.log('포그라운드 메시지 수신:', payload?.notification)
   })
 }
