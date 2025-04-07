@@ -17,6 +17,7 @@ import {
   setAccountDetail,
   setPaymentHistory,
   setRent,
+  setSelectedMenu,
   setUtility,
 } from '@/store/slices/plegeSlice'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
@@ -39,7 +40,7 @@ export function PledgePage() {
   const utilityInfo = useAppSelector((state) => state.pledge.utility)
   const contract = useAppSelector((state) => state.contract.contract)
   const user = useAppSelector((state) => state.user.user)
-
+  const selectedMenu = useAppSelector((state) => state.pledge.selectedMenu)
   // retrieveRent 월세 월별 통계 조회
   useEffect(() => {
     if (!rentInfo) {
@@ -165,26 +166,27 @@ export function PledgePage() {
   }, [contract, user.contractId, dispatch])
 
   const menuList = PledgeMenuList
-  const [menu, setMenu] = useState<PledgeMenu>('contract')
   return (
-    <Container variant={menu}>
+    <Container variant={selectedMenu}>
       <TopHeader title={'서약 관리'} />
       <FullMain>
-        {menu === 'contract' && <ContractDetail />}
-        {menu === 'account' && rentAccountNo && startDate != '' && (
-          <Account
-            paymentHistory={formattedHistory}
-            startDate={startDate}
-            endDate={endDate}
-            budgetDate={budgetStartDate}
-            setBudgetDate={handleBudgetChange}
-          />
-        )}
-        {menu === 'rent' && <RentPage />}
-        {menu === 'utility' && <UtilityPage />}
+        {selectedMenu === PledgeMenu.contract && <ContractDetail />}
+        {selectedMenu === PledgeMenu.account &&
+          rentAccountNo &&
+          startDate != '' && (
+            <Account
+              paymentHistory={formattedHistory}
+              startDate={startDate}
+              endDate={endDate}
+              budgetDate={budgetStartDate}
+              setBudgetDate={handleBudgetChange}
+            />
+          )}
+        {selectedMenu === PledgeMenu.rent && <RentPage />}
+        {selectedMenu === PledgeMenu.utility && <UtilityPage />}
         <FloatingSwitchMenu
-          selectedMenu={menu}
-          onSwitch={(menu) => setMenu(menu as PledgeMenu)}
+          selectedMenu={selectedMenu}
+          onSwitch={(menu) => dispatch(setSelectedMenu(menu as PledgeMenu))}
           menuList={menuList}
         />
       </FullMain>
