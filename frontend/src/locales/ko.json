@@ -448,6 +448,9 @@
     "cardName": "SSAFY Cha:nG Life 카드"
   },
   "livingBudget": {
+    "all": "전체",
+    "depositAmount": "입금",
+    "withdrawalAmount": "출금",
     "deposit": {
       "title": "생활비",
       "header": "개인 계좌에서\n생활비 계좌로 돈 채우기",

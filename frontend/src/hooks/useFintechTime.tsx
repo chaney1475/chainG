@@ -33,7 +33,13 @@ export const useFintechTime = (
       uniqueSuffix,
     )
 
-    return [formattedDate, formattedTime, uniqueNo, startDate, endDate] as const
+    return {
+      startDate,
+      endDate,
+      formattedDate,
+      formattedTime,
+      uniqueNo,
+    } as const
   }, [date, budgetStartDate, budgetEndDate, uniqueSuffix])
 }
 
