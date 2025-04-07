@@ -19,7 +19,7 @@ public class UtilityBatchScheduler {
     private final Job utilityBillingStatementJob;
     private final Job collectToUtilityAccountJob;
 
-    @Scheduled(cron = "0 0 9 * * MON", zone = "Asia/Seoul") // KST 기준 월요일 9시 0분 0초
+    @Scheduled(cron = "0 10 10 * * MON", zone = "Asia/Seoul")
     public void runUtilityBillingJob() {
         try {
             // Job 실행 시 파라미터 전달 (동일 파라미터로 재실행 방지 및 실행 기록 구분용)
