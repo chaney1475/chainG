@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { UserItem } from '@/components/UserItem'
 import { useAppSelector } from '@/hooks/useAppSelector'
@@ -15,7 +15,15 @@ import {
   StepContainer,
   StepItem,
   TopDescription,
+  StatusContainer,
+  StatusBarContainer,
+  MonthLabelsContainer,
+  MonthLabel,
+  BlankContainer,
+  MonthContainer,
+  BottomContainer,
 } from './styles'
+import { useTranslation } from 'react-i18next'
 
 interface UserList {
   user: User
@@ -28,19 +36,32 @@ interface monthPaid {
 }
 
 export function Step() {
+  const { t } = useTranslation()
   const rentInfo = useAppSelector((state) => state.pledge.rent)
   const userId = useAppSelector((state) => state.user.user.id)
   const user = rentInfo?.currentMonth.find((item) => item.userId === userId)
   const group = useAppSelector((state) => state.group.group.members)
 
-  useEffect(() => {
-    const date = new Date().getDate()
-    const dutDate = rentInfo?.dueDate || 0
-    const exceedDueDate: boolean = dutDate < date
+  const [userList, setUserList] = useState<UserList[]>([])
 
-    rentInfo?.monthList.slice(0, 6).forEach((item) => {
-      item.piadUserIds?.forEach((paidUser) => {
-        userList
+
+
+  useEffect(() => {
+    if (!rentInfo || !group) return
+  
+    const date = new Date().getDate()
+    const dutDate = rentInfo.dueDate || 0
+    const exceedDueDate: boolean = dutDate < date
+  
+    const newUserList: UserList[] = group.map((item) => ({
+      user: item,
+      month: [],
+    }))
+  
+    rentInfo.monthList.slice(0, 6).forEach((item) => {
+      console.log('item', item)
+      item.paidUserIds?.forEach((paidUser) => {
+        newUserList
           .find((user) => user.user.id === paidUser)
           ?.month.push({
             month: Number(item.month.slice(5)),
@@ -48,52 +69,74 @@ export function Step() {
           })
       })
       item.debtUserIds.forEach((debtUser) => {
-        userList
+        newUserList
           .find((user) => user.user.id === debtUser)
           ?.month.push({
             month: Number(item.month.slice(5)),
             finalStatus: exceedDueDate ? 'debt' : 'expected',
           })
       })
-    }) // todo: 6개까지만 가져오도록 한정하기
-  }, [])
+    })
+  
+    setUserList(newUserList)
+  }, [rentInfo, group])
 
-  const userList: UserList[] = group.map((item) => {
-    return {
-      user: item,
-      month: [],
-    }
-  })
 
   console.log('group', group)
   console.log('rentInfo', rentInfo)
   console.log('userList', userList)
 
+  
   return (
     <>
       <BoxContainer>
         <ContentContainer>
           <TopDescription>전체 납부 현황 </TopDescription>
+          
+          <BottomContainer>
+            <MonthContainer>
+              <BlankContainer/>
+              <MonthLabelsContainer>
+                {rentInfo?.monthList.map((item) => (
+                  <MonthLabel key={item.month}>{item.month.slice(5)}월</MonthLabel>
+                ))}
+              {Array.from({ length: 6 - (rentInfo?.monthList.length || 0) }).map((_, index) => (
+                <MonthLabel key={index}>&ensp;&ensp;</MonthLabel>
+              ))} 
 
-          <StepContainer>
-            {userList.map((item) => (
-              <StepItem key={item.user.id}>
-                <UserItem
-                  user={item.user}
-                  variant="bar"
-                  size="small"
-                />
-                <BarContainer>
-                  {item.month.map((month) => (
-                    <StatusIcon
-                      variant={month.finalStatus}
-                      key={month.month}
-                    />
-                  ))}
-                </BarContainer>
-              </StepItem>
-            ))}
-          </StepContainer>
+              </MonthLabelsContainer>
+            </MonthContainer>
+            <StepContainer>
+              {userList.map((item) => (
+                <StepItem key={item.user.id}>
+                  <UserItem
+                    user={item.user}
+                    variant="bar"
+                    size="small"
+                  />
+                  <BarContainer>
+                    <StatusBarContainer>
+                    {item.month.map((month) => (
+                      <StatusContainer>
+                        <StatusIcon
+                          variant={month.finalStatus}
+                          key={month.month}
+                        />
+                        <div>{t(`pledge.status.${month.finalStatus}`)}</div>
+                      </StatusContainer>
+                    ))}
+                    {Array.from({ length: 6 - item.month.length }).map((_, index) => (
+                      <StatusIcon
+                        variant={'none'}
+                        key={index}
+                      />
+                    ))}
+                    </StatusBarContainer>
+                  </BarContainer>
+                </StepItem>
+              ))}
+            </StepContainer>
+          </BottomContainer>
         </ContentContainer>
       </BoxContainer>
     </>

@@ -37,7 +37,7 @@ export interface CurrentMonth {
 
 export interface MonthList {
   month: string
-  piadUserIds: number[]
+  paidUserIds: number[]
   debtUserIds: number[]
 }
 
@@ -53,4 +53,4 @@ export interface DepositToRentAccountRequest {
   transactionBalance: number
 }
 
-export type BudgetStatus = 'complete' | 'debt' | 'expected'
+export type BudgetStatus = 'complete' | 'debt' | 'expected' | 'none'
