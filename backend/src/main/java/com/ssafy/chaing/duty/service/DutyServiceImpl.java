@@ -2,6 +2,7 @@ package com.ssafy.chaing.duty.service;
 
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+import com.ssafy.chaing.common.util.GPTUtil;
 import com.ssafy.chaing.duty.controller.request.DutyFormRequest;
 import com.ssafy.chaing.duty.controller.response.DutyDetailResponse;
 import com.ssafy.chaing.duty.controller.response.DutyListResponse;
@@ -34,6 +35,7 @@ public class DutyServiceImpl implements DutyService {
     private final GroupUserRepository groupUserRepository;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final GPTUtil gptUtil;
 
     @Override
     public DutyListResponse getDuties(Long groupId) {
@@ -64,9 +66,14 @@ public class DutyServiceImpl implements DutyService {
 
         OffsetTime dutyTime = request.getDutyTime();
 
+        String category = gptUtil.classifyDutyContent(request.getTitle());
+        if (category == null || category.isBlank()) {
+            category = "OTHER";
+        }
+
         DutyEntity dutyEntity = DutyEntity.builder()
                 .title(request.getTitle())
-                .category(request.getCategory())
+                .category(category)
                 .dutyTimeRaw(dutyTime != null ? dutyTime.toString() : null)
                 .dayOfWeek(request.getDayOfWeek())
                 .useTime(request.isUseTime())
@@ -112,7 +119,7 @@ public class DutyServiceImpl implements DutyService {
 
         dutyEntity.update(
                 request.getTitle(),
-                request.getCategory(),
+                gptUtil.classifyDutyContent(request.getTitle()),
                 dutyTimeRaw,
                 request.getDayOfWeek(),
                 request.isUseTime()

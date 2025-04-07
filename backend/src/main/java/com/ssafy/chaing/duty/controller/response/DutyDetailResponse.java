@@ -32,11 +32,11 @@ public class DutyDetailResponse {
         if (rawTime != null && !rawTime.isBlank()) {
             dutyTime = OffsetTime.parse(rawTime);
         }
-
+        String category = dutyEntity.getCategory();
         return new DutyDetailResponse(
                 dutyEntity.getId(),
                 dutyEntity.getTitle(),
-                dutyEntity.getCategory(),
+                category != null ? category : "OTHER",  // 기본값 설정
                 dutyTime,
                 dutyEntity.getDayOfWeek(),
                 dutyEntity.isUseTime(),
