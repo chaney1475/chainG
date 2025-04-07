@@ -22,6 +22,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,7 +89,12 @@ public class UtilityBatchService {
             return;
         }
 
-        CurrentBillingStatementDTO dto = new CurrentBillingStatementDTO(statements.get(statements.size() - 1));
+        if (Objects.equals(statements.getLast().billingList().getLast().status(), "결제완료")) {
+            log.info("저번주에 결제한 내역이 존재하지 않습니다.");
+            return;
+        }
+
+        CurrentBillingStatementDTO dto = new CurrentBillingStatementDTO(statements.getLast());
         List<ContractUserEntity> contractMembers = contract.getMembers();
 
         if (contractMembers == null || contractMembers.isEmpty()) {

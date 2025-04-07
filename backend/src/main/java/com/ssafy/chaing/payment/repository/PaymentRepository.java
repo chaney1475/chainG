@@ -41,4 +41,19 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
     Optional<PaymentEntity> findWithUsersByContractIdAndMonthAndFeeType(Long contractId, int month, FeeType feeType);
 
     Optional<PaymentEntity> findTopByContractIdAndFeeTypeOrderByMonthDescWeekDesc(Long id, FeeType feeType);
+
+    /**
+     * 특정 계약의 모든 공과금 내역을 월/주 내림차순으로 조회 (JPQL 사용)
+     * @param contractId 조회할 계약의 ID
+     * @param feeType 조회할 요금 유형 (예: FeeType.UTILITY)
+     * @return 조건에 맞는 PaymentEntity 리스트 (월 내림차순, 주 내림차순 정렬)
+     */
+    @Query("SELECT p FROM PaymentEntity p " +
+            "WHERE p.contract.id = :contractId " +
+            "AND p.feeType = :feeType " +
+            "ORDER BY p.month DESC, p.week DESC")
+    List<PaymentEntity> findAllByContractIdAndFeeTypeOrderByMonthDescWeekDesc(
+            @Param("contractId") Long contractId,
+            @Param("feeType") FeeType feeType
+    );
 }

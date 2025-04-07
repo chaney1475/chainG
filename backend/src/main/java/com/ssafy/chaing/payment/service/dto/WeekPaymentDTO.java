@@ -13,6 +13,7 @@ import lombok.Setter;
 public class WeekPaymentDTO {
     private String month;
     private Integer week;
+    private Integer amount;
     private List<Long> paidUserIds;
     private List<Long> debtUserIds;
 }
