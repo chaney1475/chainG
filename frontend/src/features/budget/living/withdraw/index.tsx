@@ -90,7 +90,7 @@ export function BudgetLivingWithdrawPage() {
     livingAccountDetail.accountBalance < balance
   useEffect(() => {
     if (next && !disabled) {
-      // handleSubmit(onSubmit)()
+      handleSubmit(onSubmit)()
     }
   }, [next])
 
@@ -101,6 +101,9 @@ export function BudgetLivingWithdrawPage() {
   const onSubmit = async (data: WithdrawForm) => {
     const response = await transfer()
     console.log('success', response)
+    if (response) {
+      router.push('/budget/living')
+    }
   }
 
   const handleMyAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

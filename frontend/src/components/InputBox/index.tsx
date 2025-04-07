@@ -120,6 +120,7 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          type={type}
           placeholder={placeholder}
           aria-invalid={isError}
           aria-describedby={message ? `${id}-error` : undefined}

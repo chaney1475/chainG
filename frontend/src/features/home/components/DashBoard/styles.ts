@@ -129,7 +129,7 @@ export const ScrollContainer = styled.div`
   gap: 1rem;
   width: calc(100vw - 40px);
   overflow-y: hidden;
-  height: 200px;
+  height: 100%;
   justify-content: flex-start;
 `
 export const IssueTitle = styled.div`

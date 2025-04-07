@@ -149,6 +149,10 @@ export const contractSlice = createSlice({
       }>,
     ) => {
       const { field, value } = action.payload
+      if (state.contractRequest[field] == null) {
+        // @ts-expect-error 나중에해
+        state.contractRequest[field] = value
+      }
       if (state.contractRequest[field] != undefined) {
         // @ts-expect-error 나중에해
         state.contractRequest[field] = value
