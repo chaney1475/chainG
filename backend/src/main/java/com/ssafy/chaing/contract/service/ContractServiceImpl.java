@@ -364,16 +364,6 @@ public class ContractServiceImpl implements ContractService {
             contractUserRepository.save(contractUserEntity);
         }
 
-        List<ContractUserEntity> usersToNotify = contractUserRepository.findNonSurplusUsersByContractId(contractId);
-        for (ContractUserEntity user : usersToNotify) {
-            notificationService.sendNotification(
-                    user.getUser().getId(),
-                    "계약서 초안 수정",
-                    "계약서 초안 내용이 수정되었습니다. 확인해주세요.",
-                    NotificationCategory.CONTRACT
-            );
-        }
-
         // 변경된 계약 정보를 DTO로 변환하여 반환
         return ContractDetailDTO.from(updatedContract);
     }

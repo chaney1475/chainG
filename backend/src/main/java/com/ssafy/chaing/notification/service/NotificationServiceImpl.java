@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,7 +110,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
 //    @Transactional
-    @Async
+//    @Async
     public void sendNotification(Long userId, String title, String content, NotificationCategory category) {
         userRepository.findById(userId).ifPresent(user -> {
             if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
