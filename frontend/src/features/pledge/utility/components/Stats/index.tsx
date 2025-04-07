@@ -1,10 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
-
-import { useRouter } from 'next/navigation'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { BudgetStatus } from '@/types/budget'
