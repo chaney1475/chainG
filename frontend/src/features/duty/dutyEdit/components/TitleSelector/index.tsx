@@ -8,13 +8,10 @@ import { InputBox } from '@/components'
 
 import { Container, TopContainer } from './styles'
 
-interface TitleSelectorProps {
-  title: string | undefined
-}
-
-export function TitleSelector({ title }: TitleSelectorProps) {
-  const { register } = useFormContext()
+export function TitleSelector() {
+  const { register, watch } = useFormContext()
   const { t } = useTranslation()
+  const titleValue = watch('title') // 현재 폼의 title 값
 
   return (
     <Container>
@@ -25,7 +22,8 @@ export function TitleSelector({ title }: TitleSelectorProps) {
         id="title"
         placeholder="할 일을 입력해주세요"
         type="text"
-        value={title}
+        value={titleValue}
+        maxLength={15}
         {...register('title', {
           required: t('signUp.password.error.required'),
         })}

@@ -1,8 +1,16 @@
 import { DutyCategory, DutyWeekList } from '@/types/duty'
 
 export const dutyCategoryList: DutyCategory[] = [
-  { id: 'clean', src: '/images/duty/duty-category-clean.png' },
-  { id: 'trash', src: '/images/duty/duty-category-trash.png' },
+  { id: 'CLEAN', src: '/images/duty/duty-category-clean.png' },
+  { id: 'COOKING', src: '/images/duty/duty-category-cooking.png' },
+  { id: 'SHOPPING', src: '/images/duty/duty-category-shopping.png' },
+  { id: 'MAINTENANCE', src: '/images/duty/duty-category-maintenance.png' },
+  { id: 'GARBAGE', src: '/images/duty/duty-category-garbage.png' },
+  { id: 'LAUNDRY', src: '/images/duty/duty-category-laundry.png' },
+  { id: 'PET_CARE', src: '/images/duty/duty-category-pet-care.png' },
+  { id: 'PLANT_CARE', src: '/images/duty/duty-category-plant-care.png' },
+  { id: 'SETTLEMENT', src: '/images/duty/duty-category-settlement.png' },
+  { id: 'OTHER', src: '/images/duty/duty-category-other.png' },
 ]
 
 export const dutyWeekList: DutyWeekList = {
