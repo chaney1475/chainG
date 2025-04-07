@@ -63,6 +63,10 @@ public class RentBatchConfig {
                 : todaySixPM;
 
         for (PaymentEntity payment : pendingPayments) {
+            if (payment.getNextExecutionDate() == null) {
+                continue;
+            }
+
             ZonedDateTime collectExecution = payment.getNextExecutionDate().minusDays(1);
             ZonedDateTime ownerExecution = payment.getNextExecutionDate();
 
@@ -113,7 +117,9 @@ public class RentBatchConfig {
 
             List<PaymentEntity> payments = paymentRepository.findByStatus(STARTED);
             for (PaymentEntity payment : payments) {
-                if(payment.getFeeType() == FeeType.UTILITY) continue;
+                if (payment.getFeeType() == FeeType.UTILITY) {
+                    continue;
+                }
                 rentBatchService.collectToJointAccount(payment.getId());
             }
 
@@ -138,7 +144,9 @@ public class RentBatchConfig {
 
             List<PaymentEntity> payments = paymentRepository.findByStatus(COLLECTED);
             for (PaymentEntity payment : payments) {
-                if(payment.getFeeType() == FeeType.UTILITY) continue;
+                if (payment.getFeeType() == FeeType.UTILITY) {
+                    continue;
+                }
                 rentBatchService.payToOwner(payment.getId());
             }
 
