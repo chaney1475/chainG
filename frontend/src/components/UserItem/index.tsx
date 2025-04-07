@@ -8,13 +8,13 @@ import { ContractStatus } from '@/types/contract'
 import { User } from '@/types/user'
 
 import { StatusLabel } from '../StatusLabel'
-import { ProfileContainer} from './styles'
+import { ProfileContainer } from './styles'
 
 interface UserItemProps {
   user: User
   variant?: 'bar' | 'tile'
   showName?: boolean
-  size?: 'small' | 'medium' | 'large'
+  size?: 'xs' | 'small' | 'medium' | 'large'
   contractStatus?: ContractStatus
 }
 
@@ -30,7 +30,7 @@ export const UserItem = ({
   )
 
   const handleImageError = () => {
-    const imgSrc = `/images/profile/user${user.id % 10}.png`
+    const imgSrc = `/images/profile/user${user.id % 9}.png`
     setImgSrc(imgSrc)
   }
 
@@ -41,12 +41,27 @@ export const UserItem = ({
       <Image
         src={imgSrc}
         alt={user.name}
-        width={size === 'small' ? 36 : size === 'medium' ? 40 : 50}
-        height={size === 'small' ? 36 : size === 'medium' ? 40 : 50}
+        width={
+          size === 'xs'
+            ? 21
+            : size === 'small'
+              ? 36
+              : size === 'medium'
+                ? 40
+                : 50
+        }
+        height={
+          size === 'xs'
+            ? 21
+            : size === 'small'
+              ? 36
+              : size === 'medium'
+                ? 40
+                : 50
+        }
         onError={handleImageError}
       />
       <span>{showName ? user.name : user.nickname}</span>
-
       {contractStatus && <StatusLabel contractStatus={contractStatus} />}
     </ProfileContainer>
   )
