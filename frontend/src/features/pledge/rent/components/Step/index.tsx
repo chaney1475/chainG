@@ -22,6 +22,7 @@ import {
   BlankContainer,
   MonthContainer,
   BottomContainer,
+  MonthText,
 } from './styles'
 import { useTranslation } from 'react-i18next'
 
@@ -98,10 +99,12 @@ export function Step() {
               <BlankContainer/>
               <MonthLabelsContainer>
                 {rentInfo?.monthList.map((item) => (
-                  <MonthLabel key={item.month}>{item.month.slice(5)}월</MonthLabel>
+                  <MonthLabel key={item.month}>
+                    <MonthText>{item.month.slice(5)}월</MonthText>
+                  </MonthLabel>
                 ))}
               {Array.from({ length: 6 - (rentInfo?.monthList.length || 0) }).map((_, index) => (
-                <MonthLabel key={index}>&ensp;&ensp;</MonthLabel>
+                <MonthLabel key={index}><MonthText>&ensp;&ensp;</MonthText></MonthLabel>
               ))} 
 
               </MonthLabelsContainer>

@@ -108,9 +108,21 @@ export const MonthLabelsContainer = styled.div`
 `;
 
 export const MonthLabel = styled.div`
-  ${({ theme }) => theme.typography.styles.name};
-  color: ${({ theme }) => theme.color.text.low};
+  position: relative;
+  width: 14px;
+  height: auto;
+  overflow: visible;
 `;
+
+export const MonthText = styled.div`
+  ${({ theme }) => theme.typography.styles.navigator};
+  color: ${({ theme }) => theme.color.text.low};
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+`
 
 export const MonthContainer = styled.div`
   display: flex;
@@ -118,6 +130,7 @@ export const MonthContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  min-height: 10px;
   gap: 16px;
 `;
 
