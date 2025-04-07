@@ -24,6 +24,10 @@ export const contentStyle = css`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  @media (min-width: 768px) {
+    width: 45vw;
+    margin: 0 auto;
+  }
 `
 
 export const titleStyle = css`

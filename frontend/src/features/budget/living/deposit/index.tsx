@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -90,8 +90,11 @@ export function BudgetLivingDepositPage() {
   const handleNext = () => {
     setNext(true)
   }
-
+  const hasTransfered = useRef(false)
   const onSubmit = async (data: DepositForm) => {
+    if (hasTransfered.current) return
+    hasTransfered.current = true
+
     const response = await transfer()
     console.log('success', response)
     if (response) {
@@ -102,6 +105,7 @@ export function BudgetLivingDepositPage() {
   const handleMyAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.replace(/[^0-9]/g, '')
     setValue('myAccountNo', newValue)
+    setNext(false)
   }
 
   const balanceRegister = register('balance', {
@@ -145,6 +149,7 @@ export function BudgetLivingDepositPage() {
           onChange={(e) => {
             const numeric = e.target.value.replace(/[^0-9]/g, '')
             setValue('balance', numeric)
+            setNext(false)
           }}
           ref={balanceRegister.ref}
           placeholder={t('livingBudget.deposit.balance.placeholder')}

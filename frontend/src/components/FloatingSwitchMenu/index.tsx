@@ -18,13 +18,11 @@ export function FloatingSwitchMenu({
   return (
     <Container>
       <SwitchContainer steps={menuList.length}>
-        <SwitchButton
-          step={step}></SwitchButton>
+        <SwitchButton step={step}></SwitchButton>
         {menuList.map((item, index) => (
           <SwitchText
             key={item.id}
             onClick={() => {
-              console.log(item.id)
               setStep(index)
               onSwitch(item.id)
             }}

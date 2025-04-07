@@ -10,7 +10,7 @@ export const useTransfer = ({
   depositTransactionSummary,
   withdrawalTransactionSummary,
 }: Transfer) => {
-  const [formattedDate, formattedTime, uniqueNo] = useFintechTime(new Date())
+  const { formattedDate, formattedTime, uniqueNo } = useFintechTime(new Date())
 
   return async () => {
     const request: TransferRequest = {

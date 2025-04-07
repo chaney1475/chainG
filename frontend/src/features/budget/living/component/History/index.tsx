@@ -5,27 +5,15 @@ import { useTranslation } from 'react-i18next'
 
 import { useRouter } from 'next/navigation'
 
-import { ConfirmButton } from '@/components/ConfirmButton'
-import { DefaultLabel } from '@/features/contract/detail/component/ContractViewer/styles'
+import { AccountHistoryViewer, ConfirmButton } from '@/components'
 import { useFormattedDuration } from '@/hooks'
-import {
-  Description,
-  HeaderTitle,
-  PaddingContainer,
-  SlimContainer,
-  TitleContainer,
-} from '@/styles/styles'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
 import { ButtonVariant } from '@/types/ui'
 
 import {
-  AccountHistoryContainer,
-  AccountHistoryContent,
   ButtonContainer,
-  Container,
   ContentContainer,
   DateContainer,
-  EmptyContainer,
   SelectButton,
   SelectContainer,
 } from './styles'
@@ -41,18 +29,19 @@ export function History({
 }) {
   type Filter = 'ALL' | '1' | '2'
   const [selectedFilter, setSelectedFilter] = useState<Filter>('ALL')
+  const { t } = useTranslation()
 
   const selectItem: { label: string; value: Filter }[] = [
     {
-      label: '전체',
+      label: t('livingBudget.all'),
       value: 'ALL',
     },
     {
-      label: '입금',
+      label: t('livingBudget.depositAmount'),
       value: '1',
     },
     {
-      label: '출금',
+      label: t('livingBudget.withdrawalAmount'),
       value: '2',
     },
   ]
@@ -63,35 +52,28 @@ export function History({
     )
   }, [paymentHistory, selectedFilter])
 
-  const formatDate = (date: string) => {
-    const month = Number(date.slice(5, 7))
-    const day = Number(date.slice(8, 10))
-    return `${month}.${day}`
-  }
-
   const duration = useFormattedDuration(startDate, endDate)
   const router = useRouter()
   return (
-    <Container>
+    <AccountHistoryViewer filteredHistory={filteredHistory}>
       <ButtonContainer>
         <ConfirmButton
           onClick={() => {
             router.push('/budget/living/deposit')
           }}
           variant={ButtonVariant.prev}
-          label="채우기"
+          label="livingBudget.deposit.label"
         />
         <ConfirmButton
           onClick={() => {
             router.push('/budget/living/withdraw')
           }}
           variant={ButtonVariant.next}
-          label="꺼내기"
+          label="livingBudget.withdraw.label"
         />
       </ButtonContainer>
+      <DateContainer>{duration}</DateContainer>
       <ContentContainer>
-        <DateContainer>{duration}</DateContainer>
-
         <SelectContainer>
           {selectItem.map((item) => (
             <SelectButton
@@ -102,35 +84,7 @@ export function History({
             </SelectButton>
           ))}
         </SelectContainer>
-        <PaddingContainer>
-          {filteredHistory &&
-            filteredHistory.map((item) => (
-              <SlimContainer key={item.transactionUniqueNo}>
-                <AccountHistoryContainer>
-                  <span>{item.showDate && formatDate(item.date)}</span>
-                  <AccountHistoryContent>
-                    <TitleContainer>
-                      <HeaderTitle>
-                        {item.transactionMemo + item.transactionSummary}
-                      </HeaderTitle>
-                      <DefaultLabel>{item.title}</DefaultLabel>
-                    </TitleContainer>
-                    <TitleContainer>
-                      <Description>{item.time}</Description>
-                      <Description>{item.transactionAfterBalance}</Description>
-                    </TitleContainer>
-                  </AccountHistoryContent>
-                </AccountHistoryContainer>
-              </SlimContainer>
-            ))}
-        </PaddingContainer>
-        {filteredHistory.length === 0 && (
-          <EmptyContainer>
-            <HeaderTitle>해당 계좌 거래 내역이 없어요</HeaderTitle>
-            <Description>범위를 변경해보세요</Description>
-          </EmptyContainer>
-        )}
       </ContentContainer>
-    </Container>
+    </AccountHistoryViewer>
   )
 }

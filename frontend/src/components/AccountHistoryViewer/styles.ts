@@ -27,7 +27,9 @@ export const Container = styled.div`
   flex-direction: column;
   flex: 1;
   gap: 0.5rem;
+  background-color: ${({ theme }) => theme.color.background.white};
   width: 100%;
+  height: 100%;
 `
 export const ButtonContainer = styled.div`
   display: flex;
@@ -69,7 +71,6 @@ export const DateContainer = styled.div`
   color: ${({ theme }) => theme.color.text.low};
   background-color: ${({ theme }) => theme.color.background.white};
   padding: 20px 20px 0px;
-  border-top: 8px solid ${({ theme }) => theme.color.secondary};
 `
 export const EmptyContainer = styled.div`
   display: flex;
