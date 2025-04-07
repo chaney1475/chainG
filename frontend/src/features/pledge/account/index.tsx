@@ -7,19 +7,23 @@ import { format } from 'date-fns'
 import ko from 'date-fns/locale/ko'
 import { useRouter } from 'next/navigation'
 
-import { AccountHistoryViewer, ConfirmButton, IconButton } from '@/components'
-import { CurrentMonth } from '@/features/budget/living/component/BudgetCalendar/styles'
-import { MonthNavigation } from '@/features/budget/living/component/BudgetCalendar/styles'
-import { MonthSummary } from '@/features/budget/living/component/BudgetCalendar/styles'
-import { useFormattedDuration } from '@/hooks'
-import { DefaultContainer } from '@/styles/styles'
+import { AccountHistoryViewer, IconButton } from '@/components'
+import { useAppSelector, useFormattedDuration } from '@/hooks'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
-import { ButtonVariant } from '@/types/ui'
+import { formatMoney } from '@/utils/format'
 
 import {
+  AccountContainer,
+  AccountInfo,
+  AccountTitle,
   ButtonContainer,
+  Container,
   ContentContainer,
+  CurrentMonth,
+  DashBoardContainer,
   DateContainer,
+  MonthNavigation,
+  MonthSummary,
   SelectButton,
   SelectContainer,
 } from './styles'
@@ -40,7 +44,9 @@ export function Account({
   type Filter = 'ALL' | '1' | '2'
   const [selectedFilter, setSelectedFilter] = useState<Filter>('ALL')
   const { t } = useTranslation()
-
+  const accountDetail = useAppSelector(
+    (state) => state.pledge.account.accountDetail,
+  )
   const selectItem: { label: string; value: Filter }[] = [
     {
       label: t('livingBudget.all'),
@@ -72,25 +78,19 @@ export function Account({
   const duration = useFormattedDuration(startDate, endDate)
   const router = useRouter()
   return (
-    <DefaultContainer>
+    <Container>
       <MonthSummary>
-        <MonthNavigation>
-          <IconButton
-            src={'/icons/arrow-small-left.svg'}
-            alt="전월 선택"
-            onClick={handleMonth(-1)}
-          />
-          <CurrentMonth>{formatMonth(budgetDate)}</CurrentMonth>
-          <IconButton
-            src={'/icons/arrow-small-right.svg'}
-            alt="다음월 선택"
-            onClick={handleMonth(1)}
-          />
-        </MonthNavigation>
+        <AccountContainer>
+          <AccountTitle>월세 / 공과금 계좌</AccountTitle>
+          <AccountInfo>
+            <span>{t('fintech.bankName') + ' ' + accountDetail.accountNo}</span>
+            <div>{formatMoney(accountDetail.accountBalance)}</div>
+          </AccountInfo>
+        </AccountContainer>
       </MonthSummary>
       <AccountHistoryViewer filteredHistory={filteredHistory}>
         <ButtonContainer>
-          <ConfirmButton
+          {/* <ConfirmButton
             onClick={() => {}}
             variant={ButtonVariant.prev}
             label="집주인에게 보내기"
@@ -101,22 +101,37 @@ export function Account({
             }}
             variant={ButtonVariant.next}
             label="월세 채우기"
-          />
+          /> */}
         </ButtonContainer>
-        <DateContainer>{duration}</DateContainer>
-        <ContentContainer>
-          <SelectContainer>
-            {selectItem.map((item) => (
-              <SelectButton
-                key={item.value}
-                isSelected={selectedFilter === item.value}
-                onClick={() => setSelectedFilter(item.value)}>
-                {item.label}
-              </SelectButton>
-            ))}
-          </SelectContainer>
-        </ContentContainer>
+        <DashBoardContainer>
+          <MonthNavigation>
+            <IconButton
+              src={'/icons/arrow-small-left.svg'}
+              alt="전월 선택"
+              onClick={handleMonth(-1)}
+            />
+            <CurrentMonth>{formatMonth(budgetDate)}</CurrentMonth>
+            <IconButton
+              src={'/icons/arrow-small-right.svg'}
+              alt="다음월 선택"
+              onClick={handleMonth(1)}
+            />
+          </MonthNavigation>
+          <ContentContainer>
+            <DateContainer>{duration}</DateContainer>
+            <SelectContainer>
+              {selectItem.map((item) => (
+                <SelectButton
+                  key={item.value}
+                  isSelected={selectedFilter === item.value}
+                  onClick={() => setSelectedFilter(item.value)}>
+                  {item.label}
+                </SelectButton>
+              ))}
+            </SelectContainer>
+          </ContentContainer>
+        </DashBoardContainer>
       </AccountHistoryViewer>
-    </DefaultContainer>
+    </Container>
   )
 }

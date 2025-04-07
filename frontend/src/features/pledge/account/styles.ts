@@ -28,6 +28,10 @@ export const Container = styled.div`
   flex: 1;
   gap: 0.5rem;
   width: 100%;
+  > * {
+    border-radius: 12px;
+    overflow: hidden;
+  }
 `
 export const ButtonContainer = styled.div`
   display: flex;
@@ -47,7 +51,7 @@ export const SelectContainer = styled.ul`
   justify-content: flex-end;
   gap: 0.5rem;
   background-color: ${({ theme }) => theme.color.background.white};
-  padding: 10px 10px 0px 20px;
+  padding: 8px 10px 0px 20px;
 `
 export const SelectButton = styled.li<{ isSelected: boolean }>`
   border: none;
@@ -68,8 +72,7 @@ export const DateContainer = styled.div`
   ${({ theme }) => theme.typography.styles.name};
   color: ${({ theme }) => theme.color.text.low};
   background-color: ${({ theme }) => theme.color.background.white};
-  padding: 20px 20px 0px;
-  border-top: 8px solid ${({ theme }) => theme.color.secondary};
+  padding: 16px 20px 0px;
 `
 export const EmptyContainer = styled.div`
   display: flex;
@@ -86,4 +89,119 @@ export const EmptyContainer = styled.div`
     white,
     ${({ theme }) => theme.color.secondary}
   );
+`
+
+export const TopDescription = styled.div`
+  width: 100%;
+  ${({ theme }) => theme.typography.styles.name};
+  color: ${({ theme }) => theme.color.text.disabled};
+`
+
+export const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+`
+
+export const AmountContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+
+  > div {
+    ${({ theme }) => theme.typography.styles.title};
+    color: ${({ theme }) => theme.color.text.regular};
+  }
+`
+
+export const Periond = styled.div`
+  display: flex;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: 10px;
+  padding: 4px 12px;
+  ${({ theme }) => theme.typography.styles.navigator};
+  color: ${({ theme }) => theme.color.text.disabled};
+`
+export const BoxContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: 16px;
+  padding: 20px 20px 40px;
+  background-color: ${({ theme }) => theme.color.background.white};
+`
+
+export const AccountContainer = styled.div`
+  padding: 0 20px;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  flex: 1;
+  align-self: stretch;
+  background-color: ${({ theme }) => theme.color.background.white};
+`
+export const AccountTitle = styled.div`
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.regular};
+  width: 100%;
+  text-align: left;
+`
+export const AccountInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 20px;
+  > span {
+    ${({ theme }) => theme.typography.styles.default};
+    color: ${({ theme }) => theme.color.text.low};
+    width: 100%;
+  }
+  > div {
+    ${({ theme }) => theme.typography.styles.heading};
+    color: ${({ theme }) => theme.color.text.regular};
+    width: 100%;
+  }
+`
+
+export const DashBoardContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: space-between;
+`
+export const CurrentMonth = styled.span`
+  ${({ theme }) => theme.typography.styles.title};
+  color: ${({ theme }) => theme.color.text.low};
+  white-space: nowrap;
+`
+export const MonthSummary = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  padding: 16px 20px;
+  background-color: ${({ theme }) => theme.color.background.white};
+`
+
+export const MonthNavigation = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  margin: 16px 0px;
+  border-right: 1px solid ${({ theme }) => theme.color.border};
 `

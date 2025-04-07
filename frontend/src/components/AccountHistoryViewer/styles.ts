@@ -27,8 +27,9 @@ export const Container = styled.div`
   flex-direction: column;
   flex: 1;
   gap: 0.5rem;
-  background-color: ${({ theme }) => theme.color.secondary};
+  background-color: ${({ theme }) => theme.color.background.white};
   width: 100%;
+  height: 100%;
 `
 export const ButtonContainer = styled.div`
   display: flex;
