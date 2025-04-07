@@ -9,12 +9,12 @@ import { useRouter } from 'next/navigation'
 
 import { getContract, getContractMembers, getGroup } from '@/apis/group'
 import { getUnreadNotificationCount } from '@/apis/notification'
-import { getHomeOverview } from '@/apis/user'
+import { getHomeOverview, getUserInfo } from '@/apis/user'
 import { CardButton, IconButton, UserItem } from '@/components'
 import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
-import { setHomeOverview } from '@/store/slices/userSlice'
+import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
   Container,
   PaddingContainer,
@@ -118,6 +118,11 @@ export function HomePage() {
       const response = await getContract(user.contractId)
       if (response.success) {
         dispatch(setContract(response.data))
+      }
+    } else if (user.id) {
+      const response = await getUserInfo()
+      if (response.success) {
+        dispatch(setUser(response.data))
       }
     }
   }, [user.contractId, dispatch])
