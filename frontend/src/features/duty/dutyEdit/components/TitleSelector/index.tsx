@@ -8,11 +8,7 @@ import { InputBox } from '@/components'
 
 import { Container, TopContainer } from './styles'
 
-interface TitleSelectorProps {
-  title: string | undefined
-}
-
-export function TitleSelector({ title }: TitleSelectorProps) {
+export function TitleSelector() {
   const { register, watch } = useFormContext()
   const { t } = useTranslation()
   const titleValue = watch('title') // 현재 폼의 title 값

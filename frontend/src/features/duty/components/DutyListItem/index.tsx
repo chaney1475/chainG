@@ -30,7 +30,7 @@ export const DutyListItem = ({
         <Image
           src={
             dutyCategoryList.find((category) => category.id === duty.category)
-              ?.src ?? '/images/duty/duty-category-clean.png' // 이미지 없을때 기본값 지정
+              ?.src ?? '/images/duty/duty-category-other.png' // 이미지 없을때 기본값 지정
           }
           alt={duty.category}
           width={32}

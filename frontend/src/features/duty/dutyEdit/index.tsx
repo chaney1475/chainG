@@ -61,7 +61,6 @@ export function DutyEdit() {
 
   const assignees = watch('assignees')
   const dutyTime = watch('dutyTime')
-  const title = watch('title')
 
   useEffect(() => {
     setValue('dayOfWeek', selectedWeek)
@@ -135,7 +134,7 @@ export function DutyEdit() {
             useTime={editDuty?.useTime || false}
           />
 
-          <TitleSelector title={editDuty?.title} />
+          <TitleSelector />
 
           <AssigneesSelector
             setIsBottomSheetOpen={setIsBottomSheetOpen}
