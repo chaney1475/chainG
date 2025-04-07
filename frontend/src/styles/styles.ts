@@ -257,3 +257,7 @@ export const Description = styled.p`
   ${({ theme }) => theme.typography.styles.description};
   text-align: center;
 `
+export const DefaultLabel = styled.div`
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.low};
+`
