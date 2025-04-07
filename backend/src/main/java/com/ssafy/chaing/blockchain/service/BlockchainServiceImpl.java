@@ -6,7 +6,7 @@ import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
 import com.ssafy.chaing.blockchain.handler.rent.output.RentOutput;
 import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
 import com.ssafy.chaing.blockchain.handler.utility.output.UtilityOutput;
-import com.ssafy.chaing.blockchain.pdf.ContractPortfolioPdfGenerator;
+import com.ssafy.chaing.blockchain.pdf.ContractPdfGenerator;
 import com.ssafy.chaing.blockchain.pdf.PDFGenerator;
 import com.ssafy.chaing.blockchain.pdf.TransferPortfolioPdfGenerator;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
@@ -34,7 +34,7 @@ public class BlockchainServiceImpl implements BlockchainService {
 
     private final ContractUserRepository contractUserRepository;
 
-    private final ContractPortfolioPdfGenerator contractPDFGenerator;
+    private final ContractPdfGenerator contractPDFGenerator;
     private final TransferPortfolioPdfGenerator transferPDFGenerator;
 
     private final S3Util s3Util;
