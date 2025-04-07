@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+
 import { BudgetStatus } from '@/types/budget'
 
 export const ContentContainer = styled.div`
@@ -71,7 +72,7 @@ export const StatusIcon = styled.div<{ variant: BudgetStatus }>`
         `
       case 'debt':
         return `
-          background-color: ${theme.color.text.sunday};
+          background-color: ${theme.color.text.distructive};
         `
       case 'expected':
         return `
@@ -80,4 +81,3 @@ export const StatusIcon = styled.div<{ variant: BudgetStatus }>`
     }
   }}
 `
-
