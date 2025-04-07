@@ -83,7 +83,7 @@ export function BudgetLivingDepositPage() {
 
   useEffect(() => {
     if (next && !disabled) {
-      // handleSubmit(onSubmit)()
+      handleSubmit(onSubmit)()
     }
   }, [next])
 
@@ -94,6 +94,9 @@ export function BudgetLivingDepositPage() {
   const onSubmit = async (data: DepositForm) => {
     const response = await transfer()
     console.log('success', response)
+    if (response) {
+      router.push('/budget/living')
+    }
   }
 
   const handleMyAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +119,7 @@ export function BudgetLivingDepositPage() {
   })
   return (
     <TitleHeaderLayout
-      title={t('livingBudget.deposit.titile')}
+      title={t('livingBudget.deposit.title')}
       label={t('livingBudget.deposit.label')}
       header={t('livingBudget.deposit.header')}
       onClick={handleNext}

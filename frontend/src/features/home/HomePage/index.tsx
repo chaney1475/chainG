@@ -79,7 +79,8 @@ export function HomePage() {
             함께한지
             <Title>
               {Math.floor(
-                (new Date().getTime() - new Date(contract.updatedAt).getTime()) /
+                (new Date().getTime() -
+                  new Date(contract.updatedAt).getTime()) /
                   (1000 * 60 * 60 * 24),
               ) + 1}
             </Title>
@@ -113,12 +114,10 @@ export function HomePage() {
   }, [status])
 
   const fetchContract = useCallback(async () => {
-    console.log('fetchContract 호출됨')
     if (user.contractId) {
       const response = await getContract(user.contractId)
       if (response.success) {
         dispatch(setContract(response.data))
-        console.log('fetchContract 호출됨', response.data)
       }
     }
   }, [user.contractId, dispatch])
@@ -136,7 +135,6 @@ export function HomePage() {
   }, [dispatch, user.id])
 
   const fetchUnreadNotificationCount = useCallback(async () => {
-    console.log('fetchUnreadNotificationCount 호출됨')
     const response = await getUnreadNotificationCount(user.id)
     if (response.success) {
       setHasUnreadNotification(response.data.count > 0)

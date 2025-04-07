@@ -9,7 +9,7 @@ import Image from 'next/image'
 
 import { createAccount } from '@/apis/fintech'
 import { saveAccountAndNotify } from '@/apis/livingBudget'
-import { TitleHeaderLayout } from '@/components'
+import { Modal, TitleHeaderLayout } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setLivingAccountNo } from '@/store/slices/livingBudgetSlice'
 import {
@@ -18,7 +18,7 @@ import {
   ValidationMessage,
 } from '@/styles/styles'
 import { ButtonVariant } from '@/types/ui'
-
+import { useRouter } from 'next/navigation'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -32,18 +32,18 @@ export function BudgetLivingCreatePage() {
   const livingAccountNo = useAppSelector(
     (state) => state.livingBudget.livingAccountNo,
   )
-  const rentAccountConfirm = useAppSelector(
-    (state) => state.contract.rentAccountConfirm,
-  )
-  const rent = useAppSelector((state) => state.contract.contractRequest.rent)
+  const router = useRouter()
   const group = useAppSelector((state) => state.group.group)
   const isLeader = useIsLeader()
   const [next, setNext] = useState(false)
   const disabled = !!livingAccountNo || !isLeader
-
+  const [open, setOpen] = useState(false)
   useEffect(() => {
     if (next && !disabled) {
       handleConfirm()
+    }
+    if (livingAccountNo) {
+      router.push('/budget/living')
     }
   }, [next])
 
@@ -57,6 +57,11 @@ export function BudgetLivingCreatePage() {
       }
     }
   }
+
+  const handleOpenChange = () => {
+    router.push('/budget/living')
+  }
+
   const [buttonText, setButtonText] = useState(
     t('contract.rentAccountNo.button'),
   )
@@ -66,8 +71,8 @@ export function BudgetLivingCreatePage() {
   )?.name
 
   useEffect(() => {
-    const content = rentAccountConfirm
-      ? t('fintech.bankName') + ' ' + rent.rentAccountNo + ' ' + leaderName
+    const content = livingAccountNo
+      ? t('fintech.bankName') + ' ' + livingAccountNo + ' ' + leaderName
       : '생활비 계좌 개설'
     setButtonText(content)
   }, [livingAccountNo, leaderName, t])
@@ -79,7 +84,8 @@ export function BudgetLivingCreatePage() {
   return (
     <TitleHeaderLayout
       title="생활비"
-      label="완료"
+      label={livingAccountNo ? '완료' : '개설'}
+      header="생활비 계좌를 개설해요"
       onClick={handleNext}
       buttonVariant={ButtonVariant.next}>
       <Container>
@@ -102,6 +108,15 @@ export function BudgetLivingCreatePage() {
             </ValidationMessage>
           </ValidationContainer>
         )}
+
+        <Modal
+          open={open}
+          onOpenChange={setOpen}
+          onConfirm={handleOpenChange}
+          title="생활비 계좌 개설"
+          description="생활비 계좌 개설이 완료되었어요"
+          confirmText="확인"
+        />
       </Container>
     </TitleHeaderLayout>
   )

@@ -10,6 +10,7 @@ import {
   ConfirmButton,
   CustomPicker,
   InputBox,
+  TitleHeader,
   UserItem,
 } from '@/components'
 import { useAppSelector } from '@/hooks'
@@ -207,7 +208,7 @@ export function RentRatio() {
                       {index != 0 && (
                         <Colon key={index + 'colon'}>{t('picker.colon')}</Colon>
                       )}
-                      <Label key={key}>{value}</Label>
+                      <HeaderTitle key={key}>{value}</HeaderTitle>
                     </React.Fragment>
                   )
                 })}

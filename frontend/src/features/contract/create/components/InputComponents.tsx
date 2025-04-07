@@ -76,12 +76,14 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
 
   const handleDateChange = (value: { year: string; month: string }) => {
     // KST로 날짜 생성
-    const kstDate = new Date(
-      Number(value.year),
-      Number(value.month) - 1,
-      rent?.dueDate ?? 1,
-    )
-    const currentDate = new Date(props.value as string)
+    const kstDate =
+      new Date(
+        Number(value.year),
+        Number(value.month) - 1,
+        rent?.dueDate ?? 1,
+      ) ?? new Date()
+
+    const currentDate = new Date(props.value as string) ?? new Date()
     const today = new Date()
 
     // startDate인 경우 오늘 날짜보다 작으면 오늘 날짜로 설정

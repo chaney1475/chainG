@@ -13,13 +13,15 @@ export const Page = styled.div`
 
 export const Main = styled.div`
   align-items: center;
-  text-align: center;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   padding: 4px;
   gap: 4px;
   justify-content: center;
+  > div {
+    align-items: center;
+  }
 `
 export const GroupName = styled.div`
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyBold};

@@ -443,7 +443,7 @@
   },
   "livingBudget": {
     "deposit": {
-      "titile": "생활비",
+      "title": "생활비",
       "header": "개인 계좌에서\n생활비 계좌로 돈 채우기",
       "label": "채우기",
       "myAccountNo": {
@@ -463,7 +463,9 @@
       }
     },
     "withdraw": {
-      "title": "생활비 계좌에서\n개인 계좌로 돈 꺼내기",
+      "title": "생활비",
+      "label": "꺼내기",
+      "header": "생활비 계좌에서\n개인 계좌로 돈 꺼내기",
       "myAccountNo": {
         "label": "생활비 계좌에서 꺼내기 위한 내 계좌를 입력해주세요",
         "placeholder": "계좌 번호를 입력해주세요",
