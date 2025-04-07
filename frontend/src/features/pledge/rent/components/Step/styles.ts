@@ -37,11 +37,12 @@ export const StepItem = styled.div`
 
 export const BarContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  position: relative;
   align-items: center;
   justify-content: space-between;
   height: 14px;
   width: 100%;
+  padding: 0 14px;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.color.secondary};
 `
@@ -65,6 +66,70 @@ export const StatusIcon = styled.div<{ variant: BudgetStatus }>`
         return `
           background-color: ${theme.color.primary};
         `
+      case 'none':
+        return `
+          background-color: ${theme.color.secondary};
+        `
     }
   }}
 `
+
+export const StatusBarContainer = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  position: absolute;
+  top: 0px;
+  left: 14px; /* BarWrapper의 좌우 padding과 동일하게 */
+  right: 14px;
+`;
+
+
+export const StatusContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  
+  >div {
+    ${({ theme }) => theme.typography.styles.tiny};
+    color: ${({ theme }) => theme.color.text.disabled};
+  }
+`
+
+// 상단 월 라벨 영역
+export const MonthLabelsContainer = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  padding: 0 14px;
+  width: 100%;
+`;
+
+export const MonthLabel = styled.div`
+  ${({ theme }) => theme.typography.styles.name};
+  color: ${({ theme }) => theme.color.text.low};
+`;
+
+export const MonthContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+`;
+
+export const BlankContainer = styled.div`
+  min-width: 112px;
+  height: 100%;
+`;
+
+export const BottomContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
