@@ -1,33 +1,31 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
+import { useRouter } from 'next/navigation'
 
+import { getAccountDetail } from '@/apis/fintech'
+import { notifyLeaderLivingAccountCreated } from '@/apis/livingBudget'
+import { BudgetCalendar, FullNavLayout, Modal } from '@/components'
+import { FloatingSwitchMenu } from '@/components'
+import { useFintechTime, useIsLeader } from '@/hooks'
+import { useGetAccountHistory } from '@/hooks'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import {
+  setLivingAccountDetail,
+  setLivingAccountPaymentHistory,
+} from '@/store/slices/livingBudgetSlice'
+import { FormattedAccountPaymentHistory } from '@/types/fintech'
+import {
+  formatMoney,
+  formatTransactionDate,
+  formatTransactionTime,
+} from '@/utils/format'
 
-import { useRouter } from 'next/navigation';
-
-
-
-import { getAccountDetail, getAccountPaymentHistory } from '@/apis/fintech';
-import { notifyLeaderLivingAccountCreated } from '@/apis/livingBudget';
-import { BudgetCalendar, FullNavLayout, Modal } from '@/components';
-import { FloatingSwitchMenu } from '@/components';
-import { useFintechTime, useIsLeader } from '@/hooks';
-import { useAppSelector } from '@/hooks/useAppSelector';
-import { setLivingAccountDetail, setLivingAccountPaymentHistory } from '@/store/slices/livingBudgetSlice';
-import { AccountPaymentHistoryRequest, AccountPaymentHistoryResponse, FintechResponseError, FormattedAccountPaymentHistory } from '@/types/fintech';
-import { formatMoney, formatTransactionDate, formatTransactionTime } from '@/utils/format';
-
-
-
-import { History } from './component';
+import { History } from './component'
 import { Account, AccountInfo, AccountTitle, CalendarContainer } from './styles'
-
-
-
-
 
 export function BudgetLivingPage() {
   const { t } = useTranslation()
@@ -39,17 +37,21 @@ export function BudgetLivingPage() {
   )
   const isLeader = useIsLeader()
   const [open, setOpen] = useState(false)
-  const [
-    transmissionDate,
-    transmissionTime,
-    institutionTransactionUniqueNo,
-    startDate,
-    endDate,
-  ] = useFintechTime(new Date(), budgetStartDate, budgetEndDate)
+  const { startDate, endDate } = useFintechTime(
+    new Date(),
+    budgetStartDate,
+    budgetEndDate,
+  )
 
   const livingAccountNo = useAppSelector(
     (state) => state.livingBudget.livingAccountNo,
   )
+  const getAccountHistory = useGetAccountHistory({
+    accountNo: livingAccountNo,
+    budgetStartDate: budgetStartDate,
+    budgetEndDate: budgetEndDate,
+  })
+
   const livingAccountDetail = useAppSelector(
     (state) => state.livingBudget.livingAccountDetail,
   )
@@ -76,6 +78,7 @@ export function BudgetLivingPage() {
     }
   }
 
+  const hasFetchedDetail = useRef(false)
   useEffect(() => {
     if (!livingAccountNo) {
       if (!isLeader) {
@@ -84,15 +87,20 @@ export function BudgetLivingPage() {
         router.push('/budget/living/create')
       }
     } else {
-      fetchAccountDetail()
+      if (!hasFetchedDetail.current) {
+        hasFetchedDetail.current = true
+        fetchAccountDetail()
+      }
     }
   }, [livingAccountNo])
 
+  const hasFetched = useRef(false)
   useEffect(() => {
-    if (livingAccountNo) {
+    if (livingAccountNo && !hasFetched.current) {
+      hasFetched.current = true
       fetchAccountPaymentHistory()
     }
-  }, [livingAccountNo, startDate, endDate])
+  }, [livingAccountNo])
 
   useEffect(() => {
     if (livingAccountPaymentHistory.length === 0) return
@@ -130,33 +138,9 @@ export function BudgetLivingPage() {
     .reduce((acc, item) => acc + Number(item.transactionBalance), 0)
 
   const fetchAccountPaymentHistory = async () => {
-    const Request: AccountPaymentHistoryRequest = {
-      Header: {
-        apiName: 'inquireTransactionHistoryList',
-        transmissionDate: transmissionDate,
-        transmissionTime: transmissionTime,
-        institutionCode: '00100',
-        fintechAppNo: '001',
-        apiServiceCode: 'inquireTransactionHistoryList',
-        institutionTransactionUniqueNo: institutionTransactionUniqueNo,
-        apiKey: 'a57e58879de94373856c981706ca1056',
-        userKey: 'ed638cf5-675b-4e37-91c5-1ea6f5a92f67',
-      },
-      accountNo: livingAccountNo,
-      startDate: startDate,
-      endDate: endDate,
-      transactionType: 'A',
-      orderByType: 'ASC',
-    }
-    const response: AccountPaymentHistoryResponse | FintechResponseError =
-      await getAccountPaymentHistory(Request)
-    if (
-      'Header' in response &&
-      'REC' in response &&
-      response.Header?.responseCode === 'H0000'
-    ) {
-      dispatch(setLivingAccountPaymentHistory(response.REC.list.reverse()))
-    }
+    const response = await getAccountHistory()
+    dispatch(setLivingAccountPaymentHistory(response))
+    hasFetched.current = false
   }
 
   const fetchAccountDetail = async () => {
