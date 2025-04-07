@@ -6,14 +6,18 @@ import com.ssafy.chaing.blockchain.handler.rent.RentHandler;
 import com.ssafy.chaing.blockchain.handler.rent.output.RentOutput;
 import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
 import com.ssafy.chaing.blockchain.handler.utility.output.UtilityOutput;
-import com.ssafy.chaing.blockchain.pdf.ContractPortfolioPdfGenerator;
+import com.ssafy.chaing.blockchain.pdf.ContractPdfGenerator;
 import com.ssafy.chaing.blockchain.pdf.PDFGenerator;
 import com.ssafy.chaing.blockchain.pdf.TransferPortfolioPdfGenerator;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
 import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolio;
 import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioResponse;
 import com.ssafy.chaing.blockchain.service.dto.PDFPathDTO;
+import com.ssafy.chaing.common.exception.BadRequestException;
+import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.common.util.S3Util;
+import com.ssafy.chaing.contract.domain.ContractEntity;
+import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
 import java.math.BigInteger;
 import java.util.List;
@@ -32,17 +36,23 @@ public class BlockchainServiceImpl implements BlockchainService {
     private final RentHandler rentHandler;
     private final UtilityHandler utilityHandler;
 
-    private final ContractUserRepository contractUserRepository;
-
-    private final ContractPortfolioPdfGenerator contractPDFGenerator;
+    private final ContractPdfGenerator contractPDFGenerator;
     private final TransferPortfolioPdfGenerator transferPDFGenerator;
 
     private final S3Util s3Util;
+    private final ContractRepository contractRepository;
 
     @Override
     public ContractPortfolio getContractPortfolio(
             Long contractId
     ) {
+        ContractEntity contractEntity = contractRepository.findById(contractId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.CONTRACT_NOT_FOUND));
+
+        if (!contractEntity.getIsCreatedPdf()) {
+            throw new BadRequestException(ExceptionCode.PDF_IS_GENERATING);
+        }
+
         BigInteger cid = BigInteger.valueOf(contractId);
         ContractOutput contract = contractHandler.getContract(cid);
         log.info("Contract: {}", contract.getRentAccountNo());

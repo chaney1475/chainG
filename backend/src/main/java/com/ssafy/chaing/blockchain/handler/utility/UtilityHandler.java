@@ -1,77 +1,90 @@
 package com.ssafy.chaing.blockchain.handler.utility; // 패키지 경로는 맞게 수정하세요
 
-// --- 필요한 Import 문들 ---
-
 import com.ssafy.chaing.blockchain.config.Web3jConnectionManager;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.handler.utility.output.UtilityOutput;
-import com.ssafy.chaing.blockchain.provider.CustomGasProvider;
-import com.ssafy.chaing.blockchain.web3j.UtilityManager;
+// 제거: import com.ssafy.chaing.blockchain.provider.CustomGasProvider;
+import com.ssafy.chaing.blockchain.web3j.UtilityManager; // 수정됨: web3j 패키지명 확인 필요
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
+
+import java.io.IOException; // 추가
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.web3j.abi.datatypes.DynamicStruct;
+import org.web3j.abi.FunctionEncoder; // 추가
+import org.web3j.abi.datatypes.DynamicStruct; // 추가 (기존에 있었음)
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.RawTransaction; // 추가
+import org.web3j.crypto.TransactionEncoder; // 추가
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName; // 추가
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount; // 추가
+import org.web3j.protocol.core.methods.response.EthSendTransaction; // 추가
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.exceptions.TransactionException; // 추가
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.DefaultGasProvider; // 추가
+import org.web3j.tx.response.PollingTransactionReceiptProcessor; // 추가
+import org.web3j.tx.response.TransactionReceiptProcessor; // 추가
+import org.web3j.utils.Convert; // 추가
+import org.web3j.utils.Numeric; // 추가
 
 
-@Slf4j // 로깅을 위해 추가
+@Slf4j
 @Component
 public class UtilityHandler {
-    // --- 수정: 의존성 변경 ---
     private final Web3jConnectionManager connectionManager;
     private final Credentials credentials;
     private final long chainId;
     private final String utilityAddress;
-    private final CustomGasProvider gasProvider;
+    // 제거: private final CustomGasProvider gasProvider;
     private final ConcurrentHashMap<String, Object> accountLocks = new ConcurrentHashMap<>();
 
-    // UtilityManager 인스턴스는 더 이상 final 필드가 아님
+    // --- 가스 및 폴링 관련 상수 추가 ---
+    private static final BigInteger DEFAULT_GAS_LIMIT = BigInteger.valueOf(4_500_000L); // Rent와 유사하게 설정
+    private static final BigInteger DEFAULT_MAX_PRIORITY_FEE_GWEI = BigInteger.valueOf(2L);
+    private static final int POLLING_ATTEMPTS = 20;
+    private static final long POLLING_FREQUENCY = 3000;
+
 
     @Autowired
-    public UtilityHandler(Web3jConnectionManager connectionManager, // 수정
-                          @Qualifier("utilityCredentials") Credentials utilityCredentials, // 수정
-                          long chainId, // 수정 (Web3jConfig에서 빈으로 등록된 것 주입)
-                          @Value("${web3j.utility-contract-address}") String utilityAddress) { // 수정: Value 키 변경
+    public UtilityHandler(Web3jConnectionManager connectionManager,
+                          @Qualifier("utilityCredentials") Credentials utilityCredentials,
+                          long chainId,
+                          @Value("${web3j.utility-contract-address}") String utilityAddress) {
         this.connectionManager = connectionManager;
         this.credentials = utilityCredentials;
         this.chainId = chainId;
         this.utilityAddress = utilityAddress;
-        this.gasProvider = new CustomGasProvider(); // 필요 시 빈으로 등록하여 주입
+        // 제거: this.gasProvider = new CustomGasProvider();
         log.info("✅ UtilityHandler 초기화 완료! 계약 주소: {}", utilityAddress);
     }
 
-    // --- Helper Method to load UtilityManager within execute context ---
-    private UtilityManager loadUtilityManager(Web3j web3j) {
-        // execute 콜백 내에서 현재 활성 web3j 인스턴스로 TransactionManager 생성
-        TransactionManager txManager = new RawTransactionManager(web3j, credentials, chainId);
-        // UtilityManager 로드
-        return UtilityManager.load(utilityAddress, web3j, txManager, gasProvider);
+    // --- 읽기/인코딩용 UtilityManager 로더 추가 ---
+    private UtilityManager loadUtilityManagerForRead(Web3j web3j) {
+        TransactionManager readOnlyManager = new RawTransactionManager(web3j, credentials, chainId);
+        return UtilityManager.load(utilityAddress, web3j, readOnlyManager, new DefaultGasProvider());
     }
 
-    // --- Utility Contract Methods adapted to use Web3jConnectionManager ---
-
     @Async
-    public CompletableFuture<Boolean> addContract(UtilityInput input) {
+    public CompletableFuture<Boolean> addContract(UtilityInput input) { // 메소드 이름이 addContract 이지만 Utility의 addTransaction 호출
         return CompletableFuture.supplyAsync(() -> {
             String accountAddress = credentials.getAddress();
             Object accountLock = accountLocks.computeIfAbsent(accountAddress, k -> new Object());
 
-            TransactionReceipt receipt;
-            boolean success;
+            TransactionReceipt receipt = null;
+            boolean success = false;
 
             log.info("🔒 [UTILITY] 계정 [{}] 락 획득 시도...", accountAddress);
 
@@ -80,94 +93,135 @@ public class UtilityHandler {
                     log.info("🔑 [UTILITY] 계정 [{}] 락 획득 성공! (이제 트랜잭션 보냅니다)", accountAddress);
 
                     receipt = connectionManager.execute(web3j -> {
-                        UtilityManager localRentManager = loadUtilityManager(web3j);
-                        log.info("🚀 [UTILITY] 트랜잭션 실행 요청! 계정: {}, 노드: {}", accountAddress,
-                                connectionManager.getCurrentRpcEndpoint());
+                        try {
+                            // 1. EIP-1559 가스비 계산
+                            BigInteger baseFeePerGas = web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false).send().getBlock().getBaseFeePerGas();
+                            if (baseFeePerGas == null) throw new RuntimeException("Base Fee not available.");
+                            log.info("💰 Current Base Fee: {} Gwei", Convert.fromWei(baseFeePerGas.toString(), Convert.Unit.GWEI));
 
-                        // 실제 트랜잭션 전송 (이 부분이 Nonce를 사용)
-                        return localRentManager.addTransaction(
-                                input.getId(),
-                                input.getContractId(),
-                                input.getMonth(),
-                                input.getFrom(),
-                                input.getTo(),
-                                input.getAmount(),
-                                input.getStatus(),
-                                input.getTime()
-                        ).send();
-                    });
-                }
+                            BigInteger maxPriorityFeePerGas;
+                            try { maxPriorityFeePerGas = web3j.ethMaxPriorityFeePerGas().send().getMaxPriorityFeePerGas(); }
+                            catch (IOException e) { maxPriorityFeePerGas = Convert.toWei(DEFAULT_MAX_PRIORITY_FEE_GWEI.toString(), Convert.Unit.GWEI).toBigInteger(); log.warn("⚠️ eth_maxPriorityFeePerGas failed, using default: {} Gwei", DEFAULT_MAX_PRIORITY_FEE_GWEI); }
+                            log.info("💰 Max Priority Fee (Tip): {} Gwei", Convert.fromWei(maxPriorityFeePerGas.toString(), Convert.Unit.GWEI));
+
+                            BigInteger maxFeePerGas = baseFeePerGas.multiply(BigInteger.valueOf(2)).add(maxPriorityFeePerGas);
+                            log.info("💰 Calculated Max Fee: {} Gwei", Convert.fromWei(maxFeePerGas.toString(), Convert.Unit.GWEI));
+
+
+                            // 2. Nonce 조회 (PENDING)
+                            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(accountAddress, DefaultBlockParameterName.PENDING).send();
+                            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+                            log.info("🔄 Nonce for account {}: {}", accountAddress, nonce);
+
+                            // 3. 함수 호출 데이터 인코딩
+                            UtilityManager encoderManager = loadUtilityManagerForRead(web3j);
+                            String encodedFunction = encoderManager.addTransaction( // UtilityManager의 함수 호출
+                                    input.getId(), input.getContractId(), input.getMonth(), input.getFrom(),
+                                    input.getTo(), input.getAmount(), input.getStatus(), input.getTime()
+                            ).encodeFunctionCall();
+
+                            // 4. 가스 한도 (기본값 사용)
+                            BigInteger gasLimit = DEFAULT_GAS_LIMIT;
+
+                            // 5. EIP-1559 Raw Transaction 생성
+                            RawTransaction rawTransaction = RawTransaction.createTransaction(
+                                    chainId, nonce, gasLimit, utilityAddress, BigInteger.ZERO, encodedFunction, // utilityAddress 사용
+                                    maxPriorityFeePerGas, maxFeePerGas);
+
+                            // 6. 트랜잭션 서명
+                            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, chainId, credentials);
+                            String hexValue = Numeric.toHexString(signedMessage);
+
+                            // 7. 서명된 트랜잭션 전송
+                            log.info("🚀 [UTILITY] 서명된 트랜잭션 전송 시도...");
+                            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
+
+                            if (ethSendTransaction.hasError()) {
+                                throw new RuntimeException("Raw Transaction 전송 실패: " + ethSendTransaction.getError().getMessage());
+                            }
+                            String txHash = ethSendTransaction.getTransactionHash();
+                            log.info("✅ [UTILITY] 트랜잭션 전송 성공! Tx Hash: {}", txHash);
+
+
+                            // 8. 트랜잭션 영수증 기다리기
+                            TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(
+                                    web3j, POLLING_FREQUENCY, POLLING_ATTEMPTS);
+                            TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+                            log.info("🧾 트랜잭션 [{}] 영수증 수신 완료. Status: {}", txHash, txReceipt.getStatus());
+                            return txReceipt;
+
+                        } catch (IOException e) {
+                            log.error("🚨 Web3j 통신 에러: {}", e.getMessage(), e);
+                            throw new RuntimeException("Web3j 통신 에러: " + e.getMessage(), e);
+                        } catch (TransactionException e) {
+                            log.error("🚨 트랜잭션 영수증 처리 에러: {}", e.getMessage(), e);
+                            throw new RuntimeException("트랜잭션 영수증 처리 에러: " + e.getMessage(), e);
+                        } catch (Exception e) {
+                            log.error("🚨 예측하지 못한 에러: {}", e.getMessage(), e);
+                            throw new RuntimeException("예측하지 못한 에러: " + e.getMessage(), e);
+                        }
+                    }); // connectionManager.execute 끝
+                } // synchronized 끝
 
                 log.info("🔓 [UTILITY] 계정 [{}] 락 해제됨. (트랜잭션 결과 처리 시작)", accountAddress);
 
                 success = receipt != null && receipt.isStatusOK();
                 String resultEmoji = success ? "😄 성공" : "😥 실패";
-                log.info("✅ [Utility] 트랜잭션 전송 결과 - 계정 {}: {}", accountAddress, resultEmoji);
+                log.info("✅ [UTILITY] 최종 트랜잭션 처리 결과 - 계정 {}: {} (Tx: {})",
+                        accountAddress, resultEmoji, receipt != null ? receipt.getTransactionHash() : "N/A");
 
             } catch (Exception e) {
-                log.error("🚨 [Utility] 트랜잭션 처리 중 에러 발생! 계정: {}, 이유: {}", accountAddress, e.getMessage(), e);
-                success = false;
+                log.error("🚨 [UTILITY] addContract 처리 중 최종 에러 발생! 계정: {}, 이유: {}", accountAddress, e.getMessage(), e);
+                success = false; // 예외 발생 시 실패 처리
             }
 
             return success;
-        });
+        }); // CompletableFuture 끝
     }
 
+    // --- 읽기 메소드 수정: loadUtilityManagerForRead 사용 ---
     public List<?> getAllTransactions() {
         try {
-            // connectionManager.execute를 사용하여 블록체인 호출
             return connectionManager.execute(web3j -> {
-                UtilityManager localUtilityManager = loadUtilityManager(web3j);
+                UtilityManager localUtilityManager = loadUtilityManagerForRead(web3j); // 수정
                 log.info("Executing getAllTransactions (Utility) on: {}", connectionManager.getCurrentRpcEndpoint());
-                // 실제 컨트랙트 읽기 함수 호출
                 return localUtilityManager.getAllTransactions().send();
             });
         } catch (Exception e) {
             log.error("❗Error retrieving all utility transactions: {}❗", e.getMessage(), e);
-            // 애플리케이션 특정 예외로 변환하여 던짐
             throw new BadRequestException(ExceptionCode.TRANSFER_TRANSACTION_RETRIEVE_FAILED);
         }
     }
 
-    // 변환된 DTO 리스트 형태로 반환하도록 수정된 메서드
     public List<UtilityOutput> getTransactionsByAccountId(BigInteger accountId) {
         try {
-            // connectionManager.execute를 사용하여 블록체인 호출
             List<?> rawList = connectionManager.execute(web3j -> {
-                UtilityManager localUtilityManager = loadUtilityManager(web3j);
+                UtilityManager localUtilityManager = loadUtilityManagerForRead(web3j); // 수정
                 log.info("Executing getTransactionsByAccount (Utility) for Account ID {} on: {}", accountId,
                         connectionManager.getCurrentRpcEndpoint());
-                // 실제 컨트랙트 읽기 함수 호출
                 return localUtilityManager.getTransactionsByAccount(accountId).send();
             });
 
-            // --- 결과 매핑 로직 (execute 블록 밖에서 수행) ---
             List<UtilityOutput> dtoList = new ArrayList<>();
-            if (rawList != null) { // null 체크 추가
+            // ... (기존 데이터 변환 로직 유지) ...
+            if (rawList != null) {
                 for (Object obj : rawList) {
-                    // DynamicStruct 타입 체크 및 변환 (기존 로직 유지)
                     if (obj instanceof DynamicStruct) {
                         DynamicStruct struct = (DynamicStruct) obj;
                         try {
-                            List<Object> values = struct.getNativeValueCopy(); // 내부 구현 변경 시 문제될 수 있음
+                            List<Object> values = struct.getNativeValueCopy();
                             UtilityOutput dto = new UtilityOutput(
-                                    (BigInteger) values.get(0), // id
-                                    (BigInteger) values.get(1), // accountId
-                                    (BigInteger) values.get(2), // month
-                                    (String) values.get(3),     // from
-                                    (String) values.get(4),     // to
-                                    (BigInteger) values.get(5), // amount
-                                    (Boolean) values.get(6),    // status
-                                    (String) values.get(7)      // time
+                                    (BigInteger) values.get(0), (BigInteger) values.get(1),
+                                    (BigInteger) values.get(2), (String) values.get(3),
+                                    (String) values.get(4), (BigInteger) values.get(5),
+                                    (Boolean) values.get(6), (String) values.get(7)
                             );
                             dtoList.add(dto);
-                        } catch (Exception castingException) {
-                            log.error("Error casting DynamicStruct to UtilityOutput: Struct={}, Error={}", struct,
-                                    castingException.getMessage());
-                            // 오류 발생 시 해당 항목은 건너뛰거나 기본값 처리 가능
+                        } catch (Exception castingException){
+                            log.error("❌ 데이터 변환 오류! DynamicStruct -> UtilityOutput 실패. 데이터: {}, 오류: {}", struct, castingException.getMessage());
                         }
                     } else {
-                        log.warn("Unexpected object type in rawList: {}", obj.getClass().getName());
+                        log.warn("🤔 예상치 못한 데이터 타입 발견! 타입: {}", obj != null ? obj.getClass().getName() : "null");
                     }
                 }
             }

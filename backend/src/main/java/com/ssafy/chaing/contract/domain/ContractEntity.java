@@ -89,6 +89,9 @@ public class ContractEntity extends BaseEntity {
     @Column(name = "completed_at")
     private ZonedDateTime completedAt;
 
+    @Column(name = "is_created_pdf", nullable = false)
+    private Boolean isCreatedPdf;
+
     public void updateCompletedStatus() {
         boolean allConfirmed = members.stream()
                 .filter(user -> !user.isSurplusUser())

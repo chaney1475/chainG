@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -251,29 +252,35 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public RetrieveUtilityDTO retrieveUtility(RetrieveUtilityCommand command) {
         Long userId = command.getUserId();
-        Integer year = Integer.valueOf(command.getYear());
-        Integer month = Integer.valueOf(command.getMonth());
+        // year, month 파라미터는 더 이상 직접 사용하지 않음 (항상 최신 기준 6주)
 
         // 관련 엔티티 조회
         UserEntity user = getUserEntity(userId);
         GroupEntity group = getGroupEntity(user);
         ContractEntity contract = getContractEntity(group);
 
-        // 현재 월과 주 가져오기
-        int currentMonth = formatToYearMonth(year, month);
-
-        // 현재 달의 모든 공과금 결제 정보 조회 (주 별로 내림차순 정렬)
-        List<PaymentEntity> currentMonthPayments = paymentRepository.findAllByContractIdAndFeeTypeAndMonthOrderByWeekDesc(
+        // 해당 계약의 모든 공과금 결제 정보 조회 (최신순 정렬)
+        List<PaymentEntity> allUtilityPayments = paymentRepository.findAllByContractIdAndFeeTypeOrderByMonthDescWeekDesc(
                 contract.getId(),
-                FeeType.UTILITY,
-                currentMonth);
+                FeeType.UTILITY
+        );
 
-        // 결제 정보 처리
-        Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(currentMonthPayments);
+        if (allUtilityPayments.isEmpty()) {
+            // 공과금 내역이 없으면 빈 응답 반환 또는 기본값 처리
+            return new RetrieveUtilityDTO(
+                    contract.getRentTotalAmount(), // 또는 0
+                    0, // myAmount
+                    Collections.emptyList(), // currentWeekPayments
+                    Collections.emptyList()  // weekList
+            );
+        }
 
-        // 현재 주(가장 최신 주) 결제 정보
+        // 모든 관련 UserPayment 정보 조회
+        Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(allUtilityPayments);
+
+        // 현재 주(가장 최신 주) 결제 정보 계산 (이전 로직과 거의 동일, 입력 리스트만 변경됨)
         List<CurrentPaymentDTO> currentWeekPayments = getCurrentWeekUtilityPayments(
-                currentMonthPayments, userPaymentsByPaymentId);
+                allUtilityPayments, userPaymentsByPaymentId); // 이제 전체 리스트를 받아서 내부에서 최신 주 필터링
 
         // 내 금액 계산 (현재 주에 대해)
         int myAmount = currentWeekPayments.stream()
@@ -281,14 +288,15 @@ public class PaymentServiceImpl implements PaymentService {
                 .mapToInt(CurrentPaymentDTO::getAmount)
                 .sum();
 
-        // 주별 결제 요약 (현재 달만)
-        List<WeekPaymentDTO> weekList = getWeekPaymentSummaries(currentMonthPayments, userPaymentsByPaymentId);
+        // 주별 결제 요약 (지난 6주)
+        List<WeekPaymentDTO> weekList = getWeekPaymentSummaries(allUtilityPayments, userPaymentsByPaymentId); // 전체 리스트와 userPayment 맵 전달
 
         return new RetrieveUtilityDTO(
-                contract.getRentTotalAmount(),
+                contract.getRentTotalAmount(), // 필요시 공과금 총액 필드 추가 고려
                 myAmount,
                 currentWeekPayments,
                 weekList
+                // "dueDayOfWeek" 필드가 DTO에 있다면 계산 로직 추가 필요 (contract 정보 등 활용)
         );
     }
 
@@ -512,30 +520,36 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private List<CurrentPaymentDTO> getCurrentWeekUtilityPayments(
-            final List<PaymentEntity> payments,
+            final List<PaymentEntity> sortedAllPayments, // 이름 변경: allUtilityPayments -> sortedAllPayments
             final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
 
         // 가장 최신 주 찾기 (정렬된 리스트에서 첫 번째 항목의 주)
-        if (payments.isEmpty()) {
+        if (sortedAllPayments.isEmpty()) {
             return Collections.emptyList();
         }
 
-        int latestWeek = payments.get(0).getWeek();
+        // 정렬되어 있으므로 첫번째 항목이 가장 최신 데이터
+        PaymentEntity latestPayment = sortedAllPayments.getFirst();
+        int latestMonth = latestPayment.getMonth();
+        int latestWeek = latestPayment.getWeek();
 
-        return payments.stream()
-                .filter(payment -> payment.getWeek() == latestWeek) // 현재 주 데이터만 필터링
+        // 최신 월/주에 해당하는 PaymentEntity 필터링
+        return sortedAllPayments.stream()
+                .filter(payment -> payment.getMonth() == latestMonth && payment.getWeek() == latestWeek) // 현재 월/주 데이터만 필터링
                 .flatMap(payment -> {
-                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
-                            List.of());
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    // userPayments가 비어있는 경우는 데이터 정합성 문제일 수 있음 (로깅 또는 예외 처리 고려)
                     if (userPayments.isEmpty()) {
-                        throw new BadRequestException(ExceptionCode.USER_PAYMENT_NOT_FOUND);
+                        log.warn("UserPayments not found for Payment ID: {}", payment.getId());
+                        // 혹은 throw new NotFoundException(...) 등
+                        return Stream.empty(); // 일단 비어있는 스트림 반환
                     }
 
                     return userPayments.stream()
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.COLLECTED
+                                    up.getStatus() == PaymentStatus.COLLECTED || up.getStatus() == PaymentStatus.PAID // COLLECTED 또는 PAID 상태를 완료로 간주
                             ));
                 })
                 .collect(Collectors.toList());
@@ -543,8 +557,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private List<MonthPaymentDTO> getMonthPaymentSummaries(
             final List<PaymentEntity> payments,
-            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
-
+            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId
+    ) {
         Map<Integer, List<PaymentEntity>> paymentsByMonth = payments.stream()
                 .collect(Collectors.groupingBy(PaymentEntity::getMonth));
 
@@ -582,52 +596,76 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private List<WeekPaymentDTO> getWeekPaymentSummaries(
-            final List<PaymentEntity> currentMonthPayments,
-            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId) {
+            final List<PaymentEntity> allUtilityPayments,
+            final Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId
+    ) {
+        if (allUtilityPayments.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        // 주별로 결제 데이터 그룹화
-        Map<Integer, List<PaymentEntity>> paymentsByWeek = currentMonthPayments.stream()
-                .collect(Collectors.groupingBy(PaymentEntity::getWeek));
+        Map<Integer, Map<Integer, List<PaymentEntity>>> groupedByMonthWeek = allUtilityPayments.stream()
+                .collect(Collectors.groupingBy(
+                        PaymentEntity::getMonth,
+                        Collectors.groupingBy(PaymentEntity::getWeek)
+                ));
 
-        // 월 문자열 계산 (모든 결제가 같은 달이므로 첫 번째 항목에서 추출)
-        String month = currentMonthPayments.isEmpty() ? "" :
-                monthIntToString(currentMonthPayments.get(0).getMonth());
+        List<Map.Entry<Integer, Map<Integer, List<PaymentEntity>>>> monthEntries = new ArrayList<>(groupedByMonthWeek.entrySet());
 
-        return paymentsByWeek.entrySet().stream()
-                .map(entry -> {
-                    Integer week = entry.getKey();
-                    List<PaymentEntity> weekPayments = entry.getValue();
+        monthEntries.sort(Map.Entry.<Integer, Map<Integer, List<PaymentEntity>>>comparingByKey().reversed());
 
-                    // 중복 ID 제거를 위해 Set 사용
-                    Set<Long> paidUserIds = new HashSet<>();
-                    Set<Long> debtUserIds = new HashSet<>();
+        List<WeekPaymentDTO> weeklySummaries = new ArrayList<>();
 
-                    for (PaymentEntity payment : weekPayments) {
-                        List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
-                                List.of());
+        int weekCount = 0;
+        outerLoop:
+        for (Map.Entry<Integer, Map<Integer, List<PaymentEntity>>> monthEntry : monthEntries) {
+            Integer monthInt = monthEntry.getKey();
+            String monthStr = monthIntToString(monthInt);
 
-                        for (UserPaymentEntity userPayment : userPayments) {
-                            Long userEntityId = userPayment.getContractMember().getUser().getId();
-                            if (userPayment.getStatus() == PaymentStatus.COLLECTED) {
-                                paidUserIds.add(userEntityId);
-                            } else if (userPayment.getStatus() == PaymentStatus.STARTED) {
+            List<Map.Entry<Integer, List<PaymentEntity>>> weekEntries = new ArrayList<>(monthEntry.getValue().entrySet());
+            weekEntries.sort(Map.Entry.<Integer, List<PaymentEntity>>comparingByKey().reversed());
+
+            for (Map.Entry<Integer, List<PaymentEntity>> weekEntry : weekEntries) {
+                if (weekCount >= 6) {
+                    break outerLoop;
+                }
+
+                Integer week = weekEntry.getKey();
+                List<PaymentEntity> weekPayments = weekEntry.getValue(); // 해당 주의 PaymentEntity 리스트
+
+                int weeklyTotalAmount = weekPayments.stream()
+                        .mapToInt(PaymentEntity::getTotalAmount)
+                        .sum();
+
+                Set<Long> paidUserIds = new HashSet<>();
+                Set<Long> debtUserIds = new HashSet<>();
+
+                for (PaymentEntity payment : weekPayments) {
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    for (UserPaymentEntity userPayment : userPayments) {
+                        Long userEntityId = userPayment.getContractMember().getUser().getId();
+                        if (userPayment.getStatus() == PaymentStatus.COLLECTED || userPayment.getStatus() == PaymentStatus.PAID) {
+                            paidUserIds.add(userEntityId);
+                            debtUserIds.remove(userEntityId);
+                        } else {
+                            if (!paidUserIds.contains(userEntityId)) {
                                 debtUserIds.add(userEntityId);
                             }
                         }
                     }
+                }
 
-                    return new WeekPaymentDTO(
-                            month,
-                            week,
-                            new ArrayList<>(paidUserIds),
-                            new ArrayList<>(debtUserIds)
-                    );
-                })
-                // 주 내림차순으로 정렬
-                .sorted(Comparator.comparing(WeekPaymentDTO::getWeek, Comparator.reverseOrder()))
-                .collect(Collectors.toList());
+                weeklySummaries.add(new WeekPaymentDTO(
+                        monthStr,
+                        week,
+                        weeklyTotalAmount, // 계산된 주별 총액 추가
+                        new ArrayList<>(paidUserIds),
+                        new ArrayList<>(debtUserIds)
+                ));
+                weekCount++;
+            }
+        }
+        return weeklySummaries;
     }
-
 
     private String monthIntToString(int monthInt) {
         String s = String.valueOf(monthInt);
