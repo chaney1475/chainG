@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -109,8 +110,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-//    @Transactional
-//    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // ✅ 추가!
     public void sendNotification(Long userId, String title, String content, NotificationCategory category) {
         userRepository.findById(userId).ifPresent(user -> {
             if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
