@@ -26,7 +26,7 @@ export const AccountInfo = styled.div`
   padding-bottom: 20px;
   > span {
     ${({ theme }) => theme.typography.styles.default};
-    color: ${({ theme }) => theme.color.text.account};
+    color: ${({ theme }) => theme.color.text.low};
     width: 100%;
   }
   > div {
