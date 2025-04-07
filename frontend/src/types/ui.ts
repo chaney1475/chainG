@@ -41,5 +41,18 @@ export interface ProgressBarProps {
   steps: number
 }
 
+export const PledgeMenu = {
+  contract: 'contract',
+  account: 'account',
+  rent: 'rent',
+  utility: 'utility',
+} as const
+
 export type PledgeMenu = 'contract' | 'account' | 'rent' | 'utility'
+
+export const LivingMenu = {
+  calendar: 'calendar',
+  history: 'history',
+} as const
+
 export type LivingMenu = 'calendar' | 'history'

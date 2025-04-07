@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { RetrieveRentResponse, RetrieveUtilityResponse } from '@/types/budget'
 import { AccountDetail, AccountPaymentHistory } from '@/types/fintech'
+import { PledgeMenu } from '@/types/ui'
 
 interface PledgeState {
   rent: RetrieveRentResponse | null
@@ -11,6 +12,7 @@ interface PledgeState {
     accountDetail: AccountDetail
     paymentHistory: AccountPaymentHistory[]
   }
+  selectedMenu: PledgeMenu
 }
 
 const initialState: PledgeState = {
@@ -36,6 +38,7 @@ const initialState: PledgeState = {
     },
     paymentHistory: [],
   },
+  selectedMenu: PledgeMenu.contract,
 }
 
 const pledgeSlice = createSlice({
@@ -57,9 +60,17 @@ const pledgeSlice = createSlice({
     ) => {
       state.account.paymentHistory = action.payload
     },
+    setSelectedMenu: (state, action: PayloadAction<PledgeMenu>) => {
+      state.selectedMenu = action.payload
+    },
   },
 })
 
-export const { setRent, setUtility, setAccountDetail, setPaymentHistory } =
-  pledgeSlice.actions
+export const {
+  setRent,
+  setUtility,
+  setAccountDetail,
+  setPaymentHistory,
+  setSelectedMenu,
+} = pledgeSlice.actions
 export default pledgeSlice.reducer
