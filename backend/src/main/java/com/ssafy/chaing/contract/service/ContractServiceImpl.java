@@ -312,7 +312,7 @@ public class ContractServiceImpl implements ContractService {
         ContractEntity contractEntity = contractRepository.findById(contractId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
-        if (contractEntity.isCompleted()) {
+        if (contractEntity.isCompleted() || contractEntity.getStatus() != ContractStatus.DRAFT) {
             throw new BadRequestException(ExceptionCode.CONTRACT_ALREADY_CONFIRMED);
         }
 
