@@ -88,9 +88,9 @@ public class PaymentControllerTest {
         currentWeekPayments.add(new CurrentPaymentDTO(3L, 3333, true));
 
         List<WeekPaymentDTO> weekList = new ArrayList<>();
-        weekList.add(new WeekPaymentDTO("2025-3", 3, List.of(1L, 3L), List.of(2L)));
-        weekList.add(new WeekPaymentDTO("2025-3", 2, List.of(1L, 2L, 3L), List.of()));
-        weekList.add(new WeekPaymentDTO("2025-3", 1, List.of(1L, 2L, 3L), List.of()));
+        weekList.add(new WeekPaymentDTO("2025-3", 3, 10000, List.of(1L, 3L), List.of(2L)));
+        weekList.add(new WeekPaymentDTO("2025-3", 2, 10000, List.of(1L, 2L, 3L), List.of()));
+        weekList.add(new WeekPaymentDTO("2025-3", 1, 10000, List.of(1L, 2L, 3L), List.of()));
 
         mockUtilityDTO = new RetrieveUtilityDTO(10000, 3333, currentWeekPayments, weekList);
     }

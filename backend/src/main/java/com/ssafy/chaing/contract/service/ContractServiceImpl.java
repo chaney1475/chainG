@@ -78,6 +78,7 @@ public class ContractServiceImpl implements ContractService {
                 .group(group)
                 .members(new ArrayList<>())
                 .status(ContractStatus.DRAFT) // 쓰고 있는 상태로 지정
+                .isCreatedPdf(false)
                 .build();
 
         List<ContractUserEntity> contractUsers = members.stream().map(
@@ -174,12 +175,12 @@ public class ContractServiceImpl implements ContractService {
             log.info("▶️▶️▶️비동기 호출 시작");
 
             CompletableFuture<Boolean> future = contractHandler.addContract(input);
-//            CompletableFuture<Boolean> future = CompletableFuture.completedFuture(true); // ❗❗❗❗❗반드시 프로모션 때 풀어줄 것.
 
             future.thenAccept(success -> {
                 // 이 코드는 비동기 작업이 완료된 후 실행됩니다 (별도의 스레드에서)
                 if (success) {
                     log.info("✨ 스마트 컨트랙트 등록 성공! 🚀");
+                    contract.setIsCreatedPdf(true);
                     sendNotificationTo(
                             group,
                             "스마트 컨트랙트 등록 완료!",
