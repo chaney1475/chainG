@@ -91,6 +91,7 @@ export const IssueContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  flex: 0;
   justify-content: flex-start;
   position: relative;
   margin: 1rem;
@@ -127,7 +128,7 @@ export const IssueContent = styled.div`
 export const ScrollContainer = styled.div`
   display: flex;
   gap: 1rem;
-  width: calc(100vw - 40px);
+  width: calc(100% - 40px);
   overflow-y: hidden;
   height: 100%;
   justify-content: flex-start;

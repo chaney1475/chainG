@@ -4,17 +4,17 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { useRouter } from 'next/navigation'
 
 import {
   BottomContainer,
+  ImageContainer,
   IntroduceBottomContainer,
   IntroduceContainer,
   LeftContainer,
   TopContainer,
-  ImageContainer,
 } from './styles'
 import { Container, TextContainer } from './styles'
 
@@ -51,22 +51,24 @@ export function Profile() {
           </IntroduceContainer>
         </LeftContainer>
         <ImageContainer onClick={handleEdit}>
-        <Image
-          src="/icons/arrow-right.svg"
-          alt="edit"
-          width={24}
-          height={24}
-        />
+          <Image
+            src="/icons/arrow-right.svg"
+            alt="edit"
+            width={24}
+            height={24}
+          />
         </ImageContainer>
       </TopContainer>
       <BottomContainer>
         <TextContainer>
           <div>{t('my.profile.name')}</div>
-          <div>{user.user.name}</div>
+          {user?.user?.name && <div>{user.user.name}</div>}
         </TextContainer>
         <TextContainer>
           <div>{t('my.profile.email')}</div>
-          <div>{user.summary.emailAddress}</div>
+          {user?.summary?.emailAddress && (
+            <div>{user.summary.emailAddress}</div>
+          )}
         </TextContainer>
       </BottomContainer>
     </Container>
