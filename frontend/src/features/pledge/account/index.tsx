@@ -121,7 +121,7 @@ export function Account({
           {paymentCurrent?.rent === PaymentStatus.COLLECTED && (
             <ConfirmButton
               onClick={() => {
-                router.push('/pledge/withdrawToOwner')
+                router.push('/pledge/transfer/owner')
               }}
               variant={ButtonVariant.prev}
               label="집주인에게 보내기"
@@ -131,7 +131,7 @@ export function Account({
           {paymentCurrent?.userRent === UserPaymentStatus.FAILED && (
             <ConfirmButton
               onClick={() => {
-                router.push('/budget/pledge/withdrawToRentAccount')
+                router.push('/budget/pledge/transfer/rent')
               }}
               variant={ButtonVariant.next}
               label="월세 채우기"
