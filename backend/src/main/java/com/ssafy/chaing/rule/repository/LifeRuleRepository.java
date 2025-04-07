@@ -28,4 +28,7 @@ public interface LifeRuleRepository extends JpaRepository<LifeRuleEntity, Long> 
             "WHERE lr.group.id = :groupId")
     Optional<LifeRuleEntity> findWithUsersByGroupId(@Param("groupId") Long groupId);
 
+    // 🔽 여기 추가
+    @Query("SELECT l FROM LifeRuleEntity l WHERE l.group.id = :groupId")
+    Optional<LifeRuleEntity> findByGroupId(@Param("groupId") Long groupId);
 }

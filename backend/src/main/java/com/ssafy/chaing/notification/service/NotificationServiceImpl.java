@@ -52,8 +52,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         NotificationEntity saved = notificationRepository.save(notification);
 
-        System.out.println("saved = " + NotificationDTO.from(saved));
-
         sendNotificationAsync(user.getFcmToken(), command.getTitle(), command.getContent());
     }
 
@@ -102,8 +100,8 @@ public class NotificationServiceImpl implements NotificationService {
 
                 String response = firebaseMessaging.send(message);
                 StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
-                log.info("✅ FCM 발송 성공 - response: {}, 호출 위치: {}.{}", response, caller.getClassName(),
-                        caller.getMethodName());
+//                log.info("✅ FCM 발송 성공 - response: {}, 호출 위치: {}.{}", response, caller.getClassName(),
+//                        caller.getMethodName());
 
             } catch (Exception e) {
                 log.error("FCM 발송 실패 - {}", e.getMessage(), e);
@@ -127,13 +125,13 @@ public class NotificationServiceImpl implements NotificationService {
                         .build();
 
                 NotificationEntity saved = notificationRepository.save(notification);
-                log.info("알림 저장 완료: {}", NotificationDTO.from(saved));
+//                log.info("알림 저장 완료: {}", NotificationDTO.from(saved));
 
                 sendNotificationAsync(user.getFcmToken(), title, content);
             } else {
                 StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
-                log.warn("FCM 토큰이 없어서 알림 발송 생략 - userId: {}, 호출 위치: {}.{}",
-                        userId, caller.getClassName(), caller.getMethodName());
+//                log.warn("FCM 토큰이 없어서 알림 발송 생략 - userId: {}, 호출 위치: {}.{}",
+//                        userId, caller.getClassName(), caller.getMethodName());
             }
         });
     }

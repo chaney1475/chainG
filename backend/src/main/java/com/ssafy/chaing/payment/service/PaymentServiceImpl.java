@@ -153,7 +153,7 @@ public class PaymentServiceImpl implements PaymentService {
                 null
         );
 
-        TransferDTO result = fintechService.transfer(dto);
+        TransferDTO result = fintechService.rentTransfer(dto);
 
         if (!result.isSuccess()) {
             throw new BadRequestException(ExceptionCode.FINTECH_TRANSFER_FAILED);
@@ -204,14 +204,15 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // 송금: 요청자가 본인 계좌에서 → 월세 계좌로 송금
-        TransferDTO result = fintechService.transfer(
+        TransferDTO result = fintechService.rentTransfer(
                 new TransferCommand(
                         userPayment.getId(),
                         contract.getId(),
                         (long) payment.getMonth(),
                         user.getName() + "의 계좌: " + contractUser.getAccountNo().substring(0, 4),
                         contractUser.getAccountNo(),
-                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract().getRentAccountNo().substring(0, 4),
+                        payment.getContract().getGroup().getName() + "의 공동 계좌: " + payment.getContract()
+                                .getRentAccountNo().substring(0, 4),
                         payment.getContract().getRentAccountNo(),
                         command.getBalance(),
                         payment.getStatus() == PaymentStatus.COLLECTED,
@@ -329,20 +330,20 @@ public class PaymentServiceImpl implements PaymentService {
         GroupEntity group = groupRepository.findById(user.getGroupId())
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
 
-        boolean rentPaid = false;
-        boolean userRentPaid = false;
-        boolean utilityPaid = false;
-        boolean userUtilityPaid = false;
+        boolean rentPaid = true;
+        boolean userRentPaid = true;
+        boolean utilityPaid = true;
+        boolean userUtilityPaid = true;
 
         // contractId가 null이거나 조회 실패하면 기본 상태로 리턴
         Long contractId = group.getContractId();
         if (contractId == null) {
-            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+            return new PaymentOverviewDTO(group.getName(), rentPaid, userRentPaid, utilityPaid, userUtilityPaid);
         }
 
         ContractEntity contract = contractRepository.findById(contractId).orElse(null);
         if (contract == null) {
-            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+            return new PaymentOverviewDTO(group.getName(), rentPaid, userRentPaid, utilityPaid, userUtilityPaid);
         }
 
         ContractUserEntity contractUser = contractUserRepository
@@ -350,42 +351,56 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElse(null);
 
         if (contractUser == null) {
-            return new PaymentOverviewDTO(group.getName(), false, false, false, false);
+            return new PaymentOverviewDTO(group.getName(), rentPaid, userRentPaid, utilityPaid, userUtilityPaid);
         }
 
-        int dueDate = contract.getDueDate();
+        Integer dueDate = contract.getDueDate();
+
+        if (dueDate == null) {
+            return new PaymentOverviewDTO(group.getName(), rentPaid, userRentPaid, utilityPaid, userUtilityPaid);
+        }
+
         int targetMonth = calculateTargetMonthByDueDate(dueDate);
 
         PaymentEntity rentPayment = paymentRepository
                 .findWithUsersByContractIdAndMonthAndFeeType(contract.getId(), targetMonth, FeeType.RENT)
                 .orElse(null);
 
-        if (rentPayment != null && rentPayment.getStatus() == PaymentStatus.PAID) {
-            rentPaid = true;
+        if (rentPayment != null &&
+                (
+                        rentPayment.getStatus() == PaymentStatus.PARTIALLY_PAID
+                                || rentPayment.getStatus() == PaymentStatus.FAILED
+                )
+        ) {
+            rentPaid = false;
         }
 
         UserPaymentEntity rentUserPayment = rentPayment != null
                 ? userPaymentRepository.findByPaymentIdAndContractMemberId(rentPayment.getId(), userId).orElse(null)
                 : null;
 
-        if (rentUserPayment != null && rentUserPayment.getStatus() == PaymentStatus.COLLECTED) {
-            userRentPaid = true;
+        if (rentUserPayment != null && rentUserPayment.getStatus() == PaymentStatus.FAILED) {
+            userRentPaid = false;
         }
 
         PaymentEntity utilityPayment = paymentRepository
                 .findTopByContractIdAndFeeTypeOrderByMonthDescWeekDesc(contract.getId(), FeeType.UTILITY)
                 .orElse(null);
 
-        if (utilityPayment != null && utilityPayment.getStatus() == PaymentStatus.COLLECTED) {
-            utilityPaid = true;
+        if (utilityPayment != null &&
+                (
+                        utilityPayment.getStatus() == PaymentStatus.PARTIALLY_PAID
+                                || utilityPayment.getStatus() == PaymentStatus.FAILED
+                )) {
+            utilityPaid = false;
         }
 
         UserPaymentEntity utilityUserPayment = utilityPayment != null
                 ? userPaymentRepository.findByPaymentIdAndContractMemberId(utilityPayment.getId(), userId).orElse(null)
                 : null;
 
-        if (utilityUserPayment != null && utilityUserPayment.getStatus() == PaymentStatus.COLLECTED) {
-            userUtilityPaid = true;
+        if (utilityUserPayment != null && utilityUserPayment.getStatus() == PaymentStatus.FAILED) {
+            userUtilityPaid = false;
         }
 
         return new PaymentOverviewDTO(

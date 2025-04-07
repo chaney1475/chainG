@@ -64,6 +64,7 @@ public class UtilityBatchService {
         List<PaymentEntity> payments = paymentRepository.findAllPaymentsForConfirmedContracts(ContractStatus.CONFIRMED);
 
         for (PaymentEntity payment : payments) {
+            if(payment.getFeeType() == FeeType.RENT) continue;
             collectUtility(payment);
         }
 
@@ -200,7 +201,7 @@ public class UtilityBatchService {
             }
 
             ContractEntity contract = payment.getContract();
-            TransferDTO result = fintechService.transfer(
+            TransferDTO result = fintechService.utilityTransfer(
                     new TransferCommand(
                             userPayment.getId(),
                             contract.getId(),

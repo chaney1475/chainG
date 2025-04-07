@@ -70,7 +70,7 @@ public class ContractServiceImpl implements ContractService {
 
         List<GroupUserEntity> members = groupUserRepository.findByGroupId(groupId);
 
-        if (group.getContractId() != null) {
+        if (group.getContractId() != null && group.getContractId() > 0) {
             throw new BadRequestException(CONTRACT_ALREADY_EXIST);
         }
 

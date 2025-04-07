@@ -27,4 +27,12 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
                         WHERE c.status = :status
             """)
     List<ContractEntity> findAllWithDetails(@Param("status") ContractStatus status);
+
+    @Query("""
+            SELECT c FROM ContractEntity c
+            JOIN FETCH c.members m
+            JOIN FETCH m.user u
+                WHERE u.id = :userId
+            """)
+    Optional<ContractEntity> findByContractMemberUserId(Long userId);
 }

@@ -121,7 +121,7 @@ public class RentBatchServiceWithMockTest {
                 .thenReturn(null); // 혹은 mock(ScheduledFuture.class) 반환 가능
 
         // Step 1: fintechService - 두 번째 유저만 실패하도록 세팅
-        when(fintechService.transfer(any())).thenAnswer(invocation -> {
+        when(fintechService.rentTransfer(any())).thenAnswer(invocation -> {
             TransferCommand cmd = invocation.getArgument(0);
             return cmd.getFromAccountNo().equals("0019468386865145")
                     ? new TransferDTO(false) // 실패
@@ -151,7 +151,7 @@ public class RentBatchServiceWithMockTest {
 
         // Step 5: fintechService → 전체 성공으로 다시 세팅
         Mockito.reset(fintechService);
-        when(fintechService.transfer(any())).thenReturn(new TransferDTO(true));
+        when(fintechService.rentTransfer(any())).thenReturn(new TransferDTO(true));
 
         // Step 6: 당일 작업 수동 실행 (→ 최종 송금 시도)
         ownerTask.run();
@@ -167,7 +167,7 @@ public class RentBatchServiceWithMockTest {
     @Test
     void testRetrySchedulingWhenOwnerTransferFails() {
         // Step 1: fintechService 설정 → 집주인 송금 실패
-        when(fintechService.transfer(any())).thenReturn(new TransferDTO(false));
+        when(fintechService.rentTransfer(any())).thenReturn(new TransferDTO(false));
 
         // Step 2: TaskScheduler Mock → Runnable 캡처
         ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -187,12 +187,12 @@ public class RentBatchServiceWithMockTest {
 
         // Step 5: fintechService 재설정 → collect는 성공하게
         reset(fintechService);
-        when(fintechService.transfer(any())).thenReturn(new TransferDTO(true));
+        when(fintechService.rentTransfer(any())).thenReturn(new TransferDTO(true));
         collectTask.run();
 
         // Step 6: 다시 실패 설정 → payToOwner는 실패
         reset(fintechService);
-        when(fintechService.transfer(any())).thenAnswer(invocation -> {
+        when(fintechService.rentTransfer(any())).thenAnswer(invocation -> {
             return new TransferDTO(false); // 집주인 송금 실패 유도
         });
 

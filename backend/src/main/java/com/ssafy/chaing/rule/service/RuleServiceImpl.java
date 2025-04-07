@@ -311,6 +311,12 @@ public class RuleServiceImpl implements RuleService {
 
         Long groupId = user.getGroupId();
 
+        // 생활 룰이 아예 없으면 true 리턴
+        boolean lifeRuleExists = lifeRuleRepository.findByGroupId(groupId).isPresent();
+        if (!lifeRuleExists) {
+            return true;
+        }
+
         return lifeRuleChangeRequestRepository.
                 findProgressingRequestByGroupId(groupId)
                 .isPresent(); // PROGRESS 상태면 true

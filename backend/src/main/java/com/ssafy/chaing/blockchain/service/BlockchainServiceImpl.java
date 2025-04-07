@@ -11,14 +11,14 @@ import com.ssafy.chaing.blockchain.pdf.PDFGenerator;
 import com.ssafy.chaing.blockchain.pdf.TransferPortfolioPdfGenerator;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
 import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolio;
-import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioList;
+import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioResponse;
 import com.ssafy.chaing.blockchain.service.dto.PDFPathDTO;
 import com.ssafy.chaing.common.util.S3Util;
-import com.ssafy.chaing.contract.domain.ContractUserEntity;
 import com.ssafy.chaing.contract.repository.ContractUserRepository;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,26 +50,20 @@ public class BlockchainServiceImpl implements BlockchainService {
     }
 
     @Override
-    public TransferPortfolioList getTransferPortfolio(
+    public TransferPortfolioResponse getTransferPortfolio(
             Long contractId
     ) {
-        List<ContractUserEntity> contractUsers = contractUserRepository.findByContractId(contractId);
-        List<TransferPortfolio> result = new ArrayList<>();
+        BigInteger cid = BigInteger.valueOf(contractId);
 
-        for (ContractUserEntity contractUser : contractUsers) {
-            BigInteger aid = BigInteger.valueOf(contractUser.getId());
-            List<RentOutput> rentOutput = rentHandler.getTransactionsByAccountId(aid);
-            List<UtilityOutput> utilityOutputs = utilityHandler.getTransactionsByAccountId(aid);
+        List<RentOutput> rentOutput = rentHandler.getTransactionsByAccountId(cid);
+        List<UtilityOutput> utilityOutputs = utilityHandler.getTransactionsByAccountId(cid);
 
-            result.add(new TransferPortfolio(
-                    contractUser.getId(),
-                    contractUser.getUser().getName(),
-                    rentOutput,
-                    utilityOutputs
-            ));
-        }
-
-        return new TransferPortfolioList(contractId, result);
+        return new TransferPortfolioResponse(
+                contractId,
+                new TransferPortfolio(
+                        getMonthlyRent(rentOutput),
+                        getMonthlyUtility(utilityOutputs)
+                ));
     }
 
     @Override
@@ -87,7 +81,7 @@ public class BlockchainServiceImpl implements BlockchainService {
 
     @Override
     public PDFPathDTO createTransferPDF(
-            TransferPortfolioList portfolioList
+            TransferPortfolioResponse portfolioList
     ) {
         String pdfUrl = generatePDF(
                 portfolioList,
@@ -105,5 +99,31 @@ public class BlockchainServiceImpl implements BlockchainService {
     ) {
         byte[] pdfBytes = generator.generate(data);
         return s3Util.uploadPdf(pdfBytes, "pdf/contracts", baseFileName);
+    }
+
+    private Map<String, List<RentOutput>> getMonthlyRent(List<RentOutput> rentOutputList) {
+        if (rentOutputList == null) {
+            return Map.of(); // 빈 맵 반환 또는 예외 처리
+        }
+
+        return rentOutputList.stream()
+                .filter(ro -> ro.getTime() != null && ro.getTime().length() >= 4 && ro.getMonth() != null) // Null 및 길이 체크
+                .collect(Collectors.groupingBy(
+                        // 그룹핑 기준: time 앞 4자리(연도) + month 값
+                        rentOutput -> rentOutput.getTime().substring(0, 4) + rentOutput.getMonth().toString()
+                ));
+    }
+
+    private Map<String, List<UtilityOutput>> getMonthlyUtility(List<UtilityOutput> utilityOutputList) {
+        if (utilityOutputList == null) {
+            return Map.of();
+        }
+
+        return utilityOutputList.stream()
+                .filter(ro -> ro.getTime() != null && ro.getTime().length() >= 4 && ro.getMonth() != null) // Null 및 길이 체크
+                .collect(Collectors.groupingBy(
+                        // 그룹핑 기준: time 앞 4자리(연도) + month 값
+                        utility -> utility.getTime().substring(0, 4) + utility.getMonth().toString()
+                ));
     }
 }

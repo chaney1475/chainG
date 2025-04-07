@@ -8,7 +8,7 @@ import com.ssafy.chaing.blockchain.handler.rent.input.RentInput;
 import com.ssafy.chaing.blockchain.handler.utility.UtilityHandler;
 import com.ssafy.chaing.blockchain.handler.utility.input.UtilityInput;
 import com.ssafy.chaing.blockchain.portfolio.output.ContractPortfolio;
-import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioList;
+import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioResponse;
 import com.ssafy.chaing.blockchain.service.BlockchainService;
 import com.ssafy.chaing.common.schema.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +53,7 @@ public class BlockchainController {
     public ResponseEntity<BaseResponse<PDFPathResponse>> createTransferPDF(
             @PathVariable("contractId") Long contractId
     ) {
-        TransferPortfolioList portfolioList = blockchainService.getTransferPortfolio(contractId);
+        TransferPortfolioResponse portfolioList = blockchainService.getTransferPortfolio(contractId);
         PDFPathResponse response = PDFPathResponse.from(blockchainService.createTransferPDF(portfolioList));
         return ResponseEntity.ok(BaseResponse.success(response));
     }
@@ -82,7 +82,7 @@ public class BlockchainController {
         boolean response = future.join();
         return ResponseEntity.ok(BaseResponse.success(response));
     }
-    
+
     @Operation(
             summary = "[테스트] 생활비 계약 등록",
             description = "생활비(Utility) 스마트 계약을 블록체인에 등록합니다. 테스트용으로 사용됩니다."
@@ -91,7 +91,8 @@ public class BlockchainController {
     public ResponseEntity<BaseResponse<Boolean>> createUtility(
             @RequestBody UtilityInput input
     ) {
-        boolean response = utilityHandler.addContract(input);
+        CompletableFuture<Boolean> future = utilityHandler.addContract(input);
+        boolean response = future.join();
         return ResponseEntity.ok(BaseResponse.success(response));
     }
 
@@ -112,10 +113,10 @@ public class BlockchainController {
             description = "이체 관련 스마트 컨트랙트 내용을 조회합니다. 테스트용으로 사용됩니다."
     )
     @GetMapping("/test/payment/{contractId}")
-    public ResponseEntity<BaseResponse<TransferPortfolioList>> getTransfer(
+    public ResponseEntity<BaseResponse<TransferPortfolioResponse>> getTransfer(
             @PathVariable("contractId") Long contractId
     ) {
-        TransferPortfolioList portfolioList = blockchainService.getTransferPortfolio(contractId);
-        return ResponseEntity.ok(BaseResponse.success(portfolioList));
+        TransferPortfolioResponse response = blockchainService.getTransferPortfolio(contractId);
+        return ResponseEntity.ok(BaseResponse.success(response));
     }
 }
