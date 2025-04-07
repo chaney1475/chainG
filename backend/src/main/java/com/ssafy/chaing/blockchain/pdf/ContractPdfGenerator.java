@@ -8,10 +8,14 @@ import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +42,12 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.useFont(() -> getClass().getResourceAsStream("/font/Paperlogy-7Bold.ttf"), "Paperlogy7");
             builder.useFont(() -> getClass().getResourceAsStream("/font/Paperlogy-5Medium.ttf"), "Paperlogy5");
-//            builder.withHtmlContent(html, null);
-//            builder.withHtmlContent(html, getClass().getResource("/").toExternalForm());
-            builder.withHtmlContent(html, new java.io.File("build/resources/main/").toURI().toString());
-
+            URL resourceUrl = getClass().getClassLoader().getResource("logo/ChainG_Sign.png");
+            if (resourceUrl == null) {
+                throw new RuntimeException("로고 이미지 경로를 찾을 수 없습니다!");
+            }
+            String baseUri = resourceUrl.toString().replace("ChainG_Sign.png", "");
+            builder.withHtmlContent(html, baseUri);
             builder.toStream(os);
             builder.run();
             return os.toByteArray();
@@ -289,6 +295,7 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
         }
 
         paymentInfoHtml.append("</tbody></table>");
+        String base64Image = encodeImageToBase64();
         String signatureTableHtml = """
                     <div class='signature-area'>
                         <table class='signature-table'>
@@ -300,7 +307,8 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
                                     </tr>
                                     <tr class='signature-stamp-row'>
                         """ + infos.stream()
-                .map(i -> "<td class='stamp'><img src='logo/ChainG_Sign.png' alt='도장' style='max-width:60px; max-height:60px; display:block; margin:0 auto;'/></td>")
+                .map(i -> "<td class='stamp'><img src='data:image/png;base64," + base64Image
+                        + "' alt='도장' style='max-width:60px; max-height:60px; display:block; margin:0 auto;'/></td>")
                 .collect(Collectors.joining()) +
                 """
                                 </tr>
@@ -451,6 +459,18 @@ public class ContractPdfGenerator implements PDFGenerator<ContractPortfolio> {
         return userRepository.findById(userId.longValue())
                 .map(UserEntity::getName)
                 .orElse("알 수 없음");
+    }
+
+    private String encodeImageToBase64() {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("logo/ChainG_Sign.png")) {
+            if (is == null) {
+                throw new RuntimeException("로고 이미지를 읽을 수 없습니다.");
+            }
+            byte[] imageBytes = is.readAllBytes();
+            return Base64.getEncoder().encodeToString(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("로고 이미지 인코딩 실패", e);
+        }
     }
 
 }
