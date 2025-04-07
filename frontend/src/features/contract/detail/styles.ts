@@ -65,4 +65,8 @@ export const BottomContainer = styled.div`
   gap: 16px;
   padding: 0 20px;
   width: 100%;
+  @media (min-width: 768px) {
+    width: 49%;
+    margin: 0 auto;
+  }
 `
