@@ -54,6 +54,7 @@ export function BudgetLivingCreatePage() {
       const success = await saveAccountAndNotify(accountNo)
       if (success) {
         dispatch(setLivingAccountNo(accountNo))
+        setOpen(true)
       }
     }
   }
