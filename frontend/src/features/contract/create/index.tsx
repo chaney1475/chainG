@@ -6,7 +6,11 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { createEmptyContract, updateContract } from '@/apis/group'
+import {
+  confirmContract,
+  createEmptyContract,
+  updateContract,
+} from '@/apis/group'
 import {
   ConfirmButton,
   IconButton,
@@ -32,7 +36,7 @@ import {
   HeaderContainer,
   UserTileContainer,
 } from '@/styles/styles'
-import { ContractRequest } from '@/types/contract'
+import { ContractRequest, ContractStatus } from '@/types/contract'
 
 import { useContractSteps } from '../hooks/useContractSteps'
 import {
@@ -203,11 +207,16 @@ export function ContractCreatePage() {
     if (!user.contractId) {
       return
     }
-
-    const response = await updateContract({
-      contractId: user.contractId,
-      contract: contractRequest,
-    })
+    const response =
+      contractRequest.status == ContractStatus.draft
+        ? await updateContract({
+            contractId: user.contractId,
+            contract: contractRequest,
+          })
+        : await confirmContract({
+            contractId: user.contractId,
+            contract: contractRequest,
+          })
     if (response.success) {
       dispatch(setContract(response.data))
     }

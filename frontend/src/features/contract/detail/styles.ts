@@ -59,9 +59,10 @@ export const Navigator = styled.div`
 `
 export const BottomContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   position: absolute;
   bottom: 0;
+  gap: 16px;
   padding: 0 20px;
   width: 100%;
 `

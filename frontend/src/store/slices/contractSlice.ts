@@ -23,6 +23,7 @@ interface ContractState {
   showRentRatio: boolean
   rentAccountConfirm: boolean
   cardConfirm: boolean
+  useUtilityCard: boolean
   validations: {
     [key: string]: ValidationItem
   }
@@ -73,6 +74,7 @@ const initialState: ContractState = {
   showRentRatio: true,
   rentAccountConfirm: false,
   cardConfirm: false,
+  useUtilityCard: false,
   validations: {
     requiredFields: {
       isValid: false,
@@ -275,6 +277,9 @@ export const contractSlice = createSlice({
         status: ContractStatus.draft,
       }
     },
+    setUseUtilityCard: (state, action: PayloadAction<boolean>) => {
+      state.useUtilityCard = action.payload
+    },
   },
 })
 
@@ -292,6 +297,7 @@ export const {
   validateContractRequest,
   setContractMembers,
   initContractRequest,
+  setUseUtilityCard,
 } = contractSlice.actions
 
 export default contractSlice.reducer

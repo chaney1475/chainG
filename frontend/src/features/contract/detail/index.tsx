@@ -103,13 +103,12 @@ export function ContractDetail() {
 
   const confirmModal = async () => {
     console.log('confirmModal status', status)
-    if (status === ContractStatus.pending) {
-      await handleSubmit(approveContractWithAccountNo)()
-    } else if (status === ContractStatus.isContractApproved) {
+    if (useModifyModal || status === ContractStatus.isContractApproved) {
       router.push('/contract/create')
-      
-      // await handleSubmit(modifyContract)()
+    } else if (status === ContractStatus.pending) {
+      await handleSubmit(approveContractWithAccountNo)()
     }
+    setShouldConfirm(false)
   }
   const [shouldConfirm, setShouldConfirm] = useState(false)
   const [openModal, setOpenModal] = useState(false)
@@ -154,6 +153,14 @@ export function ContractDetail() {
       router.push('/contract/detail')
     }
   }
+  const [useModifyModal, setUseModifyModal] = useState(false)
+  const showModifyModal = () => {
+    setModalTitle(t('contract.modify.title'))
+    setModalDescription(t('contract.modify.description'))
+    setModalConfirmText(t('contract.modify.confirmText'))
+    setOpenModal(true)
+    setUseModifyModal(true)
+  }
   const updateStatus = async () => {
     switch (status) {
       case ContractStatus.none:
@@ -166,11 +173,7 @@ export function ContractDetail() {
         setShouldConfirm(false)
         break
       case ContractStatus.isContractApproved:
-        console.log(t('contract.detail.is_contract_approved.title'))
-        setModalTitle(t('contract.modify.title'))
-        setModalDescription(t('contract.modify.description'))
-        setModalConfirmText(t('contract.modify.confirmText'))
-        setOpenModal(true)
+        showModifyModal()
         // router.push('/contract/create')
         break
       case ContractStatus.pending:
@@ -223,7 +226,7 @@ export function ContractDetail() {
         title={modalTitle}
         description={modalDescription}
         confirmText={modalConfirmText}>
-        {status === ContractStatus.pending && (
+        {!useModifyModal && (
           <PaddingContainer>
             <InputBox
               label="자동이체용 계좌번호"
@@ -236,6 +239,13 @@ export function ContractDetail() {
         )}
       </Modal>
       <BottomContainer>
+        {status === ContractStatus.pending && (
+          <ConfirmButton
+            label={'contract.detail.is_contract_approved.button'}
+            variant="prev"
+            onClick={() => showModifyModal()}
+          />
+        )}
         <ConfirmButton
           label={button}
           onClick={() => setShouldConfirm(true)}
