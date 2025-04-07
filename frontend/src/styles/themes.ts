@@ -5,6 +5,7 @@ export type CustomTheme = {
   color: {
     primary: string
     secondary: string
+    modify: string
     text: {
       regular: string
       low: string
@@ -13,14 +14,12 @@ export type CustomTheme = {
       confirm: string
       saturday: string
       sunday: string
-      account: string
     }
     background: {
       update: string
       delete: string
       create: string
       white: string
-      account: string
     }
     border: string
   }
@@ -88,7 +87,7 @@ export type CustomTheme = {
         fontFamily: string
         fontSize: string
       }
-      accountAndCardNum :{
+      accountAndCardNum: {
         fontFamily: string
         fontSize: string
       }
@@ -102,26 +101,25 @@ declare module '@emotion/react' {
 
 const theme: CustomTheme = {
   color: {
-    primary: '#5583e7',
-    secondary: '#f1f3f6',
+    primary: '#54a0ff',
+    secondary: '#ebeef2',
+    modify: '#fec959',
     text: {
-      regular: '#1f1f1f',
-      low: '#4f4f4f',
-      disabled: '#8c8c8c',
+      regular: '#292f35',
+      low: '#586575',
+      disabled: '#586575',
       distructive: '#c84620',
-      confirm: '#3bce6e',
+      confirm: '#2dbd99',
       saturday: '#74bcff',
-      sunday: '#ff9494',
-      account: '#448fd4',
+      sunday: '#ff8c8f',
     },
     background: {
-      update: '#fffcc4',
-      delete: '#ffe6e6',
-      create: '#ddffd4',
+      update: '#fffbe8',
+      delete: '#ffe3e5',
+      create: '#d4ffdb',
       white: '#ffffff',
-      account: '#d2ebff',
     },
-    border: '#d9d9d9',
+    border: '#d9d6e7',
   },
   typography: {
     fonts: {
