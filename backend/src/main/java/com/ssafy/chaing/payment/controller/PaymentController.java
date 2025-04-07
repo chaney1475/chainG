@@ -7,6 +7,7 @@ import com.ssafy.chaing.payment.controller.request.RetrieveRentRequest;
 import com.ssafy.chaing.payment.controller.request.RetrieveUtilityRequest;
 import com.ssafy.chaing.payment.controller.request.WithdrawTransferRequest;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
+import com.ssafy.chaing.payment.controller.response.PaymentStatusInfoResponse;
 import com.ssafy.chaing.payment.controller.response.RetrieveRentResponse;
 import com.ssafy.chaing.payment.controller.response.RetrieveUtilityResponse;
 import com.ssafy.chaing.payment.service.PaymentService;
@@ -48,6 +49,21 @@ public class PaymentController {
     ) {
         RetrieveRentCommand command = month.toCommand(principal);
         RetrieveRentResponse response = RetrieveRentResponse.from(paymentService.retrieveRent(command));
+        return ResponseEntity.ok(BaseResponse.success(response));
+    }
+
+    @Operation(
+            summary = "월세, 공과금 상태 조회"
+    )
+    @GetMapping("/rent/current-status")
+    public ResponseEntity<BaseResponse<PaymentStatusInfoResponse>> getPaymentStatus(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam int month
+    ) {
+        PaymentStatusInfoResponse response = paymentService.getCurrentPaymentStatus(
+                principal.getId(),
+                month
+        );
         return ResponseEntity.ok(BaseResponse.success(response));
     }
 

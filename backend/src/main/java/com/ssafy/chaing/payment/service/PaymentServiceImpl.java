@@ -15,6 +15,7 @@ import com.ssafy.chaing.group.repository.GroupRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.payment.controller.response.AccountInfoResponse;
+import com.ssafy.chaing.payment.controller.response.PaymentStatusInfoResponse;
 import com.ssafy.chaing.payment.domain.FeeType;
 import com.ssafy.chaing.payment.domain.PaymentEntity;
 import com.ssafy.chaing.payment.domain.PaymentStatus;
@@ -38,7 +39,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -289,7 +289,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .sum();
 
         // 주별 결제 요약 (지난 6주)
-        List<WeekPaymentDTO> weekList = getWeekPaymentSummaries(allUtilityPayments, userPaymentsByPaymentId); // 전체 리스트와 userPayment 맵 전달
+        List<WeekPaymentDTO> weekList = getWeekPaymentSummaries(allUtilityPayments,
+                userPaymentsByPaymentId); // 전체 리스트와 userPayment 맵 전달
 
         return new RetrieveUtilityDTO(
                 contract.getRentTotalAmount(), // 필요시 공과금 총액 필드 추가 고려
@@ -420,6 +421,69 @@ public class PaymentServiceImpl implements PaymentService {
         );
     }
 
+    @Override
+    public PaymentStatusInfoResponse getCurrentPaymentStatus(Long userId, int month) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+
+        GroupEntity group = groupRepository.findById(user.getGroupId())
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
+
+        Long contractId = group.getContractId();
+        if (contractId == null) {
+            return new PaymentStatusInfoResponse(null, null, null, null);
+        }
+
+        ContractEntity contract = contractRepository.findById(contractId)
+                .orElse(null);
+
+        if (contract == null) {
+            return new PaymentStatusInfoResponse(null, null, null, null);
+        }
+
+        ContractUserEntity contractUser = contractUserRepository
+                .findByContractIdAndUserId(contract.getId(), userId)
+                .orElse(null);
+
+        if (contractUser == null) {
+            return new PaymentStatusInfoResponse(null, null, null, null);
+        }
+
+        // RENT
+        PaymentEntity rentPayment = paymentRepository
+                .findWithUsersByContractIdAndMonthAndFeeType(contract.getId(), month, FeeType.RENT)
+                .orElse(null);
+
+        PaymentStatus rentStatus = rentPayment != null ? rentPayment.getStatus() : null;
+
+        UserPaymentEntity rentUserPayment = rentPayment != null
+                ? userPaymentRepository.findByPaymentIdAndContractMemberId(rentPayment.getId(), userId).orElse(null)
+                : null;
+
+        PaymentStatus userRentStatus = rentUserPayment != null ? rentUserPayment.getStatus() : null;
+
+        // UTILITY
+        PaymentEntity utilityPayment = paymentRepository
+                .findTopByContractIdAndFeeTypeAndMonthOrderByWeekDesc(contract.getId(), FeeType.UTILITY, month)
+                .orElse(null);
+
+        PaymentStatus utilityStatus = utilityPayment != null ? utilityPayment.getStatus() : null;
+
+        UserPaymentEntity utilityUserPayment = utilityPayment != null
+                ? userPaymentRepository.findByPaymentIdAndContractMemberId(utilityPayment.getId(), userId).orElse(null)
+                : null;
+
+        PaymentStatus userUtilityStatus = utilityUserPayment != null ? utilityUserPayment.getStatus() : null;
+
+        return new PaymentStatusInfoResponse(
+                rentStatus,
+                userRentStatus,
+                utilityStatus,
+                userUtilityStatus
+        );
+    }
+
+
     private int calculateTargetMonthByDueDate(int dueDateDay) {
         ZonedDateTime nowKST = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
@@ -535,9 +599,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 최신 월/주에 해당하는 PaymentEntity 필터링
         return sortedAllPayments.stream()
-                .filter(payment -> payment.getMonth() == latestMonth && payment.getWeek() == latestWeek) // 현재 월/주 데이터만 필터링
+                .filter(payment -> payment.getMonth() == latestMonth
+                        && payment.getWeek() == latestWeek) // 현재 월/주 데이터만 필터링
                 .flatMap(payment -> {
-                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                            List.of());
                     // userPayments가 비어있는 경우는 데이터 정합성 문제일 수 있음 (로깅 또는 예외 처리 고려)
                     if (userPayments.isEmpty()) {
                         log.warn("UserPayments not found for Payment ID: {}", payment.getId());
@@ -549,7 +615,8 @@ public class PaymentServiceImpl implements PaymentService {
                             .map(up -> new CurrentPaymentDTO(
                                     up.getContractMember().getUser().getId(),
                                     up.getAmount(),
-                                    up.getStatus() == PaymentStatus.COLLECTED || up.getStatus() == PaymentStatus.PAID // COLLECTED 또는 PAID 상태를 완료로 간주
+                                    up.getStatus() == PaymentStatus.COLLECTED || up.getStatus() == PaymentStatus.PAID
+                                    // COLLECTED 또는 PAID 상태를 완료로 간주
                             ));
                 })
                 .collect(Collectors.toList());
@@ -609,7 +676,8 @@ public class PaymentServiceImpl implements PaymentService {
                         Collectors.groupingBy(PaymentEntity::getWeek)
                 ));
 
-        List<Map.Entry<Integer, Map<Integer, List<PaymentEntity>>>> monthEntries = new ArrayList<>(groupedByMonthWeek.entrySet());
+        List<Map.Entry<Integer, Map<Integer, List<PaymentEntity>>>> monthEntries = new ArrayList<>(
+                groupedByMonthWeek.entrySet());
 
         monthEntries.sort(Map.Entry.<Integer, Map<Integer, List<PaymentEntity>>>comparingByKey().reversed());
 
@@ -621,7 +689,8 @@ public class PaymentServiceImpl implements PaymentService {
             Integer monthInt = monthEntry.getKey();
             String monthStr = monthIntToString(monthInt);
 
-            List<Map.Entry<Integer, List<PaymentEntity>>> weekEntries = new ArrayList<>(monthEntry.getValue().entrySet());
+            List<Map.Entry<Integer, List<PaymentEntity>>> weekEntries = new ArrayList<>(
+                    monthEntry.getValue().entrySet());
             weekEntries.sort(Map.Entry.<Integer, List<PaymentEntity>>comparingByKey().reversed());
 
             for (Map.Entry<Integer, List<PaymentEntity>> weekEntry : weekEntries) {
@@ -640,10 +709,12 @@ public class PaymentServiceImpl implements PaymentService {
                 Set<Long> debtUserIds = new HashSet<>();
 
                 for (PaymentEntity payment : weekPayments) {
-                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(), List.of());
+                    List<UserPaymentEntity> userPayments = userPaymentsByPaymentId.getOrDefault(payment.getId(),
+                            List.of());
                     for (UserPaymentEntity userPayment : userPayments) {
                         Long userEntityId = userPayment.getContractMember().getUser().getId();
-                        if (userPayment.getStatus() == PaymentStatus.COLLECTED || userPayment.getStatus() == PaymentStatus.PAID) {
+                        if (userPayment.getStatus() == PaymentStatus.COLLECTED
+                                || userPayment.getStatus() == PaymentStatus.PAID) {
                             paidUserIds.add(userEntityId);
                             debtUserIds.remove(userEntityId);
                         } else {
