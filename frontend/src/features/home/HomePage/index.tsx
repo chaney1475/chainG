@@ -80,7 +80,7 @@ export function HomePage() {
             <Title>
               {Math.floor(
                 (new Date().getTime() -
-                  new Date(contract.updatedAt).getTime()) /
+                  new Date(contract.createdAt).getTime()) /
                   (1000 * 60 * 60 * 24),
               ) + 1}
             </Title>

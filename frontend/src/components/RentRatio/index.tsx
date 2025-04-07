@@ -96,7 +96,10 @@ export function RentRatio() {
   const [pickerValue, setPickerValue] = useState<Record<string, string>>(
     group.members.reduce(
       (acc, member) => {
-        acc[member.id] = '1'
+        acc[member.id] =
+          rent.userPaymentInfo
+            .find((info) => info.userId === member.id)
+            ?.ratio.toString() ?? '1'
         return acc
       },
       {} as Record<string, string>,
@@ -109,6 +112,7 @@ export function RentRatio() {
 
   useEffect(() => {
     if (showRentRatio) {
+      if (!pickerValue) return
       if (rent.totalAmount && Object.keys(pickerValue).length > 0) {
         const totalRatio = Object.values(pickerValue).reduce(
           (sum, val) => sum + Number(val),

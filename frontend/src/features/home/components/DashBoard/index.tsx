@@ -6,14 +6,23 @@ import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
 
 import { useAppSelector } from '@/hooks'
-import { DefaultContainer, SlimContainer, Title } from '@/styles/styles'
+import {
+  CenterContainer,
+  DefaultContainer,
+  PaddingContainer,
+  RegularLabel,
+  SlimContainer,
+  Title,
+} from '@/styles/styles'
 import { Duty } from '@/types/duty'
 import { formatHourMinuteTime } from '@/utils/formatTime'
 
 import {
+  ButtonContainer,
   Card,
   CardContainer,
   Category,
+  Container,
   Description,
   ImageContainer,
   IssueContainer,
@@ -21,7 +30,6 @@ import {
   IssueTitle,
   ScrollContainer,
   StyledButton,
-  ButtonContainer
 } from './styles'
 
 interface Issue {
@@ -123,11 +131,11 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
   }, [issues, selectedCategory])
 
   return (
-    <DefaultContainer>
-      {issues.length != 0 && (
-        <>
-          <DefaultContainer>
-            <Title>오늘 나의 이슈</Title>
+    <Container>
+      <DefaultContainer>
+        <Title>오늘 나의 이슈</Title>
+        {issues.length != 0 && (
+          <>
             <SlimContainer>
               <ButtonContainer>
                 {issues.length != 0 && (
@@ -179,9 +187,16 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
                 </IssueContainer>
               ))}
             </ScrollContainer>
-          </DefaultContainer>
-        </>
-      )}
+          </>
+        )}
+        {issues.length == 0 && (
+          <PaddingContainer>
+            <CenterContainer>
+              <RegularLabel>오늘 나의 이슈가 없어요</RegularLabel>
+            </CenterContainer>
+          </PaddingContainer>
+        )}
+      </DefaultContainer>
       <DefaultContainer>
         <Title>생활 관리</Title>
         <CardContainer>
@@ -205,6 +220,6 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
           </Card>
         </CardContainer>
       </DefaultContainer>
-    </DefaultContainer>
+    </Container>
   )
 }

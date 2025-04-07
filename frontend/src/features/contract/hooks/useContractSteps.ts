@@ -13,7 +13,6 @@ const stepContent: StepContent[] = [
     dueDate: 'customPicker',
   },
   {
-    startDate: 'calendar',
     endDate: 'calendar',
   },
   {

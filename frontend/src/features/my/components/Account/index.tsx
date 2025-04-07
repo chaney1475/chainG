@@ -28,7 +28,7 @@ export function Account({ handleLogout }: AccountProps) {
   console.log('contract', contract)
 
   const isLivingBudgetConnected: boolean =
-  !!livingBudget.myAccountNo && !!livingBudget.livingAccountNo;
+    !!livingBudget.myAccountNo && !!livingBudget.livingAccountNo
 
   return (
     <Container>
@@ -37,29 +37,29 @@ export function Account({ handleLogout }: AccountProps) {
         <ContentContainer>
           <TextContainer>
             <div>{t('my.account.myAccount')}</div>
-            <div>{livingBudget.myAccountNo ? livingBudget.myAccountNo : '아직 연결되지 않았습니다.'}</div>
+            <div>
+              {livingBudget.myAccountNo
+                ? livingBudget.myAccountNo
+                : '아직 연결되지 않았습니다.'}
+            </div>
           </TextContainer>
           <hr />
           <TextContainer>
             <div>{t('my.account.rentAccount')}</div>
-            <div>{contract.contract.rent.rentAccountNo ? contract.contract.rent.rentAccountNo : '아직 연결되지 않았습니다.'}</div>
+            <div>
+              {contract.contract.rent.rentAccountNo
+                ? contract.contract.rent.rentAccountNo
+                : '아직 연결되지 않았습니다.'}
+            </div>
           </TextContainer>
           <hr />
-          {isLivingBudgetConnected && (
-            <>
-              <TextContainer>
-                <div>{t('my.account.rentAccount')}</div>
-                <div>
-                {livingBudget.myAccountNo}
-              </div>
-              </TextContainer>
-              <hr />
-            </>
-          )}
-
           <TextContainer>
             <div>{t('my.account.ownerAccount')}</div>
-            <div>{contract.contract.rent.ownerAccountNo ? contract.contract.rent.ownerAccountNo : '아직 연결되지 않았습니다.'}</div>
+            <div>
+              {contract.contract.rent.ownerAccountNo
+                ? contract.contract.rent.ownerAccountNo
+                : '아직 연결되지 않았습니다.'}
+            </div>
           </TextContainer>
         </ContentContainer>
       </TopContainer>

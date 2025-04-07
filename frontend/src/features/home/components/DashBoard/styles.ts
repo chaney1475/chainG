@@ -128,10 +128,14 @@ export const IssueContent = styled.div`
 export const ScrollContainer = styled.div`
   display: flex;
   gap: 1rem;
-  width: calc(100% - 40px);
+  width: calc(100vw - 60px);
   overflow-y: hidden;
   height: 100%;
   justify-content: flex-start;
+
+  @media (min-width: 768px) {
+    width: calc(50vw - 40px);
+  }
 `
 export const IssueTitle = styled.div`
   ${({ theme }) => theme.typography.styles.topHeader};
@@ -160,4 +164,7 @@ export const ButtonContainer = styled.div`
   display: flex;
   gap: 0.5rem;
   width: 100%;
+`
+export const Container = styled.div`
+  margin: 1rem 0;
 `

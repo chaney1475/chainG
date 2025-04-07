@@ -1,5 +1,7 @@
 import { useDispatch } from 'react-redux'
 
+import { formatDate } from '@fullcalendar/core/index.js'
+
 import {
   AccountInput,
   Card,
@@ -13,7 +15,13 @@ import {
   updateContractRequestField,
   updateRent,
 } from '@/store/slices/contractSlice'
-import { RegularLabel } from '@/styles/styles'
+import {
+  DefaultContainer,
+  RegularLabel,
+  ShowCenterBox,
+  ValidationContainer,
+  ValidationMessage,
+} from '@/styles/styles'
 import { ShowBox } from '@/styles/styles'
 
 import {
@@ -73,6 +81,9 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
   const dispatch = useDispatch()
   const item = props.item as 'startDate' | 'endDate'
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
+  const startDate = useAppSelector(
+    (state) => state.contract.contractRequest.startDate,
+  )
 
   const handleDateChange = (value: { year: string; month: string }) => {
     // KST로 날짜 생성
@@ -84,14 +95,7 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
       ) ?? new Date()
 
     const currentDate = new Date(props.value as string) ?? new Date()
-    const today = new Date()
-
     // startDate인 경우 오늘 날짜보다 작으면 오늘 날짜로 설정
-    if (item === 'startDate' && kstDate < today) {
-      kstDate.setFullYear(today.getFullYear())
-      kstDate.setMonth(today.getMonth())
-      kstDate.setDate(rent?.dueDate ?? today.getDate())
-    }
 
     // UTC로 변환하여 저장
     const utcDate = new Date(
@@ -101,19 +105,23 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
 
     dispatch(
       updateContractRequestField({
+        field: 'startDate',
+        value: new Date().toISOString(),
+      }),
+    )
+    dispatch(
+      updateContractRequestField({
         field: item,
         value: formattedDate,
       }),
     )
 
-    const shouldUpdateOtherDate =
-      (item === 'startDate' && kstDate > currentDate) ||
-      (item === 'endDate' && kstDate < currentDate)
+    const shouldUpdateOtherDate = item === 'endDate' && kstDate < currentDate
 
     if (shouldUpdateOtherDate) {
       dispatch(
         updateContractRequestField({
-          field: item === 'startDate' ? 'endDate' : 'startDate',
+          field: item,
           value: formattedDate,
         }),
       )
@@ -122,6 +130,16 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
 
   return (
     <div>
+      <DefaultContainer>
+        <ShowCenterBox isDisabled={true}>
+          <RegularLabel>{new Date().toLocaleDateString()}</RegularLabel>
+        </ShowCenterBox>
+        <ValidationContainer>
+          <ValidationMessage isValid={true}>
+            시작일은 언제나 오늘로 고정됩니다.
+          </ValidationMessage>
+        </ValidationContainer>
+      </DefaultContainer>
       <ShowBox>
         <RegularLabel>
           {new Date(props.value as string).toLocaleDateString()}

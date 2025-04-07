@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -84,30 +84,28 @@ export function ContractCreatePage() {
     handleBack,
     isLastStep,
   } = useContractSteps()
-  const [isMounted, setIsMounted] = useState(false)
+  const hasCreated = useRef(false)
+
   useEffect(() => {
     const createContract = async () => {
-      if (isMounted) return
-      console.log('createContract', user)
+      if (hasCreated.current) return
+      hasCreated.current = true
+
       if (!user.contractId || !user.groupId) {
-        console.log('createContract', user)
         const response = await createEmptyContract({
           groupId: user.groupId as number,
         })
-        console.log('createContract response', response)
         if (response.success) {
           dispatch(setContractId(response.data.id))
           dispatch(initContractRequest(group.members))
         }
       } else {
-        //값이 있는 거자나
-        console.log('컨트랙터', contract)
         dispatch(setContractRequest(contract))
       }
-      setIsMounted(true)
     }
+
     createContract()
-  }, [contractRequest])
+  }, [])
 
   const isAfter = (item: string) => {
     return item === 'rentAccountNo'
