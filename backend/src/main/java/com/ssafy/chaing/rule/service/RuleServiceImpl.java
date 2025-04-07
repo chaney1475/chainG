@@ -3,6 +3,7 @@ package com.ssafy.chaing.rule.service;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import com.ssafy.chaing.common.exception.NotFoundException;
+import com.ssafy.chaing.common.util.GPTUtil;
 import com.ssafy.chaing.group.domain.GroupEntity;
 import com.ssafy.chaing.group.domain.GroupUserEntity;
 import com.ssafy.chaing.group.repository.GroupUserRepository;
@@ -54,6 +55,7 @@ public class RuleServiceImpl implements RuleService {
     private final LifeRuleChangeItemRepository lifeRuleChangeItemRepository;
     private final LifeRuleUserRepository lifeRuleUserRepository;
     private final NotificationService notificationService;
+    private final GPTUtil gptUtil;
 
     @Override
     @Transactional
@@ -82,12 +84,17 @@ public class RuleServiceImpl implements RuleService {
         lifeRule.setLifeRuleUsers(lifeRuleUserEntities);
 
         Set<LifeRuleItemEntity> items = request.getRules().stream()
-                .map(form -> LifeRuleItemEntity.builder()
-                        .lifeRule(lifeRule)
-                        .content(form.getContent())
-                        .category(form.getCategory())
-                        .build())
-                .collect(Collectors.toSet());
+                .map(form -> {
+                    String category = gptUtil.classifyLifeRuleContent(form.getContent());
+                    if (category == null || category.isBlank()) {
+                        category = "기타";
+                    }
+                    return LifeRuleItemEntity.builder()
+                            .lifeRule(lifeRule)
+                            .content(form.getContent())
+                            .category(category)
+                            .build();
+                }).collect(Collectors.toSet());
         lifeRuleItemRepository.saveAll(items);
         lifeRule.setItems(items);
 
@@ -148,7 +155,7 @@ public class RuleServiceImpl implements RuleService {
                         .changeRequest(changeRequest)
                         .ruleItemId(update.getId())
                         .newValue(update.getContent())
-                        .category(update.getCategory())
+                        .category(gptUtil.classifyLifeRuleContent(update.getContent()))
                         .actionType(update.getActionType())
                         .build())
                 .toList();
@@ -183,7 +190,7 @@ public class RuleServiceImpl implements RuleService {
             LifeRuleUpdateDto dto = new LifeRuleUpdateDto();
             dto.setId(item.getRuleItemId());
             dto.setContent(item.getNewValue());
-            dto.setCategory(item.getCategory());
+            dto.setCategory(item.getCategory() != null ? item.getCategory() : "OTHER");
             dto.setActionType(item.getActionType());
             return dto;
         }).collect(Collectors.toList());
@@ -268,7 +275,7 @@ public class RuleServiceImpl implements RuleService {
                     LifeRuleDto dto = new LifeRuleDto();
                     dto.setId(item.getId());
                     dto.setContent(item.getContent());
-                    dto.setCategory(item.getCategory());
+                    dto.setCategory(item.getCategory() != null ? item.getCategory() : "OTHER");
                     return dto;
                 })
                 .collect(Collectors.toList());

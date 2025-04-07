@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class DutyFormRequest {
     private String title;
+    @Schema(hidden = true)
     private String category;
     @Schema(type = "string", example = "15:00Z", format = "time")
     private OffsetTime dutyTime;
