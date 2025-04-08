@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -13,6 +14,7 @@ import { ConfirmButton } from '@/components/ConfirmButton'
 import { TopHeader } from '@/components/TopHeader'
 import { lifeRuleList } from '@/constants/lifeRuleList'
 import { useAppSelector } from '@/hooks/useAppSelector'
+import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { Container } from '@/styles/styles'
 import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 
@@ -32,6 +34,7 @@ type FormValues = {
 export function LifeRuleUpdatePage() {
   const { t } = useTranslation()
   const router = useRouter()
+  const dispatch = useDispatch()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const lifeRules = useAppSelector((state) => state.lifeRule.lifeRules)
@@ -216,6 +219,7 @@ export function LifeRuleUpdatePage() {
       const response = await updateLifeRule({ updates: filteredUpdates })
       if (response.success) {
         router.push('/lifeRule')
+        dispatch(setHomeOverviewLifeRuleApproved(true))
       }
     } catch (error) {
       console.error('Error updating life rules:', error)
