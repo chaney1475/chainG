@@ -33,7 +33,6 @@ public class DutyNotificationService {
         processDutyNotificationAt(nowUtc);
     }
 
-    @Transactional
     public void processDutyNotificationAt(ZonedDateTime nowUtc) {
         ZonedDateTime kstNow = nowUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
         ZonedDateTime utcPlusOne = nowUtc.plusHours(1);
@@ -50,8 +49,10 @@ public class DutyNotificationService {
                 continue;
             }
 
-            OffsetTime dutyTime = OffsetTime.parse(duty.getDutyTimeRaw()); // OffsetTime 타입으로 직접 저장되어 있다고 가정
-            if (!targetOffsetTime.equals(dutyTime)) {
+            // 저장된 dutyTimeRaw 값과 비교할 때, 나노초를 0으로 맞춰서 비교합니다.
+            OffsetTime dutyTime = OffsetTime.parse(duty.getDutyTimeRaw()).withNano(0);
+            OffsetTime comparedTargetTime = targetOffsetTime.withNano(0);
+            if (!comparedTargetTime.equals(dutyTime)) {
                 continue;
             }
 

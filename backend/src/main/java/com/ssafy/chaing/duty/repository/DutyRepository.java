@@ -27,12 +27,13 @@ public interface DutyRepository extends JpaRepository<DutyEntity, Long> {
                 WHERE d.dutyTimeRaw = :dutyTimeRaw
             """)
     List<DutyEntity> findWithAssigneesAndUsersByDutyTimeRaw(@Param("dutyTimeRaw") String dutyTimeRaw);
-    
+
     @Query("""
                 SELECT DISTINCT d FROM DutyEntity d
                 LEFT JOIN FETCH d.assignees a
                 LEFT JOIN FETCH a.groupUser gu
                 LEFT JOIN FETCH gu.user u
+                WHERE d.isDeleted = false
             """)
     List<DutyEntity> findAllWithAssigneesAndUsers();
 }
