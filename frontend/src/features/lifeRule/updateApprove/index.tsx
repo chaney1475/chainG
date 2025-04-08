@@ -17,7 +17,11 @@ import ApproveModal from '@/features/lifeRule/components/ApproveModal'
 import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
 import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/LifeRuleUpdateApproveListItem'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { setUpdateLifeRules } from '@/store/slices/lifeRuleSlice'
+import {
+  resetNotApprovedIds,
+  setNotApprovedIds,
+  setUpdateLifeRules,
+} from '@/store/slices/lifeRuleSlice'
 import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { Container } from '@/styles/styles'
 import { LifeRuleUpdateVariant, UpdateLifeRule } from '@/types/lifeRule'
@@ -36,11 +40,16 @@ export function LifeRuleUpdateApprovePage() {
     (state) => state.lifeRule.updateLifeRules,
   )
   const user = useAppSelector((state) => state.user.user)
+  const notApprovedId: number[] = useAppSelector(
+    (state) => state.lifeRule.notApprovedIds,
+  )
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [approveType, setApproveType] = useState<'approve' | 'reject' | null>(
     null,
   )
   const [mergedLifeRules, setMergedLifeRules] = useState<UpdateLifeRule[]>([])
+  const amIApprove: boolean = !notApprovedId.includes(user.id)
 
   // 승인/거부 처리 함수
   const handleApprovalUpdate = async (approved: boolean) => {
@@ -48,20 +57,18 @@ export function LifeRuleUpdateApprovePage() {
       if (user?.id) {
         const approveResponse = await approveUpdateForm({ approved })
         if (approveResponse === true) {
-          router.push('/lifeRule')
+          router.replace('/lifeRule')
           if (!approved) {
             dispatch(setHomeOverviewLifeRuleApproved(false))
+            dispatch(resetNotApprovedIds())
           } else {
-            const postNotApprovedIdsResponse = await postNotApprovedIds(groupId)
-            console.log(
-              'postNotApprovedIdsResponse',
-              postNotApprovedIdsResponse,
-            )
-            if (
-              postNotApprovedIdsResponse.success &&
-              postNotApprovedIdsResponse.data.notApprovedIds?.length === 0
-            ) {
-              dispatch(setHomeOverviewLifeRuleApproved(false))
+            const response = await postNotApprovedIds(groupId) // api 쏘고
+            if (response.success) {
+              dispatch(setNotApprovedIds(response.data.notApprovedIds)) // 승인된 목록 업데이트
+              console.log('postNotApprovedIdsResponse', response)
+              if (response.data.notApprovedIds?.length === 0) {
+                dispatch(setHomeOverviewLifeRuleApproved(false)) // 비어있으면 false 처리
+              }
             }
           }
         }
@@ -168,10 +175,13 @@ export function LifeRuleUpdateApprovePage() {
         </LifeRuleUpdateList>
       </FullMain>
       <ConfirmContainer>
-        <ApproveButton
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
+        {/* 여기에 설정해주기 */}
+        {!amIApprove && (
+          <ApproveButton
+            onApprove={handleApprove}
+            onReject={handleReject}
+          />
+        )}
       </ConfirmContainer>
 
       <ApproveModal

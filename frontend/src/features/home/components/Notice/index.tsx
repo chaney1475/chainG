@@ -145,7 +145,7 @@ export function Notice() {
           </LinkContainer>
         </NoticeItem>
       )}
-      {!homeOverview.isLifeRuleApproved && (
+      {homeOverview.isLifeRuleApproved && (
         <NoticeItem>
           <div>
             <NoticeTitle>
