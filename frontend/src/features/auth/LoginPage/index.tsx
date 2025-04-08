@@ -61,7 +61,7 @@ export function LoginPage() {
         dispatch(setUser(response.data.data)),
         initFCM(),
       ])
-      router.push('/')
+      router.replace('/')
     }
   }
 
