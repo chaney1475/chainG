@@ -41,7 +41,6 @@ export function ContractDetail() {
     ContractStatus.none as ContractStatus,
   )
 
-
   const rentUserList: RentUser[] = group.members.map((member) => {
     return {
       ...member,
@@ -66,7 +65,6 @@ export function ContractDetail() {
     if (response.success) {
       const url = response.data.presignedUrl
       window.open(url, '_blank')
-      // router.push('/contract')
     }
   }
   useEffect(() => {
@@ -87,7 +85,7 @@ export function ContractDetail() {
       dispatch(setShowContractApprovedModal(true))
     }
     setOpenModal(false)
-    router.push('/contract')
+    router.push('/pledge')
   }
   const fetchContract = useCallback(async () => {
     if (user.contractId) {
@@ -205,9 +203,9 @@ export function ContractDetail() {
           <Title>{t(label)}</Title>
           <Label>{t(description, { value: group.name })}</Label>
           <ConfirmButton
-          label={button}
-          onClick={() => setShouldConfirm(true)}
-        />
+            label={button}
+            onClick={() => setShouldConfirm(true)}
+          />
         </HeaderContainer>
         {user.contractId && rentUserList && (
           <ContractViewer

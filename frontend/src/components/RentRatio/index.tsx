@@ -121,7 +121,6 @@ export function RentRatio() {
 
         const newUserPaymentInfo = Object.entries(pickerValue).map(
           ([userId, ratio]) => ({
-            id: Number(userId),
             userId: Number(userId),
             amount: Math.floor(rent.totalAmount * (Number(ratio) / totalRatio)),
             ratio: Number(ratio),
