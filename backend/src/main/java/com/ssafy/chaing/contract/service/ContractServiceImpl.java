@@ -181,6 +181,8 @@ public class ContractServiceImpl implements ContractService {
                 if (success) {
                     log.info("✨ 스마트 컨트랙트 등록 성공! 🚀");
                     contract.setIsCreatedPdf(true);
+                    contractRepository.save(contract);
+                    contractRepository.flush();
                     sendNotificationTo(
                             group,
                             "스마트 컨트랙트 등록 완료!",
