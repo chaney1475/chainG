@@ -13,12 +13,12 @@ import { handleFintechError } from '@/utils/error/handleFintechError'
 import { getRequest, postRequest } from './api'
 
 const fintechApi = axios.create({
-  baseURL: `/fintTechApi`,
+  baseURL: `https://finopenapi.ssafy.io/ssafy/api/vi/edu`,
   // baseURL: `${process.env.NEXT_PUBLIC_FINTECH_BASEURL}:
-  timeout: 5000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+ // timeout: 5000,
+ // headers: {
+ //   'Content-Type': 'application/json',
+ // },
 })
 
 fintechApi.interceptors.request.use(
@@ -55,7 +55,7 @@ export const getAccountPaymentHistory = async <AccountPaymentHistoryResponse>(
 ): Promise<AccountPaymentHistoryResponse | FintechResponseError> => {
   try {
     const response = await fintechApi.post<AccountPaymentHistoryResponse>(
-      'demandDeposit/inquireTransactionHistoryList',
+      '/demandDeposit/inquireTransactionHistoryList',
       data,
     )
     return response.data
@@ -104,7 +104,7 @@ export const transfer = async <TransferResponse>(
 ): Promise<TransferResponse | FintechResponseError> => {
   try {
     const response = await fintechApi.post<TransferResponse>(
-      'demandDeposit/updateDemandDepositAccountTransfer',
+      '/demandDeposit/updateDemandDepositAccountTransfer',
       data,
     )
     return response.data
