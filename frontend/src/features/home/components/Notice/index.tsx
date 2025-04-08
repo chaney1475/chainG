@@ -63,12 +63,13 @@ export function Notice() {
                 width={21}
                 height={21}
               />
-              {t('payment.allPrefix')}
-              {t(rentLabel)}
+              <p>
+                [{t('main.issues.rent')}]{t(rentTitle)}
+              </p>
             </NoticeTitle>
             <div>
-              {t('main.issues.rent')}
-              {t(rentTitle)}
+              {t('payment.allPrefix')}
+              {t(rentLabel)}
             </div>
           </div>
           <LinkContainer>
@@ -86,12 +87,13 @@ export function Notice() {
                 width={21}
                 height={21}
               />
-              {t('payment.allPrefix')}
-              {t(utilityLabel)}
+              <p>
+                [{t('main.issues.utility')}]{t(utilityTitle)}
+              </p>
             </NoticeTitle>
             <div>
-              {t('main.issues.utility')}
-              {t(utilityTitle)}
+              {t('payment.allPrefix')}
+              {t(utilityLabel)}
             </div>
           </div>
           <LinkContainer>
@@ -109,12 +111,13 @@ export function Notice() {
                 width={21}
                 height={21}
               />
-              {t('payment.userPrefix', { value: user.name })}
-              {t(userRentLabel)}
+              <p>
+                [{t('main.issues.rent')}]{t(userRentTitle)}
+              </p>
             </NoticeTitle>
             <div>
-              {t('main.issues.rent')}
-              {t(userRentTitle)}
+              {t('payment.userPrefix', { value: user.name })}
+              {t(userRentLabel)}
             </div>
           </div>
           <LinkContainer>
@@ -132,12 +135,13 @@ export function Notice() {
                 width={21}
                 height={21}
               />
-              {t('payment.userPrefix', { value: user.name })}
-              {t(userUtilityLabel)}
+              <p>
+                [{t('main.issues.utility')}]{t(userUtilityTitle)}
+              </p>
             </NoticeTitle>
             <div>
-              {t('main.issues.rent')}
-              {t(userUtilityTitle)}
+              {t('payment.userPrefix', { value: user.name })}
+              {t(userUtilityLabel)}
             </div>
           </div>
           <LinkContainer>
