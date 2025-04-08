@@ -1,35 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 96 96">
   <defs>
     <style>
       .cls-1 {
-        fill: #a4b6cc;
+        fill: #798593;
       }
 
       .cls-2 {
-        fill: #fff;
+        fill: #586575;
       }
 
       .cls-3 {
-        fill: #2dbd99;
+        fill: none;
       }
 
       .cls-4 {
+        fill: #292f35;
+      }
+
+      .cls-5 {
+        fill: #fec959;
+      }
+
+      .cls-6 {
         fill: #c9d6e7;
       }
+
+      .cls-7 {
+        clip-path: url(#clippath);
+      }
     </style>
+    <clipPath id="clippath">
+      <circle class="cls-3" cx="48" cy="48" r="48"/>
+    </clipPath>
   </defs>
-  <g id="_레이어_3" data-name="레이어 3">
-    <rect class="cls-1" x="-901.78" y="-9.98" width="1314.71" height="120.76"/>
-  </g>
   <g id="_원" data-name="원">
-    <circle class="cls-2" cx="48" cy="48" r="48"/>
+    <circle class="cls-1" cx="48" cy="48" r="48"/>
   </g>
   <g id="_레이어_1" data-name="레이어 1">
-    <g>
-      <path class="cls-4" d="M76.02,74.11H19.97c-5.71,0-5.93-4.06-5.93-5.93h0c0-13.66,15.31-22.19,28.96-22.19h9.98c13.66,0,28.96,8.53,28.96,22.19h0c0,1.87.43,5.93-5.93,5.93Z"/>
-      <circle class="cls-4" cx="47.85" cy="27.25" r="15.57"/>
-      <rect class="cls-3" x="62.06" y="51.58" width="19.28" height="11.13" rx="3.49" ry="3.49" transform="translate(-18.97 43.51) rotate(-30)"/>
+    <g class="cls-7">
+      <rect class="cls-6" x="15.58" y="17.82" width="63.19" height="93.1" rx="31.6" ry="31.6"/>
+      <circle class="cls-4" cx="38.02" cy="46.87" r="3.16"/>
+      <circle class="cls-4" cx="56.32" cy="46.87" r="3.16"/>
+      <path class="cls-5" d="M53.43,60.47l27.25-5.31c1.57-.31,3.09.72,3.39,2.29l2.45,12.57c.31,1.57-.72,3.09-2.29,3.39l-13.69,2.67-13.56,2.64c-1.57.31-3.09-.72-3.39-2.29l-2.45-12.57c-.31-1.57.72-3.09,2.29-3.39Z"/>
+      <rect class="cls-2" x="51.38" y="61.54" width="33.55" height="3.83" transform="translate(-10.88 14.2) rotate(-11.02)"/>
+      <rect class="cls-2" x="52.71" y="68.41" width="33.55" height="3.83" transform="translate(-12.16 14.58) rotate(-11.02)"/>
     </g>
   </g>
 </svg>
