@@ -10,6 +10,7 @@ import com.ssafy.chaing.contract.domain.ContractEntity;
 import com.ssafy.chaing.contract.repository.ContractRepository;
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.config.SsafyApiConfig;
+import com.ssafy.chaing.fintech.controller.request.AccountHistoryCommand;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
@@ -19,8 +20,10 @@ import com.ssafy.chaing.fintech.dto.CreateAccountRec;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
 import com.ssafy.chaing.fintech.dto.InquireDemandDepositAccountRec;
+import com.ssafy.chaing.fintech.dto.InquireTransactionHistoryRec;
 import com.ssafy.chaing.fintech.service.common.HeaderWithUserKeyDTO;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
+import com.ssafy.chaing.fintech.service.request.AccountHistoryRequest;
 import com.ssafy.chaing.fintech.service.request.ClientTransferRequest;
 import com.ssafy.chaing.fintech.service.request.CreateAccountRequest;
 import com.ssafy.chaing.fintech.service.request.CreateFintechCardRequest;
@@ -50,6 +53,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -173,7 +177,7 @@ public class FintechServiceImpl implements FintechService {
                                     command.getGroupId(),
                                     "월세 납부 완료!",
                                     "최종적으로 집주인께 월세 납부를 마쳤어요!"
-                                    );
+                            );
                         }
 
                         if (command.getGroupId() == null) {
@@ -494,6 +498,40 @@ public class FintechServiceImpl implements FintechService {
 
         } catch (Exception e) {
             log.error("청구서 조회 중 알 수 없는 오류 발생: {}", e.getMessage());
+            return new FintechResponse<>(errorResponse);
+        }
+    }
+
+    @Transactional
+    @Override
+    public FintechResponse<?> getAccountHistory(AccountHistoryCommand command) {
+        ClientErrorResponse errorResponse = null;
+        try {
+            HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
+                    "inquireTransactionHistoryList", "inquireTransactionHistoryList"
+            );
+
+            AccountHistoryRequest request = new AccountHistoryRequest(requestHeader, command);
+
+            ResponseEntity<FintechBaseResponse<InquireTransactionHistoryRec>> responseEntity =
+                    restTemplate.exchange(
+                            config.getBaseUrl() + "/demandDeposit/inquireTransactionHistoryList",
+                            HttpMethod.POST,
+                            new HttpEntity<>(request),
+                            new ParameterizedTypeReference<>() {
+                            }
+                    );
+
+            InquireTransactionHistoryRec rec = Objects.requireNonNull(responseEntity.getBody()).rec();
+            return new FintechResponse<>(rec);
+        } catch (HttpClientErrorException e) {
+            log.error("계좌 거래 내역 조회 실패 - 상태 코드: {}, 응답 내용: {}", e.getStatusCode(), e.getResponseBodyAsString());
+
+            errorResponse = ClientErrorParser.parseErrorResponse(e.getResponseBodyAsString());
+            return new FintechResponse<>(errorResponse);
+
+        } catch (Exception e) {
+            log.error("계좌 거래 내역 조회 중 알 수 없는 오류 발생: {}", e.getMessage());
             return new FintechResponse<>(errorResponse);
         }
     }

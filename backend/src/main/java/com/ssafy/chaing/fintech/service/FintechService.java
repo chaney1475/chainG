@@ -1,6 +1,7 @@
 package com.ssafy.chaing.fintech.service;
 
 import com.ssafy.chaing.contract.service.command.CreateCardCommand;
+import com.ssafy.chaing.fintech.controller.request.AccountHistoryCommand;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
@@ -9,6 +10,7 @@ import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface FintechService {
     CreateFintechCardRec createFintechCard(CreateCardCommand createCardCommand);
@@ -23,4 +25,7 @@ public interface FintechService {
     FintechResponse<?> inquireDemandDepositAccount(String accountNo);
 
     FintechResponse<?> createAccount();
+
+    @Transactional
+    FintechResponse<?> getAccountHistory(AccountHistoryCommand command);
 }

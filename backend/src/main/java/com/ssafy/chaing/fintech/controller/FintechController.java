@@ -2,11 +2,12 @@ package com.ssafy.chaing.fintech.controller;
 
 import com.ssafy.chaing.auth.domain.UserPrincipal;
 import com.ssafy.chaing.common.schema.BaseResponse;
+import com.ssafy.chaing.fintech.controller.request.AccountHistoryCommand;
 import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
-import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.CreateAccountRec;
 import com.ssafy.chaing.fintech.dto.InquireDemandDepositAccountRec;
+import com.ssafy.chaing.fintech.dto.InquireTransactionHistoryRec;
 import com.ssafy.chaing.fintech.service.FintechService;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +70,7 @@ public class FintechController {
     ) {
         FintechResponse<?> response = fintechService.inquireDemandDepositAccount(accountNo);
 
-        if(response.getData() instanceof InquireDemandDepositAccountRec){
+        if (response.getData() instanceof InquireDemandDepositAccountRec) {
             return ResponseEntity.ok(BaseResponse.success(response));
         }
         return ResponseEntity.badRequest().body(BaseResponse.error(response));
@@ -90,5 +92,34 @@ public class FintechController {
     public ResponseEntity<?> createAccount() {
         FintechResponse<?> response = fintechService.createAccount();
         return ResponseEntity.ok(BaseResponse.success(response));
+    }
+
+    @Operation(
+            summary = "계좌 거래 내역 조회",
+            description = "거래 내역을 조회하는 API 입니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200",
+                            description = "거래 내역 조회 성공",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = InquireTransactionHistoryRec.class))),
+                    @ApiResponse(responseCode = "400",
+                            description = "거래 내역 조회 실패",
+                            content = @Content(mediaType = "application/json",
+                                    // 실패 시 응답 구조 명시
+                                    schema = @Schema(implementation = ClientErrorResponse.class)))
+            }
+    )
+    @GetMapping("/account/history")
+    public ResponseEntity<BaseResponse<FintechResponse<?>>> getAccountHistory(
+            @Valid @RequestBody AccountHistoryCommand body,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        FintechResponse<?> response = fintechService.getAccountHistory(body);
+        if (response.getData() instanceof InquireTransactionHistoryRec) {
+            return ResponseEntity.ok(BaseResponse.success(response));
+        }
+        return ResponseEntity.badRequest().body(BaseResponse.error(response));
     }
 }
