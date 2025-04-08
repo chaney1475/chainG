@@ -6,10 +6,11 @@ import com.ssafy.chaing.duty.repository.DutyRepository;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
 import com.ssafy.chaing.user.domain.UserEntity;
+import java.time.DayOfWeek;
+import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,48 +30,60 @@ public class DutyNotificationService {
     @Transactional
     public void checkAndSendDutyNotifications() {
         ZonedDateTime nowUtc = ZonedDateTime.now(ZoneOffset.UTC);
+        processDutyNotificationAt(nowUtc);
+    }
+
+    @Transactional
+    public void processDutyNotificationAt(ZonedDateTime nowUtc) {
         ZonedDateTime kstNow = nowUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        String todayDayOfWeek = kstNow.getDayOfWeek().toString(); // 예: "MONDAY"
-        String yesterdayDayOfWeek = kstNow.minusDays(1).getDayOfWeek().toString(); // 전날 요일
-
-        log.info("📌 현재 시간(KST): {}, 요일: {}", kstNow.toLocalTime(), todayDayOfWeek);
-
-        // ✅ 1. useTime == true인 경우 (기존 방식)
         ZonedDateTime utcPlusOne = nowUtc.plusHours(1);
-        ZonedDateTime kstOneHourLater = utcPlusOne.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        String dutyTimeString = kstOneHourLater.toLocalTime().truncatedTo(ChronoUnit.MINUTES).toString() + "Z";
+        OffsetTime targetOffsetTime = utcPlusOne.toOffsetDateTime().toOffsetTime();
+        DayOfWeek targetKstDayOfWeek = utcPlusOne.withZoneSameInstant(ZoneId.of("Asia/Seoul")).getDayOfWeek();
 
-        List<DutyEntity> timedDuties = dutyRepository.findWithAssigneesAndUsersByDutyTimeRaw(dutyTimeString);
-        for (DutyEntity duty : timedDuties) {
+        log.info("📌 [알림 체크] UTC 기준 시간: {}, KST 기준 요일: {}", targetOffsetTime, targetKstDayOfWeek);
+
+        List<DutyEntity> allDuties = dutyRepository.findAllWithAssigneesAndUsers();
+
+        // ✅ useTime == true : 정시 duty 알림
+        for (DutyEntity duty : allDuties) {
             if (!duty.isUseTime()) {
                 continue;
             }
-            if (!duty.getDayOfWeek().equalsIgnoreCase(todayDayOfWeek)) {
+
+            OffsetTime dutyTime = OffsetTime.parse(duty.getDutyTimeRaw()); // OffsetTime 타입으로 직접 저장되어 있다고 가정
+            if (!targetOffsetTime.equals(dutyTime)) {
                 continue;
             }
-            sendDutyNotificationToAllAssignees(duty, "[당번 알림] " + duty.getTitle(),
+
+            if (!duty.getDayOfWeek().equalsIgnoreCase(targetKstDayOfWeek.toString())) {
+                continue;
+            }
+
+            sendDutyNotificationToAllAssignees(duty,
+                    "[당번 알림] " + duty.getTitle(),
                     "1시간 후 \"" + duty.getTitle() + "\" 예정되어 있습니다.");
         }
 
-        // ✅ 2. useTime == false인 경우 (종일 duty → 전날 23시, 당일 08시)
+        // ✅ useTime == false : 종일 duty 알림 (KST 기준 08시 또는 23시)
         int hour = kstNow.getHour();
-        boolean isNoticeTime = (hour == 8 || hour == 23);
+        if (hour == 8 || hour == 23) {
+            DayOfWeek targetDay = (hour == 23)
+                    ? kstNow.plusDays(1).getDayOfWeek()
+                    : kstNow.getDayOfWeek();
 
-        if (isNoticeTime) {
-            String targetDay = (hour == 23) ? kstNow.plusDays(1).getDayOfWeek().toString() : todayDayOfWeek;
-            List<DutyEntity> allDuties = dutyRepository.findAllWithAssigneesAndUsers(); // fetch join all
+            String timeNotice = (hour == 23) ? "내일 예정된" : "오늘 예정된";
+
             for (DutyEntity duty : allDuties) {
                 if (duty.isUseTime()) {
                     continue;
                 }
-                if (!duty.getDayOfWeek().equalsIgnoreCase(targetDay)) {
+                if (!duty.getDayOfWeek().equalsIgnoreCase(targetDay.toString())) {
                     continue;
                 }
 
-                String timeNotice = (hour == 23) ? "내일 예정된" : "오늘 예정된";
-                String title = "[당번 알림] " + duty.getTitle();
-                String content = timeNotice + " \"" + duty.getTitle() + "\" 당번이 있습니다.";
-                sendDutyNotificationToAllAssignees(duty, title, content);
+                sendDutyNotificationToAllAssignees(duty,
+                        "[당번 알림] " + duty.getTitle(),
+                        timeNotice + " \"" + duty.getTitle() + "\" 당번이 있습니다.");
             }
         }
     }
@@ -88,53 +101,6 @@ public class DutyNotificationService {
                 log.info("📨 알림 전송: userId={}, title={}", user.getId(), title);
             } else {
                 log.warn("⚠️ FCM 토큰 없음 - userId={}", user.getId());
-            }
-        }
-    }
-
-    @Transactional
-    public void processDutyNotificationAt(ZonedDateTime nowUtc) {
-        ZonedDateTime kstNow = nowUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        String todayDayOfWeek = kstNow.getDayOfWeek().toString();
-
-        log.info("📌 [테스트용] 현재 시간(KST): {}, 요일: {}", kstNow.toLocalTime(), todayDayOfWeek);
-
-        // 1시간 뒤 duty 알림 처리
-        ZonedDateTime utcPlusOne = nowUtc.plusHours(1);
-        ZonedDateTime kstOneHourLater = utcPlusOne.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        String dutyTimeString = kstOneHourLater.toLocalTime().truncatedTo(ChronoUnit.MINUTES).toString() + "Z";
-
-        List<DutyEntity> timedDuties = dutyRepository.findWithAssigneesAndUsersByDutyTimeRaw(dutyTimeString);
-        for (DutyEntity duty : timedDuties) {
-            if (!duty.isUseTime()) {
-                continue;
-            }
-            if (!duty.getDayOfWeek().equalsIgnoreCase(todayDayOfWeek)) {
-                continue;
-            }
-
-            sendDutyNotificationToAllAssignees(duty,
-                    "[당번 알림] " + duty.getTitle(),
-                    "1시간 후 \"" + duty.getTitle() + "\" 예정되어 있습니다.");
-        }
-
-        // 종일 duty: 전날 23시 또는 당일 08시
-        int hour = kstNow.getHour();
-        if (hour == 8 || hour == 23) {
-            List<DutyEntity> allDuties = dutyRepository.findAllWithAssigneesAndUsers();
-            for (DutyEntity duty : allDuties) {
-                if (duty.isUseTime()) {
-                    continue;
-                }
-                if (!duty.getDayOfWeek().equalsIgnoreCase(todayDayOfWeek)) {
-                    continue;
-                }
-
-                String timeNotice = (hour == 23) ? "내일 예정된" : "오늘 예정된";
-                String title = "[당번 알림] " + duty.getTitle();
-                String content = timeNotice + " \"" + duty.getTitle() + "\" 당번이 있습니다.";
-
-                sendDutyNotificationToAllAssignees(duty, title, content);
             }
         }
     }
