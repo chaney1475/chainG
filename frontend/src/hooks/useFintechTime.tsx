@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { format, formatDistanceToNow, isThisMonth } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
+const kstOffset = 9 * 60 * 60 * 1000 // 9시간
 /**
  * 날짜 관련 포맷팅 값들을 한 번에 제공하는 훅
  * @param date Date 객체
@@ -16,18 +17,26 @@ export const useFintechTime = (
   uniqueSuffix?: string,
 ) => {
   return useMemo(() => {
-    const startDate = formatTransmissionMonthDate(budgetStartDate ?? date)
-    const endDate = formatTransmissionMonthDate(budgetEndDate ?? date)
+    const kstDate = new Date(date.getTime() + kstOffset)
+    const kstBudgetStartDate = new Date(
+      (budgetStartDate ?? date).getTime() + kstOffset,
+    )
+    const kstBudgetEndDate = new Date(
+      (budgetEndDate ?? date).getTime() + kstOffset,
+    )
+
+    const startDate = formatTransmissionMonthDate(kstBudgetStartDate)
+    const endDate = formatTransmissionMonthDate(kstBudgetEndDate)
 
     // YYYYMMDD 형식 날짜
-    const formattedDate = formatTransmissionDate(date)
+    const formattedDate = formatTransmissionDate(kstDate)
 
     // HHMMSS 형식 시간
-    const formattedTime = formatTransmissionTime(date)
+    const formattedTime = formatTransmissionTime(kstDate)
 
     // 거래 고유번호 (YYYYMMDDHHMMSSXXXXXX 형식)
     const uniqueNo = formatInstitutionTransactionUniqueNo(
-      date,
+      kstDate,
       formattedDate,
       formattedTime,
       uniqueSuffix,
@@ -67,15 +76,15 @@ const formatReadableTime = (timestamp: number) => {
  * 날짜를 'YYYYMMDD' 형식으로 변환 (예: 20240405)
  */
 const formatTransmissionDate = (date: Date): string => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(date.getUTCDate()).padStart(2, '0')
 
   return `${year}${month}${day}`
 }
 const formatTransmissionMonthDate = (date: Date): string => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
   const day = '01'
 
   return `${year}${month}${day}`
@@ -84,9 +93,9 @@ const formatTransmissionMonthDate = (date: Date): string => {
  * 시간을 'HHMMSS' 형식으로 변환 (예: 154100)
  */
 const formatTransmissionTime = (date: Date): string => {
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const seconds = String(date.getSeconds()).padStart(2, '0')
+  const hours = String(date.getUTCHours()).padStart(2, '0')
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0')
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0')
 
   return `${hours}${minutes}${seconds}`
 }

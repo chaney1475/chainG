@@ -1,15 +1,24 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
 import { format } from 'date-fns'
 import ko from 'date-fns/locale/ko'
 import { useRouter } from 'next/navigation'
 
-import { AccountHistoryViewer, IconButton } from '@/components'
+import { getPaymentCurrentStatus } from '@/apis/payment'
+import { AccountHistoryViewer, ConfirmButton, IconButton } from '@/components'
 import { useAppSelector, useFormattedDuration } from '@/hooks'
+import { setPaymentCurrent } from '@/store/slices/pledgeSlice'
+import {
+  PaymentCurrent,
+  PaymentStatus,
+  UserPaymentStatus,
+} from '@/types/budget'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
+import { ButtonVariant } from '@/types/ui'
 import { formatMoney } from '@/utils/format'
 
 import {
@@ -47,6 +56,7 @@ export function Account({
   const accountDetail = useAppSelector(
     (state) => state.pledge.account.accountDetail,
   )
+  const dispatch = useDispatch()
   const selectItem: { label: string; value: Filter }[] = [
     {
       label: t('livingBudget.all'),
@@ -77,6 +87,24 @@ export function Account({
   }
   const duration = useFormattedDuration(startDate, endDate)
   const router = useRouter()
+  const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
+  const currentMonth = useMemo(() => format(new Date(), 'yyyyMM'), [])
+  const user = useAppSelector((state) => state.user.user)
+  const hasFetchedPaymentCurrent = useRef(false)
+  useEffect(() => {
+    const fetchPaymentCurrent = async () => {
+      if (hasFetchedPaymentCurrent.current) return
+      hasFetchedPaymentCurrent.current = true
+      if (!user.contractId) return
+
+      const response = await getPaymentCurrentStatus(currentMonth)
+      if (response.success) {
+        dispatch(setPaymentCurrent(response.data as PaymentCurrent))
+      }
+    }
+    fetchPaymentCurrent()
+  }, [user.contractId, currentMonth, dispatch])
+
   return (
     <Container>
       <MonthSummary>
@@ -90,18 +118,25 @@ export function Account({
       </MonthSummary>
       <AccountHistoryViewer filteredHistory={filteredHistory}>
         <ButtonContainer>
-          {/* <ConfirmButton
-            onClick={() => {}}
-            variant={ButtonVariant.prev}
-            label="집주인에게 보내기"
-          />
-          <ConfirmButton
-            onClick={() => {
-              router.push('/budget/living/withdraw')
-            }}
-            variant={ButtonVariant.next}
-            label="월세 채우기"
-          /> */}
+          {paymentCurrent?.rent === PaymentStatus.COLLECTED && (
+            <ConfirmButton
+              onClick={() => {
+                router.push('/pledge/transfer/owner')
+              }}
+              variant={ButtonVariant.prev}
+              label="집주인에게 보내기"
+            />
+          )}
+
+          {paymentCurrent?.userRent === UserPaymentStatus.FAILED && (
+            <ConfirmButton
+              onClick={() => {
+                router.push('/budget/pledge/transfer/rent')
+              }}
+              variant={ButtonVariant.next}
+              label="월세 채우기"
+            />
+          )}
         </ButtonContainer>
         <DashBoardContainer>
           <MonthNavigation>

@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
+
 import Image from 'next/image'
 
 import { useAppSelector } from '@/hooks'
@@ -19,10 +21,39 @@ export function Notice() {
     (state) => state.livingBudget.livingAccountNo,
   )
   const isLeader = useIsLeader()
+  const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
+  const { t } = useTranslation()
+  const user = useAppSelector((state) => state.user.user)
+  const rentTitle = paymentCurrent.rent
+    ? `payment.paymentStatus.${paymentCurrent.rent}.title`
+    : ''
+  const rentLabel = paymentCurrent.rent
+    ? `payment.paymentStatus.${paymentCurrent.rent}.label`
+    : ''
 
+  const utilityTitle = paymentCurrent.utility
+    ? `payment.paymentStatus.${paymentCurrent.utility}.title`
+    : ''
+  const utilityLabel = paymentCurrent.utility
+    ? `payment.paymentStatus.${paymentCurrent.utility}.label`
+    : ''
+
+  const userRentTitle = paymentCurrent.userRent
+    ? `payment.paymentStatus.${paymentCurrent.userRent}.title`
+    : ''
+  const userRentLabel = paymentCurrent.userRent
+    ? `payment.paymentStatus.${paymentCurrent.userRent}.label`
+    : ''
+
+  const userUtilityTitle = paymentCurrent.userUtility
+    ? `payment.paymentStatus.${paymentCurrent.userUtility}.title`
+    : ''
+  const userUtilityLabel = paymentCurrent.userUtility
+    ? `payment.paymentStatus.${paymentCurrent.userUtility}.label`
+    : ''
   return (
     <Container>
-      {!homeOverview.isMyRentPaid && (
+      {paymentCurrent.rent && (
         <NoticeItem>
           <div>
             <NoticeTitle>
@@ -32,31 +63,85 @@ export function Notice() {
                 width={21}
                 height={21}
               />
-              월세가 미납되었어요
+              {t('payment.allPrefix')}
+              {t(rentLabel)}
             </NoticeTitle>
-            <div>잔액을 확인해 주세요!</div>
+            <div>
+              {t('main.issues.rent')}
+              {t(rentTitle)}
+            </div>
           </div>
           <LinkContainer>
-            <StyledLink href={'/budget/rent'}>채우러가기</StyledLink>
+            <StyledLink href={'/pledge'}>확인하기</StyledLink>
           </LinkContainer>
         </NoticeItem>
       )}
-      {!homeOverview.isMyUtilityPaid && (
+      {paymentCurrent.utility && (
         <NoticeItem>
           <div>
             <NoticeTitle>
               <Image
                 src={'/icons/notice-money.png'}
-                alt="공과금 미납 공지"
+                alt="월세 미납 공지"
                 width={21}
                 height={21}
               />
-              공과금이 미납되었어요
+              {t('payment.allPrefix')}
+              {t(utilityLabel)}
             </NoticeTitle>
-            <div>잔액을 확인해 주세요!</div>
+            <div>
+              {t('main.issues.utility')}
+              {t(utilityTitle)}
+            </div>
           </div>
           <LinkContainer>
-            <StyledLink href={'/budget/utility'}>채우러가기</StyledLink>
+            <StyledLink href={'/pledge'}>확인하기</StyledLink>
+          </LinkContainer>
+        </NoticeItem>
+      )}
+      {paymentCurrent.userRent && (
+        <NoticeItem>
+          <div>
+            <NoticeTitle>
+              <Image
+                src={'/icons/notice-money.png'}
+                alt="월세 미납 공지"
+                width={21}
+                height={21}
+              />
+              {t('payment.userPrefix', { value: user.name })}
+              {t(userRentLabel)}
+            </NoticeTitle>
+            <div>
+              {t('main.issues.rent')}
+              {t(userRentTitle)}
+            </div>
+          </div>
+          <LinkContainer>
+            <StyledLink href={'/pledge'}>확인하기</StyledLink>
+          </LinkContainer>
+        </NoticeItem>
+      )}
+      {paymentCurrent.userUtility && (
+        <NoticeItem>
+          <div>
+            <NoticeTitle>
+              <Image
+                src={'/icons/notice-money.png'}
+                alt="월세 미납 공지"
+                width={21}
+                height={21}
+              />
+              {t('payment.userPrefix', { value: user.name })}
+              {t(userUtilityLabel)}
+            </NoticeTitle>
+            <div>
+              {t('main.issues.rent')}
+              {t(userUtilityTitle)}
+            </div>
+          </div>
+          <LinkContainer>
+            <StyledLink href={'/pledge'}>확인하기</StyledLink>
           </LinkContainer>
         </NoticeItem>
       )}

@@ -1,12 +1,14 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { AccountDetail, AccountPaymentHistory } from '@/types/fintech'
+import { LivingMenu } from '@/types/ui'
 
 interface LivingBudgetState {
   myAccountNo: string // 내 계좌
   livingAccountNo: string // 생활비 계좌
   livingAccountPaymentHistory: AccountPaymentHistory[]
   livingAccountDetail: AccountDetail
+  selectedMenu: LivingMenu
 }
 
 const initialState: LivingBudgetState = {
@@ -29,6 +31,7 @@ const initialState: LivingBudgetState = {
     lastTransactionDate: '',
     currency: '',
   },
+  selectedMenu: LivingMenu.calendar,
 }
 
 const livingBudgetSlice = createSlice({
@@ -50,6 +53,9 @@ const livingBudgetSlice = createSlice({
     setLivingAccountDetail: (state, action: PayloadAction<AccountDetail>) => {
       state.livingAccountDetail = action.payload
     },
+    setSelectedMenu: (state, action: PayloadAction<LivingMenu>) => {
+      state.selectedMenu = action.payload
+    },
   },
 })
 
@@ -58,5 +64,6 @@ export const {
   setLivingAccountNo,
   setLivingAccountPaymentHistory,
   setLivingAccountDetail,
+  setSelectedMenu,
 } = livingBudgetSlice.actions
 export default livingBudgetSlice.reducer

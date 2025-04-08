@@ -14,7 +14,9 @@ export function FloatingSwitchMenu({
     name: string
   }[]
 }) {
-  const [step, setStep] = useState(0)
+  const defaultStep =
+    menuList.findIndex((menu) => menu.id === selectedMenu) ?? 0
+  const [step, setStep] = useState(defaultStep)
   return (
     <Container>
       <SwitchContainer steps={menuList.length}>

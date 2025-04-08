@@ -30,11 +30,11 @@ const initialState: UserState = {
   },
   homeOverview: {
     groupName: '',
-    isRentPaid: false,
-    isMyRentPaid: false,
-    isUtilityPaid: false,
-    isMyUtilityPaid: false,
-    isLifeRuleApproved: false,
+    isRentPaid: true,
+    isMyRentPaid: true,
+    isUtilityPaid: true,
+    isMyUtilityPaid: true,
+    isLifeRuleApproved: true,
   },
 }
 

@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { format } from 'date-fns'
 
 import { getDuties } from '@/apis/duty'
 import { getLivingAccount } from '@/apis/livingBudget'
+import { getPaymentCurrentStatus } from '@/apis/payment'
 import { useAppSelector } from '@/hooks'
 import { setDutyWeekList } from '@/store/slices/dutySlice'
 import {
   setLivingAccountNo,
   setMyAccountNo,
 } from '@/store/slices/livingBudgetSlice'
+import { setPaymentCurrent } from '@/store/slices/pledgeSlice'
 import { DayKey, Duty } from '@/types/duty'
 
 import { DashBoard, LifeBudgetPreview, Notice } from '..'
@@ -22,10 +24,31 @@ export function ConfirmedHomeContents() {
   const livingBudget = useAppSelector((state) => state.livingBudget)
   const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
   const today = format(new Date(), 'EEEE').toLowerCase()
-  const fetchAccount = useCallback(async () => {
-    console.log('fetchAccount 호출됨', !user.contractId)
-    if (!user.contractId) return
-    if (!livingBudget.livingAccountNo || !livingBudget.myAccountNo) {
+
+  const hasFetchedAccount = useRef(false)
+  const hasFetchedDuties = useRef(false)
+  const hasFetchedPaymentCurrent = useRef(false)
+  const currentMonth = useMemo(() => format(new Date(), 'yyyyMM'), [])
+
+  useEffect(() => {
+    const fetchPaymentCurrent = async () => {
+      if (hasFetchedPaymentCurrent.current) return
+      hasFetchedPaymentCurrent.current = true
+      if (!user.contractId) return
+
+      const response = await getPaymentCurrentStatus(currentMonth)
+      if (response.success) {
+        dispatch(setPaymentCurrent(response.data))
+      }
+    }
+    fetchPaymentCurrent()
+  }, [user.contractId, currentMonth])
+
+  useEffect(() => {
+    const fetchAccount = async () => {
+      if (hasFetchedAccount.current) return
+      hasFetchedAccount.current = true
+      if (!user.contractId) return
       const response = await getLivingAccount()
       if (response.success) {
         if (response.data.myAccountNo) {
@@ -36,17 +59,17 @@ export function ConfirmedHomeContents() {
         }
       }
     }
-  }, [user.contractId, livingBudget, dispatch])
-
-  useEffect(() => {
-    fetchAccount()
-  }, [user.contractId])
+    if (!livingBudget.livingAccountNo || !livingBudget.myAccountNo) {
+      fetchAccount()
+    }
+  }, [user.contractId, livingBudget.livingAccountNo, livingBudget.myAccountNo])
 
   useEffect(() => {
     const fetchDuties = async () => {
+      if (hasFetchedDuties.current) return
+      hasFetchedDuties.current = true
       if (!user.groupId) return
       const response = await getDuties(user.groupId) // dutyList
-      console.log(response)
       if (response.success) {
         dispatch(setDutyWeekList(response.data))
       }

@@ -17,7 +17,9 @@ import {
   setLivingAccountDetail,
   setLivingAccountPaymentHistory,
 } from '@/store/slices/livingBudgetSlice'
+import { setSelectedMenu } from '@/store/slices/livingBudgetSlice'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
+import { LivingMenu } from '@/types/ui'
 import {
   formatMoney,
   formatTransactionDate,
@@ -42,7 +44,9 @@ export function BudgetLivingPage() {
     budgetStartDate,
     budgetEndDate,
   )
-
+  const selectedMenu = useAppSelector(
+    (state) => state.livingBudget.selectedMenu,
+  )
   const livingAccountNo = useAppSelector(
     (state) => state.livingBudget.livingAccountNo,
   )
@@ -153,7 +157,6 @@ export function BudgetLivingPage() {
     { id: 'calendar', name: '달력' },
     { id: 'history', name: '내역' },
   ]
-  const [menu, setMenu] = useState<'calendar' | 'history'>('calendar')
   return (
     <FullNavLayout title={'생활비'}>
       <Account>
@@ -164,7 +167,7 @@ export function BudgetLivingPage() {
         </AccountInfo>
       </Account>
 
-      {menu === 'calendar' && (
+      {selectedMenu === LivingMenu.calendar && (
         <CalendarContainer>
           <BudgetCalendar
             budgetDate={budgetStartDate}
@@ -175,7 +178,7 @@ export function BudgetLivingPage() {
           />
         </CalendarContainer>
       )}
-      {menu === 'history' && (
+      {selectedMenu === LivingMenu.history && (
         <History
           paymentHistory={formattedHistory}
           startDate={startDate}
@@ -183,8 +186,8 @@ export function BudgetLivingPage() {
         />
       )}
       <FloatingSwitchMenu
-        selectedMenu={menu}
-        onSwitch={(menu) => setMenu(menu as 'calendar' | 'history')}
+        selectedMenu={selectedMenu}
+        onSwitch={(menu) => dispatch(setSelectedMenu(menu as LivingMenu))}
         menuList={menuList}
       />
 

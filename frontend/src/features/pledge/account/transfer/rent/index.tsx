@@ -8,9 +8,8 @@ import { useDispatch } from 'react-redux'
 import styled from '@emotion/styled'
 import { useRouter } from 'next/navigation'
 
-import { notifyLivingDeposit } from '@/apis/livingBudget'
 import { getMySummary } from '@/apis/user'
-import { InputBox, Modal, TitleHeaderLayout } from '@/components'
+import { InputBox, TitleHeaderLayout } from '@/components'
 import { useAppSelector, useTransfer } from '@/hooks'
 import { setSummary } from '@/store/slices/userSlice'
 import { ButtonVariant } from '@/types/ui'
@@ -22,12 +21,12 @@ const Container = styled.div`
   padding: 16px 0;
 `
 
-interface DepositForm {
+interface WithdrawForm {
   myAccountNo: string
   balance: string
 }
 
-export function BudgetLivingDepositPage() {
+export function TransferToRentPage() {
   const { t } = useTranslation()
   const router = useRouter()
   const dispatch = useDispatch()
@@ -40,7 +39,7 @@ export function BudgetLivingDepositPage() {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<DepositForm>({
+  } = useForm<WithdrawForm>({
     defaultValues: {
       myAccountNo: summary.myAccountNo,
       balance: '',
@@ -67,21 +66,28 @@ export function BudgetLivingDepositPage() {
   if (!livingAccountNo) {
     router.push('/budget/living/create')
   }
+
   const userName = useAppSelector((state) => state.user.user.nickname)
   const myAccountNo = watch('myAccountNo')
   const balance = watch('balance')
-  const [success, setSuccess] = useState(false)
+
   const transfer = useTransfer({
-    depositAccountNo: livingAccountNo,
+    depositAccountNo: myAccountNo,
     transactionBalance: balance,
-    withdrawalAccountNo: myAccountNo,
-    depositTransactionSummary: userName + '의 생활비 채우기',
-    withdrawalTransactionSummary: userName + '의 생활비 채우기',
+    withdrawalAccountNo: livingAccountNo,
+    depositTransactionSummary: userName + '의 생활비 꺼내기',
+    withdrawalTransactionSummary: userName + '의 생활비 꺼내기',
   })
-
   const [next, setNext] = useState(false)
-  const disabled = !livingAccountNo || !balance || !myAccountNo
+  const livingAccountDetail = useAppSelector(
+    (state) => state.livingBudget.livingAccountDetail,
+  )
 
+  const disabled =
+    !livingAccountNo ||
+    !balance ||
+    !myAccountNo ||
+    livingAccountDetail.accountBalance < balance
   useEffect(() => {
     if (next && !disabled) {
       handleSubmit(onSubmit)()
@@ -92,13 +98,14 @@ export function BudgetLivingDepositPage() {
     setNext(true)
   }
   const hasTransfered = useRef(false)
-  const onSubmit = async (data: DepositForm) => {
+  const onSubmit = async (data: WithdrawForm) => {
     if (hasTransfered.current) return
     hasTransfered.current = true
 
     const response = await transfer()
+    console.log('success', response)
     if (response) {
-      setSuccess(await notifyLivingDeposit())
+      router.push('/budget/living')
     }
   }
 
@@ -123,27 +130,27 @@ export function BudgetLivingDepositPage() {
   })
   return (
     <TitleHeaderLayout
-      title={t('livingBudget.deposit.title')}
-      label={t('livingBudget.deposit.label')}
-      header={t('livingBudget.deposit.header')}
+      title={t('livingBudget.withdraw.title')}
+      label={t('livingBudget.withdraw.label')}
+      header={t('livingBudget.withdraw.header')}
       onClick={handleNext}
       buttonVariant={disabled ? ButtonVariant.disabled : ButtonVariant.next}>
       <Container>
         <InputBox
-          label={t('livingBudget.deposit.myAccountNo.label')}
+          label={t('livingBudget.withdraw.myAccountNo.label')}
           id="myAccountNo"
           type="text"
           value={myAccountNo}
           onChange={handleMyAccountNoChange}
           ref={myAccountNoRegister.ref}
-          placeholder={t('livingBudget.deposit.myAccountNo.placeholder')}
+          placeholder={t('livingBudget.withdraw.myAccountNo.placeholder')}
           error={errors.myAccountNo}
         />
 
         <InputBox
           id="balance"
           name="balance"
-          label={t('livingBudget.deposit.balance.label')}
+          label={t('livingBudget.withdraw.balance.label')}
           type="money"
           value={balance}
           onChange={(e) => {
@@ -152,24 +159,10 @@ export function BudgetLivingDepositPage() {
             setNext(false)
           }}
           ref={balanceRegister.ref}
-          placeholder={t('livingBudget.deposit.balance.placeholder')}
+          placeholder={t('livingBudget.withdraw.balance.placeholder')}
           error={errors.balance}
         />
       </Container>
-      <Modal
-        open={success}
-        onOpenChange={setSuccess}
-        title={t('livingBudget.deposit.success.title')}
-        description={t('livingBudget.deposit.success.description', {
-          userName,
-          balance,
-        })}
-        confirmText={t('confirm')}
-        onConfirm={() => {
-          setSuccess(false)
-          router.push('/budget/living')
-        }}
-      />
     </TitleHeaderLayout>
   )
 }
