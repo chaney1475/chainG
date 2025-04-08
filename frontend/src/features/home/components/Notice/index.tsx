@@ -39,17 +39,17 @@ export function Notice() {
     : ''
 
   const userRentTitle = paymentCurrent.userRent
-    ? `payment.paymentStatus.${paymentCurrent.userRent}.title`
+    ? `payment.userPaymentStatus.${paymentCurrent.userRent}.title`
     : ''
   const userRentLabel = paymentCurrent.userRent
-    ? `payment.paymentStatus.${paymentCurrent.userRent}.label`
+    ? `payment.userPaymentStatus.${paymentCurrent.userRent}.label`
     : ''
 
   const userUtilityTitle = paymentCurrent.userUtility
-    ? `payment.paymentStatus.${paymentCurrent.userUtility}.title`
+    ? `payment.userPaymentStatus.${paymentCurrent.userUtility}.title`
     : ''
   const userUtilityLabel = paymentCurrent.userUtility
-    ? `payment.paymentStatus.${paymentCurrent.userUtility}.label`
+    ? `payment.userPaymentStatus.${paymentCurrent.userUtility}.label`
     : ''
   return (
     <Container>
