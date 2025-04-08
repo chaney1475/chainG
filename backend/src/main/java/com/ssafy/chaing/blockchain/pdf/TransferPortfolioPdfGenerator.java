@@ -8,6 +8,13 @@ import com.ssafy.chaing.blockchain.portfolio.output.TransferPortfolioResponse;
 import com.ssafy.chaing.common.exception.BadRequestException;
 import com.ssafy.chaing.common.exception.ExceptionCode;
 import java.io.ByteArrayOutputStream;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +29,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortfolioResponse> {
 
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    private static final DateTimeFormatter FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초").withZone(KST);
 
     @Override
     public byte[] generate(TransferPortfolioResponse data) {
@@ -51,7 +61,7 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
                     body {
                         font-family: 'Paperlogy5', sans-serif;
                         margin: 0;
-                        padding: 30px;
+                        padding: 0px;
                     }
                     h1 {
                         font-family: 'Paperlogy7', sans-serif;
@@ -66,7 +76,7 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
                         margin-top: 30px;
                     }
                     .payment-table {
-                        width: 100%;
+                        width: 90%;
                         border-collapse: collapse;
                         margin-top: 10px;
                         font-size: 14px;
@@ -80,6 +90,11 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
                     .payment-table th {
                         background-color: #edf0f4;
                         font-weight: bold;
+                    }
+                    .payment-table td.time-cell {
+                        font-size: 12px;
+                        white-space: nowrap;
+                        max-width: 180px;
                     }
                     .container {
                         width: 210mm;
@@ -98,11 +113,11 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
                 </style>
                 """;
 
-        TransferPortfolio portfolio = data.getTransferPortfolio(); // ✅ TransferPortfolio 추출
-        Map<String, List<RentOutput>> rentMap = portfolio.getMonthlyRent(); // ✅ 월별 월세 맵
-        Map<String, List<UtilityOutput>> utilityMap = portfolio.getMonthlyUtility(); // ✅ 월별 공과금 맵
+        TransferPortfolio portfolio = data.getTransferPortfolio();
+        Map<String, List<RentOutput>> rentMap = portfolio.getMonthlyRent();
+        Map<String, List<UtilityOutput>> utilityMap = portfolio.getMonthlyUtility();
 
-        Set<String> allMonths = new TreeSet<>(); // 정렬된 month key
+        Set<String> allMonths = new TreeSet<>();
         allMonths.addAll(rentMap.keySet());
         allMonths.addAll(utilityMap.keySet());
 
@@ -127,8 +142,10 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
                         .append(StringEscapeUtils.escapeHtml4(r.getFrom())).append("</td><td>")
                         .append(StringEscapeUtils.escapeHtml4(r.getTo())).append("</td><td>")
                         .append(r.getAmount()).append("</td><td>")
-                        .append(r.getStatus() ? "완료" : "대기").append("</td><td>")
-                        .append(r.getTime()).append("</td></tr>\n");
+                        .append(r.getStatus() ? "완료" : "대기").append("</td>")
+                        .append("<td class=\"time-cell\">")
+                        .append(formatTimeString(r.getTime()))
+                        .append("</td></tr>\n");
             }
 
             for (UtilityOutput u : utilityMap.getOrDefault(month, List.of())) {
@@ -136,8 +153,10 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
                         .append(StringEscapeUtils.escapeHtml4(u.getFrom())).append("</td><td>")
                         .append(StringEscapeUtils.escapeHtml4(u.getTo())).append("</td><td>")
                         .append(u.getAmount()).append("</td><td>")
-                        .append(u.getStatus() ? "완료" : "대기").append("</td><td>")
-                        .append(u.getTime()).append("</td></tr>\n");
+                        .append(u.getStatus() ? "완료" : "대기").append("</td>")
+                        .append("<td class=\"time-cell\">")
+                        .append(formatTimeString(u.getTime()))
+                        .append("</td></tr>\n");
             }
 
             html.append("</tbody></table>\n</div>\n");
@@ -148,7 +167,7 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
     }
 
     private String formatMonth(String month) {
-        if (month.length() == 5) {
+        if (month.length() >= 5) {
             int year = Integer.parseInt(month.substring(0, 4));
             int mon = Integer.parseInt(month.substring(4));
             return year + "년 " + mon + "월";
@@ -156,4 +175,49 @@ public class TransferPortfolioPdfGenerator implements PDFGenerator<TransferPortf
         return "알 수 없음";
     }
 
+    private String formatTimeString(String rawTime) {
+        try {
+            // 1. ZonedDateTime 문자열 처리: [Asia/Seoul] 잘라내기
+            if (rawTime.contains("[")) {
+                rawTime = rawTime.substring(0, rawTime.indexOf("["));
+            }
+
+            // 2. ISO_OFFSET_DATE_TIME (ex: 2025-04-04T17:51:51.6122442+09:00)
+            try {
+                ZonedDateTime zdt;
+                zdt = ZonedDateTime.parse(rawTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+                return zdt.withZoneSameInstant(KST).format(FORMATTER);
+            } catch (DateTimeParseException ignored) {
+            }
+
+            // 3. Instant (ex: 2025-04-04T17:51:51Z)
+            try {
+                Instant instant = Instant.parse(rawTime);
+                return FORMATTER.format(instant);
+            } catch (DateTimeParseException ignored) {
+            }
+
+            // 4. LocalDateTime (ex: 2025-04-04T17:51:51)
+            try {
+                LocalDateTime ldt = LocalDateTime.parse(rawTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                return ldt.atZone(KST).format(FORMATTER);
+            } catch (DateTimeParseException ignored) {
+            }
+
+            // 5. LocalDate (ex: 2025-04-04)
+            try {
+                LocalDate date = LocalDate.parse(rawTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                return date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"));
+            } catch (DateTimeParseException ignored) {
+            }
+
+            // 6. 모든 파싱 실패 → 원본 보여주기
+            log.warn("날짜 파싱 실패: {}", rawTime);
+            return rawTime;
+
+        } catch (Exception e) {
+            log.error("날짜 포맷 처리 중 오류", e);
+            return "알 수 없음";
+        }
+    }
 }
