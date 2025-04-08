@@ -183,7 +183,7 @@ export function PledgePage() {
             />
           )}
         {selectedMenu === PledgeMenu.rent && <RentPage />}
-        {selectedMenu === PledgeMenu.utility && <UtilityPage />}
+        {selectedMenu === PledgeMenu.utility && utilityInfo && <UtilityPage />}
         <FloatingSwitchMenu
           selectedMenu={selectedMenu}
           onSwitch={(menu) => dispatch(setSelectedMenu(menu as PledgeMenu))}

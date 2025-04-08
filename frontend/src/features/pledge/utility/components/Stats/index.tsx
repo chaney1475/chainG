@@ -24,7 +24,9 @@ export function Stats() {
   const userId = useAppSelector((state) => state.user.user.id)
   console.log('utilityInfo', utilityInfo)
 
-  const month = Number(utilityInfo?.weekList[0].month.slice(5))
+  const month = Number(
+    utilityInfo?.weekList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
+  )
   const weekOfMonth = Number(utilityInfo?.weekList[0]?.week ?? 1)
   const date = new Date()
   const status = utilityInfo?.currentWeek.find(

@@ -11,7 +11,9 @@ import Image from 'next/image'
 import { useAppSelector } from '@/hooks/useAppSelector'
 export function Payment() {
   const rentInfo = useAppSelector((state) => state.pledge.rent)
-  const month = Number(rentInfo?.monthList[0].month.slice(5))
+  const month = Number(
+    rentInfo?.monthList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
+  )
 
   const year = new Date().getFullYear()
   const firstDay = new Date(year, month - 1, 1);
