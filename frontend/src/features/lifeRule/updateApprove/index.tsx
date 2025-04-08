@@ -57,7 +57,7 @@ export function LifeRuleUpdateApprovePage() {
       if (user?.id) {
         const approveResponse = await approveUpdateForm({ approved })
         if (approveResponse === true) {
-          router.push('/lifeRule')
+          router.replace('/lifeRule')
           if (!approved) {
             dispatch(setHomeOverviewLifeRuleApproved(false))
             dispatch(resetNotApprovedIds())
