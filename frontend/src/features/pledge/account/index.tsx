@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -76,30 +76,39 @@ export function Account({
   const handleMonth = (direction: number) => () => {
     const newDate = new Date(budgetDate)
     newDate.setMonth(newDate.getMonth() + direction)
+    setMonth(format(newDate, 'yyyyMM'))
+    // if (newDate.getTime() < new Date().getTime()) {
     setBudgetDate(newDate)
+    // }
   }
   const formatMonth = (date: Date) => {
-    return `${format(date ?? new Date(), 'LLLL', { locale: ko })}`
+    return format(date, 'yyyy.MM', { locale: ko })
   }
   const duration = useFormattedDuration(startDate, endDate)
   const router = useRouter()
   const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
   const currentMonth = useMemo(() => format(new Date(), 'yyyyMM'), [])
+  const [month, setMonth] = useState(currentMonth)
   const user = useAppSelector((state) => state.user.user)
+  const contract = useAppSelector((state) => state.contract.contract)
   const hasFetchedPaymentCurrent = useRef(false)
-  useEffect(() => {
-    const fetchPaymentCurrent = async () => {
-      if (hasFetchedPaymentCurrent.current) return
-      hasFetchedPaymentCurrent.current = true
-      if (!user.contractId) return
 
-      const response = await getPaymentCurrentStatus(currentMonth)
-      if (response.success) {
-        dispatch(setPaymentCurrent(response.data as PaymentCurrent))
-      }
+  const fetchPaymentCurrent = useCallback(async () => {
+    if (hasFetchedPaymentCurrent.current) return
+    hasFetchedPaymentCurrent.current = true
+    if (!user.contractId) return
+
+    const response = await getPaymentCurrentStatus(month)
+    console.log(response)
+    if (response.success) {
+      dispatch(setPaymentCurrent(response.data as PaymentCurrent))
     }
+    hasFetchedPaymentCurrent.current = false
+  }, [month])
+
+  useEffect(() => {
     fetchPaymentCurrent()
-  }, [user.contractId, currentMonth, dispatch])
+  }, [user.contractId, month])
 
   return (
     <Container>
@@ -114,23 +123,32 @@ export function Account({
       </MonthSummary>
       <AccountHistoryViewer filteredHistory={filteredHistory}>
         <ButtonContainer>
-          {paymentCurrent?.rent === PaymentStatus.COLLECTED && (
-            <ConfirmButton
-              onClick={() => {
-                router.push('/pledge/transfer/owner')
-              }}
-              variant={ButtonVariant.prev}
-              label="집주인에게 보내기"
-            />
-          )}
+          {paymentCurrent?.rent === PaymentStatus.COLLECTED &&
+            month >= startDate.slice(0, 6) && (
+              <ConfirmButton
+                onClick={() => {
+                  router.push('/pledge/transfer/owner')
+                }}
+                variant={ButtonVariant.prev}
+                label="집주인에게 보내기"
+              />
+            )}
 
-          {paymentCurrent?.userRent === PaymentStatus.FAILED && (
+          {paymentCurrent?.userRent === PaymentStatus.COLLECTED && (
             <ConfirmButton
+              variant={
+                paymentCurrent?.rent === PaymentStatus.PAID
+                  ? ButtonVariant.disabled
+                  : ButtonVariant.next
+              }
               onClick={() => {
                 router.push('/budget/pledge/transfer/rent')
               }}
-              variant={ButtonVariant.next}
-              label="월세 채우기"
+              label={
+                paymentCurrent?.rent === PaymentStatus.PAID
+                  ? '공통 월세 납부 완료'
+                  : '월세 채우기'
+              }
             />
           )}
         </ButtonContainer>
@@ -149,7 +167,6 @@ export function Account({
             />
           </MonthNavigation>
           <ContentContainer>
-            <DateContainer>{duration}</DateContainer>
             <SelectContainer>
               {selectItem.map((item) => (
                 <SelectButton
