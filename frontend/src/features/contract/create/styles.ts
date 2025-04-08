@@ -29,3 +29,8 @@ export const Navigator = styled.div`
   gap: 60px;
   width: 100%;
 `
+export const BottomContainer = styled.div`
+  margin: 0 20px;
+  display: flex;
+  gap: 16px;
+`

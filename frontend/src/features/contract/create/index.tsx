@@ -30,7 +30,6 @@ import {
 import { setContract } from '@/store/slices/contractSlice'
 import { setContractId } from '@/store/slices/userSlice'
 import {
-  BottomContainer,
   Container,
   FullMain,
   HeaderContainer,
@@ -54,6 +53,7 @@ import {
   TextInput,
 } from './components/InputComponents'
 import { InputWrapper } from './components/InputWrapper'
+import { BottomContainer } from './styles'
 
 const InputComponents: InputComponentMap = {
   moneyInputBox: MoneyInput,
@@ -86,6 +86,7 @@ export function ContractCreatePage() {
     currentStepContent,
     handleNext,
     handleBack,
+    isFirstStep,
     isLastStep,
   } = useContractSteps()
   const hasCreated = useRef(false)
@@ -228,7 +229,7 @@ export function ContractCreatePage() {
   return (
     <Container>
       <HeaderContainer>
-        <HeaderButton onClick={handleBack}>
+        <HeaderButton onClick={() => router.replace('/')}>
           <IconButton
             src="/icons/arrow-left.svg"
             alt={t('icon.back')}
@@ -271,6 +272,13 @@ export function ContractCreatePage() {
         ))}
       </FullMain>
       <BottomContainer>
+        <ConfirmButton
+          onClick={() => {
+            isFirstStep ? router.replace('/') : handleBack()
+          }}
+          label={isFirstStep ? t('goToHome') : t('prev')}
+          variant={'prev'}
+        />
         <ConfirmButton
           onClick={handleConfirm}
           label={isLastStep ? t('finish') : t('next')}
