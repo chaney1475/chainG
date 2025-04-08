@@ -60,6 +60,12 @@ const userSlice = createSlice({
     setHomeOverview: (state, action: PayloadAction<HomeOverview>) => {
       state.homeOverview = action.payload
     },
+    setHomeOverviewLifeRuleApproved: (
+      state,
+      action: PayloadAction<boolean>,
+    ) => {
+      state.homeOverview.isLifeRuleApproved = action.payload
+    },
     setSummary: (state, action: PayloadAction<UserSummary>) => {
       state.summary = action.payload
     },
@@ -74,6 +80,7 @@ export const {
   setContractId,
   setHomeOverview,
   setSummary,
+  setHomeOverviewLifeRuleApproved,
 } = userSlice.actions
 
 export default userSlice.reducer

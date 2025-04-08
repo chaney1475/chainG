@@ -10,6 +10,7 @@ import {
   approveUpdateForm,
   getLifeRule,
   getUpdateLifeRule,
+  postNotApprovedIds,
 } from '@/apis/lifeRule'
 import { TopHeader } from '@/components/TopHeader'
 import ApproveModal from '@/features/lifeRule/components/ApproveModal'
@@ -17,6 +18,7 @@ import { ApproveProfile } from '@/features/lifeRule/components/ApproveProfile'
 import { LifeRuleUpdateApproveListItem } from '@/features/lifeRule/components/LifeRuleUpdateApproveListItem'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setUpdateLifeRules } from '@/store/slices/lifeRuleSlice'
+import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { Container } from '@/styles/styles'
 import { LifeRuleUpdateVariant, UpdateLifeRule } from '@/types/lifeRule'
 
@@ -29,6 +31,7 @@ export function LifeRuleUpdateApprovePage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const router = useRouter()
+  const groupId = useAppSelector((state) => state.group.group.id)
   const updateLifeRules = useAppSelector(
     (state) => state.lifeRule.updateLifeRules,
   )
@@ -46,6 +49,18 @@ export function LifeRuleUpdateApprovePage() {
         const approveResponse = await approveUpdateForm({ approved })
         if (approveResponse === true) {
           router.push('/lifeRule')
+          if (!approved) {
+            dispatch(setHomeOverviewLifeRuleApproved(false))
+          } else {
+            const postNotApprovedIdsResponse = await postNotApprovedIds(groupId)
+            console.log(
+              'postNotApprovedIdsResponse',
+              postNotApprovedIdsResponse,
+            )
+            if (postNotApprovedIdsResponse.data.notApprovedIds.length === 0) {
+              dispatch(setHomeOverviewLifeRuleApproved(false))
+            }
+          }
         }
       }
     } catch (error) {
