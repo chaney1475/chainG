@@ -86,24 +86,24 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(propagation = Propagation.REQUIRES_NEW) // ✅ 추가!
     public void sendNotification(Long userId, String title, String content, NotificationCategory category) {
         userRepository.findById(userId).ifPresent(user -> {
-            if (user.getFcmToken() != null && !user.getFcmToken().isBlank()) {
-                NotificationEntity notification = NotificationEntity.builder()
-                        .user(user)
-                        .title(title)
-                        .content(content)
-                        .isRead(false)
-                        .createdAt(ZonedDateTime.now(ZoneOffset.UTC))
-                        .category(category)
-                        .build();
+            NotificationEntity notification = NotificationEntity.builder()
+                    .user(user)
+                    .title(title)
+                    .content(content)
+                    .isRead(false)
+                    .createdAt(ZonedDateTime.now(ZoneOffset.UTC))
+                    .category(category)
+                    .build();
 
-                NotificationEntity saved = notificationRepository.save(notification);
-//                log.info("알림 저장 완료: {}", NotificationDTO.from(saved));
+            NotificationEntity saved = notificationRepository.save(notification);
 
+            // 🔔 FCM 토큰이 있는 경우에만 푸시 전송
+            if (user.getFcmToken() != null) {
                 fcmService.sendNotificationAsync(user.getFcmToken(), title, content);
             } else {
                 StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
-//                log.warn("FCM 토큰이 없어서 알림 발송 생략 - userId: {}, 호출 위치: {}.{}",
-//                        userId, caller.getClassName(), caller.getMethodName());
+                log.info("✅ 알림 저장만 완료 (푸시 생략) - userId: {}, 호출 위치: {}.{}",
+                        userId, caller.getClassName(), caller.getMethodName());
             }
         });
     }
