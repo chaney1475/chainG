@@ -1,9 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import * as Dialog from '@radix-ui/react-dialog'
+import Image from 'next/image'
 
-import { ConfirmButton } from '../ConfirmButton'
+import { ModalConfirmButton } from '@/components'
+
 import {
   ButtonWrapper,
+  ImageContainer,
   contentStyle,
   descStyle,
   overlayStyle,
@@ -18,6 +21,7 @@ interface ModalProps {
   description?: string
   confirmText?: string
   children?: React.ReactNode
+  image?: string
   disablePrev?: boolean
 }
 
@@ -30,6 +34,7 @@ export function Modal({
   confirmText = '확인',
   children,
   disablePrev = false,
+  image,
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -39,7 +44,16 @@ export function Modal({
         <Dialog.Overlay css={overlayStyle} />
         <Dialog.Content css={contentStyle}>
           <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
-          {children}
+          {image && (
+            <ImageContainer>
+              <Image
+                src={image}
+                alt="modal"
+                width={80}
+                height={80}
+              />
+            </ImageContainer>
+          )}
           <Dialog.Description css={descStyle}>
             {description.split('\n').map((line, idx) => (
               <span
@@ -49,16 +63,17 @@ export function Modal({
               </span>
             ))}
           </Dialog.Description>
+          {children}
           <ButtonWrapper>
             {!disablePrev && (
               <Dialog.Close asChild>
-                <ConfirmButton
+                <ModalConfirmButton
                   label={'cancel'}
                   variant={'prev'}
                 />
               </Dialog.Close>
             )}
-            <ConfirmButton
+            <ModalConfirmButton
               label={confirmText}
               variant={'next'}
               onClick={onConfirm}
