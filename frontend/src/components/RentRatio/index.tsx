@@ -224,6 +224,7 @@ export function RentRatio() {
                     key={user.id}
                     user={user}
                     variant="bar"
+                    showName={true}
                   />
                   <RegularLabel id={user.id.toString()}>
                     {formatMoney(
@@ -253,6 +254,7 @@ export function RentRatio() {
                   key={user.id}
                   user={user}
                   variant="bar"
+                  showName={true}
                 />
                 <InputBox
                   id={user.id.toString()}
@@ -318,6 +320,7 @@ export function RentRatio() {
               <UserItem
                 key={user.id}
                 user={user}
+                showName={true}
               />
             ))}
           </TileContainer>
