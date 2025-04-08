@@ -57,3 +57,23 @@ export const ProfileItem = styled.div<{ isSelected: boolean }>`
     color: ${({ theme }) => theme.color.text.low};
   }
 `
+// -----------
+
+export const ProfileContainer = styled.div<{ isApprove: boolean }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: ${({ isApprove, theme }) =>
+    isApprove ? theme.color.text.low : theme.color.text.disabled};
+  white-space: nowrap;
+
+  gap: 0.5rem;
+  ${({ theme }) => theme.typography.styles.name};
+
+  > span {
+    text-align: center;
+    min-width: 60px;
+  }
+`

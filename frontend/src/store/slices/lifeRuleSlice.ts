@@ -1,3 +1,5 @@
+import { act } from 'react'
+
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { LifeRule, UpdateLifeRule } from '@/types/lifeRule'
@@ -5,11 +7,13 @@ import { LifeRule, UpdateLifeRule } from '@/types/lifeRule'
 interface LifeRuleState {
   updateLifeRules: UpdateLifeRule[]
   lifeRules: LifeRule[]
+  notApprovedIds: number[]
 }
 
 const initialState: LifeRuleState = {
   updateLifeRules: [],
   lifeRules: [],
+  notApprovedIds: [],
 }
 
 const lifeRuleSlice = createSlice({
@@ -22,8 +26,19 @@ const lifeRuleSlice = createSlice({
     setLifeRules: (state, action: PayloadAction<LifeRule[]>) => {
       state.lifeRules = action.payload
     },
+    setNotApprovedIds: (state, action: PayloadAction<number[]>) => {
+      state.notApprovedIds = action.payload
+    },
+    resetNotApprovedIds: (state) => {
+      state.notApprovedIds = []
+    },
   },
 })
 
-export const { setUpdateLifeRules, setLifeRules } = lifeRuleSlice.actions
+export const {
+  setUpdateLifeRules,
+  setLifeRules,
+  setNotApprovedIds,
+  resetNotApprovedIds,
+} = lifeRuleSlice.actions
 export default lifeRuleSlice.reducer

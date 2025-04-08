@@ -21,13 +21,15 @@ export const StyledButton = styled.button<StyledButtonProps>`
   border: none;
   font-size: 16px;
   text-align: center;
+  ${({ theme }) => theme.typography.styles.button};
 
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
     switch (variant) {
       case 'reject':
         return `
          background-color: ${theme.color.secondary};
-          color: ${theme.color.text.low};   
+        color: ${theme.color.text.low};   
+
         `
       case 'approve':
         return `
