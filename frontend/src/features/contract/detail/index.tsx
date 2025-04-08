@@ -224,6 +224,7 @@ export function ContractDetail() {
         onConfirm={confirmModal}
         title={modalTitle}
         description={modalDescription}
+        image={useModifyModal ? '/images/contract/contract-detail.png' : ''}
         confirmText={modalConfirmText}>
         {!useModifyModal && (
           <PaddingContainer>
