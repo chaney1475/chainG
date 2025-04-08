@@ -71,8 +71,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public RetrieveRentDTO retrieveRent(RetrieveRentCommand command) {
         Long userId = command.getUserId();
-        Integer year = Integer.valueOf(command.getYear());
-        Integer month = Integer.valueOf(command.getMonth());
+        int year = Integer.valueOf(command.getYear());
+        int month = Integer.valueOf(command.getMonth());
 
         // 관련 엔티티 조회
         UserEntity user = getUserEntity(userId);
@@ -82,7 +82,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 결제 데이터 처리
         List<PaymentEntity> payments = paymentRepository.findAllByContractIdAndFeeType(contract.getId(), FeeType.RENT);
-        int currentMonth = getCurrentMonth();
+        int currentMonth = formatToYearMonth(year, month);
 
         // 결제 정보 처리
         Map<Long, List<UserPaymentEntity>> userPaymentsByPaymentId = getUserPaymentsByPaymentId(payments);
