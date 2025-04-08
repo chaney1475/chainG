@@ -460,7 +460,8 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentStatus rentStatus = rentPayment != null ? rentPayment.getStatus() : null;
 
         UserPaymentEntity rentUserPayment = rentPayment != null
-                ? userPaymentRepository.findByPaymentIdAndContractMemberId(rentPayment.getId(), userId).orElse(null)
+                ? userPaymentRepository.findByPaymentIdAndContractMemberId(rentPayment.getId(), contractUser.getId())
+                .orElse(null)
                 : null;
 
         PaymentStatus userRentStatus = rentUserPayment != null ? rentUserPayment.getStatus() : null;
@@ -473,7 +474,8 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentStatus utilityStatus = utilityPayment != null ? utilityPayment.getStatus() : null;
 
         UserPaymentEntity utilityUserPayment = utilityPayment != null
-                ? userPaymentRepository.findByPaymentIdAndContractMemberId(utilityPayment.getId(), userId).orElse(null)
+                ? userPaymentRepository.findByPaymentIdAndContractMemberId(utilityPayment.getId(), contractUser.getId())
+                .orElse(null)
                 : null;
 
         PaymentStatus userUtilityStatus = utilityUserPayment != null ? utilityUserPayment.getStatus() : null;
