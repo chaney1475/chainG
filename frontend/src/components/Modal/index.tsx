@@ -18,6 +18,7 @@ interface ModalProps {
   description?: string
   confirmText?: string
   children?: React.ReactNode
+  disablePrev?: boolean
 }
 
 export function Modal({
@@ -28,6 +29,7 @@ export function Modal({
   description = '서약서를 임시저장할까요?\n서약서의 내용을 그룹원들이 서로 확인할 수 있어요.',
   confirmText = '확인',
   children,
+  disablePrev = false,
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -48,12 +50,14 @@ export function Modal({
             ))}
           </Dialog.Description>
           <ButtonWrapper>
-            <Dialog.Close asChild>
-              <ConfirmButton
-                label={'cancel'}
-                variant={'prev'}
-              />
-            </Dialog.Close>
+            {!disablePrev && (
+              <Dialog.Close asChild>
+                <ConfirmButton
+                  label={'cancel'}
+                  variant={'prev'}
+                />
+              </Dialog.Close>
+            )}
             <ConfirmButton
               label={confirmText}
               variant={'next'}
