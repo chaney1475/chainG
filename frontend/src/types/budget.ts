@@ -63,6 +63,8 @@ export type PaymentStatus =
   | 'RETRY_PENDING'
   | 'PAID'
   | 'FAILED'
+  | 'DEBT'
+  | 'PENDING'
 
 export const PaymentStatus = {
   STARTED: 'STARTED',
@@ -72,18 +74,9 @@ export const PaymentStatus = {
   PAID: 'PAID',
   FAILED: 'FAILED',
 } as const
-
-export type UserPaymentStatus = 'PENDING' | 'COLLECTED' | 'FAILED'
-
-export const UserPaymentStatus = {
-  PENDING: 'PENDING',
-  COLLECTED: 'COLLECTED',
-  FAILED: 'FAILED',
-} as const
-
 export interface PaymentCurrent {
-  rent: UserPaymentStatus | null
-  utility: UserPaymentStatus | null
+  rent: PaymentStatus | null
+  utility: PaymentStatus | null
   userRent: PaymentStatus | null
   userUtility: PaymentStatus | null
 }

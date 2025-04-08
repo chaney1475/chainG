@@ -12,11 +12,7 @@ import { getPaymentCurrentStatus } from '@/apis/payment'
 import { AccountHistoryViewer, ConfirmButton, IconButton } from '@/components'
 import { useAppSelector, useFormattedDuration } from '@/hooks'
 import { setPaymentCurrent } from '@/store/slices/pledgeSlice'
-import {
-  PaymentCurrent,
-  PaymentStatus,
-  UserPaymentStatus,
-} from '@/types/budget'
+import { PaymentCurrent, PaymentStatus } from '@/types/budget'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
 import { ButtonVariant } from '@/types/ui'
 import { formatMoney } from '@/utils/format'
@@ -128,7 +124,7 @@ export function Account({
             />
           )}
 
-          {paymentCurrent?.userRent === UserPaymentStatus.FAILED && (
+          {paymentCurrent?.userRent === PaymentStatus.FAILED && (
             <ConfirmButton
               onClick={() => {
                 router.push('/budget/pledge/transfer/rent')
