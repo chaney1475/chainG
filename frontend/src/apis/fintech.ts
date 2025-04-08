@@ -5,7 +5,6 @@ import {
   Account,
   AccountDetail,
   AccountPaymentHistoryRequest,
-  AccountPaymentHistoryResponse,
   FintechResponseError,
   TransferRequest,
 } from '@/types/fintech'
@@ -14,7 +13,7 @@ import { handleFintechError } from '@/utils/error/handleFintechError'
 import { getRequest, postRequest } from './api'
 
 const fintechApi = axios.create({
-  baseURL: `https://finopenapi.ssafy.io/ssafy/api/v1/edu`,
+  baseURL: `/fintTechApi`,
   // baseURL: `${process.env.NEXT_PUBLIC_FINTECH_BASEURL}:
   timeout: 5000,
   headers: {

@@ -11,15 +11,14 @@ export const MonthSummary = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: 16px 12px;
   margin: 20px;
 `
 
 export const MonthNavigation = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-right: 30px;
+  gap: 4px;
   border-right: 1px solid ${({ theme }) => theme.color.border};
 `
 
@@ -30,9 +29,8 @@ export const NavArrow = styled.span`
 `
 
 export const CurrentMonth = styled.span`
-  ${({ theme }) => theme.typography.styles.title};
+  ${({ theme }) => theme.typography.styles.descriptionBold};
   color: ${({ theme }) => theme.color.text.low};
-  white-space: nowrap;
 `
 
 export const ExpenseSummary = styled.div`
@@ -41,19 +39,20 @@ export const ExpenseSummary = styled.div`
   gap: 4px;
   justify-content: center;
   align-items: center;
-  margin: 0 30px;
   width: 100%;
 `
 
 export const ExpenseLabel = styled.div`
   color: ${({ theme }) => theme.color.text.disabled};
   ${({ theme }) => theme.typography.styles.default};
-  padding-right: 0.5rem;
+  padding: 0 10px;
+  white-space: nowrap;
 `
 
 export const ExpenseAmount = styled.div`
   color: ${({ theme }) => theme.color.text.low};
   ${({ theme }) => theme.typography.styles.topHeader};
+  white-space: pre-wrap;
 `
 
 export const StyledFullCalendar = styled.div`

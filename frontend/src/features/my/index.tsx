@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -35,7 +35,10 @@ export function MyPage() {
     fetchMySummary()
   }, [dispatch])
 
+  const logouted = useRef(false)
   const handleLogout = async () => {
+    if (logouted.current) return
+    logouted.current = true
     const success = await logout()
     if (success) {
       router.push('/auth/login')

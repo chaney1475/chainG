@@ -1,9 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import * as Dialog from '@radix-ui/react-dialog'
+import Image from 'next/image'
 
-import { ConfirmButton } from '../ConfirmButton'
+import { ModalConfirmButton } from '@/components'
+
 import {
   ButtonWrapper,
+  ImageContainer,
   contentStyle,
   descStyle,
   overlayStyle,
@@ -18,6 +21,8 @@ interface ModalProps {
   description?: string
   confirmText?: string
   children?: React.ReactNode
+  image?: string
+  disablePrev?: boolean
 }
 
 export function Modal({
@@ -28,6 +33,8 @@ export function Modal({
   description = '서약서를 임시저장할까요?\n서약서의 내용을 그룹원들이 서로 확인할 수 있어요.',
   confirmText = '확인',
   children,
+  disablePrev = false,
+  image,
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -37,7 +44,16 @@ export function Modal({
         <Dialog.Overlay css={overlayStyle} />
         <Dialog.Content css={contentStyle}>
           <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
-          {children}
+          {image && (
+            <ImageContainer>
+              <Image
+                src={image}
+                alt="modal"
+                width={80}
+                height={80}
+              />
+            </ImageContainer>
+          )}
           <Dialog.Description css={descStyle}>
             {description.split('\n').map((line, idx) => (
               <span
@@ -47,14 +63,17 @@ export function Modal({
               </span>
             ))}
           </Dialog.Description>
+          {children}
           <ButtonWrapper>
-            <Dialog.Close asChild>
-              <ConfirmButton
-                label={'cancel'}
-                variant={'prev'}
-              />
-            </Dialog.Close>
-            <ConfirmButton
+            {!disablePrev && (
+              <Dialog.Close asChild>
+                <ModalConfirmButton
+                  label={'cancel'}
+                  variant={'prev'}
+                />
+              </Dialog.Close>
+            )}
+            <ModalConfirmButton
               label={confirmText}
               variant={'next'}
               onClick={onConfirm}

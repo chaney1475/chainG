@@ -50,8 +50,10 @@ export const SelectContainer = styled.ul`
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+  margin: 0 20px;
   background-color: ${({ theme }) => theme.color.background.white};
-  padding: 8px 10px 0px 20px;
 `
 export const SelectButton = styled.li<{ isSelected: boolean }>`
   border: none;
@@ -180,11 +182,10 @@ export const AccountInfo = styled.div`
 export const DashBoardContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 12px;
   justify-content: space-between;
 `
 export const CurrentMonth = styled.span`
-  ${({ theme }) => theme.typography.styles.title};
+  ${({ theme }) => theme.typography.styles.descriptionBold};
   color: ${({ theme }) => theme.color.text.low};
   white-space: nowrap;
 `
@@ -201,7 +202,7 @@ export const MonthNavigation = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 20px;
+  padding: 0 10px;
   margin: 16px 0px;
   border-right: 1px solid ${({ theme }) => theme.color.border};
 `

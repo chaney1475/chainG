@@ -33,6 +33,12 @@ export const StepItem = styled.div`
   justify-content: space-between;
   width: 100%;
   gap: 16px;
+  > div span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+  }
 `
 
 export const BarContainer = styled.div`
@@ -82,8 +88,7 @@ export const StatusBarContainer = styled.div`
   top: 0px;
   left: 14px; /* BarWrapper의 좌우 padding과 동일하게 */
   right: 14px;
-`;
-
+`
 
 export const StatusContainer = styled.div`
   display: flex;
@@ -91,8 +96,8 @@ export const StatusContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 4px;
-  
-  >div {
+
+  > div {
     ${({ theme }) => theme.typography.styles.tiny};
     color: ${({ theme }) => theme.color.text.disabled};
   }
@@ -105,14 +110,14 @@ export const MonthLabelsContainer = styled.div`
   justify-content: space-between;
   padding: 0 14px;
   width: 100%;
-`;
+`
 
 export const MonthLabel = styled.div`
   position: relative;
   width: 14px;
   height: auto;
   overflow: visible;
-`;
+`
 
 export const MonthText = styled.div`
   ${({ theme }) => theme.typography.styles.navigator};
@@ -132,12 +137,12 @@ export const MonthContainer = styled.div`
   width: 100%;
   min-height: 10px;
   gap: 16px;
-`;
+`
 
 export const BlankContainer = styled.div`
   min-width: 112px;
   height: 100%;
-`;
+`
 
 export const BottomContainer = styled.div`
   display: flex;
@@ -145,4 +150,4 @@ export const BottomContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-`;
+`

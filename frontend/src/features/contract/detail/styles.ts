@@ -70,3 +70,11 @@ export const BottomContainer = styled.div`
     margin: 0 auto;
   }
 `
+export const PaddingContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 0px 20px;
+`

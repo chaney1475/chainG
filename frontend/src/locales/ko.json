@@ -378,7 +378,7 @@
     },
     "modify": {
       "title": "서약서 수정",
-      "description": "서약서를 수정하면, 이전에 다른 사용자들이\n승인한 내용이 초기화되어요.\n수정하시겠어요?",
+      "description": "서약서를 수정하면, 이전에 다른 사용자들이 승인한 내용이 초기화되어요. 수정하시겠어요?",
       "confirmText": "수정"
     },
     "approve": {
@@ -527,6 +527,14 @@
       "FAILED": {
         "label": "자동이체 납부가 실패했어요",
         "title": "공통 납부 실패"
+      },
+      "DEBT": {
+        "label": "미납금이 연체되었어요",
+        "title": "공통 납부 연체"
+      },
+      "PENDING": {
+        "label": "납부 시작 전이에요",
+        "title": "공통 납부 시작 전"
       }
     },
     "userPrefix": "{{value}} 님은 ",
@@ -542,50 +550,62 @@
       "FAILED": {
         "label": "송금에 실패했어요",
         "title": "개별 송금 실패"
+      },
+      "STARTED": {
+        "label": "납부 시작 전이에요",
+        "title": "개별 납부 시작 전"
+      },
+      "PARTIALLY_PAID": {
+        "label": "송금을 부분적으로 완료했어요",
+        "title": "개별 납부 부분 실패"
+      },
+      "RETRY_PENDING": {
+        "label": "집주인에게 송금을 실패해 재시도 예정이에요",
+        "title": "개별 재시도 예약"
+      },
+      "PAID": {
+        "label": "월세 / 공과금 계좌로 송금했어요",
+        "title": "개별 납부 완료"
+      },
+      "DEBT": {
+        "label": "개별 납부가 연체되었어요",
+        "title": "개별 납부 연체"
       }
     },
     "transfer": {
       "owner": {
         "title": "수동 이체",
-        "header": "집주인 계좌로\n돈 보내기",
+        "header": "집주인 계좌로\n 월세 보내기",
         "label": "보내기",
-        "myAccountNo": {
-          "label": "집주인 계좌로 보내기 위한 내 계좌를 입력해주세요",
-          "placeholder": "계좌 번호를 입력해주세요",
+        "unpaid": "전체 월세 미납금({{month}} 기준)",
+        "month": {
+          "label": "월세 미납금 지불은 각 달마다 개별적으로 실행해요",
+          "placeholder": "월세 미납금을 지불할 달을 입력해주세요",
           "error": {
-            "required": "계좌 번호를 입력해주세요",
-            "same": "같은 계좌끼리는 보낼 수 없어요"
-          }
-        },
-        "balance": {
-          "label": "집주인 계좌로 보낼 금액을 입력해주세요",
-          "placeholder": "금액을 입력해주세요",
-          "error": {
-            "required": "금액을 입력해주세요"
+            "required": "월세 미납금을 지불할 달을 입력해주세요",
+            "future": "나중 월세는 미리 보낼 수 없어요",
+            "paid": "현재 지불할 금액이 없어요",
+            "empty": "월세/공과금 계좌에 해당 금액이 없어요. 계좌에 돈을 채워주세요"
           }
         },
         "success": {
-          "title": "집주인 계좌로 돈 보내기 완료",
-          "description": "{{userName}}님이 {{balance}}원을 집주인 계좌로 보냈어요"
+          "title": "집주인 계좌로 월세 보내기 완료",
+          "description": "{{month}}의 월세 미납금 {{balance}}원을 집주인 계좌로 보냈어요"
         }
       },
       "rent": {
         "title": "수동 이체",
-        "header": "월세 /공과금 계좌로\n돈 보내기",
+        "header": "월세 / 공과금 계좌로\n돈 보내기",
         "label": "보내기",
-        "myAccountNo": {
-          "label": "월세 / 공과금 계좌로 보내기 위한 내 계좌를 입력해주세요",
-          "placeholder": "계좌 번호를 입력해주세요",
+        "unpaid": "내 월세 미납금({{month}} 기준)",
+        "month": {
+          "label": "미납금 지불은 자동이체가 실패했을 때 각 달마다 개별적으로 실행해요",
+          "placeholder": "미납금을 지불할 달을 입력해주세요",
           "error": {
-            "required": "계좌 번호를 입력해주세요",
-            "same": "같은 계좌끼리는 채울 수 없어요"
-          }
-        },
-        "balance": {
-          "label": "월세 / 공과금 계좌로 보낼 금액을 입력해주세요",
-          "placeholder": "금액을 입력해주세요",
-          "error": {
-            "required": "금액을 입력해주세요"
+            "required": "미납금을 지불할 달을 입력해주세요",
+            "future": "돈을 미리 보낼 수 없어요",
+            "paid": "현재 지불할 금액이 없어요",
+            "empty": "내 계좌에 해당 금액이 없어요. 계좌에 돈을 채워주세요"
           }
         },
         "success": {

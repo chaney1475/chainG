@@ -38,7 +38,9 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
   const user = useAppSelector((state) => state.user.user)
   const highlightUserId = user?.id
   const rentInfo = useAppSelector((state) => state.pledge.rent)
-  const month = Number(rentInfo?.monthList[0].month.slice(5))
+  const month = Number(
+    rentInfo?.monthList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
+  )
   const bonus = useMemo(() => {
     return rentInfo?.currentMonth.find((item) => item.userId == 1)?.amount ?? 0
   }, [rentInfo, user])

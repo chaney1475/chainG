@@ -27,7 +27,9 @@ export function Stats() {
   const contractInfo = useAppSelector((state) => state.contract.contract)
   const groupSize = useAppSelector((state) => state.group.group.members.length)
 
-  const month = Number(rentInfo?.monthList[0].month.slice(5))
+  const month = Number(
+    rentInfo?.monthList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
+  )
   const userId = useAppSelector((state) => state.user.user.id)
   const date = new Date().getDate()
   const dutDate = rentInfo?.dueDate || 0

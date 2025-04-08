@@ -57,4 +57,5 @@ export const StatusLabelContainer = styled.div<{ variant: ContractStatus }>`
   border-radius: 14px;
   transition: left 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 `

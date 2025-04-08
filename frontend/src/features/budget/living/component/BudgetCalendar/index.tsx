@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef } from 'react'
 
 import koLocale from '@fullcalendar/core/locales/ko'
@@ -42,15 +44,17 @@ export function BudgetCalendar({
   const calendarRef = useRef<FullCalendar>(null)
 
   const formatMonth = (date: Date) => {
-    return `${format(date, 'LLLL', { locale: ko })}`
+    return format(date, 'yyyy.MM', { locale: ko })
   }
 
   const handleMonth = (direction: number) => () => {
     const newDate = new Date(budgetDate)
     newDate.setMonth(newDate.getMonth() + direction)
-    setBudgetDate(newDate)
-    if (calendarRef.current) {
-      calendarRef.current.getApi().gotoDate(newDate)
+    if (newDate.getTime() < new Date().getTime()) {
+      setBudgetDate(newDate)
+      if (calendarRef.current) {
+        calendarRef.current.getApi().gotoDate(newDate)
+      }
     }
   }
 

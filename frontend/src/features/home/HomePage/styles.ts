@@ -51,3 +51,8 @@ export const ImageContainer = styled.div`
     margin: auto;
   }
 `
+export const NoticeContainer = styled.div`
+  display: flex;
+  flex-direction: flex-end;
+  gap: 32px;
+`

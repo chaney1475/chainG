@@ -25,7 +25,7 @@ export function Payment() {
   const month = Number(
     utilityInfo?.weekList[0]?.month?.slice(5) ?? new Date().getMonth() + 1,
   )
-  const weekOfMonth = Number(utilityInfo?.weekList[0].week)
+  const weekOfMonth = Number(utilityInfo?.weekList[0]?.week ?? 1)
 
   // 해당 월의 첫날
   const firstDayOfMonth = new Date(year, month - 1, 1)

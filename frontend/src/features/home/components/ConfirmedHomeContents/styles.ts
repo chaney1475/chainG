@@ -11,5 +11,4 @@ export const ContentsContainer = styled.div`
   flex: 1;
   flex-direction: column;
   gap: 16px;
-  padding: 0 20px;
 `

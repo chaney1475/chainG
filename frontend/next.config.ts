@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         source: '/api/v1/:path*',
         destination: 'https://chaing.site/api/v1/:path*',
       },
+      {
+        source: '/fintTechApi/:path*',
+        destination: 'https://finopenapi.ssafy.io/ssafy/api/v1/edu/:path*',
+      },
     ]
   },
 }

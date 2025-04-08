@@ -82,9 +82,4 @@ export const EmptyContainer = styled.div`
   justify-content: center;
   align-items: center;
   padding: 0 20px 40px;
-  background: linear-gradient(
-    to bottom,
-    white,
-    ${({ theme }) => theme.color.secondary}
-  );
 `

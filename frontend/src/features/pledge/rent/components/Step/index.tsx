@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { UserItem } from '@/components/UserItem'
 import { useAppSelector } from '@/hooks/useAppSelector'
@@ -10,21 +11,20 @@ import { User } from '@/types/user'
 import { BoxContainer } from '../../../styles'
 import {
   BarContainer,
+  BlankContainer,
+  BottomContainer,
   ContentContainer,
+  MonthContainer,
+  MonthLabel,
+  MonthLabelsContainer,
+  MonthText,
+  StatusBarContainer,
+  StatusContainer,
   StatusIcon,
   StepContainer,
   StepItem,
   TopDescription,
-  StatusContainer,
-  StatusBarContainer,
-  MonthLabelsContainer,
-  MonthLabel,
-  BlankContainer,
-  MonthContainer,
-  BottomContainer,
-  MonthText,
 } from './styles'
-import { useTranslation } from 'react-i18next'
 
 interface UserList {
   user: User
@@ -45,22 +45,19 @@ export function Step() {
 
   const [userList, setUserList] = useState<UserList[]>([])
 
-
-
   useEffect(() => {
     if (!rentInfo || !group) return
-  
+
     const date = new Date().getDate()
     const dutDate = rentInfo.dueDate || 0
     const exceedDueDate: boolean = dutDate < date
-  
+
     const newUserList: UserList[] = group.map((item) => ({
       user: item,
       month: [],
     }))
-  
+
     rentInfo.monthList.slice(0, 6).forEach((item) => {
-      console.log('item', item)
       item.paidUserIds?.forEach((paidUser) => {
         newUserList
           .find((user) => user.user.id === paidUser)
@@ -78,35 +75,35 @@ export function Step() {
           })
       })
     })
-  
+
     setUserList(newUserList)
   }, [rentInfo, group])
-
 
   console.log('group', group)
   console.log('rentInfo', rentInfo)
   console.log('userList', userList)
 
-  
   return (
     <>
       <BoxContainer>
         <ContentContainer>
           <TopDescription>전체 납부 현황 </TopDescription>
-          
           <BottomContainer>
             <MonthContainer>
-              <BlankContainer/>
+              <BlankContainer />
               <MonthLabelsContainer>
                 {rentInfo?.monthList.map((item) => (
                   <MonthLabel key={item.month}>
                     <MonthText>{item.month.slice(5)}월</MonthText>
                   </MonthLabel>
                 ))}
-              {Array.from({ length: 6 - (rentInfo?.monthList.length || 0) }).map((_, index) => (
-                <MonthLabel key={index}><MonthText>&ensp;&ensp;</MonthText></MonthLabel>
-              ))} 
-
+                {Array.from({
+                  length: 6 - (rentInfo?.monthList.length || 0),
+                }).map((_, index) => (
+                  <MonthLabel key={index}>
+                    <MonthText>&ensp;&ensp;</MonthText>
+                  </MonthLabel>
+                ))}
               </MonthLabelsContainer>
             </MonthContainer>
             <StepContainer>
@@ -119,21 +116,20 @@ export function Step() {
                   />
                   <BarContainer>
                     <StatusBarContainer>
-                    {item.month.map((month) => (
-                      <StatusContainer>
-                        <StatusIcon
-                          variant={month.finalStatus}
-                          key={month.month}
-                        />
-                        <div>{t(`pledge.status.${month.finalStatus}`)}</div>
-                      </StatusContainer>
-                    ))}
-                    {Array.from({ length: 6 - item.month.length }).map((_, index) => (
-                      <StatusIcon
-                        variant={'none'}
-                        key={index}
-                      />
-                    ))}
+                      {item.month.map((month) => (
+                        <StatusContainer key={month.month}>
+                          <StatusIcon variant={month.finalStatus} />
+                          <div>{t(`pledge.status.${month.finalStatus}`)}</div>
+                        </StatusContainer>
+                      ))}
+                      {Array.from({ length: 6 - item.month.length }).map(
+                        (_, index) => (
+                          <StatusIcon
+                            variant={'none'}
+                            key={index}
+                          />
+                        ),
+                      )}
                     </StatusBarContainer>
                   </BarContainer>
                 </StepItem>

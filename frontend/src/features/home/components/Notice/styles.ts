@@ -6,6 +6,8 @@ export const Container = styled.div`
   flex: 1;
   flex-direction: column;
   width: 100%;
+  max-height: 60vh;
+  overflow-y: auto;
   background-color: ${({ theme }) => theme.color.secondary};
 `
 

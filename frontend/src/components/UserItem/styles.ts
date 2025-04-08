@@ -11,7 +11,7 @@ const getNameStyles = (size: 'xs' | 'small' | 'medium' | 'large') => css`
   ${size === 'xs'
     ? '50px'
     : size === 'small'
-      ? '60px'
+      ? '50px'
       : size === 'medium'
         ? '77px'
         : '80px'};
@@ -37,7 +37,7 @@ export const ProfileContainer = styled.div<{
   gap: ${({ size }) => (size === 'xs' ? '0.5rem !important' : '1rem')};
   > span {
     text-align: ${({ variant }) => (variant === 'bar' ? 'left' : 'center')};
-    max-width: ${({ size }) => getNameStyles(size)};
+    width: ${({ size }) => getNameStyles(size)};
     word-break: break-all;
   }
 `

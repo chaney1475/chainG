@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 
@@ -6,6 +8,7 @@ import { format } from 'date-fns'
 import { getDuties } from '@/apis/duty'
 import { getLivingAccount } from '@/apis/livingBudget'
 import { getPaymentCurrentStatus } from '@/apis/payment'
+import { Modal } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setDutyWeekList } from '@/store/slices/dutySlice'
 import {
@@ -13,6 +16,7 @@ import {
   setMyAccountNo,
 } from '@/store/slices/livingBudgetSlice'
 import { setPaymentCurrent } from '@/store/slices/pledgeSlice'
+import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
 import { DayKey, Duty } from '@/types/duty'
 
 import { DashBoard, LifeBudgetPreview, Notice } from '..'
@@ -24,7 +28,9 @@ export function ConfirmedHomeContents() {
   const livingBudget = useAppSelector((state) => state.livingBudget)
   const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
   const today = format(new Date(), 'EEEE').toLowerCase()
-
+  const isNoticeModalOpen = useAppSelector(
+    (state) => state.ui.isNoticeModalOpen,
+  )
   const hasFetchedAccount = useRef(false)
   const hasFetchedDuties = useRef(false)
   const hasFetchedPaymentCurrent = useRef(false)
@@ -88,7 +94,15 @@ export function ConfirmedHomeContents() {
 
   return (
     <Container>
-      <Notice />
+      <Modal
+        title={'공지'}
+        description={''}
+        open={isNoticeModalOpen}
+        onOpenChange={() => dispatch(setIsNoticeModalOpen(false))}
+        onConfirm={() => dispatch(setIsNoticeModalOpen(false))}
+        disablePrev={true}>
+        <Notice />
+      </Modal>
       <ContentsContainer>
         <DashBoard todayMyDutyList={todayMyDutyList} />
         {livingBudget.livingAccountNo && <LifeBudgetPreview />}

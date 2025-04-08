@@ -14,19 +14,29 @@ import { CardButton, IconButton, UserItem } from '@/components'
 import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
+import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
+  CenterContainer,
   Container,
+  HeaderTitle,
   PaddingContainer,
+  ShowCenterBox,
   Title,
-  TitleContainer,
   UserTileContainer,
+  ValidationContainer,
 } from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
 
 import { ConfirmedHomeContents, HomeLayout } from '../components'
-import { Description, GroupName, ImageContainer, Main } from './styles'
+import {
+  Description,
+  GroupName,
+  ImageContainer,
+  Main,
+  NoticeContainer,
+} from './styles'
 
 export function HomePage() {
   const [isMounted, setIsMounted] = useState(false)
@@ -226,15 +236,17 @@ export function HomePage() {
           title: t('main.codeCopy.title'),
           description: t('main.codeCopy.description'),
           children: (
-            <TitleContainer>
-              <p>{t('main.codeCopy.label')}</p>
-              <p>{group.inviteCode}</p>
-              <IconButton
-                onClick={handleCopy}
-                src="/icons/copy.svg"
-                alt="copy"
-              />
-            </TitleContainer>
+            <ShowCenterBox isDisabled={true}>
+              <ValidationContainer>
+                <Description>{t('main.codeCopy.label')}</Description>
+                <HeaderTitle>{group.inviteCode}</HeaderTitle>
+                <IconButton
+                  onClick={handleCopy}
+                  src="/icons/copy.svg"
+                  alt="copy"
+                />
+              </ValidationContainer>
+            </ShowCenterBox>
           ),
         },
       ],
@@ -317,15 +329,24 @@ export function HomePage() {
     <HomeLayout
       header="ChainG"
       headerRightButton={
-        <IconButton
-          onClick={() => router.push('/notification')}
-          src={
-            hasUnreadNotification
-              ? '/icons/notice-active.svg'
-              : '/icons/notice-inactive.svg'
-          }
-          alt={t('notice.title')}
-        />
+        <NoticeContainer>
+          {status === ContractStatus.confirmed && (
+            <IconButton
+              onClick={() => dispatch(setIsNoticeModalOpen(true))}
+              src="/images/lifeRule/notice.svg"
+              alt="notice"
+            />
+          )}
+          <IconButton
+            onClick={() => router.push('/notification')}
+            src={
+              hasUnreadNotification
+                ? '/icons/notice-active.svg'
+                : '/icons/notice-inactive.svg'
+            }
+            alt={t('notice.title')}
+          />
+        </NoticeContainer>
       }>
       <Main>
         <GroupName>{group.name}</GroupName>
