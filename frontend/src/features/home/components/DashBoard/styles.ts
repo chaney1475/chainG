@@ -14,6 +14,8 @@ export const Card = styled(Link)`
   ${({ theme }) => theme.typography.styles.topHeader}
   background-color: ${({ theme }) => theme.color.background.white};
   box-shadow: 0px 0px 20px 0px rgba(118, 118, 118, 0.25);
+
+  overflow: hidden;
   transition:
     opacity 0.3s ease,
     border-color 0.3s ease,
@@ -51,7 +53,6 @@ export const StyledButton = styled.button<{ isSelected: boolean }>`
   border-radius: 16px;
   border: none;
   text-align: center;
-
   ${({ theme }) => theme.typography.styles.description};
   cursor: pointer;
   outline: none;
@@ -94,7 +95,7 @@ export const IssueContainer = styled.div`
   flex: 0;
   justify-content: flex-start;
   position: relative;
-  margin: 1rem;
+  margin: 1rem 0.5rem;
   border: none;
 `
 export const ImageContainer = styled.div`
@@ -123,12 +124,12 @@ export const IssueContent = styled.div`
   box-shadow: 0px 0px 20px 0px rgba(118, 118, 118, 0.25);
   width: 144px;
   height: 120px;
+  overflow: hidden;
 `
 
 export const ScrollContainer = styled.div`
   display: flex;
-  gap: 1rem;
-  width: calc(100vw - 60px);
+  width: calc(100vw - 20px);
   overflow-y: hidden;
   height: 100%;
   justify-content: flex-start;
@@ -167,4 +168,5 @@ export const ButtonContainer = styled.div`
 `
 export const Container = styled.div`
   margin: 1rem 0;
+  padding: 0 20px;
 `
