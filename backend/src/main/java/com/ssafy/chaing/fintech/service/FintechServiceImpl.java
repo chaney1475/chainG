@@ -513,6 +513,8 @@ public class FintechServiceImpl implements FintechService {
 
             AccountHistoryRequest request = new AccountHistoryRequest(requestHeader, command);
 
+            log.info("request: {}", request);
+
             ResponseEntity<FintechBaseResponse<InquireTransactionHistoryRec>> responseEntity =
                     restTemplate.exchange(
                             config.getBaseUrl() + "/demandDeposit/inquireTransactionHistoryList",
@@ -521,6 +523,8 @@ public class FintechServiceImpl implements FintechService {
                             new ParameterizedTypeReference<>() {
                             }
                     );
+
+            log.info("responseEntity: {}", responseEntity.getBody());
 
             InquireTransactionHistoryRec rec = Objects.requireNonNull(responseEntity.getBody()).rec();
             return new FintechResponse<>(rec);

@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @Tag(name = "Fintech API", description = "핀테크 송금 API")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/fintech")
@@ -111,11 +113,11 @@ public class FintechController {
                                     schema = @Schema(implementation = ClientErrorResponse.class)))
             }
     )
-    @GetMapping("/account/history")
+    @PostMapping("/account/history")
     public ResponseEntity<BaseResponse<FintechResponse<?>>> getAccountHistory(
-            @Valid @RequestBody AccountHistoryCommand body,
-            @AuthenticationPrincipal UserPrincipal principal
+            @Valid @RequestBody AccountHistoryCommand body
     ) {
+        log.info("getAccountHistory body: {}", body);
         FintechResponse<?> response = fintechService.getAccountHistory(body);
         if (response.getData() instanceof InquireTransactionHistoryRec) {
             return ResponseEntity.ok(BaseResponse.success(response));

@@ -26,6 +26,5 @@ public interface FintechService {
 
     FintechResponse<?> createAccount();
 
-    @Transactional
     FintechResponse<?> getAccountHistory(AccountHistoryCommand command);
 }
