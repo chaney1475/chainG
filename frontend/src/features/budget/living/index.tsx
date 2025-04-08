@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -62,25 +62,22 @@ export function BudgetLivingPage() {
   const livingAccountPaymentHistory = useAppSelector(
     (state) => state.livingBudget.livingAccountPaymentHistory,
   )
-  const [formattedHistory, setFormattedHistory] = useState<
-    FormattedAccountPaymentHistory[]
-  >([])
 
-  const handleBudgetChange = (date: Date) => {
+  const handleBudgetChange = useCallback((date: Date) => {
     setBudgetStartDate(date)
     setBudgetEndDate(new Date(date.getFullYear(), date.getMonth() + 1, 1))
-  }
+  }, [])
 
   const [sendNotification, setSendNotification] = useState(false)
 
-  const handleSendNotification = async () => {
+  const handleSendNotification = useCallback(async () => {
     if (!sendNotification) {
       await notifyLeaderLivingAccountCreated()
       setSendNotification(true)
     } else {
       setOpen(false)
     }
-  }
+  }, [sendNotification])
 
   const hasFetchedDetail = useRef(false)
   useEffect(() => {
@@ -104,12 +101,13 @@ export function BudgetLivingPage() {
       hasFetched.current = true
       fetchAccountPaymentHistory()
     }
-  }, [livingAccountNo])
+  }, [livingAccountNo, startDate])
 
-  useEffect(() => {
-    if (livingAccountPaymentHistory.length === 0) return
+  const formattedHistory = useMemo<FormattedAccountPaymentHistory[]>(() => {
+    if (livingAccountPaymentHistory.length === 0) return []
+
     let transactionDate = ''
-    const paymentHistory = livingAccountPaymentHistory.map((item) => {
+    return livingAccountPaymentHistory.map((item) => {
       let showDate = false
       if (item.transactionDate != transactionDate) {
         showDate = true
@@ -128,31 +126,35 @@ export function BudgetLivingPage() {
         transactionMemo: item.transactionMemo,
       }
     })
-    setFormattedHistory(paymentHistory)
   }, [livingAccountPaymentHistory])
 
-  const currentMonthDeposit = livingAccountPaymentHistory
-    .filter((item) => item.transactionDate >= startDate)
-    .filter((item) => item.transactionDate < endDate)
-    .filter((item) => item.transactionType === '1')
-    .reduce((acc, item) => acc + Number(item.transactionBalance), 0)
+  const currentMonthDeposit = useMemo(() => {
+    return livingAccountPaymentHistory
+      .filter((item) => item.transactionDate >= startDate)
+      .filter((item) => item.transactionDate < endDate)
+      .filter((item) => item.transactionType === '1')
+      .reduce((acc, item) => acc + Number(item.transactionBalance), 0)
+  }, [livingAccountPaymentHistory, startDate, endDate])
 
-  const currentMonthWithdrawal = livingAccountPaymentHistory
-    .filter((item) => item.transactionType === '2')
-    .reduce((acc, item) => acc + Number(item.transactionBalance), 0)
+  const currentMonthWithdrawal = useMemo(() => {
+    return livingAccountPaymentHistory
+      .filter((item) => item.transactionType === '2')
+      .reduce((acc, item) => acc + Number(item.transactionBalance), 0)
+  }, [livingAccountPaymentHistory])
 
-  const fetchAccountPaymentHistory = async () => {
+  const fetchAccountPaymentHistory = useCallback(async () => {
     const response = await getAccountHistory()
     dispatch(setLivingAccountPaymentHistory(response))
     hasFetched.current = false
-  }
+  }, [getAccountHistory, dispatch])
 
-  const fetchAccountDetail = async () => {
+  const fetchAccountDetail = useCallback(async () => {
     const response = await getAccountDetail(livingAccountNo)
     if (response.success) {
       dispatch(setLivingAccountDetail(response.data.data))
     }
-  }
+  }, [livingAccountNo, dispatch])
+
   const menuList = [
     { id: 'calendar', name: '달력' },
     { id: 'history', name: '내역' },

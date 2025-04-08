@@ -5,7 +5,6 @@ import {
   Account,
   AccountDetail,
   AccountPaymentHistoryRequest,
-  AccountPaymentHistoryResponse,
   FintechResponseError,
   TransferRequest,
 } from '@/types/fintech'
