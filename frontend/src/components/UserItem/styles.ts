@@ -31,12 +31,13 @@ export const ProfileContainer = styled.div<{
 }>`
   display: flex;
   color: ${({ theme }) => theme.color.text.low};
-  white-space: nowrap;
+  white-space: ${({ variant }) => (variant === 'bar' ? 'nowrap' : 'normal')};
   ${({ variant }) => getVariantStyles(variant)}
   ${({ size, theme }) => getSizeStyles(size, theme)}
   gap: ${({ size }) => (size === 'xs' ? '0.5rem !important' : '1rem')};
   > span {
     text-align: ${({ variant }) => (variant === 'bar' ? 'left' : 'center')};
-    min-width: ${({ size }) => getNameStyles(size)};
+    max-width: ${({ size }) => getNameStyles(size)};
+    word-break: break-all;
   }
 `

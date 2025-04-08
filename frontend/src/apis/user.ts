@@ -14,3 +14,6 @@ export const getHomeOverview = async () =>
 //putUserUpdate
 export const updateProfile = async (params: UserUpdateRequest) =>
   await putRequest<LoginUser>('/users/me/update', params)
+
+export const getUserInfo = async () =>
+  await getRequest<LoginUser>(`/users/me/info`)

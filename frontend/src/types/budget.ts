@@ -1,4 +1,4 @@
-import { DayKey } from "./duty"
+import { DayKey } from './duty'
 
 export interface RetrieveRentResponse {
   totalAmount: number
@@ -55,3 +55,35 @@ export interface DepositToRentAccountRequest {
 }
 
 export type BudgetStatus = 'complete' | 'debt' | 'expected' | 'none'
+
+export type PaymentStatus =
+  | 'STARTED'
+  | 'PARTIALLY_PAID'
+  | 'COLLECTED'
+  | 'RETRY_PENDING'
+  | 'PAID'
+  | 'FAILED'
+
+export const PaymentStatus = {
+  STARTED: 'STARTED',
+  PARTIALLY_PAID: 'PARTIALLY_PAID',
+  COLLECTED: 'COLLECTED',
+  RETRY_PENDING: 'RETRY_PENDING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+} as const
+
+export type UserPaymentStatus = 'PENDING' | 'COLLECTED' | 'FAILED'
+
+export const UserPaymentStatus = {
+  PENDING: 'PENDING',
+  COLLECTED: 'COLLECTED',
+  FAILED: 'FAILED',
+} as const
+
+export interface PaymentCurrent {
+  rent: UserPaymentStatus | null
+  utility: UserPaymentStatus | null
+  userRent: PaymentStatus | null
+  userUtility: PaymentStatus | null
+}

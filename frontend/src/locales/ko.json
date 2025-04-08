@@ -469,6 +469,10 @@
         "error": {
           "required": "금액을 입력해주세요"
         }
+      },
+      "success": {
+        "title": "생활비 채우기 완료",
+        "description": "{{userName}}님이 {{balance}}원을 생활비 계좌에 채웠어요"
       }
     },
     "withdraw": {
@@ -489,6 +493,104 @@
         "error": {
           "required": "금액을 입력해주세요",
           "min": "생활비 계좌에 있는 금액보다 많은 금액을 입력했어요."
+        }
+      },
+      "success": {
+        "title": "생활비 꺼내기 완료",
+        "description": "{{userName}}님이 {{balance}}원을 생활비 계좌에서 꺼냈어요"
+      }
+    }
+  },
+  "payment": {
+    "allPrefix": "모든 룸메들은 ",
+    "paymentStatus": {
+      "STARTED": {
+        "label": "Cha:nG와 함께하기 시작했어요",
+        "title": "공통 납부 시작 전"
+      },
+      "PARTIALLY_PAID": {
+        "label": "송금을 부분적으로 완료했어요",
+        "title": "공통 납부 부분 실패"
+      },
+      "COLLECTED": {
+        "label": "공동 계좌로 송금을 완료했어요",
+        "title": "공통 송금 완료"
+      },
+      "RETRY_PENDING": {
+        "label": "집주인에게 송금을 실패해 재시도 예정이에요",
+        "title": "공통 재시도 예약"
+      },
+      "PAID": {
+        "label": "집주인에게 송금했어요",
+        "title": "공통 납부 완료"
+      },
+      "FAILED": {
+        "label": "자동이체 납부가 실패했어요",
+        "title": "공통 납부 실패"
+      }
+    },
+    "userPrefix": "{{value}} 님은 ",
+    "userPaymentStatus": {
+      "PENDING": {
+        "label": "납부 시작 전이에요",
+        "title": "개별 납부 시작 전"
+      },
+      "COLLECTED": {
+        "label": "송금을 완료했어요",
+        "title": "개별 송금 완료"
+      },
+      "FAILED": {
+        "label": "송금에 실패했어요",
+        "title": "개별 송금 실패"
+      }
+    },
+    "transfer": {
+      "owner": {
+        "title": "수동 이체",
+        "header": "집주인 계좌로\n돈 보내기",
+        "label": "보내기",
+        "myAccountNo": {
+          "label": "집주인 계좌로 보내기 위한 내 계좌를 입력해주세요",
+          "placeholder": "계좌 번호를 입력해주세요",
+          "error": {
+            "required": "계좌 번호를 입력해주세요",
+            "same": "같은 계좌끼리는 보낼 수 없어요"
+          }
+        },
+        "balance": {
+          "label": "집주인 계좌로 보낼 금액을 입력해주세요",
+          "placeholder": "금액을 입력해주세요",
+          "error": {
+            "required": "금액을 입력해주세요"
+          }
+        },
+        "success": {
+          "title": "집주인 계좌로 돈 보내기 완료",
+          "description": "{{userName}}님이 {{balance}}원을 집주인 계좌로 보냈어요"
+        }
+      },
+      "rent": {
+        "title": "수동 이체",
+        "header": "월세 /공과금 계좌로\n돈 보내기",
+        "label": "보내기",
+        "myAccountNo": {
+          "label": "월세 / 공과금 계좌로 보내기 위한 내 계좌를 입력해주세요",
+          "placeholder": "계좌 번호를 입력해주세요",
+          "error": {
+            "required": "계좌 번호를 입력해주세요",
+            "same": "같은 계좌끼리는 채울 수 없어요"
+          }
+        },
+        "balance": {
+          "label": "월세 / 공과금 계좌로 보낼 금액을 입력해주세요",
+          "placeholder": "금액을 입력해주세요",
+          "error": {
+            "required": "금액을 입력해주세요"
+          }
+        },
+        "success": {
+          "title": "월세 / 공과금 계좌로 돈 보내기 완료",
+          "description": "{{userName}}님이 {{balance}}원을 월세 / 공과금 계좌로 보냈어요"
         }
       }
     }

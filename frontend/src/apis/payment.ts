@@ -1,5 +1,6 @@
 import {
   DepositToRentAccountRequest,
+  PaymentCurrent,
   RetrieveRentResponse,
   RetrieveUtilityResponse,
   TransferToOwnerRequest,
@@ -32,4 +33,9 @@ export const getRentAccountNo = async () =>
 export const createTransferPDF = async (contractId: number) =>
   await postRequest<{ presignedUrl: string }>(
     `/blockchain/payment/${contractId}/pdf`,
+  )
+
+export const getPaymentCurrentStatus = async (month: string) =>
+  await getRequest<PaymentCurrent>(
+    `/payment/rent/current-status?month=${month}`,
   )

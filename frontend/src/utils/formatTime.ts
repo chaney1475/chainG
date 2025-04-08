@@ -1,22 +1,25 @@
-import { format, formatDistanceToNow, isThisMonth, parse } from 'date-fns'
+import { formatDistanceToNow, isSameMonth, parse } from 'date-fns'
+import { format, utcToZonedTime } from 'date-fns-tz'
 import { ko } from 'date-fns/locale'
 
+const timeZone = 'Asia/Seoul'
 export const formatTime = (timestamp: number) => {
-  const now = Date.now()
-  const diffInHours = Math.floor((now - timestamp) / 3600000)
-  const date = new Date(timestamp)
-
+  const diffInHours = Math.floor((Date.now() - timestamp) / 3600000)
+  const kstDate = utcToZonedTime(timestamp, timeZone)
   if (diffInHours < 24) {
-    return formatDistanceToNow(date, { addSuffix: true, locale: ko })
+    return formatDistanceToNow(kstDate, { addSuffix: true, locale: ko })
   }
-
-  return isThisMonth(date)
-    ? format(date, 'M월 d일', { locale: ko })
-    : format(date, 'yyyy년 M월 d일', { locale: ko })
+  const nowKST = utcToZonedTime(new Date(), timeZone)
+  return isSameMonth(kstDate, nowKST)
+    ? format(kstDate, 'M월 d일', { locale: ko })
+    : format(kstDate, 'yyyy년 M월 d일', { locale: ko })
 }
+
 export const formatHourMinuteTime = (time: string) => {
-  const parsedTime = parse(time, "HH:mm'Z'", new Date())
-  return format(parsedTime, 'HH:mm', { locale: ko })
+  const hh = Number(time.split(':')[0])
+  const kstHour = (hh + 9) % 24
+  const a = kstHour < 12 ? '오전' : '오후'
+  return `${a} ${String(kstHour % 24)}시`
 }
 
 export const formatDuration = (startDate: string, endDate: string) => {
