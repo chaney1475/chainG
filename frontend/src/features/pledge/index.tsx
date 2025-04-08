@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { getAccountDetail } from '@/apis/fintech'
@@ -73,10 +73,6 @@ export function PledgePage() {
     budgetEndDate: budgetEndDate,
   })
 
-  const [formattedHistory, setFormattedHistory] = useState<
-    FormattedAccountPaymentHistory[]
-  >([])
-
   const handleBudgetChange = (date: Date) => {
     setBudgetStartDate(date)
     setBudgetEndDate(new Date(date.getFullYear(), date.getMonth() + 1, 1))
@@ -96,10 +92,11 @@ export function PledgePage() {
       hasFetched.current = true
       fetchAccountPaymentHistory()
     }
-  }, [rentAccountNo])
+  }, [rentAccountNo, startDate])
 
-  const paymentHistory =
-    useAppSelector((state) => state.pledge.account.paymentHistory) ?? []
+  const paymentHistory = useAppSelector(
+    (state) => state.pledge.account.paymentHistory,
+  )
   useEffect(() => {
     if (paymentHistory.length === 0) return
     let transactionDate = ''
@@ -122,14 +119,38 @@ export function PledgePage() {
         transactionMemo: item.transactionMemo,
       }
     })
-    setFormattedHistory(history)
   }, [paymentHistory])
 
-  const fetchAccountPaymentHistory = async () => {
+  const formattedHistory = useMemo<FormattedAccountPaymentHistory[]>(() => {
+    if (paymentHistory.length === 0) return []
+
+    let transactionDate = ''
+    return paymentHistory.map((item) => {
+      let showDate = false
+      if (item.transactionDate != transactionDate) {
+        showDate = true
+        transactionDate = item.transactionDate
+      }
+      const isWithdrawal = item.transactionType === '1' ? '+' : '-'
+      return {
+        transactionUniqueNo: item.transactionUniqueNo,
+        showDate: showDate,
+        date: formatTransactionDate(item.transactionDate),
+        time: formatTransactionTime(item.transactionTime),
+        title: isWithdrawal + formatMoney(Number(item.transactionBalance)),
+        transactionType: item.transactionType,
+        transactionAfterBalance: formatMoney(item.transactionAfterBalance),
+        transactionSummary: item.transactionSummary,
+        transactionMemo: item.transactionMemo,
+      }
+    })
+  }, [paymentHistory])
+
+  const fetchAccountPaymentHistory = useCallback(async () => {
     const response = await getAccountHistory()
     dispatch(setPaymentHistory(response))
     hasFetched.current = false
-  }
+  }, [getAccountHistory, dispatch])
 
   const fetchAccountDetail = async () => {
     const response = await getAccountDetail(rentAccountNo)
@@ -190,7 +211,6 @@ export function PledgePage() {
           menuList={menuList}
         />
       </FullMain>
-
       <BottomNavigation />
     </Container>
   )
