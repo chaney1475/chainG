@@ -81,9 +81,6 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
   const dispatch = useDispatch()
   const item = props.item as 'startDate' | 'endDate'
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
-  const startDate = useAppSelector(
-    (state) => state.contract.contractRequest.startDate,
-  )
 
   const handleDateChange = (value: { year: string; month: string }) => {
     // KST로 날짜 생성
