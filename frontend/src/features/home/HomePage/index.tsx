@@ -16,11 +16,14 @@ import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
+  CenterContainer,
   Container,
+  HeaderTitle,
   PaddingContainer,
+  ShowCenterBox,
   Title,
-  TitleContainer,
   UserTileContainer,
+  ValidationContainer,
 } from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
@@ -226,15 +229,17 @@ export function HomePage() {
           title: t('main.codeCopy.title'),
           description: t('main.codeCopy.description'),
           children: (
-            <TitleContainer>
-              <p>{t('main.codeCopy.label')}</p>
-              <p>{group.inviteCode}</p>
-              <IconButton
-                onClick={handleCopy}
-                src="/icons/copy.svg"
-                alt="copy"
-              />
-            </TitleContainer>
+            <ShowCenterBox isDisabled={true}>
+              <ValidationContainer>
+                <Description>{t('main.codeCopy.label')}</Description>
+                <HeaderTitle>{group.inviteCode}</HeaderTitle>
+                <IconButton
+                  onClick={handleCopy}
+                  src="/icons/copy.svg"
+                  alt="copy"
+                />
+              </ValidationContainer>
+            </ShowCenterBox>
           ),
         },
       ],
