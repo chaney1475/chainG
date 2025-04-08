@@ -57,7 +57,10 @@ export function LifeRuleUpdateApprovePage() {
               'postNotApprovedIdsResponse',
               postNotApprovedIdsResponse,
             )
-            if (postNotApprovedIdsResponse.data.notApprovedIds.length === 0) {
+            if (
+              postNotApprovedIdsResponse.success &&
+              postNotApprovedIdsResponse.data.notApprovedIds?.length === 0
+            ) {
               dispatch(setHomeOverviewLifeRuleApproved(false))
             }
           }
