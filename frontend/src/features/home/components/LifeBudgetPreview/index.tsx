@@ -11,7 +11,7 @@ import {
 } from '@/styles/styles'
 import { formatMoney } from '@/utils/format'
 
-import { CardDescription } from './styles'
+import { CardDescription, Container } from './styles'
 
 export function LifeBudgetPreview() {
   const router = useRouter()
@@ -20,47 +20,41 @@ export function LifeBudgetPreview() {
     (state) => state.livingBudget.livingAccountPaymentHistory,
   )
   return (
-    <PaddingContainer>
-      <DefaultContainer onClick={() => router.push('/budget/living')}>
-        <SlimContainer>
-          <TitleContainer>
-            <Title>생활비</Title>
-            <IconButton
-              src={'/icons/arrow-right.svg'}
-              alt="생활비"
-              onClick={() => router.push('/budget/living')}
-            />
-          </TitleContainer>
-        </SlimContainer>
-        {livingAccountPaymentHistory.length > 2 && (
-          <DefaultContainer>
-            <SlimContainer>
-              <TitleContainer>
-                <CardDescription>
-                  {livingAccountPaymentHistory[0].transactionSummary}
-                </CardDescription>
-                <CardDescription>
-                  {formatMoney(
-                    livingAccountPaymentHistory[0].transactionBalance,
-                  )}
-                </CardDescription>
-              </TitleContainer>
-            </SlimContainer>
-            <SlimContainer>
-              <TitleContainer>
-                <CardDescription>
-                  {livingAccountPaymentHistory[1].transactionSummary}
-                </CardDescription>
-                <CardDescription>
-                  {formatMoney(
-                    livingAccountPaymentHistory[1].transactionBalance,
-                  )}
-                </CardDescription>
-              </TitleContainer>
-            </SlimContainer>
-          </DefaultContainer>
-        )}
-      </DefaultContainer>
-    </PaddingContainer>
+    <Container onClick={() => router.push('/budget/living')}>
+      <SlimContainer>
+        <TitleContainer>
+          <Title>생활비</Title>
+          <IconButton
+            src={'/icons/arrow-right.svg'}
+            alt="생활비"
+            onClick={() => router.push('/budget/living')}
+          />
+        </TitleContainer>
+      </SlimContainer>
+      {livingAccountPaymentHistory.length > 2 && (
+        <DefaultContainer>
+          <SlimContainer>
+            <TitleContainer>
+              <CardDescription>
+                {livingAccountPaymentHistory[0].transactionSummary}
+              </CardDescription>
+              <CardDescription>
+                {formatMoney(livingAccountPaymentHistory[0].transactionBalance)}
+              </CardDescription>
+            </TitleContainer>
+          </SlimContainer>
+          <SlimContainer>
+            <TitleContainer>
+              <CardDescription>
+                {livingAccountPaymentHistory[1].transactionSummary}
+              </CardDescription>
+              <CardDescription>
+                {formatMoney(livingAccountPaymentHistory[1].transactionBalance)}
+              </CardDescription>
+            </TitleContainer>
+          </SlimContainer>
+        </DefaultContainer>
+      )}
+    </Container>
   )
 }

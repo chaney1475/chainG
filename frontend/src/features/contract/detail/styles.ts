@@ -76,5 +76,5 @@ export const PaddingContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-  padding: 0px 20px;
+  padding: 20px 20px;
 `

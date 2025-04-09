@@ -2,8 +2,10 @@
 
 import { useTranslation } from 'react-i18next'
 
-import { UserItem } from '@/components'
+import { IconButton, UserItem } from '@/components'
+import { useAppSelector } from '@/hooks'
 import {
+  BankLabel,
   CenterContainer,
   DefaultContainer,
   ShowBox,
@@ -35,6 +37,10 @@ export function ContractViewer({
       index === 0 ? String(user.name) : acc + ', ' + String(user.name),
     '',
   )
+  const group = useAppSelector((state) => state.group.group)
+  const leaderName = group.members.find(
+    (info) => info.id == group.leaderId,
+  )?.name
   const { t } = useTranslation()
   return (
     <Container>
@@ -60,7 +66,6 @@ export function ContractViewer({
         <HeaderTitle>{t('contract.detail.totalRatio')}</HeaderTitle>
         <DefaultLabel>{userRentRatio} </DefaultLabel>
       </TitleContainer>
-
       <UserContainer>
         {rentUserList.map((user) => (
           <TitleContainer key={user.id}>
@@ -79,17 +84,47 @@ export function ContractViewer({
       </CenterContainer>
       <hr />
       <DefaultContainer>
-        <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
-        <ShowBox>{contract.rent.rentAccountNo}</ShowBox>
+        <TitleContainer>
+          <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
+        </TitleContainer>
+        <ShowBox>
+          <BankLabel>
+            <IconButton
+              src="/icons/logo-bank.svg"
+              alt="logo-bank"
+            />
+            {t('fintech.bankName')} {contract.rent.rentAccountNo} {leaderName}
+          </BankLabel>
+        </ShowBox>
       </DefaultContainer>
       <DefaultContainer>
-        <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
-        <ShowBox>{contract.rent.ownerAccountNo}</ShowBox>{' '}
+        <TitleContainer>
+          <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
+        </TitleContainer>
+        <ShowBox>
+          <BankLabel>
+            <IconButton
+              src="/icons/logo-bank.svg"
+              alt="logo-bank"
+            />
+            {t('fintech.bankName')} {contract.rent.ownerAccountNo}
+          </BankLabel>
+        </ShowBox>
       </DefaultContainer>
       {contract.utility.cardId && (
         <DefaultContainer>
-          <HeaderTitle>{t('contract.detail.utilityCard')}</HeaderTitle>
-          <ShowBox>{t('fintech.cardName')}</ShowBox>
+          <TitleContainer>
+            <HeaderTitle>{t('contract.detail.utilityCard')}</HeaderTitle>
+          </TitleContainer>
+          <ShowBox>
+            <BankLabel>
+              <IconButton
+                src="/icons/logo-card.svg"
+                alt="logo-bank"
+              />
+              {t('fintech.cardName')}
+            </BankLabel>
+          </ShowBox>
         </DefaultContainer>
       )}
     </Container>

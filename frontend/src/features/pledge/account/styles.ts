@@ -209,3 +209,9 @@ export const MonthNavigation = styled.div`
   margin: 16px 0px;
   border-right: 1px solid ${({ theme }) => theme.color.border};
 `
+export const BottomContainer = styled.div`
+  display: flex;
+  flex: 1;
+  height: 40px;
+  width: 100%;
+`

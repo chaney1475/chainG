@@ -40,3 +40,10 @@ export const UserContainer = styled.div`
   display: flex;
   flex-direction: column;
 `
+export const BottomContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-height: 40px;
+  width: 100%;
+  border: 1px solid red;
+`

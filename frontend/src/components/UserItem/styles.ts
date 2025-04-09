@@ -34,7 +34,7 @@ export const ProfileContainer = styled.div<{
   white-space: ${({ variant }) => (variant === 'bar' ? 'nowrap' : 'normal')};
   ${({ variant }) => getVariantStyles(variant)}
   ${({ size, theme }) => getSizeStyles(size, theme)}
-  gap: ${({ size }) => (size === 'xs' ? '0.5rem !important' : '1rem')};
+  gap: ${({ size }) => (size === 'xs' ? '0.5rem !important' : '0.5rem')};
   > span {
     text-align: ${({ variant }) => (variant === 'bar' ? 'left' : 'center')};
     width: ${({ size }) => getNameStyles(size)};

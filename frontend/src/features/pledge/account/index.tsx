@@ -21,6 +21,7 @@ import {
   AccountContainer,
   AccountInfo,
   AccountTitle,
+  BottomContainer,
   ButtonContainer,
   Container,
   ContentContainer,

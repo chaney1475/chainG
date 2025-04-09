@@ -9,11 +9,11 @@ import { useRouter } from 'next/navigation'
 
 import { login, registerFCMToken } from '@/apis/auth'
 import { getFCMToken, onForegroundMessage } from '@/app/firebase'
-import { ConfirmButton, InputBox } from '@/components'
+import { ConfirmButton, Image, InputBox } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setAccessToken, setFCMToken } from '@/store/slices/authSlice'
 import { setUser } from '@/store/slices/userSlice'
-import { Container, Form, Main } from '@/styles/styles'
+import { CenterContainer, Container, Form, Main } from '@/styles/styles'
 
 import { SignupLinkContainer, StyledLink } from './styles'
 
@@ -69,6 +69,14 @@ export function LoginPage() {
     <Container>
       <Main>
         <Form onSubmit={handleSubmit(onSubmit)}>
+          <CenterContainer>
+            <Image
+              src="/icons/logo.svg"
+              alt="logo"
+              width={120}
+              height={120}
+            />
+          </CenterContainer>
           <InputBox
             label={t('login.email.label')}
             id="emailAddress"

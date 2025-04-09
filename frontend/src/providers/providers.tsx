@@ -52,9 +52,24 @@ function LoadingFallback() {
             fontFamily: 'var(--font-paperlogy-medium)',
             color: 'var(--color-text-regular)',
           }}>
-          <h1>Cha:nG</h1>
-          <p>계약과 약속 사이</p>
-          <p>우리 집의 블록체인 계약서</p>
+          <h1
+            style={{
+              color: '#292F35',
+            }}>
+            Cha:nG
+          </h1>
+          <p
+            style={{
+              color: '#586575',
+            }}>
+            계약과 약속 사이,
+          </p>
+          <p
+            style={{
+              color: '#586575',
+            }}>
+            우리 집의 블록체인 계약서
+          </p>
         </div>
       </div>
     </div>

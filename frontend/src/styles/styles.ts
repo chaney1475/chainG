@@ -6,7 +6,8 @@ export const Container = styled.div`
   flex: 1;
   justify-content: space-between;
   height: 100dvh;
-  width: 100%;
+  width: 100dvw;
+  position: relative;
   @media (min-width: 768px) {
     width: 50%;
     justify-content: center;
@@ -251,6 +252,17 @@ export const SimpleMain = styled.div`
   background-color: ${({ theme }) => theme.color.background.white};
   gap: 1rem;
 `
+export const HomeMain = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+  overflow-y: auto;
+  position: relative;
+`
 export const PaddingContainer = styled.div`
   display: flex;
   flex: 1;
@@ -270,7 +282,28 @@ export const DefaultLabel = styled.div`
 `
 
 export const BankLabel = styled.div`
-  border: 1px solid red;
   ${({ theme }) => theme.typography.styles.default};
-  color: ${({ theme }) => theme.color.text.regular};
+  color: ${({ theme }) => theme.color.text.low};
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  ${({ theme }) => theme.typography.styles.accountAndCardNum};
+`
+export const ContentWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  flex-direction: column;
+  display: flex;
+  justify-content: space-between;
+  flex-1;
+  z-index: 1;
+`
+export const MainImageContainer = styled.div`
+  position: absolute;
+  top: 30;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `

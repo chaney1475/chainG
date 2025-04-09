@@ -1,6 +1,16 @@
+import { useMemo } from 'react'
+
+import Image from 'next/image'
+
 import { BottomNavigation } from '@/components'
-import { Image } from '@/components'
-import { Container, HeaderContainer, SimpleMain } from '@/styles/styles'
+import {
+  Container,
+  ContentWrapper,
+  HeaderContainer,
+  HomeMain,
+  MainImageContainer,
+} from '@/styles/styles'
+import { useMorning } from '@/utils/formatTime'
 
 export function HomeLayout({
   header,
@@ -13,20 +23,40 @@ export function HomeLayout({
   children: React.ReactNode
   headerRightButton: React.ReactNode
 }) {
+  const morning = useMorning()
   return (
     <>
       <Container>
-        <HeaderContainer>
-          <Image
-            src="/icons/logo.svg"
-            alt="logo"
-            width={40}
-            height={40}
-          />
-          {headerRightButton}
-        </HeaderContainer>
-        <SimpleMain>{children}</SimpleMain>
-        <BottomNavigation />
+        <MainImageContainer>
+          {morning ? (
+            <Image
+              src={'/images/home/home-morning.svg'}
+              alt="home-main"
+              fill
+              style={{ objectFit: 'contain', objectPosition: 'top' }}
+            />
+          ) : (
+            <Image
+              src={'/images/home/home-night.svg'}
+              alt="home-main"
+              fill
+              style={{ objectFit: 'contain', objectPosition: 'top' }}
+            />
+          )}
+        </MainImageContainer>
+        <ContentWrapper>
+          <HeaderContainer>
+            <Image
+              src="/icons/logo-no-padding.svg"
+              alt="logo"
+              width={24}
+              height={24}
+            />
+            {headerRightButton}
+          </HeaderContainer>
+          <HomeMain>{children}</HomeMain>
+          <BottomNavigation />
+        </ContentWrapper>
       </Container>
     </>
   )
