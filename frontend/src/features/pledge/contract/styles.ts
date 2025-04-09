@@ -21,8 +21,8 @@ export const Container = styled.div`
 `
 
 export const HeaderContainer = styled.div`
-  padding: 40px 20px 20px;
-  margin: 1rem 0;
+  padding: 40px 20px 00px;
+  margin: 0rem 0 1rem;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -34,6 +34,15 @@ export const HeaderContainer = styled.div`
   background-color: ${({ theme }) => theme.color.background.white};
   opacity: 0.85;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  > div:nth-child(1) {
+    margin-bottom: 10px;
+  }
+  > div:nth-child(2) {
+    margin-bottom: 10px;
+    > div {
+      padding: 8px;
+    }
+  }
 `
 
 export const FullMain = styled.div`

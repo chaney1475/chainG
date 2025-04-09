@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
+import { logout } from '@/apis/auth'
 import { getGroupByInviteCode } from '@/apis/group'
 import { InputBox, TitleHeaderLayout } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
@@ -15,7 +16,10 @@ import {
   setInviteCode,
   setJoinGroupId,
 } from '@/store/slices/groupSlice'
+import { resetStore } from '@/store/store'
 import { ButtonVariant } from '@/types/ui'
+
+import { SignupLinkContainer, StyledLink } from './style'
 
 interface FormValues {
   inviteCode: string
@@ -68,7 +72,15 @@ export function InviteCodePage() {
       })
     }
   }
-
+  const logouted = useRef(false)
+  const handleLogout = async () => {
+    if (logouted.current) return
+    logouted.current = true
+    const success = await logout()
+    if (success) {
+      dispatch(resetStore())
+    }
+  }
   return (
     <TitleHeaderLayout
       title={t('inviteCode.label')}
@@ -78,14 +90,19 @@ export function InviteCodePage() {
       buttonVariant={
         currentInviteCode ? ButtonVariant.next : ButtonVariant.disabled
       }>
-      <InputBox
-        {...register('inviteCode')}
-        id="inviteCode"
-        label={t('inviteCode.label')}
-        placeholder={t('join.inviteCode.placeholder')}
-        error={errors.inviteCode}
-        value={currentInviteCode}
-      />
+      <div>
+        <InputBox
+          {...register('inviteCode')}
+          id="inviteCode"
+          label={t('inviteCode.label')}
+          placeholder={t('join.inviteCode.placeholder')}
+          error={errors.inviteCode}
+          value={currentInviteCode}
+        />
+        <SignupLinkContainer>
+          <StyledLink onClick={handleLogout}>{'로그아웃'}</StyledLink>
+        </SignupLinkContainer>
+      </div>
     </TitleHeaderLayout>
   )
 }
