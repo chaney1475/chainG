@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import styled from '@emotion/styled'
 
 import { createAccount } from '@/apis/fintech'
-import { Image } from '@/components'
+import { Image, Modal } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setRentAccountConfirm, updateRent } from '@/store/slices/contractSlice'
 import {
@@ -39,6 +39,7 @@ export function AccountInput({ onChange }: AccountInputProps) {
   const group = useAppSelector((state) => state.group.group)
   const isLeader = useIsLeader()
   const [next, setNext] = useState(false)
+  const [open, setOpen] = useState(false)
   const disabled = rentAccountConfirm || !isLeader
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export function AccountInput({ onChange }: AccountInputProps) {
         }),
       )
       dispatch(setRentAccountConfirm(true))
+      setOpen(true)
     }
   }
   const [buttonText, setButtonText] = useState(
@@ -100,6 +102,16 @@ export function AccountInput({ onChange }: AccountInputProps) {
           </ValidationMessage>
         </ValidationContainer>
       )}
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        onConfirm={() => {
+          setOpen(false)
+        }}
+        title={t('contract.rentAccountNo.button')}
+        description={t('contract.rentAccountNo.afterLabel')}
+        image={'/images/etc/account-create-after.svg'}
+      />
     </Container>
   )
 }

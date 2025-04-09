@@ -400,7 +400,11 @@ export function HomePage() {
         <ConfirmedHomeContents />
       ) : (
         <PaddingContainer>
-          <Title>{t('contract.title')}</Title>
+          <Title>
+            {status === ContractStatus.shouldInvite
+              ? t('inviteCode.label')
+              : t('contract.title')}
+          </Title>
           <CardButton
             cardItems={
               cardItems.find((item) => item.key === status)?.item ?? []

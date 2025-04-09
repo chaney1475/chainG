@@ -268,3 +268,9 @@ export const DefaultLabel = styled.div`
   ${({ theme }) => theme.typography.styles.default};
   color: ${({ theme }) => theme.color.text.low};
 `
+
+export const BankLabel = styled.div`
+  border: 1px solid red;
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.regular};
+`
