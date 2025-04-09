@@ -118,6 +118,7 @@ export function BudgetLivingCreatePage() {
           title="생활비 계좌 개설"
           description="생활비 계좌 개설이 완료되었어요"
           confirmText="확인"
+          image="/images/etc/account-create-after.svg"
         />
       </Container>
     </TitleHeaderLayout>

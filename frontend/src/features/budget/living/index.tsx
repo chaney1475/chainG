@@ -209,6 +209,7 @@ export function BudgetLivingPage() {
             ? '생활비 계좌 생성이 완료되었습니다'
             : '방장에게 생활비 계좌\b생성을 요청하시겠습니까?'
         }
+        image="/images/etc/account-create-before.svg"
         confirmText={sendNotification ? '확인' : '요청'}
       />
     </FullNavLayout>
