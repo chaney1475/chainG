@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import Image from 'next/image'
 
@@ -16,14 +16,38 @@ export function HomeLayout({
   header,
   children,
   headerRightButton,
+  isHeaderTransparent,
+  setIsHeaderTransparent,
 }: {
   title?: string
   header: string
   label?: string
   children: React.ReactNode
   headerRightButton: React.ReactNode
+  isHeaderTransparent: boolean
+  setIsHeaderTransparent: (isHeaderTransparent: boolean) => void
 }) {
   const morning = useMorning()
+  const mainRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const mainElement = mainRef.current
+    if (!mainElement) return
+
+    const handleScroll = () => {
+      const position = mainElement.scrollTop
+      setIsHeaderTransparent(position < 50)
+    }
+
+    // 초기 스크롤 위치 설정
+    handleScroll()
+
+    mainElement.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      mainElement.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
     <>
       <Container>
@@ -54,7 +78,7 @@ export function HomeLayout({
             />
             {headerRightButton}
           </HeaderContainer>
-          <HomeMain>{children}</HomeMain>
+          <HomeMain ref={mainRef}>{children}</HomeMain>
           <BottomNavigation />
         </ContentWrapper>
       </Container>

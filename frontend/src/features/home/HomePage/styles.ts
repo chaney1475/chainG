@@ -62,7 +62,7 @@ export const Dday = styled.div`
   }
   > div {
     ${({ theme }) => theme.typography.styles.title};
-    color: ${({ theme }) => theme.color.text.regular};
+    color: ${({ theme }) => theme.color.primary};
   }
   > p {
     ${({ theme }) => theme.typography.styles.description};

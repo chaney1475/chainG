@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -18,7 +18,9 @@ import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
   Container,
+  HeaderContainer,
   HeaderTitle,
+  HomeMain,
   PaddingContainer,
   ShowCenterBox,
   TextCenterContainer,
@@ -71,6 +73,7 @@ export function HomePage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
+  const [isHeaderTransparent, setIsHeaderTransparent] = useState(true)
   const contract = useAppSelector((state) => state.contract.contract)
   const [status, setStatus] = useState<ContractStatus>(contract.status)
   const homeOverview = useAppSelector((state) => state.user.homeOverview)
@@ -315,24 +318,6 @@ export function HomePage() {
     },
   ]
 
-  const [scrollPosition, setScrollPosition] = useState(0)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY)
-    }
-
-    // 초기 스크롤 위치 설정
-    handleScroll()
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-
   if (!isMounted) {
     return null
   }
@@ -356,9 +341,10 @@ export function HomePage() {
       </Container>
     )
   }
-
   return (
     <HomeLayout
+      isHeaderTransparent={isHeaderTransparent}
+      setIsHeaderTransparent={setIsHeaderTransparent}
       header="ChainG"
       headerRightButton={
         <NoticeContainer>
@@ -381,12 +367,18 @@ export function HomePage() {
         </NoticeContainer>
       }>
       <Main>
-        {scrollPosition}
         <GroupName>{group.name}</GroupName>
         {homeDescription}
       </Main>
       <MainWrapper>
-        <ImageContainer>
+        <ImageContainer
+          style={{
+            opacity: isHeaderTransparent ? '1' : '0',
+            boxShadow: isHeaderTransparent
+              ? 'none'
+              : '0 2px 4px rgba(0,0,0,0.1)',
+            transition: 'all 0.3s ease',
+          }}>
           <UserTileContainer>
             {group?.members &&
               group.members.map((user) => (

@@ -18,7 +18,7 @@ import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
-import { ImageContainer, Label, Title } from '@/styles/styles'
+import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
 import { ContractViewer } from './component/ContractViewer'
@@ -204,8 +204,10 @@ export function ContractDetail() {
             height={80}
           />
         </ImageContainer>
-        <Title>{t(label)}</Title>
-        <Label>{t(description, { value: group.name })}</Label>
+        <div>
+          <Title>{t(label)}</Title>
+          <Label>{t(description, { value: group.name })}</Label>
+        </div>
         <ConfirmButton
           label={button}
           onClick={() => setShouldConfirm(true)}
