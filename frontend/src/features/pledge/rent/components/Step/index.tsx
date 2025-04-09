@@ -87,7 +87,7 @@ export function Step() {
     <>
       <BoxContainer>
         <ContentContainer>
-          <TopDescription>전체 납부 현황 </TopDescription>
+          <TopDescription>전체 납부 현황</TopDescription>
           <BottomContainer>
             <MonthContainer>
               <BlankContainer />

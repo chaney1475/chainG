@@ -138,7 +138,7 @@ export function TransferToOwnerPage() {
         onOpenChange={setSuccess}
         title={t('payment.transfer.owner.success.title')}
         description={t('payment.transfer.owner.success.description', {
-          userName,
+          month,
           balance,
         })}
         confirmText={t('confirm')}

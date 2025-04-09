@@ -4,17 +4,18 @@ export const AccountHistoryContainer = styled.div`
   display: flex;
   width: 100%;
   flex: 1;
+  flex-direction: column;
   justify-content: space-between;
   > span {
     width: 2.125rem;
     padding-top:0.0625rem;
+    padding-bottom:0.5rem;
     ${({ theme }) => theme.typography.styles.description};
     color: ${({ theme }) => theme.color.text.low};
 `
 export const AccountHistoryContent = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% - 2.125rem);
   flex: 1;
   * {
     overflow: hidden;
@@ -81,5 +82,6 @@ export const EmptyContainer = styled.div`
   height: 15rem;
   justify-content: center;
   align-items: center;
+  text-align: center;
   padding: 0 20px 40px;
 `

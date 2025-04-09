@@ -112,7 +112,7 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
           return ''
         }
       })
-      .attr('fill', '#fff')
+      .attr('fill', '#0000ff')
       .style('font-size', '14px')
       .style('font-family', 'var(--font-paperlogy-regular)')
 
@@ -194,9 +194,14 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
                       variant="bar"
                       size="xs"
                     />
-                    <DisabledColorText>
-                      {item.amount} / {rentInfo?.totalAmount}
-                    </DisabledColorText>
+                    {rentInfo?.totalAmount != 0 && (
+                      <DisabledColorText>
+                        {Math.round(
+                          (item.amount / Number(rentInfo?.totalAmount)) * 100,
+                        )}
+                        %
+                      </DisabledColorText>
+                    )}
                   </span>
                   <LowColorText>{formatMoney(item.amount)}</LowColorText>
                 </TextBox>

@@ -9,6 +9,8 @@ import { useIsLeader } from '@/hooks'
 import {
   Container,
   LinkContainer,
+  NoticeContent,
+  NoticeDescription,
   NoticeItem,
   NoticeTitle,
   StyledLink,
@@ -54,137 +56,141 @@ export function Notice() {
     <Container>
       {paymentCurrent.rent && (
         <NoticeItem>
-          <div>
+          <Image
+            src="/images/notification/notification-rent.svg"
+            alt="rent"
+            width={21}
+            height={21}
+          />
+          <NoticeContent>
             <NoticeTitle>
-              <Image
-                src="/images/notification/notification-rent.svg"
-                alt="rent"
-                width={21}
-                height={21}
-              />
-              <p>
-                [{t('main.issues.rent')}]{t(rentTitle)}
-              </p>
+              [{t('main.issues.rent')}]{t(rentTitle)}
             </NoticeTitle>
-            <div>
-              {t('payment.allPrefix')}
-              {t(rentLabel)}
-            </div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/pledge'}>확인하기</StyledLink>
-          </LinkContainer>
+            <NoticeDescription>
+              <span>
+                {t('payment.allPrefix')}
+                {t(rentLabel)}
+              </span>
+              <LinkContainer>
+                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+              </LinkContainer>
+            </NoticeDescription>
+          </NoticeContent>
         </NoticeItem>
       )}
       {paymentCurrent.userRent && (
         <NoticeItem>
-          <div>
+          <Image
+            src="/images/notification/notification-rent.svg"
+            alt="userRent"
+            width={21}
+            height={21}
+          />
+          <NoticeContent>
             <NoticeTitle>
-              <Image
-                src="/images/notification/notification-rent.svg"
-                alt="userRent"
-                width={21}
-                height={21}
-              />
-              <p>
-                [{t('main.issues.rent')}]{t(userRentTitle)}
-              </p>
+              [{t('main.issues.rent')}]{t(userRentTitle)}
             </NoticeTitle>
-            <div>
-              {t('payment.userPrefix', { value: user.name })}
-              {t(userRentLabel)}
-            </div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/pledge'}>확인하기</StyledLink>
-          </LinkContainer>
+            <NoticeDescription>
+              <span>
+                {t('payment.userPrefix', { value: user.name })}
+                {t(userRentLabel)}
+              </span>
+              <LinkContainer>
+                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+              </LinkContainer>
+            </NoticeDescription>
+          </NoticeContent>
         </NoticeItem>
       )}
       {paymentCurrent.utility && (
         <NoticeItem>
-          <div>
+          <Image
+            src="/images/notification/notification-utility.svg"
+            alt="utility"
+            width={21}
+            height={21}
+          />
+          <NoticeContent>
             <NoticeTitle>
-              <Image
-                src="/images/notification/notification-utility.svg"
-                alt="utility"
-                width={21}
-                height={21}
-              />
-              <p>
-                [{t('main.issues.utility')}]{t(utilityTitle)}
-              </p>
+              [{t('main.issues.utility')}]{t(utilityTitle)}
             </NoticeTitle>
-            <div>
-              {t('payment.allPrefix')}
-              {t(utilityLabel)}
-            </div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/pledge'}>확인하기</StyledLink>
-          </LinkContainer>
+            <NoticeDescription>
+              <span>
+                {t('payment.allPrefix')}
+                {t(utilityLabel)}
+              </span>{' '}
+              <LinkContainer>
+                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+              </LinkContainer>
+            </NoticeDescription>
+          </NoticeContent>
         </NoticeItem>
       )}
 
       {paymentCurrent.userUtility && (
         <NoticeItem>
-          <div>
+          <Image
+            src="/images/notification/notification-utility.svg"
+            alt="userUtility"
+            width={21}
+            height={21}
+          />
+          <NoticeContent>
             <NoticeTitle>
-              <Image
-                src="/images/notification/notification-utility.svg"
-                alt="userUtility"
-                width={21}
-                height={21}
-              />
-              <p>
-                [{t('main.issues.utility')}]{t(userUtilityTitle)}
-              </p>
+              [{t('main.issues.utility')}]{t(userUtilityTitle)}
             </NoticeTitle>
-            <div>
-              {t('payment.userPrefix', { value: user.name })}
-              {t(userUtilityLabel)}
-            </div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/pledge'}>확인하기</StyledLink>
-          </LinkContainer>
+            <NoticeDescription>
+              <span>
+                {t('payment.userPrefix', { value: user.name })}
+                {t(userUtilityLabel)}
+              </span>
+              <LinkContainer>
+                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+              </LinkContainer>
+            </NoticeDescription>
+          </NoticeContent>
         </NoticeItem>
       )}
       {homeOverview.isLifeRuleApproved && (
         <NoticeItem>
-          <div>
+          <Image
+            src="/images/notification/notification-rule.svg"
+            alt="생활 규칙 미승인 공지"
+            width={21}
+            height={21}
+          />
+          <NoticeContent>
             <NoticeTitle>
-              <Image
-                src="/images/notification/notification-rule.svg"
-                alt="생활 규칙 미승인 공지"
-                width={21}
-                height={21}
-              />
               [생활 규칙] 승인 진행중인 생활 규칙이 있어요
             </NoticeTitle>
-            <div>새로 바뀔 생활 규칙을 확인해 주세요!</div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/lifeRule/updateApprove'}>승인하기</StyledLink>
-          </LinkContainer>
+            <NoticeDescription>
+              <span>새로 바뀔 생활 규칙을 확인해 주세요!</span>
+              <LinkContainer>
+                <StyledLink href={'/lifeRule/updateApprove'}>
+                  승인하기
+                </StyledLink>
+              </LinkContainer>
+            </NoticeDescription>
+          </NoticeContent>
         </NoticeItem>
       )}
       {isLeader && !livingAccountNo && (
         <NoticeItem>
-          <div>
-            <NoticeTitle>
-              <Image
-                src="/images/notification/notification-livingBudget.svg"
-                alt="생활비"
-                width={21}
-                height={21}
-              />
-              생활비
-            </NoticeTitle>
-            <div>생활비 계좌를 개설해서 공금을 쉽게 관리해 보세요!</div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/budget/living/create'}>개설하기</StyledLink>
-          </LinkContainer>
+          <Image
+            src="/images/notification/notification-livingBudget.svg"
+            alt="생활비"
+            width={21}
+            height={21}
+          />
+          <NoticeContent>
+            <NoticeTitle>생활비</NoticeTitle>
+            <NoticeDescription>
+              <span>생활비 계좌를 개설해서 공금을 쉽게 관리해 보세요!</span>
+              <LinkContainer>
+                <StyledLink href={'/budget/living/create'}>개설하기</StyledLink>
+              </LinkContainer>
+            </NoticeDescription>
+          </NoticeContent>
         </NoticeItem>
       )}
     </Container>

@@ -8,6 +8,8 @@ export const Container = styled.div`
   width: 100%;
   max-height: 60vh;
   overflow-y: auto;
+  gap: 8px;
+  padding: 16px 0;
   background-color: ${({ theme }) => theme.color.secondary};
 `
 
@@ -46,9 +48,29 @@ export const NoticeItem = styled.div`
   gap: 8px;
   background-color: ${({ theme }) => theme.color.background.white};
   justify-content: space-between;
-  margin: 8px 20px;
+  flex: 1;
+  height: 100%;
+  margin: 0 16px;
+`
+export const NoticeContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
 `
 
+export const NoticeDescription = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  > span {
+    white-space: pre-line;
+    word-break: break-all;
+  }
+`
 export const NoticeTitle = styled.span`
   display: flex;
   ${({ theme }) => theme.typography.styles.topHeader};
@@ -61,7 +83,12 @@ export const NoticeTitle = styled.span`
 `
 
 export const LinkContainer = styled.div`
-  margin: auto 0;
+  flex: 1;
+  display: flex;
+  margin-top: auto;
+  justify-content: flex-end;
+  align-items: flex-end;
+  height: 100%;
 `
 
 export const StyledLink = styled(Link)`

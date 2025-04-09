@@ -28,6 +28,7 @@ import {
   IssueContainer,
   IssueContent,
   IssueTitle,
+  LifeContainer,
   ScrollContainer,
   StyledButton,
 } from './styles'
@@ -140,42 +141,40 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
 
   return (
     <Container>
-      <DefaultContainer>
+      <SlimContainer>
         <Title>오늘 나의 이슈</Title>
         {issues.length != 0 && (
           <>
-            <SlimContainer>
-              <ButtonContainer>
-                {issues.length != 0 && (
-                  <StyledButton
-                    isSelected={selectedCategory === 'all'}
-                    onClick={() => setSelectedCategory('all')}>
-                    {t('main.issues.all')}
-                  </StyledButton>
-                )}
-                {dutyIssues.length != 0 && (
-                  <StyledButton
-                    isSelected={selectedCategory === 'duty'}
-                    onClick={() => setSelectedCategory('duty')}>
-                    {t('main.issues.duty')}
-                  </StyledButton>
-                )}
-                {rentIssues.length != 0 && (
-                  <StyledButton
-                    isSelected={selectedCategory === 'rent'}
-                    onClick={() => setSelectedCategory('rent')}>
-                    {t('main.issues.rent')}
-                  </StyledButton>
-                )}
-                {utilityIssues.length != 0 && (
-                  <StyledButton
-                    isSelected={selectedCategory === 'utility'}
-                    onClick={() => setSelectedCategory('utility')}>
-                    {t('main.issues.utility')}
-                  </StyledButton>
-                )}
-              </ButtonContainer>
-            </SlimContainer>
+            <ButtonContainer>
+              {issues.length != 0 && (
+                <StyledButton
+                  isSelected={selectedCategory === 'all'}
+                  onClick={() => setSelectedCategory('all')}>
+                  {t('main.issues.all')}
+                </StyledButton>
+              )}
+              {dutyIssues.length != 0 && (
+                <StyledButton
+                  isSelected={selectedCategory === 'duty'}
+                  onClick={() => setSelectedCategory('duty')}>
+                  {t('main.issues.duty')}
+                </StyledButton>
+              )}
+              {rentIssues.length != 0 && (
+                <StyledButton
+                  isSelected={selectedCategory === 'rent'}
+                  onClick={() => setSelectedCategory('rent')}>
+                  {t('main.issues.rent')}
+                </StyledButton>
+              )}
+              {utilityIssues.length != 0 && (
+                <StyledButton
+                  isSelected={selectedCategory === 'utility'}
+                  onClick={() => setSelectedCategory('utility')}>
+                  {t('main.issues.utility')}
+                </StyledButton>
+              )}
+            </ButtonContainer>
             <ScrollContainer>
               {filteredIssues.map((issue) => (
                 <IssueContainer key={issue.title}>
@@ -204,8 +203,8 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
             </ShowCenterBox>
           </PaddingContainer>
         )}
-      </DefaultContainer>
-      <DefaultContainer>
+      </SlimContainer>
+      <LifeContainer>
         <Title>생활 관리</Title>
         <CardContainer>
           <Card href="/lifeRule">
@@ -227,7 +226,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
             />
           </Card>
         </CardContainer>
-      </DefaultContainer>
+      </LifeContainer>
     </Container>
   )
 }
