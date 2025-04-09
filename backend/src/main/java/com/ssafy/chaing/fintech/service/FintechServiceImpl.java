@@ -13,6 +13,7 @@ import com.ssafy.chaing.fintech.config.SsafyApiConfig;
 import com.ssafy.chaing.fintech.controller.request.AccountHistoryCommand;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
+import com.ssafy.chaing.fintech.controller.request.SimpleTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.ClientResponseRec;
@@ -21,6 +22,7 @@ import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
 import com.ssafy.chaing.fintech.dto.InquireBillingStatementsRec;
 import com.ssafy.chaing.fintech.dto.InquireDemandDepositAccountRec;
 import com.ssafy.chaing.fintech.dto.InquireTransactionHistoryRec;
+import com.ssafy.chaing.fintech.dto.SimpleTransferRec;
 import com.ssafy.chaing.fintech.service.common.HeaderWithUserKeyDTO;
 import com.ssafy.chaing.fintech.service.dto.TransferDTO;
 import com.ssafy.chaing.fintech.service.request.AccountHistoryRequest;
@@ -29,6 +31,7 @@ import com.ssafy.chaing.fintech.service.request.CreateAccountRequest;
 import com.ssafy.chaing.fintech.service.request.CreateFintechCardRequest;
 import com.ssafy.chaing.fintech.service.request.InquireBillingRequest;
 import com.ssafy.chaing.fintech.service.request.InquireDemandDepositAccountRequest;
+import com.ssafy.chaing.fintech.service.request.SimpleTransferRequest;
 import com.ssafy.chaing.fintech.service.response.ClientErrorResponse;
 import com.ssafy.chaing.fintech.service.response.FintechBaseResponse;
 import com.ssafy.chaing.fintech.util.ClientErrorParser;
@@ -513,8 +516,6 @@ public class FintechServiceImpl implements FintechService {
 
             AccountHistoryRequest request = new AccountHistoryRequest(requestHeader, command);
 
-            log.info("request: {}", request);
-
             ResponseEntity<FintechBaseResponse<InquireTransactionHistoryRec>> responseEntity =
                     restTemplate.exchange(
                             config.getBaseUrl() + "/demandDeposit/inquireTransactionHistoryList",
@@ -523,8 +524,6 @@ public class FintechServiceImpl implements FintechService {
                             new ParameterizedTypeReference<>() {
                             }
                     );
-
-            log.info("responseEntity: {}", responseEntity.getBody());
 
             InquireTransactionHistoryRec rec = Objects.requireNonNull(responseEntity.getBody()).rec();
             return new FintechResponse<>(rec);
@@ -536,6 +535,39 @@ public class FintechServiceImpl implements FintechService {
 
         } catch (Exception e) {
             log.error("계좌 거래 내역 조회 중 알 수 없는 오류 발생: {}", e.getMessage());
+            return new FintechResponse<>(errorResponse);
+        }
+    }
+
+    @Override
+    @Transactional
+    public FintechResponse<?> transferWithSimple(SimpleTransferCommand command) {
+        ClientErrorResponse errorResponse = null;
+        try {
+            HeaderWithUserKeyDTO requestHeader = headerUtil.createFintechHeaderWithUserKey(
+                    "updateDemandDepositAccountTransfer", "updateDemandDepositAccountTransfer"
+            );
+
+            SimpleTransferRequest request = new SimpleTransferRequest(requestHeader, command);
+
+            ResponseEntity<FintechBaseResponse<List<SimpleTransferRec>>> responseEntity =
+                    restTemplate.exchange(
+                            config.getBaseUrl() + "/demandDeposit/updateDemandDepositAccountTransfer",
+                            HttpMethod.POST,
+                            new HttpEntity<>(request),
+                            new ParameterizedTypeReference<>() {
+                            }
+                    );
+
+            List<SimpleTransferRec> rec = Objects.requireNonNull(responseEntity.getBody()).rec();
+            return new FintechResponse<>(rec);
+        } catch (HttpClientErrorException e) {
+            log.error("단순 계좌 이체 실패 - 상태 코드: {}, 응답 내용: {}", e.getStatusCode(), e.getResponseBodyAsString());
+
+            errorResponse = ClientErrorParser.parseErrorResponse(e.getResponseBodyAsString());
+            return new FintechResponse<>(errorResponse);
+        } catch (Exception e) {
+            log.error("단순 계좌 이체 중 알 수 없는 오류 발생: {}", e.getMessage());
             return new FintechResponse<>(errorResponse);
         }
     }

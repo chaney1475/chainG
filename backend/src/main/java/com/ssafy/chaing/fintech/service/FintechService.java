@@ -4,6 +4,7 @@ import com.ssafy.chaing.contract.service.command.CreateCardCommand;
 import com.ssafy.chaing.fintech.controller.request.AccountHistoryCommand;
 import com.ssafy.chaing.fintech.controller.request.InquireBillingCommand;
 import com.ssafy.chaing.fintech.controller.request.ManualTransferCommand;
+import com.ssafy.chaing.fintech.controller.request.SimpleTransferCommand;
 import com.ssafy.chaing.fintech.controller.request.TransferCommand;
 import com.ssafy.chaing.fintech.controller.response.FintechResponse;
 import com.ssafy.chaing.fintech.dto.CreateFintechCardRec;
@@ -27,4 +28,6 @@ public interface FintechService {
     FintechResponse<?> createAccount();
 
     FintechResponse<?> getAccountHistory(AccountHistoryCommand command);
+
+    FintechResponse<?> transferWithSimple(SimpleTransferCommand command);
 }
