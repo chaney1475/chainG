@@ -163,6 +163,8 @@ public class PaymentServiceImpl implements PaymentService {
         payment.updatePaidDate(ZonedDateTime.now(ZoneOffset.UTC));
         payment.setStatus(PaymentStatus.PAID);
 
+        paymentRepository.save(payment);
+
         log.info("💸 유저 ID={} → 집주인에게 월세 수동 납부 완료. PaymentID={}",
                 user.getId(), payment.getId());
 
