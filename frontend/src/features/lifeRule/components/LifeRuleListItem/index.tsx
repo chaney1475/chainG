@@ -11,13 +11,14 @@ interface LifeRuleListItemProps {
   lifeRule: LifeRule
 }
 
+// 여긴 생활룰 첫화면 해결 완료
 export function LifeRuleListItem({ lifeRule }: LifeRuleListItemProps) {
   //const { t } = useTranslation()
   return (
     <Container>
       <CatrgoryIcon>
         <Image
-          src={`/images/lifeRule/life-rule-category-${lifeRule.category.toLowerCase().trim()}.svg`}
+          src={`/images/lifeRule/life-rule-${lifeRule.category.trim()}-active.svg`}
           alt={lifeRule.category}
           width={46}
           height={46}

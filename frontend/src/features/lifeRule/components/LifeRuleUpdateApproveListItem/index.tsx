@@ -55,17 +55,13 @@ export const LifeRuleUpdateApproveListItem = ({
     <ItemContainer variant={variant as LifeRuleUpdateVariant}>
       <CatrgoryIcon>
         <Image
-          src={
-            lifeRuleCategoryList.find(
-              (category) => category.id === lifeRule.category,
-            )?.src ?? '/images/lifeRule/life-rule-CLEANING-active.svg'
-          }
+          src={`/images/lifeRule/life-rule-${lifeRule.category.trim()}-inactive.svg`}
           alt={lifeRule.category}
           width={46}
           height={46}
         />
       </CatrgoryIcon>
-      {lifeRule.category}
+
       <Content>
         <ContentContainer>{lifeRule.content}</ContentContainer>
         {getStatusIcon() && (

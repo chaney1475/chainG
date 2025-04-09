@@ -116,15 +116,13 @@ export const LifeRuleUpdateListItem = ({
     }
   }
 
+  console.log('LifeRule')
+
   return (
     <ItemContainer variant={variant}>
       <CatrgoryIcon>
         <Image
-          src={
-            lifeRuleCategoryList.find(
-              (category) => category.id === lifeRule.category,
-            )?.src ?? '/images/lifeRule/life-rule-category-clean.svg'
-          }
+          src={`/images/lifeRule/life-rule-${lifeRule.category.trim()}-inactive.svg`}
           alt={lifeRule.category}
           width={46}
           height={46}

@@ -29,6 +29,10 @@ export const TopHeader = memo(function TopHeader({
     }
   }
 
+  const click = () => {
+    console.log('isclick')
+  }
+
   return (
     <Container>
       <HeaderButton onClick={() => router.back()}>
@@ -40,14 +44,16 @@ export const TopHeader = memo(function TopHeader({
         />
       </HeaderButton>
       <Title>{title}</Title>
-      <Image
+      <div
         onClick={handleUpdateClick}
-        src="/icons/update.svg"
-        alt="수정"
-        width={24}
-        height={24}
-        style={{ cursor: isUpdated ? 'not-allowed' : 'pointer' }}
-      />
+        style={{ cursor: isUpdated ? 'not-allowed' : 'pointer' }}>
+        <Image
+          src="/icons/modify.svg"
+          alt="수정"
+          width={30}
+          height={30}
+        />
+      </div>
     </Container>
   )
 })

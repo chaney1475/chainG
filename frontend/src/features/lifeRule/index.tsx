@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { createLifeRule, getLifeRule } from '@/apis/lifeRule'
 import { ConfirmButton } from '@/components'
-import { Image } from '@/components'
 import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/features/lifeRule/components/TopHeader'
 import UpdateModal from '@/features/lifeRule/components/UpdateModal'
@@ -16,7 +16,7 @@ import { useAppSelector } from '@/hooks'
 import { setLifeRules } from '@/store/slices/lifeRuleSlice'
 import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { RootState } from '@/store/store'
-import { Container, Title } from '@/styles/styles'
+import { Container } from '@/styles/styles'
 
 import { LifeRuleList } from './components/LifeRuleList'
 import { NoticeBar } from './components/NoticeBar'
@@ -32,6 +32,8 @@ export function LifeRulePage() {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isEmpty, setIsEmpty] = useState<boolean>(false)
+
+  console.log('lifeRuleList', lifeRuleList) // 진짜리스트 찍기
 
   const handleCreate = async () => {
     const response = await createLifeRule({ rules: [] })
@@ -57,7 +59,6 @@ export function LifeRulePage() {
         } else {
           setIsEmpty(true)
         }
-
         // 업데이트된 내용 확인
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -74,22 +75,21 @@ export function LifeRulePage() {
         handleOpenModal={() => setIsModalOpen(true)}
       />
       <FullMain>
-        {homeOverview?.isLifeRuleApproved && (
+        {/* 공지사항 보여주는 애 */}
+        {isEmpty && homeOverview?.isLifeRuleApproved && (
           <NoticeBar message={t('lifeRule.updateMessage')} />
         )}
         {isEmpty && (
           <EmptyContainer>
             <Image
-              src={'/icons/button-modify.svg'}
+              src={'/images/lifeRule/update.svg'}
               alt={'생활규칙 수정아이콘'}
               width={80}
               height={80}
               style={{ objectFit: 'cover' }}
             />
 
-            <TitleContainer>
-              <Title>만들어진 생활규칙이 없습니다</Title>
-            </TitleContainer>
+            <TitleContainer>만들어진 생활규칙이 없습니다</TitleContainer>
             <Description>
               친구들과 대화를 통해 생활규칙을 만들어보세요!
             </Description>
