@@ -7,13 +7,12 @@ export const Container = styled.div`
   justify-content: space-between;
   height: 100dvh;
   width: 100%;
-  gap: 50px;
   @media (min-width: 768px) {
     width: 50%;
     justify-content: center;
     margin: 0 auto;
   }
-  `
+`
 
 export const FullMain = styled.div`
   display: flex;
@@ -24,5 +23,3 @@ export const FullMain = styled.div`
   width: 100%;
   background-color: ${({ theme }) => theme.color.secondary};
 `
-
-
