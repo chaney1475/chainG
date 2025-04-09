@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -14,15 +13,16 @@ import {
   createContractPDF,
   getContract,
 } from '@/apis/group'
-import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
+import { ConfirmButton } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
-import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
+import { ImageContainer, Label, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
 import { ContractViewer } from './component/ContractViewer'
-import { BottomContainer, Container, FullMain, HeaderContainer } from './styles'
+import { FullMain, HeaderContainer } from './styles'
 
 export function ContractDetail() {
   const dispatch = useDispatch()
@@ -102,7 +102,7 @@ export function ContractDetail() {
       await handleSubmit(approveContractWithAccountNo)()
     } else if (status === ContractStatus.isContractApproved) {
       router.push('/contract/create')
-      
+
       // await handleSubmit(modifyContract)()
     }
   }
@@ -189,31 +189,29 @@ export function ContractDetail() {
   }
 
   return (
-    <>
-      <FullMain>
-        <HeaderContainer>
-          <ImageContainer>
-            <Image
-              src="/images/contract/contract-detail.png"
-              alt="contract"
-              width={68}
-              height={87}
-            />
-          </ImageContainer>
-          <Title>{t(label)}</Title>
-          <Label>{t(description, { value: group.name })}</Label>
-          <ConfirmButton
-            label={button}
-            onClick={() => setShouldConfirm(true)}
+    <FullMain>
+      <HeaderContainer>
+        <ImageContainer>
+          <Image
+            src="/images/etc/confirmed.svg"
+            alt="contract"
+            width={80}
+            height={80}
           />
-        </HeaderContainer>
-        {user.contractId && rentUserList && (
-          <ContractViewer
-            contract={contract}
-            rentUserList={rentUserList}
-          />
-        )}
-      </FullMain>
-    </>
+        </ImageContainer>
+        <Title>{t(label)}</Title>
+        <Label>{t(description, { value: group.name })}</Label>
+        <ConfirmButton
+          label={button}
+          onClick={() => setShouldConfirm(true)}
+        />
+      </HeaderContainer>
+      {user.contractId && rentUserList && (
+        <ContractViewer
+          contract={contract}
+          rentUserList={rentUserList}
+        />
+      )}
+    </FullMain>
   )
 }

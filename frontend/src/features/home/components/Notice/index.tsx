@@ -2,8 +2,7 @@
 
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { useIsLeader } from '@/hooks'
 
@@ -58,8 +57,8 @@ export function Notice() {
           <div>
             <NoticeTitle>
               <Image
-                src={'/icons/notice-money.png'}
-                alt="월세 미납 공지"
+                src="/images/notification/notification-rent.svg"
+                alt="rent"
                 width={21}
                 height={21}
               />
@@ -77,37 +76,13 @@ export function Notice() {
           </LinkContainer>
         </NoticeItem>
       )}
-      {paymentCurrent.utility && (
-        <NoticeItem>
-          <div>
-            <NoticeTitle>
-              <Image
-                src={'/icons/notice-money.png'}
-                alt="월세 미납 공지"
-                width={21}
-                height={21}
-              />
-              <p>
-                [{t('main.issues.utility')}]{t(utilityTitle)}
-              </p>
-            </NoticeTitle>
-            <div>
-              {t('payment.allPrefix')}
-              {t(utilityLabel)}
-            </div>
-          </div>
-          <LinkContainer>
-            <StyledLink href={'/pledge'}>확인하기</StyledLink>
-          </LinkContainer>
-        </NoticeItem>
-      )}
       {paymentCurrent.userRent && (
         <NoticeItem>
           <div>
             <NoticeTitle>
               <Image
-                src={'/icons/notice-money.png'}
-                alt="월세 미납 공지"
+                src="/images/notification/notification-rent.svg"
+                alt="userRent"
                 width={21}
                 height={21}
               />
@@ -125,13 +100,38 @@ export function Notice() {
           </LinkContainer>
         </NoticeItem>
       )}
+      {paymentCurrent.utility && (
+        <NoticeItem>
+          <div>
+            <NoticeTitle>
+              <Image
+                src="/images/notification/notification-utility.svg"
+                alt="utility"
+                width={21}
+                height={21}
+              />
+              <p>
+                [{t('main.issues.utility')}]{t(utilityTitle)}
+              </p>
+            </NoticeTitle>
+            <div>
+              {t('payment.allPrefix')}
+              {t(utilityLabel)}
+            </div>
+          </div>
+          <LinkContainer>
+            <StyledLink href={'/pledge'}>확인하기</StyledLink>
+          </LinkContainer>
+        </NoticeItem>
+      )}
+
       {paymentCurrent.userUtility && (
         <NoticeItem>
           <div>
             <NoticeTitle>
               <Image
-                src={'/icons/notice-money.png'}
-                alt="월세 미납 공지"
+                src="/images/notification/notification-utility.svg"
+                alt="userUtility"
                 width={21}
                 height={21}
               />
@@ -154,12 +154,12 @@ export function Notice() {
           <div>
             <NoticeTitle>
               <Image
-                src={'/images/lifeRule/approve.svg'}
-                alt="생활규정 미승인 공지"
+                src="/images/notification/notification-rule.svg"
+                alt="생활 규칙 미승인 공지"
                 width={21}
                 height={21}
               />
-              승인 진행중인 생활 규칙이 있어요
+              [생활 규칙] 승인 진행중인 생활 규칙이 있어요
             </NoticeTitle>
             <div>새로 바뀔 생활 규칙을 확인해 주세요!</div>
           </div>
@@ -173,7 +173,7 @@ export function Notice() {
           <div>
             <NoticeTitle>
               <Image
-                src={'/icons/notice-money.png'}
+                src="/images/notification/notification-livingBudget.svg"
                 alt="생활비"
                 width={21}
                 height={21}

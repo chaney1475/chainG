@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
-
 import { postNotApprovedIds } from '@/apis/lifeRule'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setNotApprovedIds } from '@/store/slices/lifeRuleSlice'
 import { UserTileContainer } from '@/styles/styles'
@@ -56,7 +55,7 @@ export function ApproveProfile() {
             key={user.id}
             isApprove={true}>
             <Image
-              src={`/images/profile/approve.svg`}
+              src={`/images/etc/approved-circle.svg`}
               alt={user.name}
               width={36}
               height={36}
@@ -69,7 +68,7 @@ export function ApproveProfile() {
             key={user.id}
             isApprove={false}>
             <Image
-              src={`/images/profile/${user.profileImage}.png`}
+              src={`/images/profile/${user.profileImage}.svg`}
               alt={user.name}
               width={36}
               height={36}

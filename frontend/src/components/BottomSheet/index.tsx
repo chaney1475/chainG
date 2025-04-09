@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { animated, useSpring } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
-import Image from 'next/image'
 
+import { Image } from '@/components'
 import { SnapPoints } from '@/types/ui'
 
 import {

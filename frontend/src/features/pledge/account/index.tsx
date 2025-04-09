@@ -112,7 +112,13 @@ export function Account({
     <Container>
       <MonthSummary>
         <AccountContainer>
-          <AccountTitle>월세 / 공과금 계좌</AccountTitle>
+          <AccountTitle>
+            <IconButton
+              src="/icons/logo-bank.svg"
+              alt="월세 / 공과금 계좌"
+            />
+            월세 / 공과금 계좌
+          </AccountTitle>
           <AccountInfo>
             <span>{t('fintech.bankName') + ' ' + accountDetail.accountNo}</span>
             <div>{formatMoney(accountDetail.accountBalance)}</div>

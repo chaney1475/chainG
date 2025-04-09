@@ -2,8 +2,7 @@
 
 import React from 'react'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
 import { LifeRuleUpdateVariant, UpdateLifeRule } from '@/types/lifeRule'
 
@@ -66,6 +65,7 @@ export const LifeRuleUpdateApproveListItem = ({
           height={46}
         />
       </CatrgoryIcon>
+      {lifeRule.category}
       <Content>
         <ContentContainer>{lifeRule.content}</ContentContainer>
         {getStatusIcon() && (

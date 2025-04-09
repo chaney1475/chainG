@@ -28,3 +28,9 @@ export const formatDuration = (startDate: string, endDate: string) => {
   newEndDate.setDate(newEndDate.getDate() - 1)
   return `${format(newStartDate, 'PP', { locale: ko })} ~ ${format(newEndDate, 'PP', { locale: ko })}`
 }
+export const useMorning = () => {
+  const now = new Date()
+  const kstOffset = 9 * 60 * 60 * 1000 //
+  const kstDate = new Date(now.getTime() + kstOffset)
+  return kstDate.getUTCHours() < 18 && kstDate.getUTCHours() >= 6
+}

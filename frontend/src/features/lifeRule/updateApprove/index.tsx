@@ -197,8 +197,8 @@ export function LifeRuleUpdateApprovePage() {
         confirmText={approveType === 'approve' ? '확인' : '확인'}
         image={
           approveType === 'approve'
-            ? '/images/lifeRule/approve.svg'
-            : '/images/lifeRule/reject.svg'
+            ? '/images/etc/approved-true.svg'
+            : '/images/etc/approved-false.svg'
         }
       />
     </Container>

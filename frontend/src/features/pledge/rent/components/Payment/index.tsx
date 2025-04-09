@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
+import { formatMoney } from '@/utils/format'
 
 import { BoxContainer } from '../../../styles'
 import {
@@ -32,7 +33,7 @@ export function Payment() {
     <>
       <BoxContainer>
         <ContentContainer>
-          <TopDescription>월세 - 4월</TopDescription>
+          <TopDescription>월세 - {month}월</TopDescription>
           <TextContainer>
             <AmountContainer>
               <Image
@@ -41,10 +42,9 @@ export function Payment() {
                 width={24}
                 height={24}
               />
-              <div>{rentInfo?.totalAmount}원</div>
+              <div>{formatMoney(rentInfo?.totalAmount ?? 0)}</div>
             </AmountContainer>
             <Periond>
-              {' '}
               {firstDay.toLocaleDateString()} ~{' '}
               {lastDay.toLocaleDateString()}{' '}
             </Periond>

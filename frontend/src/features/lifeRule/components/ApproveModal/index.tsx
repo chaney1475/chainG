@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import * as Dialog from '@radix-ui/react-dialog'
-import Image from 'next/image'
 
+import { Image } from '@/components'
 import { ConfirmButton } from '@/components/ConfirmButton'
 
 import {
@@ -44,8 +44,8 @@ export default function ApproveModal({
             <Image
               src={image}
               alt={title}
-              width={120}
-              height={120}
+              width={80}
+              height={80}
               priority
             />
           </div>

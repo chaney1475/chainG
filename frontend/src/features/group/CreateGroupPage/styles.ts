@@ -116,3 +116,20 @@ export const ParticipantsContainer = styled.div`
     background-color: ${({ theme }) => theme.color.primary}10;
   }
 `
+export const HomeImageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.5rem;
+`
+
+export const UserContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100vw;
+`

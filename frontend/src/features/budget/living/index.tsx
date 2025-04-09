@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 
 import { getAccountDetail } from '@/apis/fintech'
 import { notifyLeaderLivingAccountCreated } from '@/apis/livingBudget'
-import { BudgetCalendar, FullNavLayout, Modal } from '@/components'
+import { BudgetCalendar, FullNavLayout, IconButton, Modal } from '@/components'
 import { FloatingSwitchMenu } from '@/components'
 import { useFintechTime, useIsLeader } from '@/hooks'
 import { useGetAccountHistory } from '@/hooks'
@@ -162,7 +162,13 @@ export function BudgetLivingPage() {
   return (
     <FullNavLayout title={'생활비'}>
       <Account>
-        <AccountTitle>생활비 계좌</AccountTitle>
+        <AccountTitle>
+          <IconButton
+            src="/images/pledge/rentMoney.svg"
+            alt="생활비 계좌"
+          />
+          생활비 계좌
+        </AccountTitle>
         <AccountInfo>
           <span>{t('fintech.bankName') + ' ' + livingAccountNo}</span>
           <div>{formatMoney(livingAccountDetail.accountBalance)}</div>

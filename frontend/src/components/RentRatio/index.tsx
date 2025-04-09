@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
-import Image from 'next/image'
 
 import {
   BottomSheet,
@@ -13,6 +12,7 @@ import {
   TitleHeader,
   UserItem,
 } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setShowRentRatio, updateRent } from '@/store/slices/contractSlice'
 import {

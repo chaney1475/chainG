@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import {
   CenterContainer,
@@ -33,6 +32,7 @@ import {
 } from './styles'
 
 interface Issue {
+  img: string
   category: string
   title: string
   description: string
@@ -61,6 +61,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
   useEffect(() => {
     if (todayMyDutyList.length > 0) {
       const dutyIssues = todayMyDutyList.map((duty) => ({
+        img: duty.category,
         category: 'duty',
         title: duty.title,
         description: duty.useTime ? formatHourMinuteTime(duty.dutyTime) : '',
@@ -73,6 +74,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
     const utilityIssues = []
     if (!homeOverview.isUtilityPaid) {
       utilityIssues.push({
+        img: 'SETTLEMENT',
         category: 'utility',
         title: '공과금 카드 대납 실패',
         description: '공과급 미납 시 안내',
@@ -80,6 +82,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
     }
     if (isDueCardDay) {
       utilityIssues.push({
+        img: 'SETTLEMENT',
         category: 'utility',
         title: '공과금 카드 납부일',
         description: '금요일',
@@ -87,6 +90,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
     }
     if (isDueCardDayYesterday) {
       utilityIssues.push({
+        img: 'SETTLEMENT',
         category: 'utility',
         title: '공과금 카드 전날',
         description: '목요일',
@@ -99,6 +103,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
     const newRentissues = []
     if (!homeOverview.isRentPaid) {
       newRentissues.push({
+        img: 'SETTLEMENT',
         category: 'rent',
         title: '월세 미납',
         description: '우리모두 월세를 못냈어요',
@@ -106,6 +111,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
     }
     if (isDueRentDate) {
       newRentissues.push({
+        img: 'SETTLEMENT',
         category: 'rent',
         title: '월세 납부일',
         description: contract.rent.dueDate + '일',
@@ -113,6 +119,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
     }
     if (isDueRentDateYesterday) {
       newRentissues.push({
+        img: 'SETTLEMENT',
         category: 'rent',
         title: '월세 납부 전날',
         description: contract.rent.dueDate - 1 + '일',
@@ -173,7 +180,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
                 <IssueContainer key={issue.title}>
                   <ImageContainer>
                     <Image
-                      src={`/images/home/home-${issue.category === 'duty' ? 'duty' : 'unpaid'}.png`}
+                      src={`/images/duty/duty-${issue.img}.svg`}
                       alt={`${issue.category} 이미지`}
                       width={50}
                       height={50}
@@ -203,7 +210,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
           <Card href="/lifeRule">
             생활 규칙
             <Image
-              src={'/images/home/home-life-rule.png'}
+              src={'/images/lifeRule/life-rule-LIFE_RULE-active.svg'}
               alt="생활 규칙"
               width={50}
               height={50}
@@ -212,7 +219,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
           <Card href="/duty">
             당번
             <Image
-              src={'/images/home/home-duty.png'}
+              src={'/images/duty/duty-CLEANING.svg'}
               alt="당번"
               width={50}
               height={50}

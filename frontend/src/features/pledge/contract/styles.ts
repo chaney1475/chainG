@@ -44,7 +44,9 @@ export const FullMain = styled.div`
   gap: 16px;
   width: 100%;
   padding-bottom: 6.625rem;
-  overflow-y: auto;
+  margin-bottom: 3rem;
+  height: 100%;
+  gap: 1rem;
 `
 
 export const Navigator = styled.div`

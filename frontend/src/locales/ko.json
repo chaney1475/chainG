@@ -134,10 +134,10 @@
     "title": "방 만들기",
     "header": "함께 살 방을\n만들어볼까요?",
     "maxParticipants": {
-      "label": "참여인원"
+      "label": "참여인원은 10명까지 가능해요"
     },
     "groupName": {
-      "label": "방 이름",
+      "label": "방 이름을 입력해주세요",
       "placeholder": "방 이름을 입력해주세요",
       "error": {
         "required": "방 이름을 입력해주세요",
@@ -190,10 +190,10 @@
   },
   "onboarding": {
     "blockChain": "블록체인으로\n우리의 동거 생활을\n더욱 안전하게",
-    "transfer": "월세, 공과금\n자동이체로 편하게",
-    "budget": "우리만의 생활비 계좌를\n자유롭게 관리해요",
+    "transfer": "월세, 공과금\n자동이체로\n더 편하게",
+    "budget": "우리만의 생활비를\n자유롭게 관리해요",
     "awkward": "소중한 친구들과\n어색해지지 않도록\n도와드릴게요",
-    "start": "새로운 동거 생활의\n시작을 환영해요",
+    "start": "새로운 동거 생활의\n시작을 환영해요\n",
     "title": "Cha:nG와 함께 셰어하우스에 입주해요",
     "create": {
       "title": "방 생성하기",
@@ -208,7 +208,7 @@
   "lifeRule": {
     "title": "생활 규칙",
     "updateTitle": "생활규칙 수정",
-    "updateApproveTitle": "생활규칙 수정승인",
+    "updateApproveTitle": "생활규칙 수정 승인",
     "updateMessage": "생활 규칙이 수정되었어요. 클릭해서 확인해주세요!",
     "modal": {
       "title": "생활규칙 수정 불가",
@@ -439,7 +439,7 @@
       "totalRatio": "분담 비율",
       "rentAccountNo": "월세 계좌",
       "ownerAccountNo": "집주인 계좌",
-      "utilityDescription": "*공과금은 모든 인원이 동일한 비율로 계산됩니다.",
+      "utilityDescription": "*공과금은 모든 인원이\n동일한 비율로 계산됩니다.",
       "utilityCard": "공과금 신용 카드"
     }
   },

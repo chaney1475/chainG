@@ -18,6 +18,8 @@ export const Main = styled.div`
   flex-direction: column;
   padding: 4px;
   gap: 4px;
+  height: 60%;
+  align-items: center;
   justify-content: center;
   > div {
     align-items: center;
@@ -46,9 +48,11 @@ export const ImageContainer = styled.div`
   position: relative;
   > div {
     position: absolute;
-    bottom: 0;
+    bottom: 38px;
+    border-radius: 10px;
     background-color: ${({ theme }) => theme.color.background.white};
     margin: auto;
+    padding: 1rem 0;
   }
 `
 export const NoticeContainer = styled.div`

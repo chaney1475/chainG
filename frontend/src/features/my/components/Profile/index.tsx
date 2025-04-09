@@ -3,9 +3,9 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 
 import {
@@ -34,13 +34,11 @@ export function Profile() {
       <TopContainer>
         <LeftContainer>
           <Image
-            src={
-              `/images/profile/${user.user.profileImage}.png` ||
-              '/images/profile/user1.png'
-            }
+            src={`/images/profile/${user.user.profileImage}.svg`}
             alt={user.user.name}
             width={60}
             height={60}
+            errorSrc={`/images/profile/user${user.user.id % 9}.svg`}
           />
           <IntroduceContainer>
             <div>{t('my.profile.group')}</div>

@@ -2,11 +2,10 @@
 
 import React from 'react'
 
+import { IconButton } from '@/components'
 //import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
-
-import { IconButton } from '@/components'
+import { Image } from '@/components'
 import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
 import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 

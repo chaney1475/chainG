@@ -30,7 +30,9 @@ export function WeekSelectorItem({
     }
     return day === 'sunday' || day === 'saturday' ? day : 'default'
   }
-
+  const title = (item: Duty) => {
+    return t(`duty.category.${item.category}`)
+  }
   return (
     <Container>
       <div>{`${t(`duty.week.${day}`)}`}</div>
@@ -41,9 +43,7 @@ export function WeekSelectorItem({
       </DateSelection>
       <DutyContainer>
         {duty.map((item) => (
-          <DutyItem key={item.id}>
-            {t(`duty.category.${item.category}`)}
-          </DutyItem>
+          <DutyItem key={item.id}>{title(item)}</DutyItem>
         ))}
       </DutyContainer>
     </Container>

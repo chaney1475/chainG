@@ -5,16 +5,21 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { InputBox, TitleHeader, TitleHeaderLayout } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setGroupName, setMaxParticipants } from '@/store/slices/groupSlice'
-import { ImageContainer } from '@/styles/styles'
 import { CreateGroupRequest } from '@/types/group'
 
-import { ImageButton, Label, ParticipantsContainer } from './styles'
+import {
+  HomeImageContainer,
+  ImageButton,
+  Label,
+  ParticipantsContainer,
+  UserContainer,
+} from './styles'
 
 export function CreateGroupPage() {
   const { t } = useTranslation()
@@ -82,14 +87,32 @@ export function CreateGroupPage() {
       label={t('createGroup.confirm')}
       onClick={handleSubmit(onSubmit)}
       buttonVariant={groupName ? 'next' : 'disabled'}>
-      <ImageContainer>
+      <HomeImageContainer>
         <Image
-          src="/images/group/participants.png"
-          alt="participants"
-          width={106}
-          height={105}
+          src="/images/group/roof.svg"
+          alt="plus"
+          width={322}
+          height={61}
         />
-      </ImageContainer>
+        <UserContainer>
+          {Array.from({ length: participants }).map((_, index) => (
+            <Image
+              key={index}
+              src="/images/group/user-default.svg"
+              alt="plus"
+              width={80}
+              height={80}
+            />
+          ))}{' '}
+        </UserContainer>
+        <Image
+          src="/images/group/floor.svg"
+          alt="plus"
+          width={272}
+          height={9}
+        />
+      </HomeImageContainer>
+
       <div>
         <Label>{t('createGroup.maxParticipants.label')}</Label>
         <ParticipantsContainer

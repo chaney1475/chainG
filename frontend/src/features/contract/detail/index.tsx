@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -15,6 +14,7 @@ import {
   getContract,
 } from '@/apis/group'
 import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
@@ -103,7 +103,7 @@ export function ContractDetail() {
       dispatch(setShowContractApprovedModal(true))
     }
     setOpenModal(false)
-    router.push('/pledge')
+    router.push('/')
   }
 
   const confirmModal = async () => {
