@@ -333,7 +333,7 @@ export function HomePage() {
           {status === ContractStatus.confirmed && (
             <IconButton
               onClick={() => dispatch(setIsNoticeModalOpen(true))}
-              src="/images/lifeRule/notice.svg"
+              src="/icons/announce.svg"
               alt="notice"
             />
           )}
