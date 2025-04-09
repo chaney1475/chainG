@@ -17,6 +17,7 @@ interface ModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
+  onCancel?: () => void
   title?: string
   description?: string
   confirmText?: string
@@ -35,6 +36,7 @@ export function Modal({
   children,
   disablePrev = false,
   image,
+  onCancel,
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -70,6 +72,7 @@ export function Modal({
                 <ModalConfirmButton
                   label={'cancel'}
                   variant={'prev'}
+                  onClick={onCancel ?? (() => {})}
                 />
               </Dialog.Close>
             )}
