@@ -12,10 +12,9 @@ import com.ssafy.chaing.group.repository.GroupUserRepository;
 import com.ssafy.chaing.group.service.command.CreateGroupCommand;
 import com.ssafy.chaing.group.service.command.JoinGroupCommand;
 import com.ssafy.chaing.group.service.dto.GroupDTO;
+import com.ssafy.chaing.group.service.dto.GroupWithMemberDTO;
 import com.ssafy.chaing.notification.domain.NotificationCategory;
 import com.ssafy.chaing.notification.service.NotificationService;
-import com.ssafy.chaing.notification.service.command.NotificationCommand;
-import com.ssafy.chaing.group.service.dto.GroupWithMemberDTO;
 import com.ssafy.chaing.user.domain.UserEntity;
 import com.ssafy.chaing.user.repository.UserRepository;
 import java.util.Set;
@@ -50,7 +49,7 @@ public class GroupServiceImpl implements GroupService {
                 .build();
 
         groupRepository.save(group);
-        
+
         owner.setGroupId(group.getId());
 
         userRepository.save(owner);
@@ -65,7 +64,7 @@ public class GroupServiceImpl implements GroupService {
         // 알림 전송
         notificationService.sendNotification(
                 owner.getId(),
-                "그룹이 생성되었습니다",
+                "그룹이 생성",
                 "방 [" + group.getName() + "] 을 새로 생성했습니다.",
                 NotificationCategory.GROUP);
 
@@ -124,7 +123,7 @@ public class GroupServiceImpl implements GroupService {
         groupUserRepository.save(groupUser);
 
         Set<UserEntity> groupUsers = groupUserRepository.findAllUsersInGroupByUserId(command.getUserId());
-        String title = "새로운 멤버가 그룹에 참가했어요!";
+        String title = "새로운 멤버가 그룹에 참가!";
         String content = command.getNickname() + " 님이 그룹에 참가했습니다.";
 
         groupUsers.stream()
@@ -134,7 +133,7 @@ public class GroupServiceImpl implements GroupService {
                         title,
                         content,
                         NotificationCategory.GROUP
-                        ));
+                ));
         return GroupDTO.from(group);
     }
 
