@@ -21,8 +21,8 @@ export function HomeLayout({
           <Image
             src="/icons/logo.svg"
             alt="logo"
-            width={24}
-            height={24}
+            width={40}
+            height={40}
           />
           {headerRightButton}
         </HeaderContainer>

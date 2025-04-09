@@ -56,7 +56,7 @@ export function ApproveProfile() {
             key={user.id}
             isApprove={true}>
             <Image
-              src={`/images/profile/approve.svg`}
+              src={`/images/etc/approved-circle.svg`}
               alt={user.name}
               width={36}
               height={36}
@@ -69,7 +69,7 @@ export function ApproveProfile() {
             key={user.id}
             isApprove={false}>
             <Image
-              src={`/images/profile/${user.profileImage}.png`}
+              src={`/images/profile/${user.profileImage}.svg`}
               alt={user.name}
               width={36}
               height={36}

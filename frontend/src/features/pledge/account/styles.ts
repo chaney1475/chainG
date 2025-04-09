@@ -158,6 +158,9 @@ export const AccountTitle = styled.div`
   color: ${({ theme }) => theme.color.text.regular};
   width: 100%;
   text-align: left;
+  align-items: center;
+  display: flex;
+  gap: 8px;
 `
 export const AccountInfo = styled.div`
   display: flex;

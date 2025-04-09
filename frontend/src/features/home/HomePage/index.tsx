@@ -22,6 +22,7 @@ import {
   HeaderTitle,
   PaddingContainer,
   ShowCenterBox,
+  TextCenterContainer,
   Title,
   UserTileContainer,
   ValidationContainer,
@@ -318,8 +319,17 @@ export function HomePage() {
     return (
       <Container>
         <Main>
-          <h1>로고</h1>
-          <p>캐치 프라이즈</p>
+          <Image
+            src="/icons/logo.svg"
+            alt="logo"
+            width={100}
+            height={100}
+          />
+          <TextCenterContainer>
+            <Title>Cha:nG</Title>
+          </TextCenterContainer>
+          <Description>계약과 약속 사이</Description>
+          <Description>우리 집의 블록체인 계약서</Description>
         </Main>
       </Container>
     )

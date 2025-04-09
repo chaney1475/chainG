@@ -161,6 +161,13 @@ export const CenterContainer = styled.div`
   justify-content: center;
   width: 100%;
 `
+export const TextCenterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+`
 
 export const HeaderTitle = styled.div`
   ${({ theme }) => theme.typography.styles.topHeader};

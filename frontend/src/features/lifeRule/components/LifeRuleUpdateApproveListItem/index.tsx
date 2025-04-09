@@ -66,6 +66,7 @@ export const LifeRuleUpdateApproveListItem = ({
           height={46}
         />
       </CatrgoryIcon>
+      {lifeRule.category}
       <Content>
         <ContentContainer>{lifeRule.content}</ContentContainer>
         {getStatusIcon() && (

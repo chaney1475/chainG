@@ -64,7 +64,4 @@ export const CategoryContainer = styled(Image)`
   justify-content: center;
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  padding: 8px;
-  background-color: ${({ theme }) => theme.color.border};
 `

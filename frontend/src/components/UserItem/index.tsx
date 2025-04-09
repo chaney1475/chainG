@@ -26,11 +26,11 @@ export const UserItem = ({
   contractStatus,
 }: UserItemProps) => {
   const [imgSrc, setImgSrc] = useState(
-    `/images/profile/${user.profileImage}.png`,
+    `/images/profile/${user.profileImage}.svg`,
   )
 
   const handleImageError = () => {
-    const imgSrc = `/images/profile/user${user.id % 9}.png`
+    const imgSrc = `/images/profile/user${user.id % 9}.svg`
     setImgSrc(imgSrc)
   }
 

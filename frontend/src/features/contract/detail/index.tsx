@@ -103,7 +103,7 @@ export function ContractDetail() {
       dispatch(setShowContractApprovedModal(true))
     }
     setOpenModal(false)
-    router.push('/pledge')
+    router.push('/')
   }
 
   const confirmModal = async () => {

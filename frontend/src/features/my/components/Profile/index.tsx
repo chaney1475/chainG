@@ -35,7 +35,7 @@ export function Profile() {
         <LeftContainer>
           <Image
             src={
-              `/images/profile/${user.user.profileImage}.png` ||
+              `/images/profile/${user.user.profileImage}.svg` ||
               '/images/profile/user1.png'
             }
             alt={user.user.name}

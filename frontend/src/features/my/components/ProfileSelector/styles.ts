@@ -33,5 +33,5 @@ export const ProfileImage = styled.img<{
   box-shadow: 0 0 0 2px
     ${({ isSelected, theme }) =>
       isSelected ? theme.color.primary : 'transparent'}33;
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
 `

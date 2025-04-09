@@ -7,18 +7,14 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
+import { updateProfile } from '@/apis/user'
 import { InputBox, TitleHeaderLayout } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
-
-import {
-  setUserNickname,
-  setUserProfileImage,
-} from '@/store/slices/userSlice'
+import { setUserNickname, setUserProfileImage } from '@/store/slices/userSlice'
 import { ButtonVariant } from '@/types/ui'
 
 import { ProfileSelector } from '../components/ProfileSelector'
 import { TopContainer } from './styles'
-import { updateProfile } from '@/apis/user'
 
 export function EditProfilePage() {
   const { t } = useTranslation()
@@ -43,7 +39,7 @@ export function EditProfilePage() {
   const nickname = watch('nickname')
   const profileImage = watch('profileImage')
 
-  // api 쏘는곳 
+  // api 쏘는곳
   const onSubmit = async ({
     nickname,
     profileImage,
@@ -52,11 +48,12 @@ export function EditProfilePage() {
     profileImage: string
   }) => {
     let response = null
-      response = await updateProfile({
-        nickname: nickname,
-        profileImage: profileImage,
-      })
-      if (response.success) { // 성공하면 redux에 저장해주기 
+    response = await updateProfile({
+      nickname: nickname,
+      profileImage: profileImage,
+    })
+    if (response.success) {
+      // 성공하면 redux에 저장해주기
       await dispatch(setUserNickname(nickname))
       await dispatch(setUserProfileImage(profileImage))
       setIsConfirm(true)
@@ -80,20 +77,19 @@ export function EditProfilePage() {
       [],
   )
 
-
   return (
     <TitleHeaderLayout
       title={t('my.edit.title')}
       label={t('my.edit.confirm')}
+      header={t('my.edit.header')}
       onClick={handleSubmit(onSubmit)}
       buttonVariant={nickname ? ButtonVariant.next : ButtonVariant.disabled}>
       <TopContainer>
-        <div>{t('my.edit.description')}</div>
-      <ProfileSelector
-        selectedId={profileImage}
-        onSelect={(id) => setValue('profileImage', id)}
-        blockList={blockList}
-      />
+        <ProfileSelector
+          selectedId={profileImage}
+          onSelect={(id) => setValue('profileImage', id)}
+          blockList={blockList}
+        />
       </TopContainer>
       <InputBox
         id="nickname"

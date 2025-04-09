@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { BudgetStatus } from '@/types/budget'
+import { formatMoney } from '@/utils/format'
 
 import { BoxContainer } from '../../../styles'
 import {
@@ -54,7 +55,9 @@ export function Stats() {
           <TextContainer>
             <TextBox>
               <LowColorText>월세</LowColorText>
-              <LowColorText>{rentInfo?.totalAmount}원</LowColorText>
+              <LowColorText>
+                {formatMoney(rentInfo?.totalAmount ?? 0)}
+              </LowColorText>
             </TextBox>
             <hr />
             <TextBox>
@@ -68,13 +71,15 @@ export function Stats() {
                   contractInfo?.rent.userPaymentInfo.find(
                     (member) => member.userId === userId,
                   )?.ratio
-                }{' '}
+                }
                 / {contractInfo?.rent.totalRatio}
               </DisabledColorText>
             </TextBox>
             <TextBox>
               <LowColorText>내가 낼 월세</LowColorText>
-              <LowColorText>{rentInfo?.myAmount}원</LowColorText>
+              <LowColorText>
+                {formatMoney(rentInfo?.myAmount ?? 0)}
+              </LowColorText>
             </TextBox>
             <hr />
             <TextBox>

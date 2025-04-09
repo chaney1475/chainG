@@ -44,8 +44,8 @@ export default function ApproveModal({
             <Image
               src={image}
               alt={title}
-              width={120}
-              height={120}
+              width={80}
+              height={80}
               priority
             />
           </div>

@@ -18,6 +18,8 @@ export const Main = styled.div`
   flex-direction: column;
   padding: 4px;
   gap: 4px;
+  height: 60%;
+  align-items: center;
   justify-content: center;
   > div {
     align-items: center;
