@@ -5,7 +5,6 @@ import com.ssafy.chaing.rule.domain.LifeRuleChangeRequestEntity;
 import com.ssafy.chaing.rule.domain.LifeRuleEntity;
 import jakarta.persistence.LockModeType;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +14,7 @@ public interface LifeRuleChangeRequestRepository extends JpaRepository<LifeRuleC
 
     Optional<LifeRuleChangeRequestEntity> findByLifeRuleAndStatus(LifeRuleEntity lifeRule, ChangeRequestStatus status);
 
-    @EntityGraph(attributePaths = {"changeItems"})
+    //    @EntityGraph(attributePaths = {"changeItems"})
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
             SELECT r
