@@ -45,5 +45,4 @@ export const BottomContainer = styled.div`
   flex: 1;
   min-height: 40px;
   width: 100%;
-  border: 1px solid red;
 `

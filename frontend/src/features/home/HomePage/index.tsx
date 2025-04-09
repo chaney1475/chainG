@@ -34,8 +34,10 @@ import { useMorning } from '@/utils/formatTime'
 import { ConfirmedHomeContents, HomeLayout } from '../components'
 import {
   Dday,
+  DefaultHomeContents,
   Description,
   GroupName,
+  HomeUserTileContainer,
   ImageContainer,
   Main,
   MainWrapper,
@@ -379,7 +381,7 @@ export function HomePage() {
               : '0 2px 4px rgba(0,0,0,0.1)',
             transition: 'all 0.3s ease',
           }}>
-          <UserTileContainer>
+          <HomeUserTileContainer>
             {group?.members &&
               group.members.map((user) => (
                 <UserItem
@@ -395,22 +397,19 @@ export function HomePage() {
                   }
                 />
               ))}
-          </UserTileContainer>
+          </HomeUserTileContainer>
         </ImageContainer>
         {status == ContractStatus.confirmed ? (
           <ConfirmedHomeContents />
         ) : (
-          <PaddingContainer>
-            <Title>
-              {status === ContractStatus.shouldInvite
-                ? t('inviteCode.label')
-                : t('contract.title')}
-            </Title>
-            <CardButton
-              cardItems={
-                cardItems.find((item) => item.key === status)?.item ?? []
-              }></CardButton>
-          </PaddingContainer>
+          <DefaultHomeContents>
+            <PaddingContainer>
+              <CardButton
+                cardItems={
+                  cardItems.find((item) => item.key === status)?.item ?? []
+                }></CardButton>
+            </PaddingContainer>
+          </DefaultHomeContents>
         )}
       </MainWrapper>
     </HomeLayout>

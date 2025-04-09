@@ -33,7 +33,7 @@ export const contentStyle = css`
 export const titleStyle = css`
   font-size: 16px;
   font-weight: bold;
-  margin: 24px 0 16px 0;
+  margin: 24px 0 4px 0;
   color: ${theme.color.text.regular};
   ${theme.typography.styles.title}
   text-align: center;

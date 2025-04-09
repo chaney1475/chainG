@@ -21,8 +21,13 @@ export const BottomNavigation = () => {
   const contract = useAppSelector((state) => state.contract.contract)
   const { t } = useTranslation()
 
-  const handleClick = (variant: (typeof NavItemVariant)[NavItemKey]) => {
-    dispatch(setSelectedNavItem(variant))
+  const handleClick = (
+    variant: (typeof NavItemVariant)[NavItemKey],
+    key: NavItemKey,
+  ) => {
+    if (contract.status === ContractStatus.confirmed || key != 'pledge') {
+      dispatch(setSelectedNavItem(variant))
+    }
   }
 
   const navKeys = Object.keys(NavItemVariant) as NavItemKey[]
@@ -39,19 +44,16 @@ export const BottomNavigation = () => {
         const variant = NavItemVariant[key]
         return (
           <React.Fragment key={key}>
-            {(contract.status === ContractStatus.confirmed ||
-              key != 'pledge') && (
-              <NavItem
-                onClick={() => handleClick(variant)}
-                isActive={isActive(variant)}
-                href={`/${key === 'home' ? '' : key}`}>
-                <IconButton
-                  src={getIconSrc(key)}
-                  alt={t(variant)}
-                />
-                <IconName>{t(variant)}</IconName>
-              </NavItem>
-            )}
+            <NavItem
+              onClick={() => handleClick(variant, key)}
+              isActive={isActive(variant)}
+              href={`/${key === 'home' ? '' : key}`}>
+              <IconButton
+                src={getIconSrc(key)}
+                alt={t(variant)}
+              />
+              <IconName>{t(variant)}</IconName>
+            </NavItem>
           </React.Fragment>
         )
       })}

@@ -42,7 +42,7 @@ export function AccountHistoryViewer({
             filteredHistory.map((item) => (
               <SlimContainer key={item.transactionUniqueNo}>
                 <AccountHistoryContainer>
-                  <span>{item.showDate && formatDate(item.date)}</span>
+                  {item.showDate && <span>{formatDate(item.date)}</span>}
                   <AccountHistoryContent>
                     <TitleContainer>
                       <HeaderTitle>

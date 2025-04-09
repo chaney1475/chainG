@@ -23,24 +23,37 @@ export const Card = styled(Link)`
   background-color: ${({ theme }) => theme.color.secondary};
 `
 
+export const DefaultLabel = styled.div`
+  ${({ theme }) => theme.typography.styles.description};
+  color: ${({ theme }) => theme.color.text.low};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 export const CardDescription = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: right;
+  text-align: right;
   width: 100%;
-  ${({ theme }) => theme.typography.styles.cardDescription}
+  nowrap
+  ${({ theme }) => theme.typography.styles.default}
   background-color: ${({ theme }) => theme.color.background.white};
-  white-space: pre-line;
+  white-space: nowrap;
+  color: ${({ theme }) => theme.color.text.regular};
 `
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
   flex: 1;
-  padding: 0 20px;
-  width: 100%;
+  margin: 0 20px;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0px 0px 20px 0px rgba(118, 118, 118, 0.25);
+
   > div {
     display: flex;
     flex: 1;

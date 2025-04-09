@@ -92,13 +92,47 @@ export const ImageContainer = styled.div`
   justify-content: center;
   width: 100%;
   > div {
-    position: absolute;
-    top: -150px;
-    border-radius: 10px;
-    background-color: ${({ theme }) => theme.color.background.white};
-    margin: auto;
-    padding: 1rem 0;
-    width: 80%;
-    flex-wrap: wrap;
   }
+`
+
+export const HomeUserTileContainer = styled.div`
+  position: absolute;
+  top: -220px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.color.background.white};
+  margin: auto;
+  padding: 1rem 0;
+  width: 80%;
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: auto;
+  background-color: rgba(256, 256, 256, 0.5) !important;
+`
+
+export const DefaultHomeContents = styled.div`
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  border: 1px solid transparent;
+  flex: 1;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  color: ${({ theme }) => theme.color.text.low};
+  ${({ theme }) => theme.typography.styles.topHeader}
+  background-color: ${({ theme }) => theme.color.background.white};
+  box-shadow: 0px 0px 20px 0px rgba(118, 118, 118, 0.25);
+
+  overflow: hidden;
+  transition:
+    opacity 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  & > img {
+    margin-left: auto;
+  }
+  cursor: pointer;
 `

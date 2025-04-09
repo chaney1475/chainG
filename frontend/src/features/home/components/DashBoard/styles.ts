@@ -46,7 +46,7 @@ export const CardContainer = styled.div`
   display: flex;
   gap: 1rem;
   width: 100%;
-  padding: 0 20px 0 0px;
+  padding: 0 0px 0 0px;
 `
 
 export const StyledButton = styled.button<{ isSelected: boolean }>`
@@ -166,8 +166,18 @@ export const ButtonContainer = styled.div`
   display: flex;
   gap: 0.5rem;
   width: 100%;
+  margin-bottom: 0.5rem;
 `
 export const Container = styled.div`
   margin: 1rem 0;
   padding: 0 20px;
+  > div {
+    padding-bottom: 2rem;
+  }
+`
+export const LifeContainer = styled.div`
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `

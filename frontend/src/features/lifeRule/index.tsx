@@ -16,7 +16,7 @@ import { useAppSelector } from '@/hooks'
 import { setLifeRules } from '@/store/slices/lifeRuleSlice'
 import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { RootState } from '@/store/store'
-import { Container } from '@/styles/styles'
+import { Container, PaddingContainer } from '@/styles/styles'
 
 import { LifeRuleList } from './components/LifeRuleList'
 import { NoticeBar } from './components/NoticeBar'
@@ -82,7 +82,7 @@ export function LifeRulePage() {
         {isEmpty && (
           <EmptyContainer>
             <Image
-              src={'/images/lifeRule/update.svg'}
+              src={'/icons/button-modify.svg'}
               alt={'생활규칙 수정아이콘'}
               width={80}
               height={80}

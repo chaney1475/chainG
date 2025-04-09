@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { redirect } from 'next/dist/server/api-utils'
 import Image from 'next/image'
 
 import { BottomNavigation } from '@/components'
 import {
-  Container,
   ContentWrapper,
   HeaderContainer,
   HomeMain,
   MainImageContainer,
 } from '@/styles/styles'
 import { useMorning } from '@/utils/formatTime'
+
+import { Container } from './styles'
 
 export function HomeLayout({
   header,
@@ -51,13 +53,16 @@ export function HomeLayout({
   return (
     <>
       <Container>
-        <MainImageContainer>
+        <MainImageContainer isMorning={morning}>
           {morning ? (
             <Image
               src={'/images/home/home-morning.svg'}
               alt="home-main"
               fill
-              style={{ objectFit: 'contain', objectPosition: 'top' }}
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'top',
+              }}
             />
           ) : (
             <Image

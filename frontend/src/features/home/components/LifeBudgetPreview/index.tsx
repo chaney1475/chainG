@@ -4,14 +4,14 @@ import { IconButton } from '@/components'
 import { useAppSelector } from '@/hooks'
 import {
   DefaultContainer,
-  PaddingContainer,
+  DefaultRegularTitle,
   SlimContainer,
   Title,
   TitleContainer,
 } from '@/styles/styles'
 import { formatMoney } from '@/utils/format'
 
-import { CardDescription, Container } from './styles'
+import { CardDescription, Container, DefaultLabel } from './styles'
 
 export function LifeBudgetPreview() {
   const router = useRouter()
@@ -21,33 +21,34 @@ export function LifeBudgetPreview() {
   )
   return (
     <Container onClick={() => router.push('/budget/living')}>
-      <SlimContainer>
+      <DefaultContainer>
         <TitleContainer>
-          <Title>생활비</Title>
+          <DefaultRegularTitle>생활비</DefaultRegularTitle>
           <IconButton
             src={'/icons/arrow-right.svg'}
             alt="생활비"
             onClick={() => router.push('/budget/living')}
           />
         </TitleContainer>
-      </SlimContainer>
+      </DefaultContainer>
       {livingAccountPaymentHistory.length > 2 && (
         <DefaultContainer>
           <SlimContainer>
             <TitleContainer>
-              <CardDescription>
+              <DefaultLabel>
                 {livingAccountPaymentHistory[0].transactionSummary}
-              </CardDescription>
+              </DefaultLabel>
               <CardDescription>
                 {formatMoney(livingAccountPaymentHistory[0].transactionBalance)}
               </CardDescription>
             </TitleContainer>
           </SlimContainer>
+          <hr />
           <SlimContainer>
             <TitleContainer>
-              <CardDescription>
+              <DefaultLabel>
                 {livingAccountPaymentHistory[1].transactionSummary}
-              </CardDescription>
+              </DefaultLabel>
               <CardDescription>
                 {formatMoney(livingAccountPaymentHistory[1].transactionBalance)}
               </CardDescription>

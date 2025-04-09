@@ -24,7 +24,7 @@ export const SwitchContainer = styled.div<{ steps: number }>`
   justify-content: space-between;
   margin: auto;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.2);
-  padding: 4px 0rem;
+  padding: 4px;
 `
 
 export const SwitchText = styled.span<{ selected: boolean }>`
@@ -42,7 +42,7 @@ export const SwitchText = styled.span<{ selected: boolean }>`
 
 export const SwitchButton = styled.div<{ step: number }>`
   position: absolute;
-  left: ${({ step }) => `calc(${8 + step * 80}px)`};
+  left: ${({ step }) => `calc(${4 + step * 80}px)`};
   width: 80px;
   height: 2.25rem;
   background-color: ${({ theme }) => theme.color.primary};

@@ -148,6 +148,45 @@ export const Title = styled.div`
     }
   }
 `
+export const DefaultRegularTitle = styled.div`
+  ${({ theme }) => theme.typography.styles.defaultHighlight};
+  color: ${({ theme }) => theme.color.text.regular};
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.2s ease-out forwards;
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
+
+export const DefaultLowTitle = styled.div`
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.low};
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.2s ease-out forwards;
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
 
 export const TitleContainer = styled.div`
   display: flex;
@@ -300,10 +339,16 @@ export const ContentWrapper = styled.div`
   flex-1;
   z-index: 1;
 `
-export const MainImageContainer = styled.div`
+export const MainImageContainer = styled.div<{ isMorning: boolean }>`
   position: absolute;
-  top: 30;
   left: 0;
   width: 100%;
   height: 100%;
+  background: linear-gradient(
+    to bottom,
+    ${({ isMorning }) => (isMorning ? '#48C5A6' : '#36CCC1')} 70%,
+    ${({ isMorning }) => (isMorning ? '#48C5A6' : '#36CCC1')} 85%,
+    white 89%,
+    white 100%
+  );
 `

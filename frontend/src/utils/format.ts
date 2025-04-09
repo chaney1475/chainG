@@ -3,7 +3,7 @@ export const formatMoney = (value: string | number): string => {
   const formattedValue = new Intl.NumberFormat('ko-KR').format(
     Number(numericValue),
   )
-  return `${formattedValue} 원`
+  return `${formattedValue}원`
 }
 
 export const parseMoney = (value: string): string => {
@@ -15,4 +15,3 @@ export const formatTransactionDate = (date: string) =>
 
 export const formatTransactionTime = (time: string) =>
   `${time.slice(0, 2)} : ${time.slice(2, 4)}`
-
