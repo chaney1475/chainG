@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 
 import * as Dialog from '@radix-ui/react-dialog'
+import { useRouter } from 'next/navigation'
 
 import { setErrorModalVisible } from '@/store/slices/errorModalSlice'
 import { RootState } from '@/store/store'
@@ -18,6 +19,7 @@ import {
 
 export default function ErrorModal() {
   const { t } = useTranslation()
+  const router = useRouter()
   const {
     isVisible,
     modalTitle,
@@ -48,7 +50,10 @@ export default function ErrorModal() {
               <ConfirmButton
                 label={secondaryButtonType}
                 variant={'prev'}
-                onClick={() => dispatch(setErrorModalVisible(false))}
+                onClick={() => {
+                  dispatch(setErrorModalVisible(false))
+                  router.replace('/')
+                }}
               />
             )}
             {primaryButtonType && (
