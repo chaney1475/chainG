@@ -5,8 +5,10 @@ import {
   Account,
   AccountDetail,
   AccountPaymentHistoryRequest,
+  AccountPaymentHistoryResponse,
   FintechResponseError,
   TransferRequest,
+  TransferResponse,
 } from '@/types/fintech'
 import { handleFintechError } from '@/utils/error/handleFintechError'
 
@@ -15,10 +17,10 @@ import { getRequest, postRequest } from './api'
 const fintechApi = axios.create({
   baseURL: `https://finopenapi.ssafy.io/ssafy/api/vi/edu`,
   // baseURL: `${process.env.NEXT_PUBLIC_FINTECH_BASEURL}:
- // timeout: 5000,
- // headers: {
- //   'Content-Type': 'application/json',
- // },
+  // timeout: 5000,
+  // headers: {
+  //   'Content-Type': 'application/json',
+  // },
 })
 
 fintechApi.interceptors.request.use(
@@ -126,3 +128,18 @@ export const createCard = async ({ accountNo }: { accountNo: string }) =>
   await postRequest<{ id: string }>('/card', {
     accountNo,
   })
+
+//simple/transfer
+export const simpleTransfer = async (transferRequest: TransferRequest) =>
+  await postRequest<TransferResponse>(
+    '/fintech/simple/transfer',
+    transferRequest,
+  )
+//simple/transfer
+export const simpleHistory = async (
+  accountPaymentHistoryRequest: AccountPaymentHistoryRequest,
+) =>
+  await postRequest<AccountPaymentHistoryResponse>(
+    '/fintech/account/history',
+    accountPaymentHistoryRequest,
+  )

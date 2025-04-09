@@ -1,4 +1,4 @@
-import { transfer } from '@/apis/fintech'
+import { simpleTransfer } from '@/apis/fintech'
 import { Transfer, TransferRequest } from '@/types/fintech'
 
 import { useFintechTime } from './useFintechTime'
@@ -34,7 +34,7 @@ export const useTransfer = ({
         withdrawalTransactionSummary ?? '(수시입출금) : 출금(이체)',
     }
 
-    const response = await transfer(request)
+    const response = await simpleTransfer(request)
     return response
   }
 }

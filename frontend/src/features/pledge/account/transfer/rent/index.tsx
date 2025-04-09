@@ -1,18 +1,19 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
+import { depositToRentAccount } from '@/apis/payment'
 import { getMySummary } from '@/apis/user'
-import { InputBox, TitleHeaderLayout } from '@/components'
-import { useAppSelector, useTransfer } from '@/hooks'
+import { Modal, TitleHeaderLayout } from '@/components'
+import { useAppSelector } from '@/hooks'
 import { setSummary } from '@/store/slices/userSlice'
-import { ButtonVariant } from '@/types/ui'
+import { DefaultLabel, Label, ShowCenterBox } from '@/styles/styles'
+import { formatMoney } from '@/utils/format'
 
 const Container = styled.div`
   display: flex;
@@ -21,36 +22,17 @@ const Container = styled.div`
   padding: 16px 0;
 `
 
-interface WithdrawForm {
-  myAccountNo: string
-  balance: string
-}
-
 export function TransferToRentPage() {
+  const searchParams = useSearchParams()
+  const month = searchParams.get('month')
   const { t } = useTranslation()
   const router = useRouter()
   const dispatch = useDispatch()
-
   const summary = useAppSelector((state) => state.user.summary)
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<WithdrawForm>({
-    defaultValues: {
-      myAccountNo: summary.myAccountNo,
-      balance: '',
-    },
-  })
 
   useEffect(() => {
     if (summary.id == 0) {
       fetchSummary()
-    } else if (summary.myAccountNo) {
-      setValue('myAccountNo', summary.myAccountNo)
     }
   }, [summary])
 
@@ -60,109 +42,65 @@ export function TransferToRentPage() {
       dispatch(setSummary(response.data))
     }
   }
-  const livingAccountNo = useAppSelector(
-    (state) => state.livingBudget.livingAccountNo,
-  )
-  if (!livingAccountNo) {
-    router.push('/budget/living/create')
-  }
-
+  const myAccountNo = useAppSelector((state) => state.user.summary.myAccountNo)
   const userName = useAppSelector((state) => state.user.user.nickname)
-  const myAccountNo = watch('myAccountNo')
-  const balance = watch('balance')
-
-  const transfer = useTransfer({
-    depositAccountNo: myAccountNo,
-    transactionBalance: balance,
-    withdrawalAccountNo: livingAccountNo,
-    depositTransactionSummary: userName + '의 생활비 꺼내기',
-    withdrawalTransactionSummary: userName + '의 생활비 꺼내기',
-  })
+  const rent = useAppSelector((state) => state.contract.contract.rent)
+  const user = useAppSelector((state) => state.user.user)
+  const userAmount =
+    rent.userPaymentInfo.find((item) => item.userId == user.id)?.amount ?? 0
   const [next, setNext] = useState(false)
-  const livingAccountDetail = useAppSelector(
-    (state) => state.livingBudget.livingAccountDetail,
-  )
 
-  const disabled =
-    !livingAccountNo ||
-    !balance ||
-    !myAccountNo ||
-    livingAccountDetail.accountBalance < balance
   useEffect(() => {
-    if (next && !disabled) {
-      handleSubmit(onSubmit)()
+    if (next) {
+      onSubmit()
     }
   }, [next])
 
   const handleNext = () => {
     setNext(true)
   }
+  const [success, setSuccess] = useState(false)
   const hasTransfered = useRef(false)
-  const onSubmit = async (data: WithdrawForm) => {
+
+  const onSubmit = async () => {
     if (hasTransfered.current) return
     hasTransfered.current = true
-
-    const response = await transfer()
-    console.log('success', response)
-    if (response) {
-      router.push('/budget/living')
-    }
+    setSuccess(
+      await depositToRentAccount({
+        month: Number(month),
+        withdrawalAccountNo: myAccountNo,
+        transactionBalance: Number(userAmount),
+      }),
+    )
+    hasTransfered.current = false
   }
 
-  const handleMyAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.replace(/[^0-9]/g, '')
-    setValue('myAccountNo', newValue)
-    setNext(false)
-  }
-
-  const balanceRegister = register('balance', {
-    required: t('livingBudget.deposit.balance.error.required'),
-  })
-
-  const myAccountNoRegister = register('myAccountNo', {
-    required: t('livingBudget.deposit.myAccountNo.error.required'),
-    validate: (value) => {
-      if (value === livingAccountNo) {
-        return t('livingBudget.deposit.myAccountNo.error.same')
-      }
-      return true
-    },
-  })
   return (
     <TitleHeaderLayout
-      title={t('livingBudget.withdraw.title')}
-      label={t('livingBudget.withdraw.label')}
-      header={t('livingBudget.withdraw.header')}
-      onClick={handleNext}
-      buttonVariant={disabled ? ButtonVariant.disabled : ButtonVariant.next}>
+      title={t('payment.transfer.rent.title')}
+      label={t('payment.transfer.rent.label')}
+      header={t('payment.transfer.rent.header')}
+      onClick={handleNext}>
       <Container>
-        <InputBox
-          label={t('livingBudget.withdraw.myAccountNo.label')}
-          id="myAccountNo"
-          type="text"
-          value={myAccountNo}
-          onChange={handleMyAccountNoChange}
-          ref={myAccountNoRegister.ref}
-          placeholder={t('livingBudget.withdraw.myAccountNo.placeholder')}
-          error={errors.myAccountNo}
-        />
-
-        <InputBox
-          id="balance"
-          name="balance"
-          label={t('livingBudget.withdraw.balance.label')}
-          type="money"
-          value={balance}
-          onChange={(e) => {
-            const numeric = e.target.value.replace(/[^0-9]/g, '')
-            setValue('balance', numeric)
-            setNext(false)
-          }}
-          ref={balanceRegister.ref}
-          placeholder={t('livingBudget.withdraw.balance.placeholder')}
-          error={errors.balance}
-        />
+        <Label> {t('payment.transfer.rent.unpaid', { month })}</Label>
+        <ShowCenterBox>
+          <DefaultLabel>{formatMoney(userAmount)}</DefaultLabel>
+        </ShowCenterBox>
       </Container>
+      <Modal
+        open={success}
+        onOpenChange={setSuccess}
+        title={t('payment.transfer.rent.success.title')}
+        description={t('payment.transfer.rent.success.description', {
+          userName,
+          balance: userAmount,
+        })}
+        confirmText={t('confirm')}
+        onConfirm={() => {
+          setSuccess(false)
+          router.push('/pledge')
+        }}
+      />
     </TitleHeaderLayout>
   )
 }
