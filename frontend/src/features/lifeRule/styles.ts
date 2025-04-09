@@ -45,7 +45,6 @@ export const EmptyContainer = styled.div`
 
 export const TitleContainer = styled.div`
   text-align: center;
-  border: 1px solid purple;
 `
 
 export const Description = styled.p`

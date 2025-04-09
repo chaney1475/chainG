@@ -54,5 +54,5 @@ export const ImageContainer = styled.div`
 export const NoticeContainer = styled.div`
   display: flex;
   flex-direction: flex-end;
-  gap: 32px;
+  gap: 16px;
 `

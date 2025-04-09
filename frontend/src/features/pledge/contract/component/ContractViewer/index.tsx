@@ -72,16 +72,22 @@ export function ContractViewer({
       <DefaultLabel>{t('contract.detail.utilityDescription')}</DefaultLabel>
       <hr />
       <DefaultContainer>
-        <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
-        <ShowBox>신한  {contract.rent.rentAccountNo}</ShowBox>
+        <TitleContainer>
+          <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
+        </TitleContainer>
+        <ShowBox>신한 {contract.rent.rentAccountNo}</ShowBox>
       </DefaultContainer>
       <DefaultContainer>
-        <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
-        <ShowBox>신한  {contract.rent.ownerAccountNo}</ShowBox>{' '}
+        <TitleContainer>
+          <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
+        </TitleContainer>
+        <ShowBox>신한 {contract.rent.ownerAccountNo}</ShowBox>
       </DefaultContainer>
       {contract.utility.cardId && (
         <DefaultContainer>
-          <HeaderTitle>{t('contract.detail.utilityCard')}</HeaderTitle>
+          <TitleContainer>
+            <HeaderTitle>{t('contract.detail.utilityCard')}</HeaderTitle>
+          </TitleContainer>
           <ShowBox>{t('fintech.cardName')}</ShowBox>
         </DefaultContainer>
       )}
