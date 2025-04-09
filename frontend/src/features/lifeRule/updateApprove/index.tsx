@@ -146,6 +146,8 @@ export function LifeRuleUpdateApprovePage() {
             })
 
             setMergedLifeRules(mergedRules)
+          } else {
+            dispatch(setHomeOverviewLifeRuleApproved(false))
           }
         }
       } catch (error) {
