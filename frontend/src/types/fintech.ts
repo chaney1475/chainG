@@ -32,8 +32,7 @@ export interface AccountPaymentHistoryRequest {
   orderByType: string
 }
 export interface AccountPaymentHistoryResponse {
-  Header: FintechResponseHeader
-  REC: {
+  data: {
     totalCount: string
     list: AccountPaymentHistory[]
   }
