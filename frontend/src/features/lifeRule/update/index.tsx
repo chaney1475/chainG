@@ -259,14 +259,14 @@ export function LifeRuleUpdatePage() {
               )
             })}
           </LifeRuleUpdateList>
-
-          <Image
-            onClick={handleCreateNew}
-            src="/images/lifeRule/create.svg"
-            alt="create"
-            width={46}
-            height={46}
-          />
+          <div onClick={handleCreateNew}>
+            <Image
+              src="/images/lifeRule/create.svg"
+              alt="create"
+              width={46}
+              height={46}
+            />
+          </div>
         </FullMain>
       </FormProvider>
 

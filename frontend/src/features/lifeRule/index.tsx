@@ -76,7 +76,7 @@ export function LifeRulePage() {
       />
       <FullMain>
         {/* 공지사항 보여주는 애 */}
-        {isEmpty && homeOverview?.isLifeRuleApproved && (
+        {!isEmpty && homeOverview?.isLifeRuleApproved && (
           <NoticeBar message={t('lifeRule.updateMessage')} />
         )}
         {isEmpty && (
