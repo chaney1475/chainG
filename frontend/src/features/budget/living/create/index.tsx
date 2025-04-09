@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
-import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 import { createAccount } from '@/apis/fintech'
 import { saveAccountAndNotify } from '@/apis/livingBudget'
 import { Modal, TitleHeaderLayout } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setLivingAccountNo } from '@/store/slices/livingBudgetSlice'
 import {
@@ -18,7 +19,7 @@ import {
   ValidationMessage,
 } from '@/styles/styles'
 import { ButtonVariant } from '@/types/ui'
-import { useRouter } from 'next/navigation'
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;

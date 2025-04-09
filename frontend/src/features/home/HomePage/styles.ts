@@ -48,9 +48,11 @@ export const ImageContainer = styled.div`
   position: relative;
   > div {
     position: absolute;
-    bottom: 0;
+    bottom: 38px;
+    border-radius: 10px;
     background-color: ${({ theme }) => theme.color.background.white};
     margin: auto;
+    padding: 1rem 0;
   }
 `
 export const NoticeContainer = styled.div`

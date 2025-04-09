@@ -15,7 +15,7 @@ import { resetStore } from '@/store/store'
 import { SimpleMain } from '@/styles/styles'
 
 import { Account, Profile } from './components'
-import { Container, FullMain } from './styles'
+import { Container } from './styles'
 
 export function MyPage() {
   const dispatch = useDispatch()

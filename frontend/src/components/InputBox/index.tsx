@@ -3,8 +3,7 @@
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { FieldError } from 'react-hook-form'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { ValidationItem } from '@/types/ui'
 import { formatMoney, parseMoney } from '@/utils/format'
 

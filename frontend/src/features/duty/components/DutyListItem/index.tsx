@@ -2,8 +2,7 @@
 
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { dutyCategoryList } from '@/constants/duty'
 import { Duty } from '@/types/duty'
 import { User } from '@/types/user'

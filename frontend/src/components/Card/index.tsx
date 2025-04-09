@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
-
 import { createCard } from '@/apis/fintech'
+import { Image } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import {

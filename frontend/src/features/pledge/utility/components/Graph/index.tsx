@@ -50,7 +50,7 @@ export const Graph: React.FC<Props> = ({ data }) => {
 
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(weekList, (d) => d.amount)!])
+      .domain([0, weekList ? d3.max(weekList, (d) => d.amount) || 0 : 0])
       .range([height, 0])
 
     svg.append('g').call(d3.axisLeft(y))

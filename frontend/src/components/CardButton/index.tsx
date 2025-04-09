@@ -1,7 +1,6 @@
 'use client'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { CardItem } from '@/types/ui'
 
 import { Card, CardContainer, CardDescription, Container } from './styles'

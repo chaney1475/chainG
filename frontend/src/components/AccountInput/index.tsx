@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
-import Image from 'next/image'
 
 import { createAccount } from '@/apis/fintech'
+import { Image } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setRentAccountConfirm, updateRent } from '@/store/slices/contractSlice'
 import {

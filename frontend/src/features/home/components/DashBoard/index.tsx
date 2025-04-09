@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import {
   CenterContainer,

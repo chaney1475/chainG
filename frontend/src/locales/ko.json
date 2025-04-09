@@ -134,10 +134,10 @@
     "title": "방 만들기",
     "header": "함께 살 방을\n만들어볼까요?",
     "maxParticipants": {
-      "label": "참여인원"
+      "label": "참여인원은 10명까지 가능해요"
     },
     "groupName": {
-      "label": "방 이름",
+      "label": "방 이름을 입력해주세요",
       "placeholder": "방 이름을 입력해주세요",
       "error": {
         "required": "방 이름을 입력해주세요",

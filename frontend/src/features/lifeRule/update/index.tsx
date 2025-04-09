@@ -5,10 +5,10 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { updateLifeRule } from '@/apis/lifeRule'
+import { Image } from '@/components'
 import { Modal } from '@/components/'
 import { ConfirmButton } from '@/components/ConfirmButton'
 import { TopHeader } from '@/components/TopHeader'

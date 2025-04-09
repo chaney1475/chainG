@@ -2,10 +2,10 @@
 
 import { useTranslation } from 'react-i18next'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { TitleHeaderLayout } from '@/components'
+import { Image } from '@/components'
 import { IconButton } from '@/components/IconButton'
 import { Label } from '@/components/InputBox/styles'
 import { HeaderButton } from '@/components/TopHeader/styles'
@@ -40,7 +40,7 @@ export function ShareInviteCodePage() {
       <div>
         <ImageContainer>
           <Image
-            src="/images/group/share-invite-code.png"
+            src="/images/group/invite-code.svg"
             alt="inviteCode"
             width={106}
             height={105}

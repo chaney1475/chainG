@@ -53,7 +53,7 @@ export const NoticeTitle = styled.span`
   display: flex;
   ${({ theme }) => theme.typography.styles.topHeader};
   color: ${({ theme }) => theme.color.text.regular};
-  gap: 8px;
+  gap: 4px;
   & + div {
     ${({ theme }) => theme.typography.styles.inputBoxTitle};
     color: ${({ theme }) => theme.color.text.low};

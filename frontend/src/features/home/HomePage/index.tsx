@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { getContract, getContractMembers, getGroup } from '@/apis/group'
 import { getUnreadNotificationCount } from '@/apis/notification'
 import { getHomeOverview, getUserInfo } from '@/apis/user'
 import { CardButton, IconButton, UserItem } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
@@ -29,6 +29,7 @@ import {
 } from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
+import { useMorning } from '@/utils/formatTime'
 
 import { ConfirmedHomeContents, HomeLayout } from '../components'
 import {
@@ -55,6 +56,9 @@ export function HomePage() {
   }, [accessToken, router, isMounted])
 
   const user = useAppSelector((state) => state.user.user)
+
+  const morning = useMorning()
+
   useEffect(() => {
     if (!user.id) return
     console.log('user', user)
@@ -362,13 +366,16 @@ export function HomePage() {
         <GroupName>{group.name}</GroupName>
         {homeDescription}
       </Main>
-
       <ImageContainer>
         <Image
-          src="/images/home/home-main.png"
+          src={
+            morning
+              ? '/images/home/home-morning.svg'
+              : '/images/home/home-night.svg'
+          }
           alt="home-main"
-          width={300}
-          height={300}
+          width={310}
+          height={500}
           style={{ objectFit: 'cover' }}
         />
         <UserTileContainer>
