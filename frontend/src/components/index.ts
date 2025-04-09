@@ -27,3 +27,4 @@ export { BudgetCalendar } from '../features/budget/living/component/BudgetCalend
 export { FullNavLayout } from './layouts/FullNavLayout'
 export { AccountHistoryViewer } from './AccountHistoryViewer'
 export { ModalConfirmButton } from './ModalConfirmButton'
+export { Image } from './Images'

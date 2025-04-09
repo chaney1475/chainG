@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import Image from 'next/image'
+
+import { Image } from '@/components'
 
 export const Container = styled.div`
   display: flex;

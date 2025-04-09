@@ -4,10 +4,13 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { createTransferPDF } from '@/apis/payment'
+import { ConfirmButton, Image } from '@/components'
+import { ButtonContainer } from '@/components/AccountHistoryViewer/styles'
 import { useAppSelector } from '@/hooks/useAppSelector'
+import { TitleContainer } from '@/styles/styles'
 import { formatMoney } from '@/utils/format'
 
 import { BoxContainer } from '../../../styles'
@@ -24,11 +27,17 @@ export function Payment() {
   const month = Number(
     rentInfo?.monthList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
   )
-
+  const contractId = useAppSelector((state) => state.contract.contract.id)
   const year = new Date().getFullYear()
   const firstDay = new Date(year, month - 1, 1)
   const lastDay = new Date(year, month, 0)
-
+  const savePdf = async () => {
+    const response = await createTransferPDF(contractId)
+    if (response.success) {
+      const url = response.data.presignedUrl
+      window.open(url, '_blank')
+    }
+  }
   return (
     <>
       <BoxContainer>
@@ -50,6 +59,10 @@ export function Payment() {
             </Periond>
           </TextContainer>
         </ContentContainer>
+        <ConfirmButton
+          onClick={savePdf}
+          label="PDF로 저장하기"
+        />
       </BoxContainer>
     </>
   )

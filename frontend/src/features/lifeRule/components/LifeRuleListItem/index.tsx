@@ -2,8 +2,7 @@
 
 // import { useState } from 'react'
 // import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { LifeRule } from '@/types/lifeRule'
 
 import { CatrgoryIcon, Container, Content } from './styles'

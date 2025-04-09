@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { ContractStatus } from '@/types/contract'
 import { User } from '@/types/user'
 

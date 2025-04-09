@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -15,6 +14,7 @@ import {
   getContract,
 } from '@/apis/group'
 import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
@@ -93,8 +93,6 @@ export function ContractDetail() {
   }, [status])
 
   const approveContractWithAccountNo = async (data: { accountNo: string }) => {
-    console.log('approveContractWithAccountNo')
-    console.log(data)
     const success = await approveContract(contract.id, {
       accountNo: data.accountNo,
     })
@@ -208,7 +206,7 @@ export function ContractDetail() {
         <HeaderContainer>
           <ImageContainer>
             <Image
-              src="/images/contract/contract-detail.png"
+              src="/images/etc/confirmed.svg"
               alt="contract"
               width={68}
               height={87}
@@ -230,8 +228,16 @@ export function ContractDetail() {
         onConfirm={confirmModal}
         title={modalTitle}
         description={modalDescription}
-        image={useModifyModal ? '/images/contract/contract-detail.png' : ''}
-        confirmText={modalConfirmText}>
+        image={
+          useModifyModal
+            ? '/images/etc/contract-create.svg'
+            : '/images/etc/approved-default.svg'
+        }
+        confirmText={modalConfirmText}
+        onCancel={() => {
+          setOpenModal(false)
+          setShouldConfirm(false)
+        }}>
         {!useModifyModal && (
           <PaddingContainer>
             <InputBox

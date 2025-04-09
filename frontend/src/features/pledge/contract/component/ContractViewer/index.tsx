@@ -2,8 +2,14 @@
 
 import { useTranslation } from 'react-i18next'
 
-import { UserItem } from '@/components'
-import { DefaultContainer, ShowBox, TitleContainer } from '@/styles/styles'
+import { IconButton, UserItem } from '@/components'
+import { useAppSelector } from '@/hooks'
+import {
+  DefaultContainer,
+  Description,
+  ShowBox,
+  TitleContainer,
+} from '@/styles/styles'
 import { Contract, ContractRequest, RentUser } from '@/types/contract'
 import { formatMoney } from '@/utils/format'
 
@@ -30,6 +36,10 @@ export function ContractViewer({
       index === 0 ? String(user.name) : acc + ', ' + String(user.name),
     '',
   )
+  const group = useAppSelector((state) => state.group.group)
+  const leaderName = group.members.find(
+    (info) => info.id == group.leaderId,
+  )?.name
   const { t } = useTranslation()
   return (
     <Container>
@@ -75,13 +85,23 @@ export function ContractViewer({
         <TitleContainer>
           <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
         </TitleContainer>
-        <ShowBox>신한 {contract.rent.rentAccountNo}</ShowBox>
+        <ShowBox>
+          <DefaultLabel>
+            <IconButton
+              src="/icons/logo-bank.svg"
+              alt="copy"
+            />
+            {t('fintech.bankName')} {contract.rent.rentAccountNo} {leaderName}
+          </DefaultLabel>
+        </ShowBox>
       </DefaultContainer>
       <DefaultContainer>
         <TitleContainer>
           <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
         </TitleContainer>
-        <ShowBox>신한 {contract.rent.ownerAccountNo}</ShowBox>
+        <ShowBox>
+          {t('fintech.bankName')} {contract.rent.ownerAccountNo}
+        </ShowBox>
       </DefaultContainer>
       {contract.utility.cardId && (
         <DefaultContainer>

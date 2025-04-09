@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 
 import Flicking from '@egjs/react-flicking'
 import '@egjs/react-flicking/dist/flicking.css'
-import Image from 'next/image'
+
+import { Image } from '@/components'
 
 import {
   Card,

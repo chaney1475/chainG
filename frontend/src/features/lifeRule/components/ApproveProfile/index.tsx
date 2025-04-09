@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
-
 import { postNotApprovedIds } from '@/apis/lifeRule'
+import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setNotApprovedIds } from '@/store/slices/lifeRuleSlice'
 import { UserTileContainer } from '@/styles/styles'

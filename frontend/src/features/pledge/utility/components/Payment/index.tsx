@@ -4,9 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { createTransferPDF } from '@/apis/payment'
+import { ConfirmButton, Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 
 import { BoxContainer } from '../../../styles'
@@ -26,6 +27,7 @@ export function Payment() {
     utilityInfo?.weekList[0]?.month?.slice(5) ?? new Date().getMonth() + 1,
   )
   const weekOfMonth = Number(utilityInfo?.weekList[0]?.week ?? 1)
+  const contractId = useAppSelector((state) => state.contract.contract.id)
 
   // 해당 월의 첫날
   const firstDayOfMonth = new Date(year, month - 1, 1)
@@ -51,7 +53,13 @@ export function Payment() {
   // 해당 주의 일요일 계산 (월요일 + 6일)
   const sundayOfTargetWeek = new Date(mondayOfTargetWeek)
   sundayOfTargetWeek.setDate(mondayOfTargetWeek.getDate() + 6)
-
+  const savePdf = async () => {
+    const response = await createTransferPDF(contractId)
+    if (response.success) {
+      const url = response.data.presignedUrl
+      window.open(url, '_blank')
+    }
+  }
   return (
     <>
       <BoxContainer>
@@ -76,6 +84,10 @@ export function Payment() {
             </Periond>
           </TextContainer>
         </ContentContainer>
+        <ConfirmButton
+          onClick={savePdf}
+          label="PDF로 저장하기"
+        />
       </BoxContainer>
     </>
   )

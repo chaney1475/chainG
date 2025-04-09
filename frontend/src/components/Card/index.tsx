@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
-
 import { createCard } from '@/apis/fintech'
+import { Image, Modal } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import {
@@ -35,6 +34,7 @@ export function Card({ onChange }: AccountInputProps) {
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
   const isLeader = useIsLeader()
   const [next, setNext] = useState(false)
+  const [open, setOpen] = useState(false)
   const disabled = cardConfirm || !isLeader
   const [buttonText, setButtonText] = useState(t('contract.utility.button'))
   useEffect(() => {
@@ -53,6 +53,7 @@ export function Card({ onChange }: AccountInputProps) {
           cardId: Number(cardId),
         }),
       )
+      setOpen(true)
       dispatch(setCardConfirm(true))
     }
   }
@@ -89,6 +90,16 @@ export function Card({ onChange }: AccountInputProps) {
               </ValidationMessage>
             </ValidationContainer>
           )}
+          <Modal
+            open={open}
+            onOpenChange={setOpen}
+            onConfirm={() => {
+              setOpen(false)
+            }}
+            title="카드 개설"
+            description="카드 개설이 완료되었어요"
+            image="/images/etc/logo-card-big.svg"
+          />
         </DefaultContainer>
       )}
     </>

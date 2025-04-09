@@ -3,7 +3,12 @@
 import { useTranslation } from 'react-i18next'
 
 import { UserItem } from '@/components'
-import { DefaultContainer, ShowBox, TitleContainer } from '@/styles/styles'
+import {
+  CenterContainer,
+  DefaultContainer,
+  ShowBox,
+  TitleContainer,
+} from '@/styles/styles'
 import { Contract, ContractRequest, RentUser } from '@/types/contract'
 import { formatMoney } from '@/utils/format'
 
@@ -69,7 +74,9 @@ export function ContractViewer({
           </TitleContainer>
         ))}
       </UserContainer>
-      <DefaultLabel>{t('contract.detail.utilityDescription')}</DefaultLabel>
+      <CenterContainer>
+        <DefaultLabel>{t('contract.detail.utilityDescription')}</DefaultLabel>
+      </CenterContainer>
       <hr />
       <DefaultContainer>
         <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>

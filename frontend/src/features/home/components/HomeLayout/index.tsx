@@ -1,6 +1,5 @@
-import Image from 'next/image'
-
 import { BottomNavigation } from '@/components'
+import { Image } from '@/components'
 import { Container, HeaderContainer, SimpleMain } from '@/styles/styles'
 
 export function HomeLayout({

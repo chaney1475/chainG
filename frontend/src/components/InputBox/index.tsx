@@ -3,8 +3,7 @@
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { FieldError } from 'react-hook-form'
 
-import Image from 'next/image'
-
+import { Image } from '@/components'
 import { ValidationItem } from '@/types/ui'
 import { formatMoney, parseMoney } from '@/utils/format'
 
@@ -132,7 +131,7 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
             {Object.entries(validations || {}).map(([key, validation]) => (
               <ValidationContainer key={key}>
                 <Image
-                  src={`/icons/validation-${validation.isValid ? 'true' : 'false'}.svg`}
+                  src={`/icons/button-${validation.isValid ? 'valid' : 'invalid'}.svg`}
                   alt={
                     validation.isValid ? '유효성 검사 통과' : '유효성 검사 실패'
                   }

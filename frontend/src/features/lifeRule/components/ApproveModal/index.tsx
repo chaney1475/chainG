@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import * as Dialog from '@radix-ui/react-dialog'
-import Image from 'next/image'
 
+import { Image } from '@/components'
 import { ConfirmButton } from '@/components/ConfirmButton'
 
 import {
