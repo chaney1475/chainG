@@ -1,5 +1,6 @@
-import { PledgeMenu } from '@/types/ui'
 import styled from '@emotion/styled'
+
+import { PledgeMenu } from '@/types/ui'
 
 export const FullMain = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ export const FullMain = styled.div`
   gap: 10px;
   padding: 20px;
   overflow-y: auto;
-  `
+`
 export const Container = styled.div<{ variant: PledgeMenu }>`
   display: flex;
   flex-direction: column;
@@ -41,14 +42,11 @@ export const Container = styled.div<{ variant: PledgeMenu }>`
     }
   }}
 
-
-
   @media (min-width: 768px) {
     width: 50%;
     justify-content: center;
     margin: 0 auto;
   }
-
 `
 export const BoxContainer = styled.div`
   display: flex;
@@ -57,13 +55,13 @@ export const BoxContainer = styled.div`
   justify-content: center;
   width: 100%;
   border-radius: 16px;
-  padding: 20px 20px 40px;
+  padding: 20px 20px 20px;
   background-color: ${({ theme }) => theme.color.background.white};
-` 
+`
 
 export const BottomContainer = styled.div`
   display: flex;
   flex: 1;
   min-height: 40px;
   width: 100%;
-  `
+`

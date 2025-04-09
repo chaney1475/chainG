@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import NextImage, { ImageProps as NextImageProps } from 'next/image'
 
@@ -20,6 +20,9 @@ export const Image = ({
   const handleImageError = () => {
     setImgSrc(errorSrc)
   }
+  useEffect(() => {
+    setImgSrc(src)
+  }, [src])
 
   return (
     <NextImage

@@ -261,7 +261,7 @@ export function HomePage() {
       item: [
         {
           url: '/contract/create',
-          image: '/images/group/group-create.svg',
+          image: '/images/etc/contract-create.svg',
           title: t('contract.detail.none.button'),
           description: t('contract.detail.none.description', {
             value: homeOverview?.groupName,
@@ -274,7 +274,7 @@ export function HomePage() {
       item: [
         {
           url: '/contract/create',
-          image: '/images/group/group-create.svg',
+          image: '/images/etc/contract-create.svg',
           title: t('contract.detail.draft.button'),
           description: t('contract.detail.draft.description'),
         },
@@ -285,7 +285,7 @@ export function HomePage() {
       item: [
         {
           url: '/contract/detail',
-          image: '/images/group/group-create.svg',
+          image: '/images/etc/contract-create.svg',
           title: t('contract.detail.is_contract_approved.cardButton'),
           description: t('contract.detail.is_contract_approved.description'),
         },
@@ -296,7 +296,7 @@ export function HomePage() {
       item: [
         {
           url: '/contract/detail',
-          image: '/images/group/group-create.svg',
+          image: '/images/etc/contract-create.svg',
           title: t('contract.detail.pending.button'),
           description: t('contract.detail.pending.description'),
         },
@@ -307,7 +307,7 @@ export function HomePage() {
       item: [
         {
           url: '/contract/detail',
-          image: '/images/group/group-create.svg',
+          image: '/images/etc/contract-create.svg',
           title: t('contract.detail.review_required.button'),
           description: t('contract.detail.review_required.description'),
         },
