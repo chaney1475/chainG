@@ -45,6 +45,7 @@ export function LifeRuleUpdatePage() {
         id: rule.id,
         variant: 'DEFAULT',
         actionType: 'DEFAULT',
+        category: 'OTHER',
         content: rule.content,
         rule,
       })),
@@ -126,20 +127,20 @@ export function LifeRuleUpdatePage() {
   }, [items])
 
   const handleCreateNew = () => {
-    // 기존 아이템들 중 가장 큰 id 값을 찾아서 +1
-    const maxId = items.reduce((max, item) => {
-      const itemId = Number(item.id)
-      return itemId > max ? itemId : max
-    }, 0)
+    const newRule = {
+      id: Date.now(),
+      content: '',
+      category: 'OTHER',
+    }
 
-    const newRule = lifeRuleList[0]
     append({
-      id: maxId + 1,
+      id: Date.now(), // 현재시간으로 생성해버리기
       rule: newRule,
       variant: 'CREATE',
       actionType: 'CREATE',
       content: '',
     })
+
     setIsUpdateMode(true)
     setIsUpdated(true)
   }
@@ -215,8 +216,10 @@ export function LifeRuleUpdatePage() {
       const filteredUpdates = updates.filter(
         (update) => update.actionType !== 'DEFAULT',
       )
-      console.log('filteredUpdates', filteredUpdates)
+      console.log('filteredUpdates', filteredUpdates) // 수정요청보내는거 콘솔찍기
       const response = await updateLifeRule({ updates: filteredUpdates })
+
+      console.log(updates)
       if (response.success) {
         router.push('/lifeRule')
         dispatch(setHomeOverviewLifeRuleApproved(true))

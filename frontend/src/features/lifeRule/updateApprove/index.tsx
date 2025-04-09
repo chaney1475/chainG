@@ -55,10 +55,11 @@ export function LifeRuleUpdateApprovePage() {
   const handleApprovalUpdate = async (approved: boolean) => {
     try {
       if (user?.id) {
-        const approveResponse = await approveUpdateForm({ approved })
+        const approveResponse = await approveUpdateForm({ approved }) //api 쏘는거부터 실패?
         if (approveResponse === true) {
           router.replace('/lifeRule')
           if (!approved) {
+            // 승인을 누를때
             dispatch(setHomeOverviewLifeRuleApproved(false))
             dispatch(resetNotApprovedIds())
           } else {
@@ -113,6 +114,7 @@ export function LifeRuleUpdateApprovePage() {
           const updateResponse = await getUpdateLifeRule()
           if (updateResponse.success) {
             dispatch(setUpdateLifeRules(updateResponse.data))
+            console.log('==변경==', updateLifeRules) // 변경된 생활규칙 로그찍기
 
             // 기존 규칙과 업데이트된 규칙 병합
             const mergedRules: UpdateLifeRule[] = [...baseRules]
