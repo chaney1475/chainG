@@ -17,14 +17,12 @@ import { setGroup } from '@/store/slices/groupSlice'
 import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
-  CenterContainer,
   Container,
   HeaderTitle,
   PaddingContainer,
   ShowCenterBox,
   TextCenterContainer,
   Title,
-  UserTileContainer,
   ValidationContainer,
 } from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
@@ -33,11 +31,14 @@ import { useMorning } from '@/utils/formatTime'
 
 import { ConfirmedHomeContents, HomeLayout } from '../components'
 import {
+  Dday,
   Description,
   GroupName,
   ImageContainer,
   Main,
+  MainWrapper,
   NoticeContainer,
+  UserTileContainer,
 } from './styles'
 
 export function HomePage() {
@@ -90,17 +91,17 @@ export function HomePage() {
     switch (status) {
       case ContractStatus.confirmed:
         return (
-          <Description>
-            함께한지
-            <Title>
+          <Dday>
+            <span>함께한지</span>
+            <div>
               {Math.floor(
                 (new Date().getTime() -
                   new Date(contract.createdAt).getTime()) /
                   (1000 * 60 * 60 * 24),
               ) + 1}
-            </Title>
-            일째
-          </Description>
+            </div>
+            <p>일째</p>
+          </Dday>
         )
       case ContractStatus.pending:
       case ContractStatus.isContractApproved:
@@ -111,7 +112,6 @@ export function HomePage() {
           </Description>
         )
       default:
-        return <Description>{t('main.description')}</Description>
     }
   }, [status, t, group])
 
@@ -315,6 +315,24 @@ export function HomePage() {
     },
   ]
 
+  const [scrollPosition, setScrollPosition] = useState(0)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY)
+    }
+
+    // 초기 스크롤 위치 설정
+    handleScroll()
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   if (!isMounted) {
     return null
   }
@@ -332,7 +350,7 @@ export function HomePage() {
           <TextCenterContainer>
             <Title>Cha:nG</Title>
           </TextCenterContainer>
-          <Description>계약과 약속 사이</Description>
+          <Description>계약과 약속 사이,</Description>
           <Description>우리 집의 블록체인 계약서</Description>
         </Main>
       </Container>
@@ -363,54 +381,46 @@ export function HomePage() {
         </NoticeContainer>
       }>
       <Main>
+        {scrollPosition}
         <GroupName>{group.name}</GroupName>
         {homeDescription}
       </Main>
-      <ImageContainer>
-        <Image
-          src={
-            morning
-              ? '/images/home/home-morning.svg'
-              : '/images/home/home-night.svg'
-          }
-          alt="home-main"
-          width={310}
-          height={500}
-          style={{ objectFit: 'cover' }}
-        />
-        <UserTileContainer>
-          {group?.members &&
-            group.members.map((user) => (
-              <UserItem
-                key={user.id}
-                user={user}
-                variant="tile"
-                size="large"
-                contractStatus={
-                  showMemberStatus
-                    ? contractMembers?.find((member) => member.id === user.id)
-                        ?.status
-                    : ContractStatus.none
-                }
-              />
-            ))}
-        </UserTileContainer>
-      </ImageContainer>
-      {status == ContractStatus.confirmed ? (
-        <ConfirmedHomeContents />
-      ) : (
-        <PaddingContainer>
-          <Title>
-            {status === ContractStatus.shouldInvite
-              ? t('inviteCode.label')
-              : t('contract.title')}
-          </Title>
-          <CardButton
-            cardItems={
-              cardItems.find((item) => item.key === status)?.item ?? []
-            }></CardButton>
-        </PaddingContainer>
-      )}
+      <MainWrapper>
+        <ImageContainer>
+          <UserTileContainer>
+            {group?.members &&
+              group.members.map((user) => (
+                <UserItem
+                  key={user.id}
+                  user={user}
+                  variant="tile"
+                  size="small"
+                  contractStatus={
+                    showMemberStatus
+                      ? contractMembers?.find((member) => member.id === user.id)
+                          ?.status
+                      : ContractStatus.none
+                  }
+                />
+              ))}
+          </UserTileContainer>
+        </ImageContainer>
+        {status == ContractStatus.confirmed ? (
+          <ConfirmedHomeContents />
+        ) : (
+          <PaddingContainer>
+            <Title>
+              {status === ContractStatus.shouldInvite
+                ? t('inviteCode.label')
+                : t('contract.title')}
+            </Title>
+            <CardButton
+              cardItems={
+                cardItems.find((item) => item.key === status)?.item ?? []
+              }></CardButton>
+          </PaddingContainer>
+        )}
+      </MainWrapper>
     </HomeLayout>
   )
 }

@@ -22,7 +22,12 @@ import { ImageContainer, Label, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
 import { ContractViewer } from './component/ContractViewer'
-import { FullMain, HeaderContainer } from './styles'
+import {
+  BottomContainer,
+  EmptyContainer,
+  FullMain,
+  HeaderContainer,
+} from './styles'
 
 export function ContractDetail() {
   const dispatch = useDispatch()
@@ -212,6 +217,8 @@ export function ContractDetail() {
           rentUserList={rentUserList}
         />
       )}
+      <EmptyContainer />
+      <BottomContainer />
     </FullMain>
   )
 }

@@ -10,6 +10,7 @@ import {
   DefaultContainer,
   PaddingContainer,
   RegularLabel,
+  ShowCenterBox,
   SlimContainer,
   Title,
 } from '@/styles/styles'
@@ -198,9 +199,9 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
         )}
         {issues.length == 0 && (
           <PaddingContainer>
-            <CenterContainer>
+            <ShowCenterBox>
               <RegularLabel>오늘 나의 이슈가 없어요</RegularLabel>
-            </CenterContainer>
+            </ShowCenterBox>
           </PaddingContainer>
         )}
       </DefaultContainer>

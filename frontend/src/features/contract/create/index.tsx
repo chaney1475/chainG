@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -53,7 +54,12 @@ import {
   TextInput,
 } from './components/InputComponents'
 import { InputWrapper } from './components/InputWrapper'
-import { BottomContainer } from './styles'
+import {
+  BottomContainer,
+  DraftLabel,
+  HeaderPaddingTitle,
+  UserContainer,
+} from './styles'
 
 const InputComponents: InputComponentMap = {
   moneyInputBox: MoneyInput,
@@ -186,7 +192,6 @@ export function ContractCreatePage() {
   }
   const isValid = Object.values(validations).every((v) => v.isValid)
   const [shouldUpdate, setShouldUpdate] = useState(false)
-
   useEffect(() => {
     const handleDraft = async () => {
       if (shouldUpdate) {
@@ -236,13 +241,8 @@ export function ContractCreatePage() {
             onClick={handleBack}
           />
         </HeaderButton>
-        {t('contract.title')}
-        <HeaderButton onClick={handleDraft}>
-          <IconButton
-            src="/icons/save.svg"
-            alt={t('contract.draft.title')}
-          />
-        </HeaderButton>
+        <HeaderPaddingTitle>{t('contract.title')}</HeaderPaddingTitle>
+        <DraftLabel onClick={handleDraft}>임시저장</DraftLabel>
       </HeaderContainer>
       <HeaderContainer>
         <ProgressBar
@@ -253,11 +253,25 @@ export function ContractCreatePage() {
       <HeaderContainer>
         <UserTileContainer>
           {group?.members.map((user) => (
-            <UserItem
-              key={user.id}
-              user={user}
-              showName={true}
-            />
+            <UserContainer key={user.id}>
+              {group.leaderId === user.id && (
+                <Image
+                  src={'/icons/leader-rotate.svg'}
+                  alt={user.name}
+                  width={25}
+                  height={25}
+                  style={{
+                    position: 'absolute',
+                    top: -15,
+                    left: 0,
+                  }}
+                />
+              )}
+              <UserItem
+                user={user}
+                showName={true}
+              />
+            </UserContainer>
           ))}
         </UserTileContainer>
       </HeaderContainer>
@@ -274,7 +288,11 @@ export function ContractCreatePage() {
       <BottomContainer>
         <ConfirmButton
           onClick={() => {
-            isFirstStep ? router.replace('/') : handleBack()
+            if (isFirstStep) {
+              router.replace('/')
+            } else {
+              handleBack()
+            }
           }}
           label={isFirstStep ? t('goToHome') : t('prev')}
           variant={'prev'}

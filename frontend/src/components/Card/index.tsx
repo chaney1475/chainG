@@ -3,10 +3,15 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { createCard } from '@/apis/fintech'
-import { Image, Modal } from '@/components'
+import { IconButton, Image, Modal } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
-import { setCardConfirm, updateUtility } from '@/store/slices/contractSlice'
 import {
+  setCardConfirm,
+  setUseUtilityCard,
+  updateUtility,
+} from '@/store/slices/contractSlice'
+import {
+  BankLabel,
   DefaultContainer,
   ShowCenterBox,
   ValidationContainer,
@@ -42,6 +47,11 @@ export function Card({ onChange }: AccountInputProps) {
       handleConfirm()
     }
   }, [next])
+  useEffect(() => {
+    if (utility.cardId) {
+      dispatch(setUseUtilityCard(true))
+    }
+  }, [utility.cardId])
 
   const handleConfirm = async () => {
     const response = await createCard({ accountNo: rent.rentAccountNo })
@@ -75,7 +85,13 @@ export function Card({ onChange }: AccountInputProps) {
           <ShowCenterBox
             onClick={() => setNext(true)}
             isDisabled={disabled}>
-            {buttonText}
+            <BankLabel>
+              <IconButton
+                src={'/icons/logo-card.svg'}
+                alt={'card'}
+              />
+              {buttonText}
+            </BankLabel>
           </ShowCenterBox>
           {!isLeader && !cardConfirm && (
             <ValidationContainer>

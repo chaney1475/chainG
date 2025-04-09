@@ -18,17 +18,11 @@ import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
-import { ImageContainer, Label, Title } from '@/styles/styles'
+import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
 import { ContractViewer } from './component/ContractViewer'
-import {
-  BottomContainer,
-  Container,
-  FullMain,
-  HeaderContainer,
-  PaddingContainer,
-} from './styles'
+import { BottomContainer, Container, FullMain, HeaderContainer } from './styles'
 
 export function ContractDetail() {
   const dispatch = useDispatch()
@@ -243,7 +237,6 @@ export function ContractDetail() {
             <InputBox
               label="자동이체용 계좌번호"
               id="accountNo"
-              type="number"
               {...register('accountNo')}
               placeholder="자동이체용 계좌번호를 입력해주세요"
             />
@@ -251,6 +244,13 @@ export function ContractDetail() {
         )}
       </Modal>
       <BottomContainer>
+        {status === ContractStatus.isContractApproved && (
+          <ConfirmButton
+            label={'goToHome'}
+            variant="prev"
+            onClick={() => router.replace('/')}
+          />
+        )}
         {status === ContractStatus.pending && (
           <ConfirmButton
             label={'contract.detail.is_contract_approved.button'}

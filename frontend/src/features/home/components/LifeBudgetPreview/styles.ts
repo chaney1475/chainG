@@ -34,3 +34,17 @@ export const CardDescription = styled.div`
   background-color: ${({ theme }) => theme.color.background.white};
   white-space: pre-line;
 `
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  padding: 0 20px;
+  width: 100%;
+  > div {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    justify-content: space-between;
+  }
+`

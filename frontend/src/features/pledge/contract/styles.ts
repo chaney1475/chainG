@@ -66,3 +66,9 @@ export const BottomContainer = styled.div`
   padding: 0 20px;
   width: 100%;
 `
+export const EmptyContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-height: 60px;
+  width: 100%;
+`

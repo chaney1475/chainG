@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 import { IconButton, UserItem } from '@/components'
 import { useAppSelector } from '@/hooks'
 import {
+  BankLabel,
   DefaultContainer,
-  Description,
   ShowBox,
   TitleContainer,
 } from '@/styles/styles'
@@ -65,7 +65,6 @@ export function ContractViewer({
         <HeaderTitle>{t('contract.detail.totalRatio')}</HeaderTitle>
         <DefaultLabel>{userRentRatio} </DefaultLabel>
       </TitleContainer>
-
       <UserContainer>
         {rentUserList.map((user) => (
           <TitleContainer key={user.id}>
@@ -86,13 +85,13 @@ export function ContractViewer({
           <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
         </TitleContainer>
         <ShowBox>
-          <DefaultLabel>
+          <BankLabel>
             <IconButton
               src="/icons/logo-bank.svg"
-              alt="copy"
+              alt="logo-bank"
             />
             {t('fintech.bankName')} {contract.rent.rentAccountNo} {leaderName}
-          </DefaultLabel>
+          </BankLabel>
         </ShowBox>
       </DefaultContainer>
       <DefaultContainer>
@@ -100,7 +99,13 @@ export function ContractViewer({
           <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
         </TitleContainer>
         <ShowBox>
-          {t('fintech.bankName')} {contract.rent.ownerAccountNo}
+          <BankLabel>
+            <IconButton
+              src="/icons/logo-bank.svg"
+              alt="logo-bank"
+            />
+            {t('fintech.bankName')} {contract.rent.ownerAccountNo}
+          </BankLabel>
         </ShowBox>
       </DefaultContainer>
       {contract.utility.cardId && (
@@ -108,7 +113,15 @@ export function ContractViewer({
           <TitleContainer>
             <HeaderTitle>{t('contract.detail.utilityCard')}</HeaderTitle>
           </TitleContainer>
-          <ShowBox>{t('fintech.cardName')}</ShowBox>
+          <ShowBox>
+            <BankLabel>
+              <IconButton
+                src="/icons/logo-card.svg"
+                alt="logo-bank"
+              />
+              {t('fintech.cardName')}
+            </BankLabel>
+          </ShowBox>
         </DefaultContainer>
       )}
     </Container>

@@ -46,6 +46,7 @@ export const CardContainer = styled.div`
   display: flex;
   gap: 1rem;
   width: 100%;
+  padding: 0 20px 0 0px;
 `
 
 export const StyledButton = styled.button<{ isSelected: boolean }>`

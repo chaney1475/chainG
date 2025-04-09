@@ -34,3 +34,21 @@ export const BottomContainer = styled.div`
   display: flex;
   gap: 16px;
 `
+export const DraftLabel = styled.div`
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.low};
+  align-items: right;
+  display: flex;
+  white-space: nowrap;
+  ${({ theme }) => theme.typography.styles.accountAndCardNum};
+  padding: 4px 8px;
+  border-radius: 8px;
+  width: 74px;
+  border: 1px solid ${({ theme }) => theme.color.border};
+`
+export const HeaderPaddingTitle = styled.div`
+  padding: 0 0 0 48px;
+`
+export const UserContainer = styled.div`
+  position: relative;
+`

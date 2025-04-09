@@ -5,10 +5,11 @@ import { useDispatch } from 'react-redux'
 import styled from '@emotion/styled'
 
 import { createAccount } from '@/apis/fintech'
-import { Image, Modal } from '@/components'
+import { IconButton, Image, Modal } from '@/components'
 import { useAppSelector, useIsLeader } from '@/hooks'
 import { setRentAccountConfirm, updateRent } from '@/store/slices/contractSlice'
 import {
+  BankLabel,
   ShowCenterBox,
   ValidationContainer,
   ValidationMessage,
@@ -87,7 +88,13 @@ export function AccountInput({ onChange }: AccountInputProps) {
       <ShowCenterBox
         onClick={() => setNext(true)}
         isDisabled={disabled}>
-        <AccountText>{buttonText}</AccountText>
+        <BankLabel>
+          <IconButton
+            src={'/icons/logo-bank.svg'}
+            alt={'bank'}
+          />
+          <AccountText>{buttonText}</AccountText>
+        </BankLabel>
       </ShowCenterBox>
       {!isLeader && !rentAccountConfirm && (
         <ValidationContainer>
