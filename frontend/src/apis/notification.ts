@@ -4,7 +4,9 @@ import { getRequest, putRequest } from './api'
 
 //markNotificationAsRead
 export const markNotificationAsRead = async (notificationIds: number[]) =>
-  await putRequest<Notification[]>(`/notification/read`, notificationIds)
+  await putRequest<Notification[]>(`/notification/read`, {
+    notificationIds: notificationIds,
+  })
 
 //getNotifications
 export const getNotifications = async (userId: number) =>

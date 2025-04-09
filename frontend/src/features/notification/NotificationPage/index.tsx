@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { getNotifications } from '@/apis/notification'
+import { getNotifications, markNotificationAsRead } from '@/apis/notification'
 import { NavLayout } from '@/components/layouts/NavLayout'
 import { useAppSelector, useFormattedTime } from '@/hooks'
 import { Notification } from '@/types/notification'
@@ -25,7 +25,11 @@ const NotificationItemComponent = ({
   return (
     <NotificationItem>
       <CategoryContainer
-        src="/images/notification/notification-etc.svg"
+        src={
+          notification?.category
+            ? `/images/notification/notification-${notification.category}.svg`
+            : '/images/notification/notification-etc.svg'
+        }
         alt="notification"
         width={40}
         height={40}
@@ -45,9 +49,11 @@ export function NotificationPage() {
   const { user } = useAppSelector((state) => state.user)
   const [notifications, setNotifications] = useState<Notification[]>([])
 
+  const fetchNoti = useRef(false)
   useEffect(() => {
-    if (!user.id) return
     const fetchNotification = async () => {
+      if (!user.id || fetchNoti.current) return
+      fetchNoti.current = true
       const response = await getNotifications(user.id)
       if (response.success) {
         setNotifications(response.data)
@@ -55,7 +61,21 @@ export function NotificationPage() {
     }
     fetchNotification()
   }, [user.id])
+  const notiRead = useRef(false)
 
+  useEffect(() => {
+    const readNotification = async () => {
+      if (notifications.length > 0 || !notiRead.current) {
+        notiRead.current = true
+        const map = notifications.map((notification) => notification.id)
+        const success = await markNotificationAsRead(map)
+        if (success) {
+          console.log('success')
+        }
+      }
+    }
+    readNotification()
+  }, [notifications])
   return (
     <NavLayout title="알림">
       {notifications.map((notification) => (

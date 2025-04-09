@@ -20,7 +20,7 @@ export const NoticeBar: React.FC<NoticeBarProps> = ({ message }) => {
     <NoticeBarContainer onClick={handleClick}>
       <DivContainer>
         <Image
-          src="/images/lifeRule/notice.svg"
+          src="/icons/announce.svg"
           alt="notice"
           width={20}
           height={20}
@@ -29,7 +29,7 @@ export const NoticeBar: React.FC<NoticeBarProps> = ({ message }) => {
         {message}
       </DivContainer>
       <Image
-        src="/images/lifeRule/move-right.svg"
+        src="/icons/arrow-right.svg"
         alt="notice"
         width={20}
         height={20}
