@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { BottomNavigation } from '@/components'
 import { Container, HeaderContainer, SimpleMain } from '@/styles/styles'
 
@@ -16,7 +18,12 @@ export function HomeLayout({
     <>
       <Container>
         <HeaderContainer>
-          {header}
+          <Image
+            src="/icons/logo.svg"
+            alt="logo"
+            width={24}
+            height={24}
+          />
           {headerRightButton}
         </HeaderContainer>
         <SimpleMain>{children}</SimpleMain>

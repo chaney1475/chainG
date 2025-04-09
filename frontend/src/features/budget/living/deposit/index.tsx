@@ -97,7 +97,7 @@ export function BudgetLivingDepositPage() {
     hasTransfered.current = true
 
     const response = await transfer()
-    if (response) {
+    if (response.success) {
       setSuccess(await notifyLivingDeposit())
     }
   }

@@ -20,7 +20,6 @@ export const StyledButton = styled.button<StyledButtonProps>`
   outline: none;
 
   &:focus {
-    outline: 1px solid ${({ theme }) => theme.color.primary};
     outline-offset: 1px;
     border-color: ${({ theme }) => theme.color.primary};
     outline: none;

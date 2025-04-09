@@ -99,7 +99,6 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
       Date.UTC(kstDate.getFullYear(), kstDate.getMonth(), kstDate.getDate()),
     )
     const formattedDate = utcDate.toISOString()
-
     dispatch(
       updateContractRequestField({
         field: 'startDate',
@@ -125,11 +124,17 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
     }
   }
 
+  const contractRequest = useAppSelector(
+    (state) => state.contract.contractRequest,
+  )
+
   return (
     <div>
       <DefaultContainer>
         <ShowCenterBox isDisabled={true}>
-          <RegularLabel>{new Date().toLocaleDateString()}</RegularLabel>
+          <RegularLabel>
+            {`${new Date(contractRequest.startDate).toLocaleDateString()}${' ~ '}${new Date(props.value as string).toLocaleDateString()}`}
+          </RegularLabel>
         </ShowCenterBox>
         <ValidationContainer>
           <ValidationMessage isValid={true}>
@@ -137,11 +142,6 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
           </ValidationMessage>
         </ValidationContainer>
       </DefaultContainer>
-      <ShowBox>
-        <RegularLabel>
-          {new Date(props.value as string).toLocaleDateString()}
-        </RegularLabel>
-      </ShowBox>
       <CustomPicker
         handleChange={handleDateChange}
         pickerValue={{

@@ -1,20 +1,32 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { registerLocale } from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
 import { format } from 'date-fns'
-import { useRouter } from 'next/navigation'
+import ko from 'date-fns/locale/ko'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { transferToOwner } from '@/apis/payment'
 import { getMySummary } from '@/apis/user'
-import { InputBox, Modal, TitleHeaderLayout } from '@/components'
+import { Modal, TitleHeaderLayout } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setSummary } from '@/store/slices/userSlice'
+import {
+  DefaultLabel,
+  Label,
+  RegularLabel,
+  ShowBox,
+  ShowCenterBox,
+} from '@/styles/styles'
 import { ButtonVariant } from '@/types/ui'
+import { formatMoney } from '@/utils/format'
+import { formatTime } from '@/utils/formatTime'
 
 const Container = styled.div`
   display: flex;
@@ -28,15 +40,21 @@ interface DepositForm {
   balance: string
 }
 
+registerLocale('ko', ko)
 export function TransferToOwnerPage() {
+  const searchParams = useSearchParams()
+  const month = searchParams.get('month')
   const { t } = useTranslation()
   const router = useRouter()
   const dispatch = useDispatch()
 
   const summary = useAppSelector((state) => state.user.summary)
+  const livingAccountNo = useAppSelector(
+    (state) => state.livingBudget.livingAccountNo,
+  )
+  const userName = useAppSelector((state) => state.user.user.nickname)
 
   const {
-    register,
     handleSubmit,
     watch,
     setValue,
@@ -48,13 +66,36 @@ export function TransferToOwnerPage() {
     },
   })
 
+  const myAccountNo = watch('myAccountNo')
+  const balance = watch('balance')
+  const disabled = !livingAccountNo || !balance || !myAccountNo
+
+  const [next, setNext] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const hasTransfered = useRef(false)
+
+  const rent = useAppSelector((state) => state.contract.contract.rent)
+
   useEffect(() => {
-    if (summary.id == 0) {
+    if (summary.id === 0) {
       fetchSummary()
     } else if (summary.myAccountNo) {
       setValue('myAccountNo', summary.myAccountNo)
     }
   }, [summary])
+
+  useEffect(() => {
+    if (next) {
+      onSubmit()
+    }
+  }, [next])
+
+  useEffect(() => {
+    if (!rent.ownerAccountNo) {
+      router.push('/pledge')
+    }
+  }, [rent.ownerAccountNo])
 
   const fetchSummary = async () => {
     const response = await getMySummary()
@@ -62,98 +103,35 @@ export function TransferToOwnerPage() {
       dispatch(setSummary(response.data))
     }
   }
-  const livingAccountNo = useAppSelector(
-    (state) => state.livingBudget.livingAccountNo,
-  )
-  if (!livingAccountNo) {
-    router.push('/budget/living/create')
-  }
-  const userName = useAppSelector((state) => state.user.user.nickname)
-  const myAccountNo = watch('myAccountNo')
-  const balance = watch('balance')
-
-  const [next, setNext] = useState(false)
-  const disabled = !livingAccountNo || !balance || !myAccountNo
-
-  useEffect(() => {
-    if (next && !disabled) {
-      handleSubmit(onSubmit)()
-    }
-  }, [next])
 
   const handleNext = () => {
     setNext(true)
   }
-  const hasTransfered = useRef(false)
-  const currentMonth = useMemo(() => Number(format(new Date(), 'yyyyMM')), [])
 
-  const [success, setSuccess] = useState(false)
-  const onSubmit = async (data: DepositForm) => {
+  const onSubmit = async () => {
     if (hasTransfered.current) return
     hasTransfered.current = true
-
     setSuccess(
       await transferToOwner({
-        month: currentMonth,
-        depositAccountNo: myAccountNo,
-        transactionBalance: Number(balance),
+        month: Number(month),
+        depositAccountNo: rent.rentAccountNo,
+        transactionBalance: Number(rent.totalAmount),
       }),
     )
+    hasTransfered.current = false
   }
 
-  const handleMyAccountNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value.replace(/[^0-9]/g, '')
-    setValue('myAccountNo', newValue)
-    setNext(false)
-  }
-
-  const balanceRegister = register('balance', {
-    required: t('payment.transfer.owner.balance.error.required'),
-  })
-
-  const myAccountNoRegister = register('myAccountNo', {
-    required: t('payment.transfer.owner.myAccountNo.error.required'),
-    validate: (value) => {
-      if (value === livingAccountNo) {
-        return t('payment.transfer.owner.myAccountNo.error.same')
-      }
-      return true
-    },
-  })
   return (
     <TitleHeaderLayout
       title={t('payment.transfer.owner.title')}
       label={t('payment.transfer.owner.label')}
       header={t('payment.transfer.owner.header')}
-      onClick={handleNext}
-      buttonVariant={disabled ? ButtonVariant.disabled : ButtonVariant.next}>
+      onClick={handleNext}>
       <Container>
-        <InputBox
-          label={t('payment.transfer.owner.myAccountNo.label')}
-          id="myAccountNo"
-          type="text"
-          value={myAccountNo}
-          onChange={handleMyAccountNoChange}
-          ref={myAccountNoRegister.ref}
-          placeholder={t('payment.transfer.owner.myAccountNo.placeholder')}
-          error={errors.myAccountNo}
-        />
-
-        <InputBox
-          id="balance"
-          name="balance"
-          label={t('payment.transfer.owner.balance.label')}
-          type="money"
-          value={balance}
-          onChange={(e) => {
-            const numeric = e.target.value.replace(/[^0-9]/g, '')
-            setValue('balance', numeric)
-            setNext(false)
-          }}
-          ref={balanceRegister.ref}
-          placeholder={t('payment.transfer.owner.balance.placeholder')}
-          error={errors.balance}
-        />
+        <Label> {t('payment.transfer.owner.unpaid', { month })}</Label>
+        <ShowCenterBox>
+          <DefaultLabel>{formatMoney(rent.totalAmount)}</DefaultLabel>
+        </ShowCenterBox>
       </Container>
       <Modal
         open={success}

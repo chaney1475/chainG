@@ -10,11 +10,12 @@ export const Container = styled.div`
   right: 0;
   margin: auto;
   z-index: 1000;
+  padding: 0 20px;
 `
 
 export const SwitchContainer = styled.div<{ steps: number }>`
   position: relative;
-  width: ${({ steps }) => `${steps * 6}rem`};
+  width: ${({ steps }) => `${steps * 82 + 8}px`};
   border-radius: 1.5rem;
   background-color: ${({ theme }) => theme.color.secondary};
   cursor: pointer;
@@ -23,7 +24,7 @@ export const SwitchContainer = styled.div<{ steps: number }>`
   justify-content: space-between;
   margin: auto;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.2);
-  padding: 0.25rem 0rem;
+  padding: 4px 0rem;
 `
 
 export const SwitchText = styled.span<{ selected: boolean }>`
@@ -35,13 +36,14 @@ export const SwitchText = styled.span<{ selected: boolean }>`
   text-align: center;
   flex: 1;
   vertical-align: end;
-  margin: 0.625rem;
+  width: 80px;
+  margin: 0.625rem 0;
 `
 
 export const SwitchButton = styled.div<{ step: number }>`
   position: absolute;
-  left: ${({ step }) => `calc(${0.5 + step * 6}rem)`};
-  width: 5rem;
+  left: ${({ step }) => `calc(${8 + step * 80}px)`};
+  width: 80px;
   height: 2.25rem;
   background-color: ${({ theme }) => theme.color.primary};
   border-radius: 1.5rem;

@@ -18,11 +18,17 @@ import { ConfirmButton, InputBox, Modal, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
-import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
+import { ImageContainer, Label, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
 import { ContractViewer } from './component/ContractViewer'
-import { BottomContainer, Container, FullMain, HeaderContainer } from './styles'
+import {
+  BottomContainer,
+  Container,
+  FullMain,
+  HeaderContainer,
+  PaddingContainer,
+} from './styles'
 
 export function ContractDetail() {
   const dispatch = useDispatch()

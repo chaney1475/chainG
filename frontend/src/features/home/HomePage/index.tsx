@@ -333,7 +333,7 @@ export function HomePage() {
           {status === ContractStatus.confirmed && (
             <IconButton
               onClick={() => dispatch(setIsNoticeModalOpen(true))}
-              src="/images/lifeRule/notice.svg"
+              src="/icons/announce.svg"
               alt="notice"
             />
           )}
@@ -341,8 +341,8 @@ export function HomePage() {
             onClick={() => router.push('/notification')}
             src={
               hasUnreadNotification
-                ? '/icons/notice-active.svg'
-                : '/icons/notice-inactive.svg'
+                ? '/icons/notification-active.svg'
+                : '/icons/notification-inactive.svg'
             }
             alt={t('notice.title')}
           />

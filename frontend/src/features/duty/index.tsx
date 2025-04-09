@@ -8,14 +8,15 @@ import { getDuties } from '@/apis/duty'
 import { BottomNavigation, BottomSheet, TopHeader } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setDutyWeekList } from '@/store/slices/dutySlice'
+import { clearCompleteDayOfWeek } from '@/store/slices/dutySlice'
+import { SimpleMain } from '@/styles/styles'
+import { Duty } from '@/types/duty'
 
 import { DutyList } from './components/DutyList'
 import { EditOrDeleteDuty } from './components/EditOrDeleteDuty'
 import { WeekList } from './components/WeekList'
 import useSelectWeek from './hooks/useSelectWeek'
-import { Container, FullMain } from './styles'
-import { Duty } from '@/types/duty'
-import { clearCompleteDayOfWeek } from '@/store/slices/dutySlice'
+import { Container } from './styles'
 
 export function DutyPage() {
   const { t } = useTranslation()
@@ -23,8 +24,10 @@ export function DutyPage() {
   const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
   const dispatch = useDispatch()
   const userList = group.members
-  
-  const completeDayOfWeek = useAppSelector((state) => state.duty.completeDayOfWeek)
+
+  const completeDayOfWeek = useAppSelector(
+    (state) => state.duty.completeDayOfWeek,
+  )
   const { selectedWeek, setSelectedWeek } = useSelectWeek()
 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState<boolean>(false)
@@ -41,7 +44,7 @@ export function DutyPage() {
   }
 
   useEffect(() => {
-    if(completeDayOfWeek) {
+    if (completeDayOfWeek) {
       setSelectedWeek(completeDayOfWeek)
       dispatch(clearCompleteDayOfWeek())
     }
@@ -61,10 +64,8 @@ export function DutyPage() {
 
   return (
     <Container>
-      <TopHeader
-        title={t('duty.title')}
-      />
-      <FullMain>
+      <TopHeader title={t('duty.title')} />
+      <SimpleMain>
         <WeekList
           dutyList={dutyWeekList}
           selectedWeek={selectedWeek}
@@ -89,9 +90,8 @@ export function DutyPage() {
             setOpen={setIsBottomSheetOpen}
           />
         </BottomSheet>
-      </FullMain>
+      </SimpleMain>
       <BottomNavigation />
-      </Container>
-
+    </Container>
   )
 }

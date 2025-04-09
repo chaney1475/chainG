@@ -10,7 +10,7 @@
   "duty": {
     "title": "당번 일정",
     "category": {
-      "CLEAN": "청소",
+      "CLEANING": "청소",
       "COOKING": "요리",
       "SHOPPING": "장보기",
       "MAINTENANCE": "수리",

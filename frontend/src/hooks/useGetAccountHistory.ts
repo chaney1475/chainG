@@ -1,9 +1,5 @@
-import { getAccountPaymentHistory } from '@/apis/fintech'
-import {
-  AccountPaymentHistoryRequest,
-  AccountPaymentHistoryResponse,
-  FintechResponseError,
-} from '@/types/fintech'
+import { simpleHistory } from '@/apis/fintech'
+import { AccountPaymentHistoryRequest } from '@/types/fintech'
 
 import { useFintechTime } from './useFintechTime'
 
@@ -39,15 +35,11 @@ export const useGetAccountHistory = ({
       orderByType: 'DESC',
     }
 
-    const response: AccountPaymentHistoryResponse | FintechResponseError =
-      await getAccountPaymentHistory(request)
-    if (
-      'Header' in response &&
-      'REC' in response &&
-      response.Header?.responseCode === 'H0000'
-    ) {
-      return response.REC.list
+    const response = await simpleHistory(request)
+    if (response.success) {
+      return response.data.data.list
+    } else {
+      return []
     }
-    return []
   }
 }

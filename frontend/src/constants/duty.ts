@@ -1,16 +1,16 @@
 import { DutyCategory, DutyWeekList } from '@/types/duty'
 
 export const dutyCategoryList: DutyCategory[] = [
-  { id: 'CLEAN', src: '/images/duty/duty-category-clean.png' },
-  { id: 'COOKING', src: '/images/duty/duty-category-cooking.png' },
-  { id: 'SHOPPING', src: '/images/duty/duty-category-shopping.png' },
-  { id: 'MAINTENANCE', src: '/images/duty/duty-category-maintenance.png' },
-  { id: 'GARBAGE', src: '/images/duty/duty-category-garbage.png' },
-  { id: 'LAUNDRY', src: '/images/duty/duty-category-laundry.png' },
-  { id: 'PET_CARE', src: '/images/duty/duty-category-pet-care.png' },
-  { id: 'PLANT_CARE', src: '/images/duty/duty-category-plant-care.png' },
-  { id: 'SETTLEMENT', src: '/images/duty/duty-category-settlement.png' },
-  { id: 'OTHER', src: '/images/duty/duty-category-other.png' },
+  { id: 'CLEANING', src: '/images/duty/duty-CLEANING.svg' },
+  { id: 'COOKING', src: '/images/duty/duty-COOKING.svg' },
+  { id: 'SHOPPING', src: '/images/duty/duty-SHOPPING.svg' },
+  { id: 'MAINTENANCE', src: '/images/duty/duty-MAINTENANCE.svg' },
+  { id: 'GARBAGE', src: '/images/duty/duty-GARBAGE.svg' },
+  { id: 'LAUNDRY', src: '/images/duty/duty-LAUNDRY.svg' },
+  { id: 'PET_CARE', src: '/images/duty/duty-PET_CARE.svg' },
+  { id: 'PLANT_CARE', src: '/images/duty/duty-PLANT_CARE.svg' },
+  { id: 'SETTLEMENT', src: '/images/duty/duty-SETTLEMENT.svg' },
+  { id: 'OTHER', src: '/images/duty/duty-OTHER.svg' },
 ]
 
 export const dutyWeekList: DutyWeekList = {

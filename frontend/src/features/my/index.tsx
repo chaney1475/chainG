@@ -12,6 +12,7 @@ import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/components/TopHeader'
 import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
+import { SimpleMain } from '@/styles/styles'
 
 import { Account, Profile } from './components'
 import { Container, FullMain } from './styles'
@@ -50,10 +51,10 @@ export function MyPage() {
     <>
       <Container>
         <TopHeader title={t('my.title')} />
-        <FullMain>
+        <SimpleMain>
           <Profile />
           <Account handleLogout={handleLogout} />
-        </FullMain>
+        </SimpleMain>
         <BottomNavigation />
       </Container>
     </>

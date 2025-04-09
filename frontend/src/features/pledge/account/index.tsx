@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 
 import { getPaymentCurrentStatus } from '@/apis/payment'
 import { AccountHistoryViewer, ConfirmButton, IconButton } from '@/components'
-import { useAppSelector, useFormattedDuration } from '@/hooks'
+import { useAppSelector } from '@/hooks'
 import { setPaymentCurrent } from '@/store/slices/pledgeSlice'
 import { PaymentCurrent, PaymentStatus } from '@/types/budget'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
@@ -26,7 +26,6 @@ import {
   ContentContainer,
   CurrentMonth,
   DashBoardContainer,
-  DateContainer,
   MonthNavigation,
   MonthSummary,
   SelectButton,
@@ -84,13 +83,11 @@ export function Account({
   const formatMonth = (date: Date) => {
     return format(date, 'yyyy.MM', { locale: ko })
   }
-  const duration = useFormattedDuration(startDate, endDate)
   const router = useRouter()
   const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
   const currentMonth = useMemo(() => format(new Date(), 'yyyyMM'), [])
   const [month, setMonth] = useState(currentMonth)
   const user = useAppSelector((state) => state.user.user)
-  const contract = useAppSelector((state) => state.contract.contract)
   const hasFetchedPaymentCurrent = useRef(false)
 
   const fetchPaymentCurrent = useCallback(async () => {
@@ -106,6 +103,7 @@ export function Account({
     hasFetchedPaymentCurrent.current = false
   }, [month])
 
+  const rent = useAppSelector((state) => state.contract.contract.rent)
   useEffect(() => {
     fetchPaymentCurrent()
   }, [user.contractId, month])
@@ -123,18 +121,16 @@ export function Account({
       </MonthSummary>
       <AccountHistoryViewer filteredHistory={filteredHistory}>
         <ButtonContainer>
-          {paymentCurrent?.rent === PaymentStatus.COLLECTED &&
-            month >= startDate.slice(0, 6) && (
-              <ConfirmButton
-                onClick={() => {
-                  router.push('/pledge/transfer/owner')
-                }}
-                variant={ButtonVariant.prev}
-                label="집주인에게 보내기"
-              />
-            )}
+          {paymentCurrent?.rent === PaymentStatus.COLLECTED && (
+            <ConfirmButton
+              onClick={() => {
+                router.push(`/pledge/transfer/owner?month=${month}`)
+              }}
+              label="집주인에게 보내기"
+            />
+          )}
 
-          {paymentCurrent?.userRent === PaymentStatus.COLLECTED && (
+          {paymentCurrent?.userRent !== PaymentStatus.COLLECTED && (
             <ConfirmButton
               variant={
                 paymentCurrent?.rent === PaymentStatus.PAID
@@ -142,7 +138,7 @@ export function Account({
                   : ButtonVariant.next
               }
               onClick={() => {
-                router.push('/budget/pledge/transfer/rent')
+                router.push(`/pledge/transfer/rent?month=${month}`)
               }}
               label={
                 paymentCurrent?.rent === PaymentStatus.PAID

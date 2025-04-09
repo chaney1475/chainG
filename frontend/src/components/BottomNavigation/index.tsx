@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -37,11 +38,10 @@ export const BottomNavigation = () => {
       {navKeys.map((key) => {
         const variant = NavItemVariant[key]
         return (
-          <>
+          <React.Fragment key={key}>
             {(contract.status === ContractStatus.confirmed ||
               key != 'pledge') && (
               <NavItem
-                key={key}
                 onClick={() => handleClick(variant)}
                 isActive={isActive(variant)}
                 href={`/${key === 'home' ? '' : key}`}>
@@ -52,7 +52,7 @@ export const BottomNavigation = () => {
                 <IconName>{t(variant)}</IconName>
               </NavItem>
             )}
-          </>
+          </React.Fragment>
         )
       })}
     </Container>
