@@ -99,7 +99,6 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
       Date.UTC(kstDate.getFullYear(), kstDate.getMonth(), kstDate.getDate()),
     )
     const formattedDate = utcDate.toISOString()
-
     dispatch(
       updateContractRequestField({
         field: 'startDate',
@@ -139,7 +138,7 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
         </ShowCenterBox>
         <ValidationContainer>
           <ValidationMessage isValid={true}>
-            시작일은 언제나 이번 달로 고정됩니다.
+            시작일은 언제나 오늘로 고정됩니다.
           </ValidationMessage>
         </ValidationContainer>
       </DefaultContainer>
