@@ -65,6 +65,8 @@ export type PaymentStatus =
   | 'FAILED'
   | 'DEBT'
   | 'PENDING'
+// userRent 기준으로 // COLLECTED 면 월세 채우기 오픈 X
+// rent 기준으로 COLLECTED 때만 집주인 계좌 송금 오픈 o
 
 export const PaymentStatus = {
   STARTED: 'STARTED',

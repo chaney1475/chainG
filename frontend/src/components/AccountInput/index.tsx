@@ -90,7 +90,7 @@ export function AccountInput({ onChange }: AccountInputProps) {
       {!isLeader && !rentAccountConfirm && (
         <ValidationContainer>
           <Image
-            src={`/icons/validation-false.svg`}
+            src={`/icons/button-invalid.svg`}
             alt={'message'}
             width={14}
             height={14}

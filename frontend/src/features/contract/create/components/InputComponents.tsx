@@ -125,23 +125,24 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
     }
   }
 
+  const contractRequest = useAppSelector(
+    (state) => state.contract.contractRequest,
+  )
+
   return (
     <div>
       <DefaultContainer>
         <ShowCenterBox isDisabled={true}>
-          <RegularLabel>{new Date().toLocaleDateString()}</RegularLabel>
+          <RegularLabel>
+            {`${new Date(contractRequest.startDate).toLocaleDateString()}${' ~ '}${new Date(props.value as string).toLocaleDateString()}`}
+          </RegularLabel>
         </ShowCenterBox>
         <ValidationContainer>
           <ValidationMessage isValid={true}>
-            시작일은 언제나 오늘로 고정됩니다.
+            시작일은 언제나 이번 달로 고정됩니다.
           </ValidationMessage>
         </ValidationContainer>
       </DefaultContainer>
-      <ShowBox>
-        <RegularLabel>
-          {new Date(props.value as string).toLocaleDateString()}
-        </RegularLabel>
-      </ShowBox>
       <CustomPicker
         handleChange={handleDateChange}
         pickerValue={{

@@ -341,8 +341,8 @@ export function HomePage() {
             onClick={() => router.push('/notification')}
             src={
               hasUnreadNotification
-                ? '/icons/notice-active.svg'
-                : '/icons/notice-inactive.svg'
+                ? '/icons/notification-active.svg'
+                : '/icons/notification-inactive.svg'
             }
             alt={t('notice.title')}
           />

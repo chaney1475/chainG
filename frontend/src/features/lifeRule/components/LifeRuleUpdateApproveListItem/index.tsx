@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-// import { useTranslation } from 'react-i18next'
-
 import Image from 'next/image'
 
 import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
@@ -31,11 +29,11 @@ export const LifeRuleUpdateApproveListItem = ({
   const getStatusIcon = () => {
     switch (variant) {
       case 'UPDATE':
-        return '/images/lifeRule/update.svg'
+        return '/icons/button-modify.svg'
       case 'CREATE':
-        return '/images/lifeRule/create.svg'
+        return '/icons/button-create.svg'
       case 'DELETE':
-        return '/images/lifeRule/delete.svg'
+        return '/icons/button-delete.svg'
       default:
         return null
     }
@@ -61,7 +59,7 @@ export const LifeRuleUpdateApproveListItem = ({
           src={
             lifeRuleCategoryList.find(
               (category) => category.id === lifeRule.category,
-            )?.src ?? '/images/lifeRule/life-rule-category-clean.svg'
+            )?.src ?? '/images/lifeRule/life-rule-CLEANING-active.svg'
           }
           alt={lifeRule.category}
           width={46}
