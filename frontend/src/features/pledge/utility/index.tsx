@@ -45,7 +45,7 @@ export function UtilityPage() {
             <ShowCenterBox isDisabled>
               <SlimContainer>
                 <AnimatedImage
-                  src="/images/account/account-no.svg"
+                  src="/images/pledge/account-no.svg"
                   alt="공과금을 이용할 수 없어요"
                   width={80}
                   height={80}
