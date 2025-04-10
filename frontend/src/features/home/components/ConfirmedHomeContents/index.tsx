@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { format } from 'date-fns'
+import { useRouter } from 'next/navigation'
 
 import { getDuties } from '@/apis/duty'
 import { getLivingAccount } from '@/apis/livingBudget'
@@ -16,13 +17,17 @@ import {
   setMyAccountNo,
 } from '@/store/slices/livingBudgetSlice'
 import { setPaymentCurrent } from '@/store/slices/pledgeSlice'
-import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
+import {
+  setIsNoticeModalOpen,
+  setNoContractWhenLogIn,
+} from '@/store/slices/uiSlice'
 import { DayKey, Duty } from '@/types/duty'
 
 import { DashBoard, LifeBudgetPreview, Notice } from '..'
 import { Container, ContentsContainer } from './styles'
 
 export function ConfirmedHomeContents() {
+  const router = useRouter()
   const dispatch = useDispatch()
   const user = useAppSelector((state) => state.user.user)
   const livingBudget = useAppSelector((state) => state.livingBudget)
@@ -91,6 +96,17 @@ export function ConfirmedHomeContents() {
       ),
     [dutyWeekList],
   )
+  const noContractWhenLogIn = useAppSelector(
+    (state) => state.ui.noContractWhenLogIn,
+  )
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+
+  useEffect(() => {
+    if (noContractWhenLogIn) {
+      setOpenConfirmModal(true)
+      dispatch(setNoContractWhenLogIn(false))
+    }
+  }, [noContractWhenLogIn])
 
   return (
     <Container>
@@ -107,6 +123,17 @@ export function ConfirmedHomeContents() {
         <DashBoard todayMyDutyList={todayMyDutyList} />
         {livingBudget.livingAccountNo && <LifeBudgetPreview />}
       </ContentsContainer>
+      <Modal
+        open={openConfirmModal}
+        onOpenChange={setOpenConfirmModal}
+        onConfirm={() => {
+          setOpenConfirmModal(false)
+          router.replace('/pledge')
+        }}
+        title={'서약서 완성을 축하드려요'}
+        description={'서약서를 확인해보세요'}
+        image={'/images/etc/congratulations.svg'}
+      />
     </Container>
   )
 }

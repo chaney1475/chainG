@@ -14,7 +14,10 @@ import { Image } from '@/components'
 import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
-import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
+import {
+  setIsNoticeModalOpen,
+  setNoContractWhenLogIn,
+} from '@/store/slices/uiSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
   Container,
@@ -28,11 +31,14 @@ import {
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
 
-import { ConfirmedHomeContents, HomeLayout } from '../components'
+import {
+  ConfirmedHomeContents,
+  DefaultHomeContents,
+  HomeLayout,
+} from '../components'
 import {
   CopyBox,
   Dday,
-  DefaultHomeContents,
   Description,
   GroupName,
   HomeUserTileContainer,
@@ -328,8 +334,9 @@ export function HomePage() {
           <TextCenterContainer>
             <Title>Cha:nG</Title>
           </TextCenterContainer>
-          <Description>계약과 약속 사이,</Description>
-          <Description>우리 집의 블록체인 계약서</Description>
+          <Description>
+            가볍지만 신뢰할 수 있는 동거 서약관리 서비스
+          </Description>
         </Main>
       </Container>
     )
@@ -393,12 +400,11 @@ export function HomePage() {
         {status == ContractStatus.confirmed ? (
           <ConfirmedHomeContents />
         ) : (
-          <DefaultHomeContents>
-            <CardButton
-              cardItems={
-                cardItems.find((item) => item.key === status)?.item ?? []
-              }></CardButton>
-          </DefaultHomeContents>
+          <DefaultHomeContents
+            cardItems={
+              cardItems.find((item) => item.key === status)?.item ?? []
+            }
+          />
         )}
       </MainWrapper>
     </HomeLayout>

@@ -393,7 +393,7 @@
       "none": {
         "title": "서약서 생성",
         "button": "서약서 생성하기",
-        "description": "'{{value}}'만의 월세,\n공과금 서약서를 작성해주세요.",
+        "description": "<{{value}}>만의 월세,\n공과금 서약서를 작성해주세요.",
         "label": "서약서를 생성해주세요"
       },
       "draft": {

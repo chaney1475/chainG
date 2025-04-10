@@ -18,7 +18,6 @@ import {
   setSignUpPassword,
 } from '@/store/slices/authSlice'
 import { setUser } from '@/store/slices/userSlice'
-import { Form } from '@/styles/styles'
 import { ButtonVariant, ValidationItem } from '@/types/ui'
 
 interface SignupForm {
@@ -123,7 +122,6 @@ export function SignUpPasswordPage() {
           const token = response.headers['authorization']
           await dispatch(setAccessToken(token))
           await dispatch(setUser(response.data.data))
-          await initFCM()
         }
       }
       handleSignUp()
@@ -160,7 +158,6 @@ export function SignUpPasswordPage() {
         id="confirmPassword"
         type="password"
         placeholder={t('signUp.confirmPassword.placeholder')}
-        error={errors.confirmPassword}
         validations={sameValidations}
         {...register('confirmPassword', {
           required: t('signUp.confirmPassword.error.required'),
@@ -168,6 +165,7 @@ export function SignUpPasswordPage() {
             value === watch('password') ||
             t('signUp.confirmPassword.error.match'),
         })}
+        error={errors.confirmPassword}
       />
     </TitleHeaderLayout>
   )

@@ -133,6 +133,8 @@ export function ContractDetail() {
       setStatus(contract.status)
     }
   }, [user.id, contractMembers, contract.status])
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+
   const hadConfirmed = useRef(false)
   const updateContractRequest = async () => {
     if (hadConfirmed.current || !user.contractId) {
@@ -146,7 +148,8 @@ export function ContractDetail() {
     hadConfirmed.current = false
     if (response.success) {
       dispatch(setContract(response.data))
-      router.push('/contract/detail')
+      setOpenConfirmModal(true)
+      // router.push('/contract/detail')
     }
   }
   const [useModifyModal, setUseModifyModal] = useState(false)
@@ -238,6 +241,18 @@ export function ContractDetail() {
           </PaddingContainer>
         )}
       </Modal>
+      {'openConfirmModal'} {openConfirmModal ? 'sddd' : 'nnn'}
+      <Modal
+        open={openConfirmModal}
+        onOpenChange={setOpenConfirmModal}
+        onConfirm={() => {
+          setOpenConfirmModal(false)
+          router.replace('/contract/detail')
+        }}
+        title={'초안 서약서 완성을 축하드려요!'}
+        description={'모두의 승인을 받아보세요'}
+        image={'/images/etc/congratulations.svg'}
+      />
       <BottomContainer>
         {status === ContractStatus.isContractApproved && (
           <ConfirmButton
