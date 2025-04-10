@@ -214,6 +214,7 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
                       }}
                       variant="bar"
                       size="xs"
+                      showName={true}
                     />
                     {rentInfo?.totalAmount != 0 && (
                       <DisabledColorText>
