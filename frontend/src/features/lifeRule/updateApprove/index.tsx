@@ -196,7 +196,7 @@ export function LifeRuleUpdateApprovePage() {
         description={
           approveType === 'approve'
             ? '생활 규칙 수정 확인하셨나요?\n모두가 승인 버튼을 누르면 적용됩니다!'
-            : '바뀐 생활규칙을 거부하실건가요?\n거부버튼을 누르면 기존의 생활규칙이 유지됩니다'
+            : '바뀐 생활 규칙을 거부하실건가요?\n거부버튼을 누르면 기존의 생활 규칙이 유지됩니다'
         }
         confirmText={approveType === 'approve' ? '확인' : '확인'}
         image={

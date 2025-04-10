@@ -1,3 +1,5 @@
+import { ImageProps as NextImageProps } from 'next/image'
+
 export interface ValidationItem {
   isValid: boolean
   message: string
@@ -56,3 +58,47 @@ export const LivingMenu = {
 } as const
 
 export type LivingMenu = 'calendar' | 'history'
+
+export interface ImageProps extends NextImageProps {
+  errorSrc?: string
+  styles?: React.CSSProperties
+}
+
+export const ImageVariant = {
+  pop: 'pop',
+  slice: 'slice',
+  fade: 'fade',
+  slideLeft: 'slide-left',
+  slideRight: 'slide-right',
+  slideUp: 'slide-up',
+  slideDown: 'slide-down',
+  zoomIn: 'zoom-in',
+  zoomOut: 'zoom-out',
+  flip: 'flip',
+  bounce: 'bounce',
+  rotate: 'rotate',
+  blur: 'blur',
+  scale: 'scale',
+  sliceFade: 'slice-fade',
+} as const
+
+export type ImageVariant =
+  | 'pop'
+  | 'slice'
+  | 'fade'
+  | 'slide-left'
+  | 'slide-right'
+  | 'slide-up'
+  | 'slide-down'
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'flip'
+  | 'bounce'
+  | 'rotate'
+  | 'blur'
+  | 'scale'
+  | 'slice-fade'
+
+export interface AnimatedImageProps extends ImageProps {
+  variant?: ImageVariant
+}

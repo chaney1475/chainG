@@ -57,8 +57,8 @@ export function ApproveProfile() {
             <Image
               src={`/images/etc/approved-circle.svg`}
               alt={user.name}
-              width={36}
-              height={36}
+              width={40}
+              height={40}
             />
             <span>{user.nickname}</span>
           </ProfileContainer>
@@ -70,8 +70,8 @@ export function ApproveProfile() {
             <Image
               src={`/images/profile/${user.profileImage}.svg`}
               alt={user.name}
-              width={36}
-              height={36}
+              width={40}
+              height={40}
             />
             <span>{user.nickname}</span>
           </ProfileContainer>

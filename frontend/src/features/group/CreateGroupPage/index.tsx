@@ -7,11 +7,18 @@ import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { InputBox, TitleHeader, TitleHeaderLayout } from '@/components'
-import { Image } from '@/components'
+import {
+  AnimatedImage,
+  Image,
+  InputBox,
+  TitleHeader,
+  TitleHeaderLayout,
+} from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setGroupName, setMaxParticipants } from '@/store/slices/groupSlice'
+import { DefaultContainer } from '@/styles/styles'
 import { CreateGroupRequest } from '@/types/group'
+import { ImageVariant } from '@/types/ui'
 
 import {
   HomeImageContainer,
@@ -87,73 +94,76 @@ export function CreateGroupPage() {
       label={t('createGroup.confirm')}
       onClick={handleSubmit(onSubmit)}
       buttonVariant={groupName ? 'next' : 'disabled'}>
-      <HomeImageContainer>
-        <Image
-          src="/images/group/roof.svg"
-          alt="plus"
-          width={322}
-          height={61}
-        />
-        <UserContainer>
-          {Array.from({ length: participants }).map((_, index) => (
-            <Image
-              key={index}
-              src="/images/group/user-default.svg"
-              alt="plus"
-              width={80}
-              height={80}
-            />
-          ))}{' '}
-        </UserContainer>
-        <Image
-          src="/images/group/floor.svg"
-          alt="plus"
-          width={272}
-          height={9}
-        />
-      </HomeImageContainer>
+      <DefaultContainer>
+        <HomeImageContainer>
+          <Image
+            src="/images/group/roof.svg"
+            alt="plus"
+            width={326}
+            height={61}
+          />
+          <UserContainer>
+            {Array.from({ length: participants }).map((_, index) => (
+              <AnimatedImage
+                key={index}
+                src="/images/group/user-default.svg"
+                alt="plus"
+                width={50}
+                height={50}
+                variant={ImageVariant.pop}
+              />
+            ))}
+          </UserContainer>
+          <Image
+            src="/images/group/floor.svg"
+            alt="plus"
+            width={272}
+            height={9}
+          />
+        </HomeImageContainer>
 
-      <div>
-        <Label>{t('createGroup.maxParticipants.label')}</Label>
-        <ParticipantsContainer
-          ref={participantsRef}
-          onKeyDown={handleKeyDown}
-          tabIndex={0}
-          role="button"
-          aria-label="참가자 수 조절">
-          <ImageButton onClick={decreaseParticipants}>
-            <Image
-              src="/icons/minus.svg"
-              alt="minus"
-              width={28}
-              height={28}
-            />
-          </ImageButton>
-          <TitleHeader title={participants + ''} />
-          <ImageButton onClick={increaseParticipants}>
-            <Image
-              src="/icons/plus.svg"
-              alt="plus"
-              width={28}
-              height={28}
-            />
-          </ImageButton>
-        </ParticipantsContainer>
-      </div>
-      <InputBox
-        {...register('groupName')}
-        label={t('createGroup.groupName.label')}
-        id="groupName"
-        {...register('groupName', {
-          required: t('createGroup.groupName.error.required'),
-          maxLength: {
-            value: 20,
-            message: t('createGroup.groupName.error.maxLength'),
-          },
-        })}
-        placeholder={t('createGroup.groupName.placeholder')}
-        error={errors.groupName}
-      />
+        <div>
+          <Label>{t('createGroup.maxParticipants.label')}</Label>
+          <ParticipantsContainer
+            ref={participantsRef}
+            onKeyDown={handleKeyDown}
+            tabIndex={0}
+            role="button"
+            aria-label="참가자 수 조절">
+            <ImageButton onClick={decreaseParticipants}>
+              <Image
+                src="/icons/minus.svg"
+                alt="minus"
+                width={28}
+                height={28}
+              />
+            </ImageButton>
+            <TitleHeader title={participants + ''} />
+            <ImageButton onClick={increaseParticipants}>
+              <Image
+                src="/icons/plus.svg"
+                alt="plus"
+                width={28}
+                height={28}
+              />
+            </ImageButton>
+          </ParticipantsContainer>
+        </div>
+        <InputBox
+          {...register('groupName')}
+          label={t('createGroup.groupName.label')}
+          id="groupName"
+          {...register('groupName', {
+            required: t('createGroup.groupName.error.required'),
+            maxLength: {
+              value: 20,
+              message: t('createGroup.groupName.error.maxLength'),
+            },
+          })}
+          placeholder={t('createGroup.groupName.placeholder')}
+          error={errors.groupName}
+        />
+      </DefaultContainer>
     </TitleHeaderLayout>
   )
 }

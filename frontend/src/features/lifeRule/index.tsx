@@ -16,7 +16,7 @@ import { useAppSelector } from '@/hooks'
 import { setLifeRules } from '@/store/slices/lifeRuleSlice'
 import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { RootState } from '@/store/store'
-import { Container, PaddingContainer } from '@/styles/styles'
+import { Container } from '@/styles/styles'
 
 import { LifeRuleList } from './components/LifeRuleList'
 import { NoticeBar } from './components/NoticeBar'
@@ -83,15 +83,15 @@ export function LifeRulePage() {
           <EmptyContainer>
             <Image
               src={'/icons/button-modify.svg'}
-              alt={'생활규칙 수정아이콘'}
+              alt={'생활 규칙 수정아이콘'}
               width={80}
               height={80}
               style={{ objectFit: 'cover' }}
             />
 
-            <TitleContainer>만들어진 생활규칙이 없습니다</TitleContainer>
+            <TitleContainer>만들어진 생활 규칙이 없습니다</TitleContainer>
             <Description>
-              친구들과 대화를 통해 생활규칙을 만들어보세요!
+              친구들과 대화를 통해 생활 규칙을 만들어보세요!
             </Description>
             <ConfirmButton
               label={'생활 규칙 생성하러 가기'}

@@ -11,7 +11,6 @@ import { User } from '@/types/user'
 import { BoxContainer } from '../../../styles'
 import {
   BarContainer,
-  BlankContainer,
   BottomContainer,
   ContentContainer,
   MonthContainer,
@@ -60,7 +59,6 @@ export function Step() {
     }))
 
     utilityInfo.weekList.slice(0, 6).forEach((item) => {
-      console.log('item', item)
       item.paidUserIds?.forEach((paidUser) => {
         newUserList
           .find((user) => user.user.id === paidUser)
@@ -92,10 +90,9 @@ export function Step() {
     <>
       <BoxContainer>
         <ContentContainer>
-          <TopDescription>전체 납부 현황 </TopDescription>
+          <TopDescription>전체 납부 현황</TopDescription>
           <BottomContainer>
             <MonthContainer>
-              <BlankContainer />
               <MonthLabelsContainer>
                 {utilityInfo?.weekList.map((item) => (
                   <MonthLabel key={item.week}>

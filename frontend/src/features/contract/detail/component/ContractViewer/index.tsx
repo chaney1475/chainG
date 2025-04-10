@@ -14,7 +14,13 @@ import {
 import { Contract, ContractRequest, RentUser } from '@/types/contract'
 import { formatMoney } from '@/utils/format'
 
-import { Container, DefaultLabel, HeaderTitle, UserContainer } from './styles'
+import {
+  Container,
+  DefaultLabel,
+  HeaderTitle,
+  UserContainer,
+  UtilityDescription,
+} from './styles'
 
 export function ContractViewer({
   contract,
@@ -79,9 +85,9 @@ export function ContractViewer({
           </TitleContainer>
         ))}
       </UserContainer>
-      <CenterContainer>
-        <DefaultLabel>{t('contract.detail.utilityDescription')}</DefaultLabel>
-      </CenterContainer>
+      <UtilityDescription>
+        {t('contract.detail.utilityDescription')}
+      </UtilityDescription>
       <hr />
       <DefaultContainer>
         <TitleContainer>

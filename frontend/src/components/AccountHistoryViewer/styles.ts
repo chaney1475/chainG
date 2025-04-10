@@ -73,15 +73,3 @@ export const DateContainer = styled.div`
   background-color: ${({ theme }) => theme.color.background.white};
   padding: 20px 20px 0px;
 `
-export const EmptyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  height: 15rem;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0 20px 40px;
-`

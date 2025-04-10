@@ -8,6 +8,12 @@ export const Container = styled.div`
   height: 100%;
   flex-direction: row;
   height: 100%;
+  > div {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+  }
 `
 export const ProfileContainer = styled.div`
   display: flex;

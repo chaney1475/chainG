@@ -11,7 +11,6 @@ import { User } from '@/types/user'
 import { BoxContainer } from '../../../styles'
 import {
   BarContainer,
-  BlankContainer,
   BottomContainer,
   ContentContainer,
   MonthContainer,
@@ -79,10 +78,6 @@ export function Step() {
     setUserList(newUserList)
   }, [rentInfo, group])
 
-  console.log('group', group)
-  console.log('rentInfo', rentInfo)
-  console.log('userList', userList)
-
   return (
     <>
       <BoxContainer>
@@ -90,7 +85,6 @@ export function Step() {
           <TopDescription>전체 납부 현황</TopDescription>
           <BottomContainer>
             <MonthContainer>
-              <BlankContainer />
               <MonthLabelsContainer>
                 {rentInfo?.monthList.map((item) => (
                   <MonthLabel key={item.month}>

@@ -108,7 +108,7 @@ const theme: CustomTheme = {
       regular: '#292f35',
       low: '#586575',
       disabled: '#A4B6CC',
-      distructive: '#c84620',
+      distructive: '#f96e69',
       confirm: '#2dbd99',
       saturday: '#74bcff',
       sunday: '#ff8c8f',

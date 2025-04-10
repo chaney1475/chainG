@@ -76,22 +76,6 @@ export const DateContainer = styled.div`
   background-color: ${({ theme }) => theme.color.background.white};
   padding: 16px 20px 0px;
 `
-export const EmptyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  height: 15rem;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px 40px;
-  background: linear-gradient(
-    to bottom,
-    white,
-    ${({ theme }) => theme.color.secondary}
-  );
-`
 
 export const TopDescription = styled.div`
   width: 100%;
@@ -211,7 +195,7 @@ export const MonthNavigation = styled.div`
 `
 export const BottomContainer = styled.div`
   display: flex;
-  flex: 1;
+  min-height: 40px;
   height: 40px;
   width: 100%;
 `

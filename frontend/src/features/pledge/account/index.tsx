@@ -137,23 +137,24 @@ export function Account({
             />
           )}
 
-          {paymentCurrent?.userRent !== PaymentStatus.COLLECTED && (
-            <ConfirmButton
-              variant={
-                paymentCurrent?.rent === PaymentStatus.PAID
-                  ? ButtonVariant.disabled
-                  : ButtonVariant.next
-              }
-              onClick={() => {
-                router.push(`/pledge/transfer/rent?month=${month}`)
-              }}
-              label={
-                paymentCurrent?.rent === PaymentStatus.PAID
-                  ? '공통 월세 납부 완료'
-                  : '월세 채우기'
-              }
-            />
-          )}
+          {paymentCurrent?.userRent != null &&
+            paymentCurrent?.userRent !== PaymentStatus.COLLECTED && (
+              <ConfirmButton
+                variant={
+                  paymentCurrent?.rent === PaymentStatus.PAID
+                    ? ButtonVariant.disabled
+                    : ButtonVariant.next
+                }
+                onClick={() => {
+                  router.push(`/pledge/transfer/rent?month=${month}`)
+                }}
+                label={
+                  paymentCurrent?.rent === PaymentStatus.PAID
+                    ? '공통 월세 납부 완료'
+                    : '월세 채우기'
+                }
+              />
+            )}
         </ButtonContainer>
         <DashBoardContainer>
           <MonthNavigation>
@@ -183,6 +184,7 @@ export function Account({
           </ContentContainer>
         </DashBoardContainer>
       </AccountHistoryViewer>
+      <BottomContainer />
     </Container>
   )
 }

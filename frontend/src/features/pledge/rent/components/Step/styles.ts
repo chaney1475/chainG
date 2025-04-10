@@ -47,7 +47,7 @@ export const BarContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 14px;
-  min-width: 50%;
+  min-width: 70%;
   padding: 0 14px;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.color.secondary};
@@ -108,15 +108,15 @@ export const MonthLabelsContainer = styled.div`
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  padding: 0 14px;
   width: 100%;
+  margin: 0 10px 0 30px;
 `
 
 export const MonthLabel = styled.div`
   position: relative;
-  width: 14px;
   height: auto;
   overflow: visible;
+  text-align: center;
 `
 
 export const MonthText = styled.div`
@@ -133,15 +133,10 @@ export const MonthContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: flex-end;
+  margin-left: auto;
+  width: 70%;
   min-height: 10px;
-  gap: 16px;
-`
-
-export const BlankContainer = styled.div`
-  min-width: 112px;
-  height: 100%;
 `
 
 export const BottomContainer = styled.div`

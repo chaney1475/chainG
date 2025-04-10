@@ -55,7 +55,6 @@ export function DutyPage() {
       const response = await getDuties(group.id) // dutyList
       console.log(response)
       if (response.success) {
-        console.log('듀티 리스트', response.data)
         dispatch(setDutyWeekList(response.data))
       }
     }
