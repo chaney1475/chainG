@@ -151,7 +151,6 @@ export function Notice() {
           </NoticeContent>
         </NoticeItem>
       )}
-
       {paymentCurrent.userUtility && (
         <NoticeItem>
           <Image
@@ -208,7 +207,7 @@ export function Notice() {
           </NoticeContent>
         </NoticeItem>
       )}
-      {isLeader && !livingAccountNo && (
+      {!livingAccountNo && (
         <NoticeItem>
           <Image
             src="/images/notification/notification-livingBudget.svg"
@@ -217,15 +216,19 @@ export function Notice() {
             height={21}
           />
           <NoticeContent>
-            <NoticeTitle>생활비</NoticeTitle>
+            <NoticeTitle>생활비 계좌 개설</NoticeTitle>
             <NoticeDescription>
-              <span>생활비 계좌를 개설해서 공금을 쉽게 관리해 보세요!</span>
+              <span>
+                {isLeader
+                  ? '생활비 계좌를 개설해서 공금을 쉽게 관리해 보세요!'
+                  : '방장에게 생활비 계좌 개설을 요청해보세요!'}
+              </span>
               <LinkContainer>
                 <StyledLink
                   onClick={() => {
-                    router.push('/budget/living/create')
+                    router.push('/budget/living')
                   }}>
-                  개설하기
+                  {isLeader ? '개설하기' : '요청하기'}
                 </StyledLink>
               </LinkContainer>
             </NoticeDescription>

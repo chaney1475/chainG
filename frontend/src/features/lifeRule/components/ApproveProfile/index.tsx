@@ -25,7 +25,6 @@ export function ApproveProfile() {
       const response = await postNotApprovedIds(group.id)
       if (response.success) {
         dispatch(setNotApprovedIds(response.data.notApprovedIds))
-        console.log('notApprovedId', response.data)
       }
     }
     fetchRent()
@@ -41,10 +40,6 @@ export function ApproveProfile() {
     setNotApprovedUser(
       group.members.filter((item) => notApprovedId.includes(item.id)),
     )
-
-    console.log('내정보', user)
-    console.log('승인', approvedUser)
-    console.log('아직', notApprovedUser)
   }, [group.members, notApprovedId])
 
   return (

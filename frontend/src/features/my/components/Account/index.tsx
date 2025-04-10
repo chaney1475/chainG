@@ -24,11 +24,6 @@ export function Account({ handleLogout }: AccountProps) {
   const approve: ButtonVariant = 'next'
   const livingBudget = useAppSelector((state) => state.livingBudget)
   const contract = useAppSelector((state) => state.contract)
-  console.log('livingBudget', livingBudget)
-  console.log('contract', contract)
-
-  const isLivingBudgetConnected: boolean =
-    !!livingBudget.myAccountNo && !!livingBudget.livingAccountNo
 
   return (
     <Container>

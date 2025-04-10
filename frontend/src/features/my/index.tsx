@@ -8,12 +8,18 @@ import { useRouter } from 'next/navigation'
 
 import { logout } from '@/apis/auth'
 import { getMySummary } from '@/apis/user'
+import { ConfirmButton } from '@/components'
 import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/components/TopHeader'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
-import { SimpleMain } from '@/styles/styles'
+import {
+  PaddingContainer,
+  ShowCenterBox,
+  SimpleMain,
+  SlimContainer,
+} from '@/styles/styles'
 
 import { Account, Profile } from './components'
 import { Container } from './styles'
@@ -101,18 +107,12 @@ export function MyPage() {
                 fontFamily: 'var(--font-paperlogy-medium)',
                 color: 'var(--color-text-regular)',
               }}>
-              <h1
-                style={{
-                  color: '#292F35',
-                }}>
-                Cha:nG
-              </h1>
-              <p
-                style={{
-                  color: '#586575',
-                }}>
-                계약과 약속 사이,
-              </p>
+              <img
+                src="/icons/logo-chainG.svg"
+                alt="logo"
+                width={100}
+                height={20}
+              />
               <p
                 style={{
                   color: '#586575',

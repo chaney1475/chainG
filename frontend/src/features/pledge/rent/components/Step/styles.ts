@@ -47,8 +47,9 @@ export const BarContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 14px;
-  min-width: 70%;
+  min-width: 50%;
   padding: 0 14px;
+  width: 70%;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.color.secondary};
 `
@@ -135,6 +136,8 @@ export const MonthContainer = styled.div`
   align-items: center;
   justify-content: flex-end;
   margin-left: auto;
+  min-width: 50%;
+  padding: 0 14px;
   width: 70%;
   min-height: 10px;
 `

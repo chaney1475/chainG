@@ -90,7 +90,6 @@ export function LifeRuleUpdatePage() {
       )
 
       if (itemIndex === -1) {
-        console.error('Item not found with id:', id)
         return
       }
 
@@ -122,7 +121,6 @@ export function LifeRuleUpdatePage() {
         actionType: item.actionType,
         variant: item.variant,
       }))
-      console.log('items updated:', debugUpdates)
     }
   }, [items])
 
@@ -212,20 +210,14 @@ export function LifeRuleUpdatePage() {
       actionType: item.actionType,
     }))
 
-    try {
-      const filteredUpdates = updates.filter(
-        (update) => update.actionType !== 'DEFAULT',
-      )
-      console.log('filteredUpdates', filteredUpdates) // 수정요청보내는거 콘솔찍기
-      const response = await updateLifeRule({ updates: filteredUpdates })
+    const filteredUpdates = updates.filter(
+      (update) => update.actionType !== 'DEFAULT',
+    )
+    const response = await updateLifeRule({ updates: filteredUpdates })
 
-      console.log(updates)
-      if (response.success) {
-        router.push('/lifeRule')
-        dispatch(setHomeOverviewLifeRuleApproved(true))
-      }
-    } catch (error) {
-      console.error('Error updating life rules:', error)
+    if (response.success) {
+      router.push('/lifeRule')
+      dispatch(setHomeOverviewLifeRuleApproved(true))
     }
   }
 

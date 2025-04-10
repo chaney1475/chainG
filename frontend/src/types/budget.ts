@@ -69,12 +69,14 @@ export type PaymentStatus =
 // rent 기준으로 COLLECTED 때만 집주인 계좌 송금 오픈 o
 
 export const PaymentStatus = {
-  STARTED: 'STARTED',
-  PARTIALLY_PAID: 'PARTIALLY_PAID',
-  COLLECTED: 'COLLECTED',
-  RETRY_PENDING: 'RETRY_PENDING',
-  PAID: 'PAID',
-  FAILED: 'FAILED',
+  STARTED: 'STARTED', //납부 전
+  PARTIALLY_PAID: 'PARTIALLY_PAID', // 모으기 실패
+  COLLECTED: 'COLLECTED', // 모으기 완료
+  RETRY_PENDING: 'RETRY_PENDING', // 송금 실패
+  PAID: 'PAID', // 완료
+  FAILED: 'FAILED', // 실패
+  DEBT: 'DEBT', // 연체
+  PENDING: 'PENDING', // 자동이체 중
 } as const
 export interface PaymentCurrent {
   rent: PaymentStatus | null

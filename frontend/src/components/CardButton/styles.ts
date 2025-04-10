@@ -19,7 +19,7 @@ export const Card = styled(Link)`
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
   height: 100%;
   border: none;

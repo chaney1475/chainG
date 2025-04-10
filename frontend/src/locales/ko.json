@@ -510,15 +510,15 @@
       },
       "PARTIALLY_PAID": {
         "label": "송금을 부분적으로 완료했어요",
-        "title": "공통 납부 부분 실패"
+        "title": "공통 계좌로 모으기 실패"
       },
       "COLLECTED": {
         "label": "공동 계좌로 송금을 완료했어요",
-        "title": "공통 송금 완료"
+        "title": "공통 계좌로 모으기 완료"
       },
       "RETRY_PENDING": {
         "label": "집주인에게 송금을 실패해 재시도 예정이에요",
-        "title": "공통 재시도 예약"
+        "title": "공통 계좌에서 납부 실패"
       },
       "PAID": {
         "label": "집주인에게 송금했어요",
@@ -533,19 +533,23 @@
         "title": "공통 납부 연체"
       },
       "PENDING": {
-        "label": "납부 시작 전이에요",
-        "title": "공통 납부 시작 전"
+        "label": "자동이체 중이에요",
+        "title": "공통 계좌에서 자동이체 중"
+      },
+      "null": {
+        "label": "결과를 확인할 수 없어요",
+        "title": "해당 사항 없음"
       }
     },
     "userPrefix": "{{value}} 님은 ",
     "userPaymentStatus": {
       "PENDING": {
-        "label": "납부 시작 전이에요",
-        "title": "개별 납부 시작 전"
+        "label": "자동이체 중이에요",
+        "title": "개별 계좌에서 자동이체 중"
       },
       "COLLECTED": {
         "label": "송금을 완료했어요",
-        "title": "개별 송금 완료"
+        "title": "개별 계좌에서 모으기 완료"
       },
       "FAILED": {
         "label": "송금에 실패했어요",
@@ -557,7 +561,7 @@
       },
       "PARTIALLY_PAID": {
         "label": "송금을 부분적으로 완료했어요",
-        "title": "개별 납부 부분 실패"
+        "title": "개별 계좌에서 납부 실패"
       },
       "RETRY_PENDING": {
         "label": "집주인에게 송금을 실패해 재시도 예정이에요",
@@ -570,6 +574,10 @@
       "DEBT": {
         "label": "개별 납부가 연체되었어요",
         "title": "개별 납부 연체"
+      },
+      "null": {
+        "label": "결과를 확인할 수 없어요",
+        "title": "해당 사항 없음"
       }
     },
     "transfer": {

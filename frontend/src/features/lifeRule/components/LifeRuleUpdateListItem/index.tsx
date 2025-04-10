@@ -116,8 +116,6 @@ export const LifeRuleUpdateListItem = ({
     }
   }
 
-  console.log('LifeRule')
-
   return (
     <ItemContainer variant={variant}>
       <CatrgoryIcon>

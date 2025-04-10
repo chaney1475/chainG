@@ -30,7 +30,7 @@ export const formatDuration = (startDate: string, endDate: string) => {
 }
 export const useMorning = () => {
   const now = new Date()
-  const kstOffset = 9 * 60 * 60 * 1000 //
+  const kstOffset = 9 * 60 * 60 * 1000
   const kstDate = new Date(now.getTime() + kstOffset)
   return kstDate.getUTCHours() < 18 && kstDate.getUTCHours() >= 6
 }

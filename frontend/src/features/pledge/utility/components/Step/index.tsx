@@ -39,8 +39,6 @@ interface weekPaid {
 export function Step() {
   const { t } = useTranslation()
   const utilityInfo = useAppSelector((state) => state.pledge.utility)
-  const userId = useAppSelector((state) => state.user.user.id)
-  const user = utilityInfo?.currentWeek.find((item) => item.userId === userId)
   const group = useAppSelector((state) => state.group.group.members)
 
   const [userList, setUserList] = useState<UserList[]>([])
@@ -51,7 +49,7 @@ export function Step() {
     const dayOfWeek = new Date().getDay()
 
     const exceedDueDate = dayOfWeek === 0 || dayOfWeek >= 5
-    //dueDate 는 언제나 금요일인것으로 가정정
+    //dueDate 는 언제나 금요일인것으로 가정
 
     const newUserList: UserList[] = group.map((item) => ({
       user: item,
@@ -81,10 +79,6 @@ export function Step() {
 
     setUserList(newUserList)
   }, [utilityInfo, group])
-
-  console.log('group', group)
-  console.log('utilityInfo', utilityInfo)
-  console.log('userList', userList)
 
   return (
     <>
@@ -117,6 +111,7 @@ export function Step() {
                     user={item.user}
                     variant="bar"
                     size="small"
+                    showName={true}
                   />
                   <BarContainer>
                     <StatusBarContainer>

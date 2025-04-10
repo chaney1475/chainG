@@ -88,26 +88,6 @@ export function Account({
   const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
   const currentMonth = useMemo(() => format(new Date(), 'yyyyMM'), [])
   const [month, setMonth] = useState(currentMonth)
-  const user = useAppSelector((state) => state.user.user)
-  const hasFetchedPaymentCurrent = useRef(false)
-
-  const fetchPaymentCurrent = useCallback(async () => {
-    if (hasFetchedPaymentCurrent.current) return
-    hasFetchedPaymentCurrent.current = true
-    if (!user.contractId) return
-
-    const response = await getPaymentCurrentStatus(month)
-    console.log(response)
-    if (response.success) {
-      dispatch(setPaymentCurrent(response.data as PaymentCurrent))
-    }
-    hasFetchedPaymentCurrent.current = false
-  }, [month])
-
-  const rent = useAppSelector((state) => state.contract.contract.rent)
-  useEffect(() => {
-    fetchPaymentCurrent()
-  }, [user.contractId, month])
 
   return (
     <Container>

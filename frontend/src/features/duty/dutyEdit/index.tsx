@@ -91,27 +91,17 @@ export function DutyEdit() {
   const onSubmit = async (data: DutyRequest) => {
     data.useTime = dutyTime !== '' // useTime 값 처리
 
-    console.log('data', data)
-    console.log('isEditMode', isEditMode)
     if (isEditMode) {
       const response = await modifyDuty(editDuty.id, data)
-      console.log(response)
       if (response.success) {
-        console.log('success')
         router.push('/duty')
         dispatch(setCompleteDayOfWeek(data.dayOfWeek))
-      } else {
-        console.log('error')
       }
     } else {
       const response = await createDuty(group.id, data)
-      console.log(response)
       if (response.success) {
-        console.log('success')
         router.push('/duty')
         dispatch(setCompleteDayOfWeek(data.dayOfWeek))
-      } else {
-        console.log('error')
       }
     }
   }

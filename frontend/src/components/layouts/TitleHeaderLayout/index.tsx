@@ -10,6 +10,7 @@ export function TitleHeaderLayout({
   children,
   onClick,
   buttonVariant = ButtonVariant.next,
+  gap = '60px',
 }: {
   title?: string
   header?: string
@@ -18,12 +19,13 @@ export function TitleHeaderLayout({
   children: React.ReactNode
   onClick: () => void
   buttonVariant?: ButtonVariant
+  gap?: string
 }) {
   return (
     <>
       <Container>
         <TopHeader title={title} />
-        <Main>
+        <Main style={{ gap: gap }}>
           {header && (
             <TitleHeader
               title={header}

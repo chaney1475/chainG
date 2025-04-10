@@ -34,9 +34,9 @@ export const Main = styled.main`
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  min-height: 60%;
+  min-height: 70%;
   margin: auto;
-  gap: 30px;
+  gap: 60px;
   width: 100%;
   overflow-y: auto;
 `
@@ -219,7 +219,11 @@ export const RegularLabel = styled.div`
 `
 export const DisabledLabel = styled.div`
   ${({ theme }) => theme.typography.styles.default};
-  color: ${({ theme }) => theme.color.text.regular};
+  color: ${({ theme }) => theme.color.text.disabled};
+`
+
+export const DisabledColorText = styled.div`
+  color: ${({ theme }) => theme.color.text.disabled};
 `
 export const ValidationMessage = styled.div<{ isValid: boolean }>`
   display: flex;
@@ -349,7 +353,10 @@ export const MainImageContainer = styled.div<{ isMorning: boolean }>`
   height: 100%;
   background: linear-gradient(
     to bottom,
-    ${({ isMorning }) => (isMorning ? '#48C5A6' : '#36CCC1')} 70%,
+
+    ${({ isMorning }) => (isMorning ? '#FFFBE8' : '#E6E7E8')} 0%,
+    ${({ isMorning }) => (isMorning ? '#FFFBE8' : '#E6E7E8')} 70%,
+    ${({ isMorning }) => (isMorning ? '#48C5A6' : '#36CCC1')} 77%,
     ${({ isMorning }) => (isMorning ? '#48C5A6' : '#36CCC1')} 85%,
     white 89%,
     white 100%

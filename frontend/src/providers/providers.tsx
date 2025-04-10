@@ -51,19 +51,14 @@ function LoadingFallback() {
             textAlign: 'center',
             fontFamily: 'var(--font-paperlogy-medium)',
             color: 'var(--color-text-regular)',
+            gap: '10px',
           }}>
-          <h1
-            style={{
-              color: '#292F35',
-            }}>
-            Cha:nG
-          </h1>
-          <p
-            style={{
-              color: '#586575',
-            }}>
-            계약과 약속 사이,
-          </p>
+          <img
+            src="/icons/logo-chainG-no.svg"
+            alt="logo"
+            width={100}
+            height={20}
+          />
           <p
             style={{
               color: '#586575',
