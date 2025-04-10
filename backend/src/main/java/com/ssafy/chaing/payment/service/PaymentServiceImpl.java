@@ -518,6 +518,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private GroupEntity getGroupEntity(UserEntity user) {
+        log.info("user group is = {} ", user.getGroupId());
         return groupRepository.findById(user.getGroupId())
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.GROUP_NOT_FOUND));
     }
