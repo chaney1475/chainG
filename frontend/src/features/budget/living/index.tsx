@@ -27,7 +27,13 @@ import {
 } from '@/utils/format'
 
 import { History } from './component'
-import { Account, AccountInfo, AccountTitle, CalendarContainer } from './styles'
+import {
+  Account,
+  AccountInfo,
+  AccountTitle,
+  CalendarContainer,
+  EmptyContainer,
+} from './styles'
 
 export function BudgetLivingPage() {
   const { t } = useTranslation()

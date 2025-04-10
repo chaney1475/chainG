@@ -66,13 +66,10 @@ export function TransferToOwnerPage() {
     },
   })
 
-  const myAccountNo = watch('myAccountNo')
   const balance = watch('balance')
-  const disabled = !livingAccountNo || !balance || !myAccountNo
 
   const [next, setNext] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
   const hasTransfered = useRef(false)
 
   const rent = useAppSelector((state) => state.contract.contract.rent)

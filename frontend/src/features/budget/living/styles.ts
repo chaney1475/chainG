@@ -49,3 +49,9 @@ export const CalendarContainer = styled.div`
   justify-content: flex-start;
   border-top: 8px solid ${({ theme }) => theme.color.secondary};
 `
+export const EmptyContainer = styled.div`
+  display: flex;
+  flex: 1;
+  height: 30px;
+  width: 100%;
+`

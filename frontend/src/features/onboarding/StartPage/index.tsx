@@ -115,22 +115,16 @@ export function StartPage() {
         <HeaderButton />
       </HeaderContainer>
       <Main>
-        {stepContent[step].title && (
-          <TitleContainer key={step}>
-            <LittleTitle>{stepContent[step].title}</LittleTitle>
-          </TitleContainer>
-        )}
         <ImageContainer>
           <AnimatedImage
             key={step}
             src={stepContent[step].image}
             alt={stepContent[step].title}
-            width={300}
-            height={400}
+            width={396}
+            height={537}
             style={{
-              objectFit: 'cover',
-              width: '80%',
-              height: '80%',
+              width: '90%',
+              height: '90%',
               margin: 'auto',
               display: 'flex',
             }}
