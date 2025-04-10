@@ -1,9 +1,8 @@
 // HistogramChart.tsx
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import * as d3 from 'd3'
 
-import { useAppSelector } from '@/hooks/useAppSelector'
 import { WeekList } from '@/types/budget'
 
 import { ContentContainer } from './styles'
@@ -13,7 +12,11 @@ interface Props {
 }
 
 export const Graph: React.FC<Props> = ({ data }) => {
-  const weekList = useAppSelector((state) => state.pledge.utility?.weekList)
+  const [weekList, setWeekList] = useState<WeekList[]>([])
+
+  useEffect(() => {
+    setWeekList([...data].reverse())
+  }, [data])
   const ref = useRef<SVGSVGElement | null>(null)
 
   useEffect(() => {

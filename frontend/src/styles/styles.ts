@@ -64,7 +64,7 @@ export const FullWidthMain = styled.div`
 `
 export const Form = styled.form`
   width: 100%;
-  gap: 1rem;
+  gap: 2rem;
   display: flex;
   flex-direction: column;
 `
@@ -217,7 +217,10 @@ export const RegularLabel = styled.div`
   ${({ theme }) => theme.typography.styles.default};
   color: ${({ theme }) => theme.color.text.regular};
 `
-
+export const DisabledLabel = styled.div`
+  ${({ theme }) => theme.typography.styles.default};
+  color: ${({ theme }) => theme.color.text.disabled};
+`
 export const ValidationMessage = styled.div<{ isValid: boolean }>`
   display: flex;
   align-items: center;
@@ -350,5 +353,34 @@ export const MainImageContainer = styled.div<{ isMorning: boolean }>`
     ${({ isMorning }) => (isMorning ? '#48C5A6' : '#36CCC1')} 85%,
     white 89%,
     white 100%
+  );
+`
+
+export const EmptyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 15rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px 40px;
+`
+export const EmptyContainer2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 15rem;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px 40px;
+  background: linear-gradient(
+    to bottom,
+    white,
+    ${({ theme }) => theme.color.secondary}
   );
 `

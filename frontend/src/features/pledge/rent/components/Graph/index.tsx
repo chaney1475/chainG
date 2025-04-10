@@ -92,7 +92,11 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
       .enter()
       .append('path')
       .attr('d', arc)
-      .attr('fill', (_: unknown, i: number) => color(i.toString()))
+      .attr('fill', (d: d3.PieArcDatum<DataItem>) =>
+        d.data.userId === highlightUserId
+          ? '#54a0ff'
+          : color(d.index.toString()),
+      )
 
     // 퍼센트 레이블
     svg
@@ -112,7 +116,7 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
           return ''
         }
       })
-      .attr('fill', '#0000ff')
+      .attr('fill', '#292f35')
       .style('font-size', '14px')
       .style('font-family', 'var(--font-paperlogy-regular)')
 
@@ -166,7 +170,7 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
           .attr('text-anchor', 'middle')
           .style('font-size', '18px')
           .style('font-family', 'var(--font-paperlogy-semi-bold)')
-          .attr('fill', '#00c4cc')
+          .attr('fill', '#54a0ff')
       }
     }
   }, [data, highlightUserId, width, height])

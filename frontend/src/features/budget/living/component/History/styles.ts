@@ -71,19 +71,3 @@ export const DateContainer = styled.div`
   padding: 20px 20px 0px;
   border-top: 8px solid ${({ theme }) => theme.color.secondary};
 `
-export const EmptyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  height: 15rem;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px 40px;
-  background: linear-gradient(
-    to bottom,
-    white,
-    ${({ theme }) => theme.color.secondary}
-  );
-`

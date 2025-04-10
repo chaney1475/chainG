@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react'
 
-import NextImage, { ImageProps as NextImageProps } from 'next/image'
+import NextImage from 'next/image'
 
-interface ImageProps extends NextImageProps {
-  errorSrc?: string
-}
+import { ImageProps } from '@/types/ui'
 
 export const Image = ({
   src,
@@ -14,6 +12,8 @@ export const Image = ({
   width = 80,
   height = 80,
   errorSrc = '/images/lifeRule/life-rule-OTHER-inactive.svg',
+  styles,
+  ...props
 }: ImageProps) => {
   const [imgSrc, setImgSrc] = useState(src)
 
@@ -32,6 +32,8 @@ export const Image = ({
       height={height}
       onError={handleImageError}
       unoptimized={true}
+      style={styles}
+      {...props}
     />
   )
 }

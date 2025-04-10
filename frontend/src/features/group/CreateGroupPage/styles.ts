@@ -122,7 +122,7 @@ export const HomeImageContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  gap: 0.5rem;
+  padding-bottom: 0.5rem;
 `
 
 export const UserContainer = styled.div`
@@ -131,5 +131,7 @@ export const UserContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  width: 100vw;
+  gap: 0.25rem;
+  width: 300px;
+  padding-bottom: 1rem;
 `

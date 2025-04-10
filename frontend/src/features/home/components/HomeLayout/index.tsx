@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { redirect } from 'next/dist/server/api-utils'
 import Image from 'next/image'
 
 import { BottomNavigation } from '@/components'

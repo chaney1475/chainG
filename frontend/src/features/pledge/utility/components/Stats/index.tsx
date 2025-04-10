@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { BudgetStatus } from '@/types/budget'
+import { formatMoney } from '@/utils/format'
 
 import { BoxContainer } from '../../../styles'
 import {
@@ -61,7 +62,9 @@ export function Stats() {
           <TextContainer>
             <TextBox>
               <LowColorText>공과금</LowColorText>
-              <LowColorText>{utilityInfo?.totalAmount}원</LowColorText>
+              <LowColorText>
+                {formatMoney(Number(utilityInfo?.totalAmount ?? 0))}
+              </LowColorText>
             </TextBox>
             <hr />
             <TextBox>
@@ -74,7 +77,9 @@ export function Stats() {
             </TextBox>
             <TextBox>
               <LowColorText>내가 낼 공과금</LowColorText>
-              <LowColorText>{utilityInfo?.myAmount}원</LowColorText>
+              <LowColorText>
+                {formatMoney(Number(utilityInfo?.myAmount ?? 0))}
+              </LowColorText>
             </TextBox>
             <hr />
             <TextBox>

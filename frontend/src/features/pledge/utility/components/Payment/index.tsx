@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { createTransferPDF } from '@/apis/payment'
 import { ConfirmButton, Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
+import { formatMoney } from '@/utils/format'
 
 import { BoxContainer } from '../../../styles'
 import {
@@ -75,7 +76,7 @@ export function Payment() {
                 width={24}
                 height={24}
               />
-              <div>{utilityInfo?.totalAmount}</div>
+              <div>{formatMoney(Number(utilityInfo?.totalAmount ?? 0))}</div>
             </AmountContainer>
             <Periond>
               {' '}

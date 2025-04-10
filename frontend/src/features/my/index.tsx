@@ -10,6 +10,7 @@ import { logout } from '@/apis/auth'
 import { getMySummary } from '@/apis/user'
 import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/components/TopHeader'
+import { useAppSelector } from '@/hooks/useAppSelector'
 import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
 import { SimpleMain } from '@/styles/styles'
@@ -21,8 +22,10 @@ export function MyPage() {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const router = useRouter()
-
+  const fetched = useRef(false)
   useEffect(() => {
+    if (fetched.current) return
+    fetched.current = true
     const fetchMySummary = async () => {
       try {
         const response = await getMySummary()
@@ -34,7 +37,7 @@ export function MyPage() {
       }
     }
     fetchMySummary()
-  }, [dispatch])
+  }, [])
 
   const logouted = useRef(false)
   const handleLogout = async () => {
@@ -46,17 +49,80 @@ export function MyPage() {
       dispatch(resetStore())
     }
   }
-
+  const accessToken = useAppSelector(
+    (state) => state.auth.loginToken.accessToken,
+  )
   return (
     <>
-      <Container>
-        <TopHeader title={t('my.title')} />
-        <SimpleMain>
-          <Profile />
-          <Account handleLogout={handleLogout} />
-        </SimpleMain>
-        <BottomNavigation />
-      </Container>
+      {accessToken ? (
+        <Container>
+          <TopHeader title={t('my.title')} />
+          <SimpleMain>
+            <Profile />
+            <Account handleLogout={handleLogout} />
+          </SimpleMain>
+          <BottomNavigation />
+        </Container>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            height: '100dvh',
+            width: '100%',
+          }}>
+          <div
+            style={{
+              padding: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '60%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 'auto',
+              width: '100%',
+              overflowY: 'auto',
+            }}>
+            <img
+              src="/icons/loading.svg"
+              alt="logo"
+              width={100}
+              height={100}
+            />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                width: '100%',
+                textAlign: 'center',
+                fontFamily: 'var(--font-paperlogy-medium)',
+                color: 'var(--color-text-regular)',
+              }}>
+              <h1
+                style={{
+                  color: '#292F35',
+                }}>
+                Cha:nG
+              </h1>
+              <p
+                style={{
+                  color: '#586575',
+                }}>
+                계약과 약속 사이,
+              </p>
+              <p
+                style={{
+                  color: '#586575',
+                }}>
+                우리 집의 블록체인 계약서
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

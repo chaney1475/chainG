@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 
 import { IconButton } from '@/components/IconButton'
 import { setCreateDayOfWeek } from '@/store/slices/dutySlice'
+import { Title } from '@/styles/styles'
 import { DayKey, DutyWeekList } from '@/types/duty'
 
 import { WeekSelector } from '../WeekSelector'
@@ -39,7 +40,7 @@ export function WeekList({
       <TopContainer>
         <div>3월 {t(`duty.schedule.week.${week}`)}</div>
         <TextContainer>
-          <div>이번주 당번</div>
+          <Title>이번주 당번</Title>
           <IconButton
             src="/icons/plus_circle.svg"
             alt="plus_circle"

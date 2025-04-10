@@ -5,6 +5,7 @@ import React from 'react'
 import {
   DefaultLabel,
   Description,
+  EmptyContainer,
   HeaderTitle,
   PaddingContainer,
   SlimContainer,
@@ -17,7 +18,6 @@ import {
   AccountHistoryContent,
   Container,
   ContentContainer,
-  EmptyContainer,
 } from './styles'
 
 export function AccountHistoryViewer({

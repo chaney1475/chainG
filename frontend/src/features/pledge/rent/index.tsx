@@ -1,10 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
-
-import { useRouter } from 'next/navigation'
+import React from 'react'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
 
@@ -22,7 +18,7 @@ export function RentPage() {
       <Payment />
       <Graph data={rentInfo?.currentMonth || []} />
       <Stats />
-      <Step/>
+      <Step />
       <BottomContainer />
     </>
   )

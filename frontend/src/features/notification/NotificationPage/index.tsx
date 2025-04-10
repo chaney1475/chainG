@@ -27,7 +27,7 @@ const NotificationItemComponent = ({
       <CategoryContainer
         src={
           notification?.category
-            ? `/images/notification/notification-${notification.category}.svg`
+            ? `/images/notification/notification-${notification.category.toLocaleLowerCase()}.svg`
             : '/images/notification/notification-etc.svg'
         }
         alt="notification"

@@ -7,17 +7,31 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import {
+  AnimatedImage,
   BottomSheet,
   CardButton,
   ConfirmButton,
   IconButton,
-  TitleHeader,
 } from '@/components'
 import { HeaderButton } from '@/components/TopHeader/styles'
-import { BottomContainer, Container, HeaderContainer } from '@/styles/styles'
-import { CardItem } from '@/types/ui'
+import {
+  BottomContainer,
+  Container,
+  DefaultContainer,
+  HeaderContainer,
+  TextCenterContainer,
+  Title,
+} from '@/styles/styles'
+import { CardItem, ImageVariant } from '@/types/ui'
 
-import { ImageContainer, Main } from './styles'
+import {
+  Dot,
+  ImageContainer,
+  LittleTitle,
+  Main,
+  StepControl,
+  TitleContainer,
+} from './styles'
 
 export function StartPage() {
   const router = useRouter()
@@ -92,19 +106,49 @@ export function StartPage() {
           alt={t('icon.back')}
           onClick={handleBack}
         />
-        {'ChainG'}
+        <Image
+          src="/icons/logo-chainG.svg"
+          alt="logo"
+          width={90}
+          height={24}
+        />
         <HeaderButton />
       </HeaderContainer>
       <Main>
-        <TitleHeader title={stepContent[step].title} />
+        {stepContent[step].title && (
+          <TitleContainer key={step}>
+            <LittleTitle>{stepContent[step].title}</LittleTitle>
+          </TitleContainer>
+        )}
         <ImageContainer>
-          <Image
+          <div></div>
+          <AnimatedImage
+            key={step}
             src={stepContent[step].image}
             alt={stepContent[step].title}
-            fill
-            style={{ objectFit: 'cover' }}
+            width={300}
+            height={400}
+            style={{
+              objectFit: 'cover',
+              width: '80%',
+              height: '80%',
+              margin: 'auto',
+              display: 'flex',
+            }}
+            variant={ImageVariant.flip}
           />
+          <div></div>
         </ImageContainer>
+
+        <StepControl>
+          {stepContent.map((_, i) => (
+            <Dot
+              key={i}
+              active={i === step}
+              onClick={() => setStep(i)}
+            />
+          ))}
+        </StepControl>
       </Main>
 
       <BottomContainer>
@@ -121,8 +165,12 @@ export function StartPage() {
           MID: 0.5,
           MAX: 0.5,
         }}>
-        <HeaderContainer>{t('onboarding.title')}</HeaderContainer>
-        <CardButton cardItems={cardItems} />
+        <DefaultContainer>
+          <TextCenterContainer>
+            <Title>{t('onboarding.title')}</Title>
+          </TextCenterContainer>
+          <CardButton cardItems={cardItems} />
+        </DefaultContainer>
       </BottomSheet>
     </Container>
   )

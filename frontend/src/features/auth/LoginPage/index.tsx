@@ -13,7 +13,13 @@ import { ConfirmButton, Image, InputBox } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setAccessToken, setFCMToken } from '@/store/slices/authSlice'
 import { setUser } from '@/store/slices/userSlice'
-import { CenterContainer, Container, Form, Main } from '@/styles/styles'
+import {
+  CenterContainer,
+  Container,
+  Form,
+  Main,
+  SlimContainer,
+} from '@/styles/styles'
 
 import { SignupLinkContainer, StyledLink } from './styles'
 
@@ -69,50 +75,83 @@ export function LoginPage() {
     <Container>
       <Main>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <CenterContainer>
-            <Image
-              src="/icons/logo.svg"
-              alt="logo"
-              width={120}
-              height={120}
+          <SlimContainer>
+            <CenterContainer>
+              <Image
+                src="/icons/logo.svg"
+                alt="logo"
+                width={120}
+                height={120}
+              />
+            </CenterContainer>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                width: '100%',
+                textAlign: 'center',
+                fontFamily: 'var(--font-paperlogy-medium)',
+                color: 'var(--color-text-regular)',
+              }}>
+              <h1
+                style={{
+                  color: '#292F35',
+                }}>
+                Cha:nG
+              </h1>
+              <p
+                style={{
+                  color: '#586575',
+                }}>
+                계약과 약속 사이,
+              </p>
+              <p
+                style={{
+                  color: '#586575',
+                }}>
+                우리 집의 블록체인 계약서
+              </p>
+            </div>
+          </SlimContainer>
+          <SlimContainer>
+            <InputBox
+              label={t('login.email.label')}
+              id="emailAddress"
+              type="email"
+              placeholder={t('login.email.placeholder')}
+              {...register('emailAddress', {
+                required: t('login.email.error.required'),
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: t('login.email.error.invalidEmail'),
+                },
+              })}
+              error={errors.emailAddress}
             />
-          </CenterContainer>
-          <InputBox
-            label={t('login.email.label')}
-            id="emailAddress"
-            type="email"
-            placeholder={t('login.email.placeholder')}
-            {...register('emailAddress', {
-              required: t('login.email.error.required'),
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: t('login.email.error.invalidEmail'),
-              },
-            })}
-            error={errors.emailAddress}
-          />
-
-          <InputBox
-            id="password"
-            label={t('login.password.label')}
-            type="password"
-            placeholder={t('login.password.placeholder')}
-            {...register('password', {
-              required: t('login.password.error.required'),
-              minLength: {
-                value: 6,
-                message: t('login.password.error.length'),
-              },
-            })}
-            error={errors.password}
-          />
-          <ConfirmButton
-            onClick={handleSubmit(onSubmit)}
-            label={'login.title'}
-          />
-          <SignupLinkContainer>
-            <StyledLink href="/auth/signup">{t('signUp.title')}</StyledLink>
-          </SignupLinkContainer>
+            <InputBox
+              id="password"
+              label={t('login.password.label')}
+              type="password"
+              placeholder={t('login.password.placeholder')}
+              {...register('password', {
+                required: t('login.password.error.required'),
+                minLength: {
+                  value: 6,
+                  message: t('login.password.error.length'),
+                },
+              })}
+              error={errors.password}
+            />
+            <ConfirmButton
+              onClick={handleSubmit(onSubmit)}
+              label={'login.title'}
+            />
+            <SignupLinkContainer>
+              <StyledLink href="/auth/signup">{t('signUp.title')}</StyledLink>
+            </SignupLinkContainer>
+          </SlimContainer>
         </Form>
       </Main>
     </Container>

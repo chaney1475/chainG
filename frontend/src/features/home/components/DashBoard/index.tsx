@@ -6,10 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import {
-  CenterContainer,
-  DefaultContainer,
+  DisabledLabel,
   PaddingContainer,
-  RegularLabel,
   ShowCenterBox,
   SlimContainer,
   Title,
@@ -198,8 +196,8 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
         )}
         {issues.length == 0 && (
           <PaddingContainer>
-            <ShowCenterBox>
-              <RegularLabel>오늘 나의 이슈가 없어요</RegularLabel>
+            <ShowCenterBox isDisabled={true}>
+              <DisabledLabel>오늘 나의 이슈가 없어요</DisabledLabel>
             </ShowCenterBox>
           </PaddingContainer>
         )}

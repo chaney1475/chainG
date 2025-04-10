@@ -7,13 +7,20 @@ import { useAppSelector } from '@/hooks'
 import {
   BankLabel,
   DefaultContainer,
+  PaddingContainer,
   ShowBox,
   TitleContainer,
 } from '@/styles/styles'
 import { Contract, ContractRequest, RentUser } from '@/types/contract'
 import { formatMoney } from '@/utils/format'
 
-import { Container, DefaultLabel, HeaderTitle, UserContainer } from './styles'
+import {
+  Container,
+  DefaultLabel,
+  HeaderTitle,
+  UserContainer,
+  UtilityDescription,
+} from './styles'
 
 export function ContractViewer({
   contract,
@@ -78,7 +85,9 @@ export function ContractViewer({
           </TitleContainer>
         ))}
       </UserContainer>
-      <DefaultLabel>{t('contract.detail.utilityDescription')}</DefaultLabel>
+      <UtilityDescription>
+        {t('contract.detail.utilityDescription')}
+      </UtilityDescription>
       <hr />
       <DefaultContainer>
         <TitleContainer>

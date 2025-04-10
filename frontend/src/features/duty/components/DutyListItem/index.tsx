@@ -29,11 +29,12 @@ export const DutyListItem = ({
         <Image
           src={
             dutyCategoryList.find((category) => category.id === duty.category)
-              ?.src ?? '/images/duty/duty-OTHER.svg' // 이미지 없을때 기본값 지정
+              ?.src ?? '/images/duty/duty-OTHER.svg'
           }
           alt={duty.category}
           width={32}
           height={32}
+          errorSrc="/images/duty/duty-OTHER.svg"
         />
       </CatrgoryIcon>
       <DutyInfo>
