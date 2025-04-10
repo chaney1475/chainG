@@ -14,6 +14,7 @@ export const ImageContainer = styled.div`
   height: 50dvh;
   display: flex;
   width: 100%;
+  padding-top: 30px;
   > div:nth-child(1) {
     position: absolute;
     width: 100%;

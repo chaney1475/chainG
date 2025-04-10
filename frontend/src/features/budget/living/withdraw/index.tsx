@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -83,12 +83,19 @@ export function BudgetLivingWithdrawPage() {
   const livingAccountDetail = useAppSelector(
     (state) => state.livingBudget.livingAccountDetail,
   )
-
-  const disabled =
-    !livingAccountNo ||
-    !balance ||
-    !myAccountNo ||
-    livingAccountDetail.accountBalance < balance
+  const disabled = useMemo(() => {
+    return !!(
+      !livingAccountNo ||
+      !balance ||
+      !myAccountNo ||
+      Number(livingAccountDetail.accountBalance) < Number(balance)
+    )
+  }, [
+    livingAccountNo,
+    balance,
+    myAccountNo,
+    livingAccountDetail.accountBalance,
+  ])
 
   useEffect(() => {
     if (next && !disabled) {
@@ -147,7 +154,6 @@ export function BudgetLivingWithdrawPage() {
           placeholder={t('livingBudget.withdraw.myAccountNo.placeholder')}
           error={errors.myAccountNo}
         />
-
         <InputBox
           id="balance"
           name="balance"

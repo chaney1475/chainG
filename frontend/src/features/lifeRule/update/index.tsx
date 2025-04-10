@@ -215,9 +215,11 @@ export function LifeRuleUpdatePage() {
         category: item.rule.category,
         actionType: item.id > 1000 ? 'CREATE' : item.actionType,
       }))
+      .filter(
+        (update) => !(update.actionType == 'CREATE' && update.content == ''),
+      )
 
     // const filteredUpdates = updates.filter((update) => update.id < 1000)
-    console.log('filteredUpdates', filteredUpdates)
     const response = await updateLifeRule({ updates: filteredUpdates })
 
     if (response.success) {

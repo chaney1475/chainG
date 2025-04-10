@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Image } from '@/components'
+import { AnimatedImage, Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import {
   DisabledLabel,
@@ -197,6 +197,12 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
         {issues.length == 0 && (
           <PaddingContainer>
             <ShowCenterBox isDisabled={true}>
+              <AnimatedImage
+                src="/images/home/home-my-issue-no.svg"
+                alt="오늘 나의 이슈가 없어요"
+                width={80}
+                height={80}
+              />
               <DisabledLabel>오늘 나의 이슈가 없어요</DisabledLabel>
             </ShowCenterBox>
           </PaddingContainer>
@@ -208,7 +214,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
           <Card href="/lifeRule">
             생활 규칙
             <Image
-              src={'/images/lifeRule/life-rule-LIFE_RULE-active.svg'}
+              src={'/images/home/home-life-rule.svg'}
               alt="생활 규칙"
               width={50}
               height={50}

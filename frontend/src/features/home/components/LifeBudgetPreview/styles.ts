@@ -38,8 +38,7 @@ export const CardDescription = styled.div`
   align-items: right;
   text-align: right;
   width: 100%;
-  nowrap
-  ${({ theme }) => theme.typography.styles.default}
+  ${({ theme }) => theme.typography.styles.default};
   background-color: ${({ theme }) => theme.color.background.white};
   white-space: nowrap;
   color: ${({ theme }) => theme.color.text.regular};

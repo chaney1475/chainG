@@ -71,3 +71,10 @@ export const DateContainer = styled.div`
   padding: 20px 20px 0px;
   border-top: 8px solid ${({ theme }) => theme.color.secondary};
 `
+export const EmptyContainer = styled.div`
+  display: flex;
+  flex: 1;
+  height: 60px;
+  width: 100%;
+  border: 10px solid red;
+`

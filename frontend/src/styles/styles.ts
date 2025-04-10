@@ -167,7 +167,7 @@ export const Title = styled.div`
   }
 `
 export const DefaultRegularTitle = styled.div`
-  ${({ theme }) => theme.typography.styles.defaultHighlight};
+  ${({ theme }) => theme.typography.styles.default};
   color: ${({ theme }) => theme.color.text.regular};
   width: 100%;
   opacity: 0;

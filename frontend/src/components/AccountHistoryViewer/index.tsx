@@ -8,7 +8,6 @@ import {
   Description,
   EmptyContainer,
   HeaderTitle,
-  PaddingContainer,
   SlimContainer,
   TitleContainer,
 } from '@/styles/styles'
@@ -20,6 +19,7 @@ import {
   AccountHistoryContent,
   Container,
   ContentContainer,
+  PaddingContainer,
 } from './styles'
 
 export function AccountHistoryViewer({

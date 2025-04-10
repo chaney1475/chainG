@@ -10,6 +10,7 @@ import { useFormattedDuration } from '@/hooks'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
 import { ButtonVariant } from '@/types/ui'
 
+import { EmptyContainer } from '../../styles'
 import {
   ButtonContainer,
   ContentContainer,
@@ -85,6 +86,7 @@ export function History({
           ))}
         </SelectContainer>
       </ContentContainer>
+      <EmptyContainer />
     </AccountHistoryViewer>
   )
 }
