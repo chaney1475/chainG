@@ -22,6 +22,7 @@ import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
   CenterContainer,
   Container,
+  Container2,
   DefaultContainer,
   EmptyContainer,
   HeaderTitle,
@@ -326,7 +327,7 @@ export function HomePage() {
 
   if (!accessToken || !user.groupId) {
     return (
-      <Container>
+      <Container2>
         <SlimContainer>
           <CenterContainer>
             <AnimatedImage
@@ -365,7 +366,7 @@ export function HomePage() {
             </div>
           </div>
         </SlimContainer>
-      </Container>
+      </Container2>
     )
   }
   return (
