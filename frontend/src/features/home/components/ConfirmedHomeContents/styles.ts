@@ -12,6 +12,6 @@ export const ContentsContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 16px;
+  gap: 0px;
   width: 100%;
 `

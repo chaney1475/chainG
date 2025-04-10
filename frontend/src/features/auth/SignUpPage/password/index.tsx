@@ -67,6 +67,15 @@ export function SignUpPasswordPage() {
     },
   })
 
+  const [sameValidations, setSameValidations] = useState<{
+    [key: string]: ValidationItem
+  }>({
+    same: {
+      isValid: true,
+      message: t('signUp.confirmPassword.error.match'),
+    },
+  })
+
   const isValidPassword =
     Object.values(validations).every((v) => v.isValid) &&
     password.length >= 8 &&
@@ -81,8 +90,12 @@ export function SignUpPasswordPage() {
       newValidations.length.isValid =
         password.length >= 8 && password.length <= 20
       setValidations(newValidations)
+
+      const newSameValidations = { ...sameValidations }
+      newSameValidations.same.isValid = password === confirmPassword
+      setSameValidations(newSameValidations)
     }
-  }, [password])
+  }, [password, confirmPassword])
 
   const initFCM = async () => {
     if (FCMToken) return
@@ -129,33 +142,33 @@ export function SignUpPasswordPage() {
       onClick={handleSubmit(onSubmit)}
       buttonVariant={
         isValidPassword ? ButtonVariant.next : ButtonVariant.disabled
-      }>
-      <Form>
-        <InputBox
-          label={t('signUp.password.label')}
-          id="password"
-          type="password"
-          placeholder={t('signUp.password.placeholder')}
-          error={errors.password}
-          validations={validations}
-          {...register('password', {
-            required: t('signUp.password.error.required'),
-          })}
-        />
-        <InputBox
-          label={t('signUp.confirmPassword.label')}
-          id="confirmPassword"
-          type="password"
-          placeholder={t('signUp.confirmPassword.placeholder')}
-          error={errors.confirmPassword}
-          {...register('confirmPassword', {
-            required: t('signUp.confirmPassword.error.required'),
-            validate: (value) =>
-              value === watch('password') ||
-              t('signUp.confirmPassword.error.match'),
-          })}
-        />
-      </Form>
+      }
+      gap="20px">
+      <InputBox
+        label={t('signUp.password.label')}
+        id="password"
+        type="password"
+        placeholder={t('signUp.password.placeholder')}
+        error={errors.password}
+        validations={validations}
+        {...register('password', {
+          required: t('signUp.password.error.required'),
+        })}
+      />
+      <InputBox
+        label={t('signUp.confirmPassword.label')}
+        id="confirmPassword"
+        type="password"
+        placeholder={t('signUp.confirmPassword.placeholder')}
+        error={errors.confirmPassword}
+        validations={sameValidations}
+        {...register('confirmPassword', {
+          required: t('signUp.confirmPassword.error.required'),
+          validate: (value) =>
+            value === watch('password') ||
+            t('signUp.confirmPassword.error.match'),
+        })}
+      />
     </TitleHeaderLayout>
   )
 }

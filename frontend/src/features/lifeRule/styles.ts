@@ -13,13 +13,13 @@ export const Container = styled.div`
 `
 
 export const FullMain = styled.main`
-  padding: 1.25rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;
   width: 100%;
-  height: calc(100% - 75px);
+  height: 100%;
   overflow-y: auto;
 `
 

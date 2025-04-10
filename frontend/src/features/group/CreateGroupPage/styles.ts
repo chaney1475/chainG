@@ -98,7 +98,6 @@ export const ParticipantsContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  width: 100%;
   padding: 0.5rem;
   border: 2px solid transparent;
   border-radius: 16px;
@@ -106,7 +105,6 @@ export const ParticipantsContainer = styled.div`
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   background-color: ${({ theme }) => theme.color.background.white};
-
   &:focus {
     outline: 1px solid ${({ theme }) => theme.color.primary};
   }

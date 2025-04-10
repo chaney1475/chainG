@@ -2,6 +2,7 @@
 
 import React from 'react'
 
+import { AnimatedImage } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import {
   Description,
@@ -12,6 +13,7 @@ import {
   SlimContainer,
   Title,
 } from '@/styles/styles'
+import { ImageVariant } from '@/types/ui'
 
 import { BottomContainer, EmptyMain } from '../styles'
 import { Graph } from './components/Graph'
@@ -42,6 +44,13 @@ export function UtilityPage() {
           <EmptyContainer>
             <ShowCenterBox isDisabled>
               <SlimContainer>
+                <AnimatedImage
+                  src="/images/account/account-no.svg"
+                  alt="공과금을 이용할 수 없어요"
+                  width={80}
+                  height={80}
+                  variant={ImageVariant.bounce}
+                />
                 <Title>공과금을 이용할 수 없어요</Title>
                 <Description>월세로 한정된 서약서를 사용 중이에요</Description>
               </SlimContainer>

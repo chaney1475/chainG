@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -74,6 +74,7 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
     }
   }, [existingNickname, setValue])
   const [isConfirm, setIsConfirm] = useState(false)
+  const hadConfirmed = useRef(false)
   const onSubmit = async ({
     nickname,
     profileImage,
@@ -81,6 +82,10 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
     nickname: string
     profileImage: string
   }) => {
+    if (hadConfirmed.current) {
+      return
+    }
+    hadConfirmed.current = true
     let response = null
     if (leader) {
       dispatch(setOwnerNickname(nickname))
@@ -115,6 +120,7 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
       await dispatch(setUserProfileImage(profileImage))
       setIsConfirm(true)
     }
+    hadConfirmed.current = false
   }
 
   useEffect(() => {

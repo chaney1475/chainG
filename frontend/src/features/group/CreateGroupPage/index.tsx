@@ -14,8 +14,10 @@ import {
   TitleHeader,
   TitleHeaderLayout,
 } from '@/components'
+import '@/components/TitleHeader/styles'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setGroupName, setMaxParticipants } from '@/store/slices/groupSlice'
+import { Title, TitleCenter } from '@/styles/styles'
 import { CreateGroupRequest } from '@/types/group'
 import { ImageVariant } from '@/types/ui'
 
@@ -136,7 +138,7 @@ export function CreateGroupPage() {
               height={28}
             />
           </ImageButton>
-          <TitleHeader title={participants + ''} />
+          <TitleCenter> {participants + ''}</TitleCenter>
           <ImageButton onClick={increaseParticipants}>
             <Image
               src="/icons/plus.svg"

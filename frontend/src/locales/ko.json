@@ -118,7 +118,7 @@
       "placeholder": "비밀번호를 다시 입력해주세요",
       "error": {
         "required": "비밀번호를 확인해주세요",
-        "match": "비밀번호가 일치하지 않습니다"
+        "match": "올바른 비밀번호를 입력해주세요"
       }
     }
   },
@@ -197,11 +197,11 @@
     "title": "셰어하우스에 입주해요",
     "create": {
       "title": "방 생성하기",
-      "description": "방장이 되어 방을 만들고\n친구들을 초대할 수 있어요"
+      "description": "방장이 되어\n친구들을 초대해요"
     },
     "join": {
       "title": "방 참여하기",
-      "description": "이미 생성된 방에\n입주할 수 있어요"
+      "description": "이미 생성된 방에\n입주해요"
     },
     "confirm": "입주하기"
   },
@@ -257,7 +257,7 @@
     "codeCopy": {
       "title": "코드 복사",
       "label": "초대 코드",
-      "description": "같이 살 룸메들을\nCha:nG에 초대해주세요"
+      "description": "같이 살 룸메들을 Cha:nG에 초대해주세요"
     },
     "issues": {
       "all": "전체",
@@ -345,7 +345,7 @@
     },
     "ownerAccountNo": {
       "title": "집주인 계좌 번호",
-      "label": "서약한 집 주인의 월세 납부용 계좌 번호를 입력해주세요",
+      "label": "월세 납부용 계좌 번호를 입력해주세요",
       "placeholder": "계좌 번호를 입력해주세요"
     },
     "dueDate": {
@@ -393,7 +393,7 @@
       "none": {
         "title": "서약서 생성",
         "button": "서약서 생성하기",
-        "description": "{{value}}만의 월세,\n공과금 서약서를 작성해주세요.",
+        "description": "'{{value}}'만의 월세,\n공과금 서약서를 작성해주세요.",
         "label": "서약서를 생성해주세요"
       },
       "draft": {
@@ -439,7 +439,7 @@
       "totalRatio": "분담 비율",
       "rentAccountNo": "월세 계좌",
       "ownerAccountNo": "집주인 계좌",
-      "utilityDescription": "*공과금은 모든 인원이\n동일한 비율로 계산됩니다.",
+      "utilityDescription": "*공과금은 n분의 1 비율로 계산됩니다.",
       "utilityCard": "공과금 신용 카드"
     }
   },
@@ -544,8 +544,8 @@
     "userPrefix": "{{value}} 님은 ",
     "userPaymentStatus": {
       "PENDING": {
-        "label": "자동이체 중이에요",
-        "title": "개별 계좌에서 자동이체 중"
+        "label": "납부 진행 중이에요",
+        "title": "개별 계좌에서 진행 중"
       },
       "COLLECTED": {
         "label": "송금을 완료했어요",

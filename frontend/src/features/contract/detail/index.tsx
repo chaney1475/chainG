@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -133,15 +133,17 @@ export function ContractDetail() {
       setStatus(contract.status)
     }
   }, [user.id, contractMembers, contract.status])
-
+  const hadConfirmed = useRef(false)
   const updateContractRequest = async () => {
-    if (!user.contractId) {
+    if (hadConfirmed.current || !user.contractId) {
       return
     }
+    hadConfirmed.current = true
     const response = await confirmContract({
       contractId: user.contractId,
       contract: contract,
     })
+    hadConfirmed.current = false
     if (response.success) {
       dispatch(setContract(response.data))
       router.push('/contract/detail')
@@ -231,7 +233,7 @@ export function ContractDetail() {
               label="자동이체용 계좌번호"
               id="accountNo"
               {...register('accountNo')}
-              placeholder="자동이체용 계좌번호를 입력해주세요"
+              placeholder="계좌번호를 입력해주세요"
             />
           </PaddingContainer>
         )}

@@ -30,6 +30,7 @@ import { CardItem } from '@/types/ui'
 
 import { ConfirmedHomeContents, HomeLayout } from '../components'
 import {
+  CopyBox,
   Dday,
   DefaultHomeContents,
   Description,
@@ -238,17 +239,15 @@ export function HomePage() {
           title: t('main.codeCopy.title'),
           description: t('main.codeCopy.description'),
           children: (
-            <ShowCenterBox isDisabled={true}>
-              <ValidationContainer>
-                <Description>{t('main.codeCopy.label')}</Description>
-                <HeaderTitle>{group.inviteCode}</HeaderTitle>
-                <IconButton
-                  onClick={handleCopy}
-                  src="/icons/copy.svg"
-                  alt="copy"
-                />
-              </ValidationContainer>
-            </ShowCenterBox>
+            <CopyBox>
+              <Description>{t('main.codeCopy.label')}</Description>
+              <HeaderTitle>{group.inviteCode}</HeaderTitle>
+              <IconButton
+                onClick={handleCopy}
+                src="/icons/copy.svg"
+                alt="copy"
+              />
+            </CopyBox>
           ),
         },
       ],
@@ -395,12 +394,10 @@ export function HomePage() {
           <ConfirmedHomeContents />
         ) : (
           <DefaultHomeContents>
-            <PaddingContainer>
-              <CardButton
-                cardItems={
-                  cardItems.find((item) => item.key === status)?.item ?? []
-                }></CardButton>
-            </PaddingContainer>
+            <CardButton
+              cardItems={
+                cardItems.find((item) => item.key === status)?.item ?? []
+              }></CardButton>
           </DefaultHomeContents>
         )}
       </MainWrapper>

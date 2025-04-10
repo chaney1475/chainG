@@ -159,7 +159,7 @@ const theme: CustomTheme = {
       },
       heading: {
         fontFamily: 'var(--font-paperlogy-semi-bold)',
-        fontSize: '1.875rem',
+        fontSize: '22px',
       },
       navigator: {
         fontFamily: 'var(--font-paperlogy-regular)',

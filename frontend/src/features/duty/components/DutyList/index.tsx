@@ -4,7 +4,7 @@ import React from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { ConfirmButton } from '@/components'
+import { AnimatedImage, ConfirmButton } from '@/components'
 import { Image } from '@/components'
 import {
   Description,
@@ -14,6 +14,7 @@ import {
   TitleContainer,
 } from '@/styles/styles'
 import { DayKey, Duty, DutyWeekList } from '@/types/duty'
+import { ImageVariant } from '@/types/ui'
 import { User } from '@/types/user'
 
 import { DutyListItem } from '../DutyListItem'
@@ -47,6 +48,13 @@ export function DutyList({
       {dutyList[selectedWeek].length == 0 && (
         <PaddingContainer>
           <EmptyContainer>
+            <AnimatedImage
+              src="/images/duty/duty-no.svg"
+              alt="당번이 없습니다"
+              width={80}
+              height={80}
+              variant={ImageVariant.bounce}
+            />
             <TitleContainer>
               <Title>당번이 없습니다</Title>
             </TitleContainer>

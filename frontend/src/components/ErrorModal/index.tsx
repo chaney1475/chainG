@@ -16,6 +16,7 @@ import {
   overlayStyle,
   titleStyle,
 } from '../Modal/styles'
+import { ModalConfirmButton } from '../ModalConfirmButton'
 
 export default function ErrorModal() {
   const { t } = useTranslation()
@@ -47,7 +48,7 @@ export default function ErrorModal() {
           )}
           <ButtonWrapper>
             {secondaryButtonType && (
-              <ConfirmButton
+              <ModalConfirmButton
                 label={secondaryButtonType}
                 variant={'prev'}
                 onClick={() => {
@@ -57,7 +58,7 @@ export default function ErrorModal() {
               />
             )}
             {primaryButtonType && (
-              <ConfirmButton
+              <ModalConfirmButton
                 label={primaryButtonType}
                 variant={'next'}
                 onClick={() => dispatch(setErrorModalVisible(false))}

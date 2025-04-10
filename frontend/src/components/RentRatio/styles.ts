@@ -5,8 +5,7 @@ export const Total = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  padding-left: 56px;
-  padding-top: 8px;
+  padding: 16px 10px 8px 56px;
   ${({ theme }) => theme.typography.styles.topHeader};
   color: ${({ theme }) => theme.color.text.regular};
   animation: fadeInUp 0.2s ease-out forwards;

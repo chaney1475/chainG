@@ -108,7 +108,7 @@ export function MyPage() {
                 color: 'var(--color-text-regular)',
               }}>
               <img
-                src="/icons/logo-chainG.svg"
+                src="/icons/logo-chainG-no.svg"
                 alt="logo"
                 width={100}
                 height={20}

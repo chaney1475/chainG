@@ -1,13 +1,17 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
+import { postNotApprovedIds } from '@/apis/lifeRule'
 import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { useIsLeader } from '@/hooks'
+import { setNotApprovedIds } from '@/store/slices/lifeRuleSlice'
 import { setSelectedMenu } from '@/store/slices/pledgeSlice'
 import { PledgeMenu } from '@/types/ui'
 
@@ -59,6 +63,24 @@ export function Notice() {
     : ''
   const router = useRouter()
   const dispatch = useDispatch()
+  const group = useAppSelector((state) => state.group.group)
+  const notApprovedId: number[] = useAppSelector(
+    (state) => state.lifeRule.notApprovedIds,
+  )
+  const shouldApprove = useMemo(
+    () => notApprovedId.includes(user.id),
+    [notApprovedId, user.id],
+  )
+
+  useEffect(() => {
+    const fetchRent = async () => {
+      const response = await postNotApprovedIds(group.id)
+      if (response.success) {
+        dispatch(setNotApprovedIds(response.data.notApprovedIds))
+      }
+    }
+    fetchRent()
+  }, [group, dispatch])
   return (
     <Container>
       {paymentCurrent.rent && (
@@ -181,7 +203,7 @@ export function Notice() {
           </NoticeContent>
         </NoticeItem>
       )}
-      {homeOverview.isLifeRuleApproved && (
+      {shouldApprove && (
         <NoticeItem>
           <Image
             src="/images/notification/notification-rule.svg"
@@ -191,7 +213,7 @@ export function Notice() {
           />
           <NoticeContent>
             <NoticeTitle>
-              [생활 규칙] 승인 진행중인 생활 규칙이 있어요
+              [생활 규칙] 승인해야 하는 생활 규칙이 있어요
             </NoticeTitle>
             <NoticeDescription>
               <span>새로 바뀔 생활 규칙을 확인해 주세요!</span>

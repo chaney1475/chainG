@@ -10,7 +10,7 @@ import { IconButton } from '@/components/IconButton'
 import { Label } from '@/components/InputBox/styles'
 import { HeaderButton } from '@/components/TopHeader/styles'
 import { useAppSelector, useCopyInviteCode } from '@/hooks'
-import { ImageContainer, ShowCenterBox } from '@/styles/styles'
+import { BankLabel, ImageContainer, ShowCenterBox } from '@/styles/styles'
 
 export function ShareInviteCodePage() {
   const { t } = useTranslation()
@@ -49,12 +49,14 @@ export function ShareInviteCodePage() {
         <Label>{t('shareInviteCode.inviteCode.label')}</Label>
         <ShowCenterBox>
           <HeaderButton />
-          {group.inviteCode}
-          <IconButton
-            onClick={handleCopy}
-            src="/icons/copy.svg"
-            alt="copy"
-          />
+          <BankLabel>
+            {group.inviteCode}
+            <IconButton
+              onClick={handleCopy}
+              src="/icons/copy.svg"
+              alt="copy"
+            />
+          </BankLabel>
         </ShowCenterBox>
       </div>
     </TitleHeaderLayout>
