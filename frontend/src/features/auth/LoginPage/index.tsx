@@ -81,8 +81,8 @@ export function LoginPage() {
               <AnimatedImage
                 src="/icons/logo-no-padding.svg"
                 alt="logo"
-                width={60}
-                height={60}
+                width={100}
+                height={100}
                 variant={ImageVariant.bounce}
               />
             </CenterContainer>

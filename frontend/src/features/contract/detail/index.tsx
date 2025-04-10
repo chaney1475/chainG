@@ -18,6 +18,7 @@ import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
+import { setNoContractWhenLogIn } from '@/store/slices/uiSlice'
 import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
@@ -148,6 +149,7 @@ export function ContractDetail() {
     hadConfirmed.current = false
     if (response.success) {
       dispatch(setContract(response.data))
+      dispatch(setNoContractWhenLogIn(false))
       setOpenConfirmModal(true)
       // router.push('/contract/detail')
     }
@@ -241,7 +243,6 @@ export function ContractDetail() {
           </PaddingContainer>
         )}
       </Modal>
-      {'openConfirmModal'} {openConfirmModal ? 'sddd' : 'nnn'}
       <Modal
         open={openConfirmModal}
         onOpenChange={setOpenConfirmModal}
