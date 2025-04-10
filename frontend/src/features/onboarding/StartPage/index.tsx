@@ -13,12 +13,12 @@ import {
   ConfirmButton,
   IconButton,
 } from '@/components'
+import { AnimatedImageWrapper } from '@/components/AnimatedImage/styles'
 import { HeaderButton } from '@/components/TopHeader/styles'
 import {
   BottomContainer,
   Container,
   DefaultContainer,
-  HeaderContainer,
   TextCenterContainer,
   Title,
 } from '@/styles/styles'
@@ -26,6 +26,7 @@ import { CardItem, ImageVariant } from '@/types/ui'
 
 import {
   Dot,
+  HeaderContainer,
   ImageContainer,
   LittleTitle,
   Main,
@@ -116,20 +117,19 @@ export function StartPage() {
       </HeaderContainer>
       <Main>
         <ImageContainer>
-          <AnimatedImage
+          <AnimatedImageWrapper
             key={step}
-            src={stepContent[step].image}
-            alt={stepContent[step].title}
-            width={396}
-            height={537}
-            style={{
-              width: '90%',
-              height: '90%',
-              margin: 'auto',
-              display: 'flex',
-            }}
-            variant={ImageVariant.flip}
-          />
+            variant={ImageVariant.flip}>
+            <Image
+              src={stepContent[step].image}
+              alt={stepContent[step].title}
+              fill
+              style={{
+                objectFit: 'contain',
+              }}
+              unoptimized={true}
+            />
+          </AnimatedImageWrapper>
           <div onClick={() => setStep(Math.max(step - 1, 0))}></div>
           <div
             onClick={() =>

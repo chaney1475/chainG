@@ -18,6 +18,7 @@ import { Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setShowContractApprovedModal } from '@/store/slices/appSlice'
 import { setContract } from '@/store/slices/contractSlice'
+import { setNoContractWhenLogIn } from '@/store/slices/uiSlice'
 import { ImageContainer, Label, PaddingContainer, Title } from '@/styles/styles'
 import { ContractStatus, RentUser } from '@/types/contract'
 
@@ -133,6 +134,8 @@ export function ContractDetail() {
       setStatus(contract.status)
     }
   }, [user.id, contractMembers, contract.status])
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+
   const hadConfirmed = useRef(false)
   const updateContractRequest = async () => {
     if (hadConfirmed.current || !user.contractId) {
@@ -146,7 +149,9 @@ export function ContractDetail() {
     hadConfirmed.current = false
     if (response.success) {
       dispatch(setContract(response.data))
-      router.push('/contract/detail')
+      dispatch(setNoContractWhenLogIn(false))
+      setOpenConfirmModal(true)
+      // router.push('/contract/detail')
     }
   }
   const [useModifyModal, setUseModifyModal] = useState(false)
@@ -238,6 +243,17 @@ export function ContractDetail() {
           </PaddingContainer>
         )}
       </Modal>
+      <Modal
+        open={openConfirmModal}
+        onOpenChange={setOpenConfirmModal}
+        onConfirm={() => {
+          setOpenConfirmModal(false)
+          router.replace('/contract/detail')
+        }}
+        title={'초안 서약서 완성을 축하드려요!'}
+        description={'모두의 승인을 받아보세요'}
+        image={'/images/etc/congratulations.svg'}
+      />
       <BottomContainer>
         {status === ContractStatus.isContractApproved && (
           <ConfirmButton

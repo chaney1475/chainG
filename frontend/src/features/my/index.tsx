@@ -117,7 +117,7 @@ export function MyPage() {
                 style={{
                   color: '#586575',
                 }}>
-                우리 집의 블록체인 계약서
+                가볍지만 신뢰할 수 있는 동거 서약관리 서비스
               </p>
             </div>
           </div>

@@ -30,12 +30,12 @@ const fetchErrorModal = (props: FetchErrorModalProps) => {
 
 export const handleDefaultError = (error: unknown) => {
   if (!isAxiosError(error)) {
-    fetchErrorModal({
-      title: `error.999.title`,
-      content: `error.999.content`,
-      useSecondaryButton: true,
-      useI18n: true,
-    })
+    // fetchErrorModal({
+    //   title: `error.999.title`,
+    //   content: `error.999.content`,
+    //   useSecondaryButton: true,
+    //   useI18n: true,
+    // })
     return Promise.reject({
       success: false,
       error: error,
@@ -48,12 +48,12 @@ export const handleDefaultError = (error: unknown) => {
     if (responseData.code == 'LIFE_RULE_NOT_FOUND') {
       return Promise.reject(error.response?.data)
     }
-    fetchErrorModal({
-      title: '',
-      content: responseData.message,
-      useSecondaryButton: false,
-      useI18n: false,
-    })
+    // fetchErrorModal({
+    //   title: '',
+    //   content: responseData.message,
+    //   useSecondaryButton: false,
+    //   useI18n: false,
+    // })
     return Promise.reject(error.response?.data as ApiErrorResponse)
   }
 
@@ -71,12 +71,12 @@ export const handleDefaultError = (error: unknown) => {
       break
   }
 
-  fetchErrorModal({
-    title: `error.${status}.title`,
-    content: `error.${status}.content`,
-    useSecondaryButton: true,
-    useI18n: true,
-  })
+  // fetchErrorModal({
+  //   title: `error.${status}.title`,
+  //   content: `error.${status}.content`,
+  //   useSecondaryButton: true,
+  //   useI18n: true,
+  // })
 
   return Promise.reject({
     success: false,

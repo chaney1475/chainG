@@ -382,8 +382,8 @@
       "confirmText": "수정"
     },
     "approve": {
-      "title": "계약서 최종 승인",
-      "description": "계약서를 최종 승인하시겠어요?\n한 번 완료한 승인은 취소할 수 없어요.",
+      "title": "서약서 최종 승인",
+      "description": "서약서를 최종 승인하시겠어요?\n한 번 완료한 승인은 취소할 수 없어요.",
       "confirmText": "승인"
     },
     "detail": {
@@ -393,7 +393,7 @@
       "none": {
         "title": "서약서 생성",
         "button": "서약서 생성하기",
-        "description": "'{{value}}'만의 월세,\n공과금 서약서를 작성해주세요.",
+        "description": "<{{value}}>만의 월세,\n공과금 서약서를 작성해주세요.",
         "label": "서약서를 생성해주세요"
       },
       "draft": {

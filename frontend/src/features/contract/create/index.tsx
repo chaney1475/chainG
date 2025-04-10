@@ -77,6 +77,7 @@ export function ContractCreatePage() {
   const dispatch = useDispatch()
   const router = useRouter()
   const group = useAppSelector((state) => state.group.group)
+  const user = useAppSelector((state) => state.user.user)
   const contract = useAppSelector((state) => state.contract.contract)
   const [openModal, setOpenModal] = useState(false)
   const contractRequest = useAppSelector(
@@ -97,7 +98,7 @@ export function ContractCreatePage() {
     isLastStep,
   } = useContractSteps()
   const hasCreated = useRef(false)
-
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     const createContract = async () => {
       if (hasCreated.current) return
@@ -108,8 +109,9 @@ export function ContractCreatePage() {
           groupId: user.groupId as number,
         })
         if (response.success) {
-          dispatch(setContractId(response.data.id))
-          dispatch(initContractRequest(group.members))
+          setIsLoading(true)
+          await dispatch(setContractId(response.data.id))
+          await dispatch(initContractRequest(group.members))
         }
       } else {
         dispatch(setContractRequest(contract))
@@ -118,6 +120,19 @@ export function ContractCreatePage() {
 
     createContract()
   }, [])
+  useEffect(() => {
+    if (
+      isLoading &&
+      user.contractId &&
+      contractRequest.status === ContractStatus.draft
+    ) {
+      updateContract({
+        contractId: user.contractId,
+        contract: contractRequest,
+      })
+      setIsLoading(false)
+    }
+  }, [isLoading, contractRequest, user])
 
   const isAfter = (item: string) => {
     return item === 'rentAccountNo'
@@ -126,7 +141,6 @@ export function ContractCreatePage() {
         ? cardConfirm
         : false
   }
-  const user = useAppSelector((state) => state.user.user)
 
   const handleChange = (field: string, value: FieldValue) => {
     if (field === 'rent') {

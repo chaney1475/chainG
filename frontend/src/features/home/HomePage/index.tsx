@@ -9,30 +9,39 @@ import { useRouter } from 'next/navigation'
 import { getContract, getContractMembers, getGroup } from '@/apis/group'
 import { getUnreadNotificationCount } from '@/apis/notification'
 import { getHomeOverview, getUserInfo } from '@/apis/user'
-import { CardButton, IconButton, UserItem } from '@/components'
+import { AnimatedImage, CardButton, IconButton, UserItem } from '@/components'
 import { Image } from '@/components'
 import { useAppSelector, useCopyInviteCode } from '@/hooks'
 import { setContract, setContractMembers } from '@/store/slices/contractSlice'
 import { setGroup } from '@/store/slices/groupSlice'
-import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
+import {
+  setIsNoticeModalOpen,
+  setNoContractWhenLogIn,
+} from '@/store/slices/uiSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
+  CenterContainer,
   Container,
+  DefaultContainer,
+  EmptyContainer,
   HeaderTitle,
   PaddingContainer,
   ShowCenterBox,
+  SlimContainer,
   TextCenterContainer,
   Title,
-  ValidationContainer,
 } from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
-import { CardItem } from '@/types/ui'
+import { CardItem, ImageVariant } from '@/types/ui'
 
-import { ConfirmedHomeContents, HomeLayout } from '../components'
+import {
+  ConfirmedHomeContents,
+  DefaultHomeContents,
+  HomeLayout,
+} from '../components'
 import {
   CopyBox,
   Dday,
-  DefaultHomeContents,
   Description,
   GroupName,
   HomeUserTileContainer,
@@ -105,7 +114,7 @@ export function HomePage() {
       case ContractStatus.isContractApproved:
         return (
           <Description>
-            계약서 승인이 진행 중입니다. {confirmedCount} /
+            서약서 승인이 진행 중입니다. {confirmedCount} /
             {group.maxParticipants}
           </Description>
         )
@@ -318,19 +327,44 @@ export function HomePage() {
   if (!accessToken || !user.groupId) {
     return (
       <Container>
-        <Main>
-          <Image
-            src="/icons/logo.svg"
-            alt="logo"
-            width={100}
-            height={100}
-          />
-          <TextCenterContainer>
-            <Title>Cha:nG</Title>
-          </TextCenterContainer>
-          <Description>계약과 약속 사이,</Description>
-          <Description>우리 집의 블록체인 계약서</Description>
-        </Main>
+        <SlimContainer>
+          <CenterContainer>
+            <AnimatedImage
+              src="/icons/logo-no-padding.svg"
+              alt="logo"
+              width={90}
+              height={90}
+              variant={ImageVariant.bounce}
+            />
+          </CenterContainer>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              width: '100%',
+              textAlign: 'center',
+              fontFamily: 'var(--font-paperlogy-medium)',
+              color: 'var(--color-text-regular)',
+              gap: '10px',
+            }}>
+            <Image
+              src="/icons/logo-chainG-no.svg"
+              alt="logo"
+              width={120}
+              height={20}
+            />
+            <div>
+              <p
+                style={{
+                  color: '#586575',
+                }}>
+                가볍지만 신뢰할 수 있는 동거 서약관리 서비스
+              </p>
+            </div>
+          </div>
+        </SlimContainer>
       </Container>
     )
   }
@@ -393,12 +427,11 @@ export function HomePage() {
         {status == ContractStatus.confirmed ? (
           <ConfirmedHomeContents />
         ) : (
-          <DefaultHomeContents>
-            <CardButton
-              cardItems={
-                cardItems.find((item) => item.key === status)?.item ?? []
-              }></CardButton>
-          </DefaultHomeContents>
+          <DefaultHomeContents
+            cardItems={
+              cardItems.find((item) => item.key === status)?.item ?? []
+            }
+          />
         )}
       </MainWrapper>
     </HomeLayout>

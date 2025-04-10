@@ -7,14 +7,23 @@ export const Main = styled.main`
   justify-content: space-between;
   min-height: 60%;
   margin: auto;
-  margin: 30px;
+  width: 100%;
 `
+export const HeaderContainer = styled.div`
+  padding: 20px 16px 50px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  ${({ theme }) => theme.typography.styles.title};
+  color: ${({ theme }) => theme.color.text.regular};
+`
+
 export const ImageContainer = styled.div`
   position: relative;
   height: 50dvh;
   display: flex;
+  flex: 1;
   width: 100%;
-  padding-top: 30px;
   > div:nth-child(1) {
     position: absolute;
     width: 100%;
@@ -26,11 +35,8 @@ export const ImageContainer = styled.div`
   > div:nth-child(2) {
     position: absolute;
     left: 0;
-    width: 50%;
+    width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
   > div:nth-child(3) {
     position: absolute;
