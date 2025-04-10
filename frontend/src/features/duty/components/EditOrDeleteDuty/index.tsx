@@ -42,7 +42,6 @@ export const EditOrDeleteDuty = ({
     if (selectedDuty !== null) {
       const response = await deleteDuty(selectedDuty.id)
       if (response.success) {
-        console.log(response.data)
         dispatch(removeDutyFromList(selectedDuty))
         setOpen(false)
       } else {

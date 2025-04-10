@@ -1,6 +1,7 @@
 'use client'
 
 import { Image } from '@/components'
+import { DefaultRegularTitle } from '@/styles/styles'
 import { CardItem } from '@/types/ui'
 
 import { Card, CardContainer, CardDescription, Container } from './styles'

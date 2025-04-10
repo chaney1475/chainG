@@ -18,9 +18,7 @@ import { setIsNoticeModalOpen } from '@/store/slices/uiSlice'
 import { setHomeOverview, setUser } from '@/store/slices/userSlice'
 import {
   Container,
-  HeaderContainer,
   HeaderTitle,
-  HomeMain,
   PaddingContainer,
   ShowCenterBox,
   TextCenterContainer,
@@ -29,7 +27,6 @@ import {
 } from '@/styles/styles'
 import { ContractStatus } from '@/types/contract'
 import { CardItem } from '@/types/ui'
-import { useMorning } from '@/utils/formatTime'
 
 import { ConfirmedHomeContents, HomeLayout } from '../components'
 import {
@@ -42,7 +39,6 @@ import {
   Main,
   MainWrapper,
   NoticeContainer,
-  UserTileContainer,
 } from './styles'
 
 export function HomePage() {
@@ -61,12 +57,8 @@ export function HomePage() {
   }, [accessToken, router, isMounted])
 
   const user = useAppSelector((state) => state.user.user)
-
-  const morning = useMorning()
-
   useEffect(() => {
     if (!user.id) return
-    console.log('user', user)
     if (!user.groupId) {
       router.push('/onboarding')
     }

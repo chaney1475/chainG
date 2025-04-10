@@ -6,6 +6,7 @@ import { Image } from '@/components'
 import { dutyCategoryList } from '@/constants/duty'
 import { Duty } from '@/types/duty'
 import { User } from '@/types/user'
+import { formatHourMinuteTime } from '@/utils/formatTime'
 
 import { Assignees } from '../Assignees'
 import { CatrgoryIcon, Container, Content, DutyInfo } from './styles'
@@ -40,7 +41,8 @@ export const DutyListItem = ({
       <DutyInfo>
         <Content>
           <div>
-            {t(`duty.category.${duty.category}`)} {duty.dutyTime?.slice(0, -1)}
+            {t(`duty.category.${duty.category}`)} {'|'}
+            {duty.useTime ? formatHourMinuteTime(duty.dutyTime) : ''}
           </div>
           <div>{duty.title}</div>
         </Content>

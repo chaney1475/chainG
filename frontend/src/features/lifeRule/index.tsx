@@ -33,11 +33,8 @@ export function LifeRulePage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isEmpty, setIsEmpty] = useState<boolean>(false)
 
-  console.log('lifeRuleList', lifeRuleList) // 진짜리스트 찍기
-
   const handleCreate = async () => {
     const response = await createLifeRule({ rules: [] })
-    console.log('response🔥', response)
     if (response.success) {
       router.push('/lifeRule/update')
       dispatch(setHomeOverviewLifeRuleApproved(true))
@@ -48,7 +45,6 @@ export function LifeRulePage() {
   )
 
   useEffect(() => {
-    console.log('lifeRuleList🔥', lifeRuleList)
     const fetchData = async () => {
       try {
         // 생활규칙 목록 가져오기

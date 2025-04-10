@@ -14,6 +14,18 @@ export const FullMain = styled.div`
   padding: 20px;
   overflow-y: auto;
 `
+
+export const EmptyMain = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1rem;
+  overflow-y: auto;
+  position: relative;
+`
 export const Container = styled.div<{ variant: PledgeMenu }>`
   display: flex;
   flex-direction: column;

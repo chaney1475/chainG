@@ -9,7 +9,6 @@ interface StyledButtonProps {
 
 export const StyledButton = styled.button<StyledButtonProps>`
   padding: 16px 8px;
-  margin: 20px 0;
   border-radius: 16px;
   border: none;
   text-align: center;
@@ -34,18 +33,40 @@ export const StyledButton = styled.button<StyledButtonProps>`
   ${({ variant, theme }: StyledButtonProps & { theme: CustomTheme }) => {
     switch (variant) {
       case 'next':
+        return `  
+        margin: 20px 0;
+        background-color: ${theme.color.primary};
+        color: white;
+      `
+      case 'slimNext':
         return `
+        margin:  0;
           background-color: ${theme.color.primary};
           color: white;
         `
       case 'disabled':
         return `
+        margin: 20px 0;
+          background-color: ${theme.color.border};
+          color: ${theme.color.text.disabled};
+          cursor: not-allowed;
+        `
+      case 'slimDisabled':
+        return `
+        margin: 0;
           background-color: ${theme.color.border};
           color: ${theme.color.text.disabled};
           cursor: not-allowed;
         `
       case 'prev':
         return `
+        margin: 20px 0;
+          background-color: ${theme.color.secondary};
+          color: ${theme.color.text.low};
+        `
+      case 'slimPrev':
+        return `
+        margin: 0;
           background-color: ${theme.color.secondary};
           color: ${theme.color.text.low};
         `

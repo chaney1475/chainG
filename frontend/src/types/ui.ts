@@ -9,9 +9,20 @@ export const ButtonVariant = {
   next: 'next',
   disabled: 'disabled',
   prev: 'prev',
+  slimNext: 'slimNext',
+  slimPrev: 'slimPrev',
+  slimDisabled: 'slimDisabled',
 } as const
 
-export type ButtonVariant = 'next' | 'disabled' | 'prev' | 'reject' | 'approve'
+export type ButtonVariant =
+  | 'next'
+  | 'disabled'
+  | 'prev'
+  | 'reject'
+  | 'approve'
+  | 'slimNext'
+  | 'slimPrev'
+  | 'slimDisabled'
 
 export interface CardItem {
   url: string

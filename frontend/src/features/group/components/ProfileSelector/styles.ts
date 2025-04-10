@@ -26,11 +26,12 @@ export const ProfileImage = styled.img<{
   disabled: boolean
 }>`
   border-radius: 50%;
-  border: 3px solid
+  outline: 3px solid
     ${({ isSelected, primaryColor }) =>
       isSelected ? primaryColor : 'transparent'};
+  outline-offset: 3px;
   cursor: pointer;
-  box-shadow: 0 0 0 2px
+  box-shadow: 0 0 2px
     ${({ isSelected, theme }) =>
       isSelected ? theme.color.primary : 'transparent'}33;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};

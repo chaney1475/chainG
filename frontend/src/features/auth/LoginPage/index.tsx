@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 
 import { login, registerFCMToken } from '@/apis/auth'
 import { getFCMToken, onForegroundMessage } from '@/app/firebase'
-import { ConfirmButton, Image, InputBox } from '@/components'
+import { AnimatedImage, ConfirmButton, InputBox } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setAccessToken, setFCMToken } from '@/store/slices/authSlice'
 import { setUser } from '@/store/slices/userSlice'
@@ -20,6 +20,7 @@ import {
   Main,
   SlimContainer,
 } from '@/styles/styles'
+import { ImageVariant } from '@/types/ui'
 
 import { SignupLinkContainer, StyledLink } from './styles'
 
@@ -77,11 +78,12 @@ export function LoginPage() {
         <Form onSubmit={handleSubmit(onSubmit)}>
           <SlimContainer>
             <CenterContainer>
-              <Image
-                src="/icons/logo.svg"
+              <AnimatedImage
+                src="/icons/logo-no-padding.svg"
                 alt="logo"
-                width={120}
-                height={120}
+                width={60}
+                height={60}
+                variant={ImageVariant.bounce}
               />
             </CenterContainer>
             <div
@@ -94,28 +96,26 @@ export function LoginPage() {
                 textAlign: 'center',
                 fontFamily: 'var(--font-paperlogy-medium)',
                 color: 'var(--color-text-regular)',
+                gap: '10px',
               }}>
-              <h1
-                style={{
-                  color: '#292F35',
-                }}>
-                Cha:nG
-              </h1>
-              <p
-                style={{
-                  color: '#586575',
-                }}>
-                계약과 약속 사이,
-              </p>
-              <p
-                style={{
-                  color: '#586575',
-                }}>
-                우리 집의 블록체인 계약서
-              </p>
+              <AnimatedImage
+                src="/icons/logo-chainG-no.svg"
+                alt="logo"
+                width={120}
+                height={20}
+                variant={ImageVariant.bounce}
+              />
+              <div>
+                <p
+                  style={{
+                    color: '#586575',
+                  }}>
+                  우리 집의 블록체인 계약서
+                </p>
+              </div>
             </div>
           </SlimContainer>
-          <SlimContainer>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <InputBox
               label={t('login.email.label')}
               id="emailAddress"
@@ -151,7 +151,7 @@ export function LoginPage() {
             <SignupLinkContainer>
               <StyledLink href="/auth/signup">{t('signUp.title')}</StyledLink>
             </SignupLinkContainer>
-          </SlimContainer>
+          </div>
         </Form>
       </Main>
     </Container>

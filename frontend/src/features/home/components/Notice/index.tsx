@@ -1,10 +1,15 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
+
+import { useRouter } from 'next/navigation'
 
 import { Image } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { useIsLeader } from '@/hooks'
+import { setSelectedMenu } from '@/store/slices/pledgeSlice'
+import { PledgeMenu } from '@/types/ui'
 
 import {
   Container,
@@ -52,6 +57,8 @@ export function Notice() {
   const userUtilityLabel = paymentCurrent.userUtility
     ? `payment.userPaymentStatus.${paymentCurrent.userUtility}.label`
     : ''
+  const router = useRouter()
+  const dispatch = useDispatch()
   return (
     <Container>
       {paymentCurrent.rent && (
@@ -72,7 +79,13 @@ export function Notice() {
                 {t(rentLabel)}
               </span>
               <LinkContainer>
-                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    dispatch(setSelectedMenu(PledgeMenu.rent))
+                    router.push('/pledge')
+                  }}>
+                  확인하기
+                </StyledLink>
               </LinkContainer>
             </NoticeDescription>
           </NoticeContent>
@@ -96,7 +109,13 @@ export function Notice() {
                 {t(userRentLabel)}
               </span>
               <LinkContainer>
-                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    dispatch(setSelectedMenu(PledgeMenu.rent))
+                    router.push('/pledge')
+                  }}>
+                  확인하기
+                </StyledLink>
               </LinkContainer>
             </NoticeDescription>
           </NoticeContent>
@@ -118,15 +137,20 @@ export function Notice() {
               <span>
                 {t('payment.allPrefix')}
                 {t(utilityLabel)}
-              </span>{' '}
+              </span>
               <LinkContainer>
-                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    dispatch(setSelectedMenu(PledgeMenu.utility))
+                    router.push('/pledge')
+                  }}>
+                  확인하기
+                </StyledLink>
               </LinkContainer>
             </NoticeDescription>
           </NoticeContent>
         </NoticeItem>
       )}
-
       {paymentCurrent.userUtility && (
         <NoticeItem>
           <Image
@@ -145,7 +169,13 @@ export function Notice() {
                 {t(userUtilityLabel)}
               </span>
               <LinkContainer>
-                <StyledLink href={'/pledge'}>확인하기</StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    dispatch(setSelectedMenu(PledgeMenu.utility))
+                    router.push('/pledge')
+                  }}>
+                  확인하기
+                </StyledLink>
               </LinkContainer>
             </NoticeDescription>
           </NoticeContent>
@@ -166,7 +196,10 @@ export function Notice() {
             <NoticeDescription>
               <span>새로 바뀔 생활 규칙을 확인해 주세요!</span>
               <LinkContainer>
-                <StyledLink href={'/lifeRule/updateApprove'}>
+                <StyledLink
+                  onClick={() => {
+                    router.push('/lifeRule/updateApprove')
+                  }}>
                   승인하기
                 </StyledLink>
               </LinkContainer>
@@ -174,7 +207,7 @@ export function Notice() {
           </NoticeContent>
         </NoticeItem>
       )}
-      {isLeader && !livingAccountNo && (
+      {!livingAccountNo && (
         <NoticeItem>
           <Image
             src="/images/notification/notification-livingBudget.svg"
@@ -183,11 +216,20 @@ export function Notice() {
             height={21}
           />
           <NoticeContent>
-            <NoticeTitle>생활비</NoticeTitle>
+            <NoticeTitle>생활비 계좌 개설</NoticeTitle>
             <NoticeDescription>
-              <span>생활비 계좌를 개설해서 공금을 쉽게 관리해 보세요!</span>
+              <span>
+                {isLeader
+                  ? '생활비 계좌를 개설해서 공금을 쉽게 관리해 보세요!'
+                  : '방장에게 생활비 계좌 개설을 요청해보세요!'}
+              </span>
               <LinkContainer>
-                <StyledLink href={'/budget/living/create'}>개설하기</StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    router.push('/budget/living')
+                  }}>
+                  {isLeader ? '개설하기' : '요청하기'}
+                </StyledLink>
               </LinkContainer>
             </NoticeDescription>
           </NoticeContent>

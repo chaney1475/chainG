@@ -38,8 +38,6 @@ interface monthPaid {
 export function Step() {
   const { t } = useTranslation()
   const rentInfo = useAppSelector((state) => state.pledge.rent)
-  const userId = useAppSelector((state) => state.user.user.id)
-  const user = rentInfo?.currentMonth.find((item) => item.userId === userId)
   const group = useAppSelector((state) => state.group.group.members)
 
   const [userList, setUserList] = useState<UserList[]>([])
@@ -107,6 +105,7 @@ export function Step() {
                     user={item.user}
                     variant="bar"
                     size="small"
+                    showName={true}
                   />
                   <BarContainer>
                     <StatusBarContainer>

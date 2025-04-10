@@ -121,7 +121,6 @@ export function StartPage() {
           </TitleContainer>
         )}
         <ImageContainer>
-          <div></div>
           <AnimatedImage
             key={step}
             src={stepContent[step].image}
@@ -137,7 +136,11 @@ export function StartPage() {
             }}
             variant={ImageVariant.flip}
           />
-          <div></div>
+          <div onClick={() => setStep(Math.max(step - 1, 0))}></div>
+          <div
+            onClick={() =>
+              setStep(Math.min(step + 1, stepContent.length - 1))
+            }></div>
         </ImageContainer>
 
         <StepControl>
@@ -162,8 +165,8 @@ export function StartPage() {
         onOpenChange={setIsBottomSheetOpen}
         snapPoints={{
           MIN: 0.1,
-          MID: 0.5,
-          MAX: 0.5,
+          MID: 0.45,
+          MAX: 0.45,
         }}>
         <DefaultContainer>
           <TextCenterContainer>

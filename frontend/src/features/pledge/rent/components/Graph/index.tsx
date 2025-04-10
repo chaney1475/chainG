@@ -91,12 +91,25 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
       .data(arcs)
       .enter()
       .append('path')
-      .attr('d', arc)
+      .attr('d', (d) => arc({ ...d, startAngle: 0, endAngle: 0 })!) // 초기 각도 0
       .attr('fill', (d: d3.PieArcDatum<DataItem>) =>
         d.data.userId === highlightUserId
           ? '#54a0ff'
           : color(d.index.toString()),
       )
+      .attr('opacity', 0) // 초기 투명도 0
+      .transition()
+      .duration(800)
+      .attr('opacity', 1) // 최종 투명도 1
+      .attrTween('d', function (d) {
+        const interpolate = d3.interpolate(
+          { ...d, startAngle: 0, endAngle: 0 },
+          d,
+        )
+        return function (t) {
+          return arc(interpolate(t))!
+        }
+      })
 
     // 퍼센트 레이블
     svg
@@ -105,6 +118,10 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
       .enter()
       .append('text')
       .attr('class', 'label')
+      .attr('opacity', 0) // 초기 투명도 0
+      .transition()
+      .duration(800)
+      .attr('opacity', 1) // 최종 투명도 1
       .attr(
         'transform',
         (d: d3.PieArcDatum<DataItem>) => `translate(${arc.centroid(d)})`,

@@ -47,7 +47,7 @@ export const LowColorText = styled.div`
 `
 
 export const DisabledColorText = styled.div`
-  ${({ theme }) => theme.typography.styles.topHeader};
+  ${({ theme }) => theme.typography.styles.name};
   color: ${({ theme }) => theme.color.text.disabled};
 `
 

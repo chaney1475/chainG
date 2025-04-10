@@ -91,7 +91,7 @@ export const LinkContainer = styled.div`
   height: 100%;
 `
 
-export const StyledLink = styled(Link)`
+export const StyledLink = styled.div`
   gap: 8px;
   cursor: pointer;
   outline: none;

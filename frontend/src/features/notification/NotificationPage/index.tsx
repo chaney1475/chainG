@@ -68,10 +68,7 @@ export function NotificationPage() {
       if (notifications.length > 0 || !notiRead.current) {
         notiRead.current = true
         const map = notifications.map((notification) => notification.id)
-        const success = await markNotificationAsRead(map)
-        if (success) {
-          console.log('success')
-        }
+        await markNotificationAsRead(map)
       }
     }
     readNotification()

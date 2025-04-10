@@ -66,7 +66,6 @@ export function LifeRuleUpdateApprovePage() {
             const response = await postNotApprovedIds(groupId) // api 쏘고
             if (response.success) {
               dispatch(setNotApprovedIds(response.data.notApprovedIds)) // 승인된 목록 업데이트
-              console.log('postNotApprovedIdsResponse', response)
               if (response.data.notApprovedIds?.length === 0) {
                 dispatch(setHomeOverviewLifeRuleApproved(false)) // 비어있으면 false 처리
               }
@@ -90,12 +89,8 @@ export function LifeRuleUpdateApprovePage() {
   }
 
   const handleModalConfirm = async () => {
-    try {
-      await handleApprovalUpdate(approveType === 'approve')
-      setIsModalOpen(false)
-    } catch (error) {
-      console.error('Error in approval process:', error)
-    }
+    await handleApprovalUpdate(approveType === 'approve')
+    setIsModalOpen(false)
   }
 
   useEffect(() => {
@@ -114,8 +109,6 @@ export function LifeRuleUpdateApprovePage() {
           const updateResponse = await getUpdateLifeRule()
           if (updateResponse.success) {
             dispatch(setUpdateLifeRules(updateResponse.data))
-            console.log('==변경==', updateLifeRules) // 변경된 생활규칙 로그찍기
-
             // 기존 규칙과 업데이트된 규칙 병합
             const mergedRules: UpdateLifeRule[] = [...baseRules]
 

@@ -3,6 +3,8 @@
 import { useTranslation } from 'react-i18next'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
+import { ShowCenterBox, TextCenterContainer } from '@/styles/styles'
+import { BankLabel } from '@/styles/styles'
 import { BudgetStatus } from '@/types/budget'
 import { formatMoney } from '@/utils/format'
 
@@ -22,8 +24,8 @@ export function Stats() {
   const { t } = useTranslation()
   const utilityInfo = useAppSelector((state) => state.pledge.utility)
   const groupSize = useAppSelector((state) => state.group.group.members.length)
-  const userId = useAppSelector((state) => state.user.user.id)
-  console.log('utilityInfo', utilityInfo)
+  const user = useAppSelector((state) => state.user.user)
+  const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
 
   const month = Number(
     utilityInfo?.weekList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
@@ -31,7 +33,7 @@ export function Stats() {
   const weekOfMonth = Number(utilityInfo?.weekList[0]?.week ?? 1)
   const date = new Date()
   const status = utilityInfo?.currentWeek.find(
-    (item) => item.userId === userId,
+    (item) => item.userId === user.id,
   )?.status
   const dayOfWeek = date.getDay()
 
@@ -98,6 +100,28 @@ export function Stats() {
               </StatusContainer>
             </TextBox>
           </TextContainer>
+          <ShowCenterBox isDisabled={true}>
+            <LowColorText>
+              <BankLabel style={{ paddingBottom: '0.5rem' }}>
+                <DisabledColorText>[공통 계좌 → 카드사]</DisabledColorText>
+              </BankLabel>
+              <TextCenterContainer>
+                {t(`payment.paymentStatus.${paymentCurrent.utility}.title`)}
+              </TextCenterContainer>
+            </LowColorText>
+          </ShowCenterBox>
+          <ShowCenterBox isDisabled={true}>
+            <LowColorText>
+              <BankLabel style={{ paddingBottom: '0.5rem' }}>
+                <DisabledColorText>[개인 계좌 → 공통 계좌]</DisabledColorText>
+              </BankLabel>
+              <TextCenterContainer>
+                {t(
+                  `payment.userPaymentStatus.${paymentCurrent.userUtility}.title`,
+                )}
+              </TextCenterContainer>
+            </LowColorText>
+          </ShowCenterBox>
         </ContentContainer>
       </BoxContainer>
     </>

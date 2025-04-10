@@ -3,9 +3,17 @@
 import React from 'react'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { Description, EmptyContainer, HeaderTitle } from '@/styles/styles'
+import {
+  Description,
+  EmptyContainer,
+  HomeMain,
+  ShowCenterBox,
+  SimpleMain,
+  SlimContainer,
+  Title,
+} from '@/styles/styles'
 
-import { BottomContainer } from '../styles'
+import { BottomContainer, EmptyMain } from '../styles'
 import { Graph } from './components/Graph'
 import { Payment } from './components/Payment'
 import { Stats } from './components/Stats'
@@ -30,10 +38,16 @@ export function UtilityPage() {
         </>
       )}
       {cardId == null && (
-        <EmptyContainer>
-          <HeaderTitle>해당 계좌 거래 내역이 없어요</HeaderTitle>
-          <Description>범위를 변경해보세요</Description>
-        </EmptyContainer>
+        <EmptyMain>
+          <EmptyContainer>
+            <ShowCenterBox isDisabled>
+              <SlimContainer>
+                <Title>공과금을 이용할 수 없어요</Title>
+                <Description>월세로 한정된 서약서를 사용 중이에요</Description>
+              </SlimContainer>
+            </ShowCenterBox>
+          </EmptyContainer>
+        </EmptyMain>
       )}
     </>
   )

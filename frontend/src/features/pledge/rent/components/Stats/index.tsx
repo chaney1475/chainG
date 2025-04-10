@@ -1,12 +1,17 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
-
-import { useRouter } from 'next/navigation'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
+import {
+  BankLabel,
+  DisabledLabel,
+  Label,
+  ShowCenterBox,
+  SlimContainer,
+  TextCenterContainer,
+} from '@/styles/styles'
 import { BudgetStatus } from '@/types/budget'
 import { formatMoney } from '@/utils/format'
 
@@ -27,6 +32,8 @@ export function Stats() {
   const rentInfo = useAppSelector((state) => state.pledge.rent)
   const contractInfo = useAppSelector((state) => state.contract.contract)
   const groupSize = useAppSelector((state) => state.group.group.members.length)
+  const user = useAppSelector((state) => state.user.user)
+  const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
 
   const month = Number(
     rentInfo?.monthList[0]?.month.slice(5) ?? new Date().getMonth() + 1,
@@ -61,19 +68,19 @@ export function Stats() {
             </TextBox>
             <hr />
             <TextBox>
-              <DisabledColorText>참여 인원</DisabledColorText>
-              <DisabledColorText>{groupSize} 명</DisabledColorText>
+              <LowColorText>참여 인원</LowColorText>
+              <LowColorText>{groupSize} 명</LowColorText>
             </TextBox>
             <TextBox>
-              <DisabledColorText>분담 비율</DisabledColorText>
-              <DisabledColorText>
+              <LowColorText>분담 비율</LowColorText>
+              <LowColorText>
                 {
                   contractInfo?.rent.userPaymentInfo.find(
                     (member) => member.userId === userId,
                   )?.ratio
                 }
                 / {contractInfo?.rent.totalRatio}
-              </DisabledColorText>
+              </LowColorText>
             </TextBox>
             <TextBox>
               <LowColorText>내가 낼 월세</LowColorText>
@@ -83,8 +90,8 @@ export function Stats() {
             </TextBox>
             <hr />
             <TextBox>
-              <DisabledColorText>자동이체 일</DisabledColorText>
-              <DisabledColorText>매월 {dutDate}일</DisabledColorText>
+              <LowColorText>자동이체 일</LowColorText>
+              <LowColorText>매월 {dutDate}일</LowColorText>
             </TextBox>
             <TextBox>
               <LowColorText>월세 납부 여부</LowColorText>
@@ -93,6 +100,30 @@ export function Stats() {
                 <LowColorText>{t(`pledge.status.${finalStatus}`)}</LowColorText>
               </StatusContainer>
             </TextBox>
+            <ShowCenterBox isDisabled={true}>
+              <LowColorText>
+                <BankLabel style={{ paddingBottom: '0.5rem' }}>
+                  <DisabledColorText>
+                    [공통 계좌 → 집주인 계좌]
+                  </DisabledColorText>
+                </BankLabel>
+                <TextCenterContainer>
+                  {t(`payment.paymentStatus.${paymentCurrent.rent}.title`)}
+                </TextCenterContainer>
+              </LowColorText>
+            </ShowCenterBox>
+            <ShowCenterBox isDisabled={true}>
+              <LowColorText>
+                <BankLabel style={{ paddingBottom: '0.5rem' }}>
+                  <DisabledColorText>[개인 계좌 → 공통 계좌]</DisabledColorText>
+                </BankLabel>
+                <TextCenterContainer>
+                  {t(
+                    `payment.userPaymentStatus.${paymentCurrent.userRent}.title`,
+                  )}
+                </TextCenterContainer>
+              </LowColorText>
+            </ShowCenterBox>
           </TextContainer>
         </ContentContainer>
       </BoxContainer>

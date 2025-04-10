@@ -53,7 +53,6 @@ export function DutyPage() {
   useEffect(() => {
     const fetchDuties = async () => {
       const response = await getDuties(group.id) // dutyList
-      console.log(response)
       if (response.success) {
         dispatch(setDutyWeekList(response.data))
       }

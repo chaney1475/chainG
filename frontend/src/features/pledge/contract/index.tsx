@@ -80,8 +80,6 @@ export function ContractDetail() {
   }, [status])
 
   const approveContractWithAccountNo = async (data: { accountNo: string }) => {
-    console.log('approveContractWithAccountNo')
-    console.log(data)
     const success = await approveContract(contract.id, {
       accountNo: data.accountNo,
     })
@@ -102,12 +100,10 @@ export function ContractDetail() {
   }, [user.contractId, dispatch])
 
   const confirmModal = async () => {
-    console.log('confirmModal status', status)
     if (status === ContractStatus.pending) {
       await handleSubmit(approveContractWithAccountNo)()
     } else if (status === ContractStatus.isContractApproved) {
       router.push('/contract/create')
-
       // await handleSubmit(modifyContract)()
     }
   }
@@ -120,8 +116,6 @@ export function ContractDetail() {
   useEffect(() => {
     const handleConfirm = async () => {
       if (shouldConfirm) {
-        console.log('handleConfirm')
-        console.log(contract.status)
         await updateStatus()
       }
     }
@@ -157,16 +151,13 @@ export function ContractDetail() {
   const updateStatus = async () => {
     switch (status) {
       case ContractStatus.none:
-        console.log(t('contract.detail.none.title'))
         router.push('/contract/create')
         break
       case ContractStatus.draft:
-        console.log(t('contract.detail.draft.title'))
         await updateContractRequest()
         setShouldConfirm(false)
         break
       case ContractStatus.isContractApproved:
-        console.log(t('contract.detail.is_contract_approved.title'))
         setModalTitle(t('contract.modify.title'))
         setModalDescription(t('contract.modify.description'))
         setModalConfirmText(t('contract.modify.confirmText'))
@@ -180,14 +171,12 @@ export function ContractDetail() {
         setOpenModal(true)
         break
       case ContractStatus.reviewRequired:
-        console.log(t('contract.detail.review_required.title'))
         setModalTitle(t('contract.detail.review_required.title'))
         setModalDescription(t('contract.detail.review_required.description'))
         setModalConfirmText(t('contract.detail.review_required.confirmText'))
         setOpenModal(true)
         break
       case ContractStatus.confirmed:
-        console.log(t('contract.detail.confirmed.title'))
         await savePdf()
         break
     }

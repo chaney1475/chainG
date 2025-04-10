@@ -99,7 +99,6 @@ export function ContractDetail() {
   }
 
   const confirmModal = async () => {
-    console.log('confirmModal status', status)
     if (useModifyModal || status === ContractStatus.isContractApproved) {
       router.push('/contract/create')
     } else if (status === ContractStatus.pending) {
@@ -116,8 +115,6 @@ export function ContractDetail() {
   useEffect(() => {
     const handleConfirm = async () => {
       if (shouldConfirm) {
-        console.log('handleConfirm')
-        console.log(contract.status)
         await updateStatus()
       }
     }
@@ -161,11 +158,9 @@ export function ContractDetail() {
   const updateStatus = async () => {
     switch (status) {
       case ContractStatus.none:
-        console.log(t('contract.detail.none.title'))
         router.push('/contract/create')
         break
       case ContractStatus.draft:
-        console.log(t('contract.detail.draft.title'))
         await updateContractRequest()
         setShouldConfirm(false)
         break
@@ -180,14 +175,12 @@ export function ContractDetail() {
         setOpenModal(true)
         break
       case ContractStatus.reviewRequired:
-        console.log(t('contract.detail.review_required.title'))
         setModalTitle(t('contract.detail.review_required.title'))
         setModalDescription(t('contract.detail.review_required.description'))
         setModalConfirmText(t('contract.detail.review_required.confirmText'))
         setOpenModal(true)
         break
       case ContractStatus.confirmed:
-        console.log(t('contract.detail.confirmed.title'))
         await savePdf()
         break
     }

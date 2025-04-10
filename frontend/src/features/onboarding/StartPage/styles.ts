@@ -12,25 +12,33 @@ export const Main = styled.main`
 export const ImageContainer = styled.div`
   position: relative;
   height: 50dvh;
-  align-items: center;
   display: flex;
   width: 100%;
-  > div:first-child {
+  > div:nth-child(1) {
+    position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: flex;
-    position: absolute;
-    width: 50%;
-    margin-left: 0;
+    justify-content: center;
+    align-items: center;
   }
-  > div:last-child {
-    width: 100%;
+  > div:nth-child(2) {
+    position: absolute;
+    left: 0;
+    width: 50%;
     height: 100%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  > div:nth-child(3) {
     position: absolute;
+    left: 50%;
     width: 50%;
-    margin-left: auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `
 export const TitleContainer = styled.div`

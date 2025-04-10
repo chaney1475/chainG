@@ -107,7 +107,7 @@ export const HomeUserTileContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin: auto;
+  align-items: start;
   background-color: rgba(256, 256, 256, 0.5) !important;
 `
 

@@ -4,6 +4,7 @@ body {
   height: 100dvh;
   overflow-x: hidden;
   background-color: white;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {

@@ -73,7 +73,7 @@ export const ImageButton = styled.button`
   border: none;
   cursor: pointer;
   background-color: ${({ theme }) => theme.color.secondary};
-  border-radius: 50%;
+  border-radius: 12px;
   width: 28px;
   height: 28px;
   align-items: center;
@@ -116,6 +116,7 @@ export const ParticipantsContainer = styled.div`
     background-color: ${({ theme }) => theme.color.primary}10;
   }
 `
+
 export const HomeImageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -123,6 +124,7 @@ export const HomeImageContainer = styled.div`
   justify-content: center;
   width: 100%;
   padding-bottom: 0.5rem;
+  position: relative;
 `
 
 export const UserContainer = styled.div`

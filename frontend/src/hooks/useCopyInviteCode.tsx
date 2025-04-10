@@ -22,8 +22,6 @@ export const useCopyInviteCode = (
     navigator.clipboard.writeText(message)
     try {
       await navigator.share(shareData)
-    } catch (err) {
-      console.log(err)
-    }
+    } catch (err) {}
   }, [inviteCode, name, groupName])
 }

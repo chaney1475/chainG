@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useRouter } from 'next/navigation'
 
-import { Image } from '@/components'
+import { ConfirmButton, Image } from '@/components'
 import { useAppSelector } from '@/hooks/useAppSelector'
 
 import {
@@ -22,8 +22,6 @@ export function Profile() {
   const { t } = useTranslation()
   const router = useRouter()
   const user = useAppSelector((state) => state.user)
-
-  console.log(user)
 
   const handleEdit = () => {
     router.push('/my/edit')
@@ -69,6 +67,13 @@ export function Profile() {
           )}
         </TextContainer>
       </BottomContainer>
+      <ConfirmButton
+        onClick={() => {
+          router.push('/blockChain')
+        }}
+        label="블록체인 가이드 바로가기"
+        variant="slimPrev"
+      />
     </Container>
   )
 }

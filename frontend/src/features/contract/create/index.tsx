@@ -170,7 +170,6 @@ export function ContractCreatePage() {
   const [isFinalSubmit, setIsFinalSubmit] = useState(false)
 
   useEffect(() => {
-    console.log('isFinalSubmit', isFinalSubmit)
     if (isFinalSubmit) {
       setOpenModal(true)
     }

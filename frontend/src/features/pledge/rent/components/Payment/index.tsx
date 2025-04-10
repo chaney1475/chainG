@@ -58,11 +58,12 @@ export function Payment() {
               {lastDay.toLocaleDateString()}{' '}
             </Periond>
           </TextContainer>
+          <ConfirmButton
+            onClick={savePdf}
+            label="PDF로 저장하기"
+            variant="slimNext"
+          />
         </ContentContainer>
-        <ConfirmButton
-          onClick={savePdf}
-          label="PDF로 저장하기"
-        />
       </BoxContainer>
     </>
   )
