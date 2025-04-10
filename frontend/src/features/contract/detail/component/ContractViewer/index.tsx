@@ -9,6 +9,7 @@ import {
   CenterContainer,
   DefaultContainer,
   ShowBox,
+  SlimContainer,
   TitleContainer,
 } from '@/styles/styles'
 import { Contract, ContractRequest, RentUser } from '@/types/contract'
@@ -89,7 +90,7 @@ export function ContractViewer({
         {t('contract.detail.utilityDescription')}
       </UtilityDescription>
       <hr />
-      <DefaultContainer>
+      <SlimContainer>
         <TitleContainer>
           <HeaderTitle>{t('contract.detail.rentAccountNo')}</HeaderTitle>
         </TitleContainer>
@@ -99,11 +100,11 @@ export function ContractViewer({
               src="/icons/logo-bank.svg"
               alt="logo-bank"
             />
-            {t('fintech.bankName')} {contract.rent.rentAccountNo} {leaderName}
+            {t('fintech.bankName')} {contract.rent.rentAccountNo}
           </BankLabel>
         </ShowBox>
-      </DefaultContainer>
-      <DefaultContainer>
+      </SlimContainer>
+      <SlimContainer>
         <TitleContainer>
           <HeaderTitle>{t('contract.detail.ownerAccountNo')}</HeaderTitle>
         </TitleContainer>
@@ -116,9 +117,9 @@ export function ContractViewer({
             {t('fintech.bankName')} {contract.rent.ownerAccountNo}
           </BankLabel>
         </ShowBox>
-      </DefaultContainer>
+      </SlimContainer>
       {contract.utility.cardId && (
-        <DefaultContainer>
+        <SlimContainer>
           <TitleContainer>
             <HeaderTitle>{t('contract.detail.utilityCard')}</HeaderTitle>
           </TitleContainer>
@@ -131,7 +132,7 @@ export function ContractViewer({
               {t('fintech.cardName')}
             </BankLabel>
           </ShowBox>
-        </DefaultContainer>
+        </SlimContainer>
       )}
     </Container>
   )

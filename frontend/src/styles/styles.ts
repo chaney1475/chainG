@@ -128,7 +128,25 @@ export const UserTileContainer = styled.div`
   flex: 0;
   background-color: rgba(256, 256, 256, 0.8) !important;
 `
+export const TitleCenter = styled.div`
+  ${({ theme }) => theme.typography.styles.title};
+  color: ${({ theme }) => theme.color.text.regular};
+  opacity: 0;
+  text-align: center;
+  transform: translateY(20px);
+  animation: fadeInUp 0.2s ease-out forwards;
 
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
 export const Title = styled.div`
   ${({ theme }) => theme.typography.styles.title};
   color: ${({ theme }) => theme.color.text.regular};

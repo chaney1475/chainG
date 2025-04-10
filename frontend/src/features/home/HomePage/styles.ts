@@ -135,3 +135,42 @@ export const DefaultHomeContents = styled.div`
   }
   cursor: pointer;
 `
+export const CopyBox = styled.div<{ isDisabled?: boolean }>`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  padding: 1rem;
+  color: ${({ isDisabled, theme }) =>
+    isDisabled ? theme.color.text.disabled : theme.color.text.regular};
+  background-color: ${({ isDisabled, theme }) =>
+    isDisabled ? theme.color.background.white : theme.color.secondary};
+  ${({ theme }) => theme.typography.styles.button};
+  border: ${({ isDisabled, theme }) =>
+    isDisabled ? `1px solid ${theme.color.border}` : 'none'};
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  gap: 4px;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
+  background-color: ${({ theme }) => theme.color.background.white};
+
+  &:focus {
+    outline: ${({ isDisabled, theme }) =>
+      isDisabled ? 'none' : `1px solid ${theme.color.primary}`};
+  }
+
+  &:hover {
+    background-color: ${({ isDisabled, theme }) =>
+      isDisabled ? 'white' : `${theme.color.primary}10`};
+    outline: ${({ isDisabled, theme }) =>
+      isDisabled ? 'none' : `1px solid ${theme.color.primary}`};
+  }
+  > div:last-child {
+    min-width: 24px;
+  }
+`

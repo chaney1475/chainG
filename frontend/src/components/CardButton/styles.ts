@@ -16,6 +16,7 @@ export const CardContainer = styled.div`
 `
 
 export const Card = styled(Link)`
+  text-decoration: none;
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
@@ -38,7 +39,8 @@ export const CardDescription = styled.div`
   text-align: center;
   width: 100%;
   color: ${({ theme }) => theme.color.text.low};
-  ${({ theme }) => theme.typography.styles.cardDescription}
+  ${({ theme }) => theme.typography.styles.description}
   background-color: ${({ theme }) => theme.color.background.white};
   white-space: pre-line;
+  padding: 4px;
 `

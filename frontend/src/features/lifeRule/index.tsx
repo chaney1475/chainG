@@ -1,22 +1,25 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { createLifeRule, getLifeRule } from '@/apis/lifeRule'
-import { ConfirmButton } from '@/components'
-import { BottomNavigation } from '@/components/BottomNavigation'
+import {
+  createLifeRule,
+  getLifeRule,
+  postNotApprovedIds,
+} from '@/apis/lifeRule'
+import { AnimatedImage, ConfirmButton, Modal, NavLayout } from '@/components'
 import { TopHeader } from '@/features/lifeRule/components/TopHeader'
 import UpdateModal from '@/features/lifeRule/components/UpdateModal'
 import { useAppSelector } from '@/hooks'
-import { setLifeRules } from '@/store/slices/lifeRuleSlice'
+import { setLifeRules, setNotApprovedIds } from '@/store/slices/lifeRuleSlice'
 import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { RootState } from '@/store/store'
-import { Container } from '@/styles/styles'
+import { Container, Title } from '@/styles/styles'
+import { ImageVariant } from '@/types/ui'
 
 import { LifeRuleList } from './components/LifeRuleList'
 import { NoticeBar } from './components/NoticeBar'
@@ -36,8 +39,8 @@ export function LifeRulePage() {
   const handleCreate = async () => {
     const response = await createLifeRule({ rules: [] })
     if (response.success) {
-      router.push('/lifeRule/update')
-      dispatch(setHomeOverviewLifeRuleApproved(true))
+      // router.push('/lifeRule/update')
+      // dispatch(setHomeOverviewLifeRuleApproved(true))
     }
   }
   const homeOverview = useAppSelector(
@@ -63,29 +66,56 @@ export function LifeRulePage() {
     fetchData()
   }, [])
 
+  const group = useAppSelector((state) => state.group.group)
+  const user = useAppSelector((state) => state.user.user)
+  const notApprovedId: number[] = useAppSelector(
+    (state) => state.lifeRule.notApprovedIds,
+  )
+  const shouldApprove = useMemo(
+    () => notApprovedId.includes(user.id),
+    [notApprovedId, user.id],
+  )
+
+  useEffect(() => {
+    const fetchRent = async () => {
+      const response = await postNotApprovedIds(group.id)
+      if (response.success) {
+        dispatch(setNotApprovedIds(response.data.notApprovedIds))
+      }
+    }
+    fetchRent()
+  }, [group, dispatch])
   return (
-    <Container>
-      <TopHeader
-        title={t('lifeRule.title')}
-        isUpdated={homeOverview?.isLifeRuleApproved}
-        handleOpenModal={() => setIsModalOpen(true)}
-      />
+    <NavLayout
+      title={t('lifeRule.title')}
+      headerRightButton={
+        <TopHeader
+          isUpdated={notApprovedId.length > 0}
+          handleOpenModal={() => setIsModalOpen(true)}
+        />
+      }>
       <FullMain>
-        {/* 공지사항 보여주는 애 */}
         {!isEmpty && homeOverview?.isLifeRuleApproved && (
-          <NoticeBar message={t('lifeRule.updateMessage')} />
+          <NoticeBar
+            message={
+              shouldApprove
+                ? t('lifeRule.updateMessage')
+                : '룸메들의 승인을 기다리는 생활 규칙을 확인해보세요'
+            }
+          />
         )}
         {isEmpty && (
           <EmptyContainer>
-            <Image
-              src={'/icons/button-modify.svg'}
+            <AnimatedImage
+              src={'/images/lifeRule/life-rule-no.svg'}
               alt={'생활 규칙 수정아이콘'}
               width={80}
               height={80}
-              style={{ objectFit: 'cover' }}
+              variant={ImageVariant.bounce}
             />
-
-            <TitleContainer>만들어진 생활 규칙이 없습니다</TitleContainer>
+            <TitleContainer>
+              <Title>만들어진 생활 규칙이 없습니다</Title>
+            </TitleContainer>
             <Description>
               친구들과 대화를 통해 생활 규칙을 만들어보세요!
             </Description>
@@ -100,14 +130,14 @@ export function LifeRulePage() {
           <LifeRuleList lifeRuleList={lifeRuleList} />
         )}
       </FullMain>
-
-      <UpdateModal
+      <Modal
         open={isModalOpen}
-        onOpenChange={() => setIsModalOpen(false)}
+        onOpenChange={setIsModalOpen}
         onConfirm={() => setIsModalOpen(false)}
+        title={t('lifeRule.modal.title')}
+        description={t('lifeRule.modal.description')}
+        disablePrev={true}
       />
-
-      <BottomNavigation />
-    </Container>
+    </NavLayout>
   )
 }

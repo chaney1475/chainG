@@ -13,9 +13,7 @@ export const Container = styled.div`
   filter: drop-shadow(0px -1px 20px rgba(0, 0, 0, 0.1));
 `
 
-export const NavItem = styled(Link, {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isActive',
-})<{ isActive: boolean }>`
+export const NavItem = styled.div<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;

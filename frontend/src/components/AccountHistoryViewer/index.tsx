@@ -2,6 +2,7 @@
 
 import React from 'react'
 
+import { AnimatedImage } from '@/components'
 import {
   DefaultLabel,
   Description,
@@ -12,6 +13,7 @@ import {
   TitleContainer,
 } from '@/styles/styles'
 import { FormattedAccountPaymentHistory } from '@/types/fintech'
+import { ImageVariant } from '@/types/ui'
 
 import {
   AccountHistoryContainer,
@@ -61,6 +63,13 @@ export function AccountHistoryViewer({
         </PaddingContainer>
         {filteredHistory.length === 0 && (
           <EmptyContainer>
+            <AnimatedImage
+              src="/images/pledge/account-no.svg"
+              alt="해당 계좌 거래 내역이 없어요"
+              width={80}
+              height={80}
+              variant={ImageVariant.bounce}
+            />
             <HeaderTitle>해당 계좌 거래 내역이 없어요</HeaderTitle>
             <Description>범위를 변경해보세요</Description>
           </EmptyContainer>

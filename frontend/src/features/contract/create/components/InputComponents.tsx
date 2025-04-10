@@ -82,6 +82,10 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
   const item = props.item as 'startDate' | 'endDate'
   const rent = useAppSelector((state) => state.contract.contractRequest.rent)
 
+  const startDate = useAppSelector(
+    (state) => state.contract.contractRequest.startDate,
+  )
+
   const handleDateChange = (value: { year: string; month: string }) => {
     // KST로 날짜 생성
     const kstDate =
@@ -93,7 +97,10 @@ export const CalendarInput: React.FC<FormValuesInputProps> = (props) => {
 
     const currentDate = new Date(props.value as string) ?? new Date()
     // startDate인 경우 오늘 날짜보다 작으면 오늘 날짜로 설정
-
+    if (item === 'endDate' && kstDate < new Date()) {
+      console.log('kstDate', kstDate)
+      return
+    }
     // UTC로 변환하여 저장
     const utcDate = new Date(
       Date.UTC(kstDate.getFullYear(), kstDate.getMonth(), kstDate.getDate()),
@@ -190,7 +197,9 @@ export const CustomPickerInput: React.FC<FormValuesInputProps> = () => {
     if (contractRequest.startDate && contractRequest.endDate) {
       const startDate = new Date(contractRequest.startDate)
       const endDate = new Date(contractRequest.endDate)
-
+      if (startDate >= endDate) {
+        return
+      }
       // KST로 날짜 생성
       const newStartDate = new Date(
         startDate.getFullYear(),

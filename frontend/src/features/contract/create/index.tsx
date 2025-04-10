@@ -34,6 +34,7 @@ import {
   Container,
   FullMain,
   HeaderContainer,
+  PaddingContainer,
   UserTileContainer,
 } from '@/styles/styles'
 import { ContractRequest, ContractStatus } from '@/types/contract'
@@ -206,12 +207,13 @@ export function ContractCreatePage() {
     setIsFinalSubmit(false)
     setOpenModal(true)
   }
-
+  const hadConfirmed = useRef(false)
   const draftContractRequest = async () => {
     setOpenModal(false)
-    if (!user.contractId) {
+    if (!user.contractId || hadConfirmed.current) {
       return
     }
+    hadConfirmed.current = true
     const response =
       contractRequest.status == ContractStatus.draft
         ? await updateContract({
@@ -225,6 +227,8 @@ export function ContractCreatePage() {
     if (response.success) {
       dispatch(setContract(response.data))
     }
+
+    hadConfirmed.current = true
     if (isFinalSubmit) {
       router.push('/contract/detail')
     }
@@ -250,29 +254,32 @@ export function ContractCreatePage() {
         />
       </HeaderContainer>
       <HeaderContainer>
-        <UserTileContainer>
-          {group?.members.map((user) => (
-            <UserContainer key={user.id}>
-              {group.leaderId === user.id && (
-                <Image
-                  src={'/icons/leader-rotate.svg'}
-                  alt={user.name}
-                  width={25}
-                  height={25}
-                  style={{
-                    position: 'absolute',
-                    top: -15,
-                    left: 0,
-                  }}
+        <PaddingContainer>
+          <UserTileContainer>
+            {group?.members.map((user) => (
+              <UserContainer key={user.id}>
+                {group.leaderId === user.id && (
+                  <Image
+                    src={'/icons/leader-rotate.svg'}
+                    alt={user.name}
+                    width={25}
+                    height={25}
+                    style={{
+                      position: 'absolute',
+                      top: -15,
+                      left: -5,
+                    }}
+                  />
+                )}
+                <UserItem
+                  user={user}
+                  showName={true}
+                  size="small"
                 />
-              )}
-              <UserItem
-                user={user}
-                showName={true}
-              />
-            </UserContainer>
-          ))}
-        </UserTileContainer>
+              </UserContainer>
+            ))}
+          </UserTileContainer>
+        </PaddingContainer>
       </HeaderContainer>
       <FullMain>
         {Object.entries(currentStepContent).map(([item, type]) => (

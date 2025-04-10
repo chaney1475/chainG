@@ -41,7 +41,7 @@ export const UserContainer = styled.div`
   flex-direction: column;
 `
 export const UtilityDescription = styled.div`
-  ${({ theme }) => theme.typography.styles.default};
+  ${({ theme }) => theme.typography.styles.name};
   color: ${({ theme }) => theme.color.text.low};
   padding: 0 20px;
   white-space: pre-line;

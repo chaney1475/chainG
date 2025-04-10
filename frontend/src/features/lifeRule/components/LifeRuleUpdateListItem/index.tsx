@@ -25,7 +25,7 @@ interface LifeRuleUpdateListItemProps {
   variant: LifeRuleUpdateVariant
   actionType: LifeRuleUpdateVariant
   content: string
-  setVariant: (variant: LifeRuleUpdateVariant) => void
+  setVariant: (variant: LifeRuleUpdateVariant, content: string) => void
   onContentChange: (content: string) => void
   onAddItem: (index: number) => void
   onUpdateConfirm: () => void
@@ -42,7 +42,7 @@ const ActionButton = ({
   return (
     <IconButton
       onClick={onClick}
-      src={`/images/lifeRule/${type}.svg`}
+      src={`/icons/button-${type == 'delete' ? 'delete' : 'modify'}.svg`}
       alt={type}
     />
   )
@@ -68,7 +68,7 @@ export const LifeRuleUpdateListItem = ({
         return (
           <>
             <p>{content}</p>
-            <DeleteButton onClick={() => setVariant('DEFAULT')}>
+            <DeleteButton onClick={() => setVariant('DEFAULT', content)}>
               취소
             </DeleteButton>
           </>
@@ -92,7 +92,7 @@ export const LifeRuleUpdateListItem = ({
               id={`create-${lifeRule.id}`}
               value={content}
               onChange={(e) => onContentChange(e.target.value)}
-              placeholder="새로운 내용을 입력하세요"
+              placeholder="내용을 입력하세요"
             />
             <CreateButton onClick={() => onAddItem(index)}>추가</CreateButton>
           </>
@@ -104,11 +104,11 @@ export const LifeRuleUpdateListItem = ({
             <ActionButtons>
               <ActionButton
                 type="update"
-                onClick={() => setVariant('UPDATE')}
+                onClick={() => setVariant('UPDATE', content)}
               />
               <ActionButton
                 type="delete"
-                onClick={() => setVariant('DELETE')}
+                onClick={() => setVariant('DELETE', content)}
               />
             </ActionButtons>
           </>

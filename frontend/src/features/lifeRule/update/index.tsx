@@ -83,8 +83,10 @@ export function LifeRuleUpdatePage() {
   const handleVariantChange = (
     id: string | number,
     newVariant: LifeRuleUpdateVariant,
+    content: string,
   ) => {
     try {
+      console.log('handleVariantChange', id, newVariant, content)
       const itemIndex = items.findIndex(
         (item) => String(item.id) === String(id),
       )
@@ -101,7 +103,7 @@ export function LifeRuleUpdatePage() {
         ...currentItem,
         variant: newVariant,
         actionType: newVariant,
-        content: updatedContent,
+        content: content,
       })
 
       setIsUpdateMode(true)
@@ -202,21 +204,24 @@ export function LifeRuleUpdatePage() {
 
   const handleModalConfirm = async () => {
     setIsModalOpen(false)
+    console.log('handleModalConfirm', items)
 
-    const updates = items.map((item) => ({
-      id: Number(item.id),
-      content: item.content.trim(),
-      category: item.rule.category,
-      actionType: item.actionType,
-    }))
+    const filteredUpdates = items
+      .filter((update) => !(update.actionType == 'DEFAULT'))
+      .filter((update) => !(update.id > 1000 && update.actionType == 'DELETE'))
+      .map((item) => ({
+        id: Number(item.id),
+        content: item.content.trim(),
+        category: item.rule.category,
+        actionType: item.id > 1000 ? 'CREATE' : item.actionType,
+      }))
 
-    const filteredUpdates = updates.filter(
-      (update) => update.actionType !== 'DEFAULT',
-    )
+    // const filteredUpdates = updates.filter((update) => update.id < 1000)
+    console.log('filteredUpdates', filteredUpdates)
     const response = await updateLifeRule({ updates: filteredUpdates })
 
     if (response.success) {
-      router.push('/lifeRule')
+      router.replace('/lifeRule')
       dispatch(setHomeOverviewLifeRuleApproved(true))
     }
   }
@@ -238,8 +243,8 @@ export function LifeRuleUpdatePage() {
                   content={
                     localContent !== undefined ? localContent : item.content
                   }
-                  setVariant={(variant) =>
-                    handleVariantChange(item.id, variant)
+                  setVariant={(variant, content) =>
+                    handleVariantChange(item.id, variant, content)
                   }
                   onContentChange={(content) =>
                     handleContentChange(item.id, content)
@@ -253,7 +258,7 @@ export function LifeRuleUpdatePage() {
           </LifeRuleUpdateList>
           <div onClick={handleCreateNew}>
             <Image
-              src="/images/lifeRule/create.svg"
+              src="/icons/button-create.svg"
               alt="create"
               width={46}
               height={46}

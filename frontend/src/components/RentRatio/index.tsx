@@ -40,7 +40,7 @@ const RentRatioContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 0px;
   width: 100%;
 `
 const TileContainer = styled.div`
@@ -61,6 +61,13 @@ const ModalContainer = styled.div`
   height: calc(60vh - 2rem);
 `
 
+const UserContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 10px;
+`
 const TitleContainer = styled.div`
   display: flex;
   align-items: center;
@@ -76,7 +83,7 @@ const MoneyContainer = styled.div`
   flex: 1;
   gap: 16px;
   & div:nth-of-type(2) {
-    padding-top: 16px;
+    padding-top: 8px;
   }
   & div:nth-of-type(2) {
     > input {
@@ -191,7 +198,7 @@ export function RentRatio() {
   return (
     <Container>
       <RentRatioContainer>
-        <TitleContainer>
+        <UserContainer>
           <Title>{t('contract.rentTotalRatio.title')}</Title>
           <Switch
             checked={showRentRatio}
@@ -199,7 +206,7 @@ export function RentRatio() {
             onText={t('contract.rentTotalRatio.switch.ratio')}
             offText={t('contract.rentTotalRatio.switch.money')}
           />
-        </TitleContainer>
+        </UserContainer>
         {showRentRatio ? (
           <RentRatioContainer>
             <ShowBox onClick={() => setOpen(true)}>
@@ -218,7 +225,7 @@ export function RentRatio() {
             </ShowBox>
             <RentRatioContainer>
               {group.members.map((user) => (
-                <TitleContainer key={user.id}>
+                <UserContainer key={user.id}>
                   <UserItem
                     key={user.id}
                     user={user}
@@ -232,7 +239,7 @@ export function RentRatio() {
                         ?.amount?.toString() ?? '',
                     )}
                   </RegularLabel>
-                </TitleContainer>
+                </UserContainer>
               ))}
               <Total>
                 총합

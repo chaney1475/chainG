@@ -76,8 +76,8 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
       utilityIssues.push({
         img: 'SETTLEMENT',
         category: 'utility',
-        title: '공과금 카드 대납 실패',
-        description: '공과급 미납 시 안내',
+        title: '공과금 카드 납부 실패',
+        description: '공과금이 미납되었어요',
       })
     }
     if (isDueCardDay) {
@@ -92,7 +92,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
       utilityIssues.push({
         img: 'SETTLEMENT',
         category: 'utility',
-        title: '공과금 카드 전날',
+        title: '공과금 카드\n전날',
         description: '목요일',
       })
     }
@@ -106,7 +106,7 @@ export function DashBoard({ todayMyDutyList }: { todayMyDutyList: Duty[] }) {
         img: 'SETTLEMENT',
         category: 'rent',
         title: '월세 미납',
-        description: '우리모두 월세를 못냈어요',
+        description: '우리 모두\n월세를 못 냈어요',
       })
     }
     if (isDueRentDate) {

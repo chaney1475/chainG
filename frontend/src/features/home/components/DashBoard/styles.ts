@@ -5,7 +5,7 @@ export const Card = styled(Link)`
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0rem;
   height: 100%;
   border: 1px solid transparent;
   flex: 1;
@@ -146,7 +146,7 @@ export const IssueTitle = styled.div`
   opacity: 0;
   justify-content: center;
   text-align: center;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   transform: translateY(20px);
   animation: fadeInUp 0.2s ease-out forwards;
 

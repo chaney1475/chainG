@@ -42,7 +42,7 @@ export const FullMain = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: 10px;
   width: 100%;
   padding-bottom: 6.625rem;
   overflow-y: auto;
