@@ -11,7 +11,6 @@ import { User } from '@/types/user'
 import { BoxContainer } from '../../../styles'
 import {
   BarContainer,
-  BlankContainer,
   BottomContainer,
   ContentContainer,
   MonthContainer,
