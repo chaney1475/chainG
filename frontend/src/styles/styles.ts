@@ -14,6 +14,17 @@ export const Container = styled.div`
     margin: 0 auto;
   }
 `
+export const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  height: 100dvh;
+  width: 100dvw;
+  justify-content: center;
+  margin: 0 auto;
+  align-items: center;
+`
 
 export const HeaderContainer = styled.div`
   padding: 20px 16px;
