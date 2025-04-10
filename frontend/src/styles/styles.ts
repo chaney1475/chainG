@@ -36,7 +36,7 @@ export const Main = styled.main`
   flex-direction: column;
   min-height: 60%;
   margin: auto;
-  gap: 60px;
+  gap: 30px;
   width: 100%;
   overflow-y: auto;
 `
@@ -219,7 +219,7 @@ export const RegularLabel = styled.div`
 `
 export const DisabledLabel = styled.div`
   ${({ theme }) => theme.typography.styles.default};
-  color: ${({ theme }) => theme.color.text.disabled};
+  color: ${({ theme }) => theme.color.text.regular};
 `
 export const ValidationMessage = styled.div<{ isValid: boolean }>`
   display: flex;

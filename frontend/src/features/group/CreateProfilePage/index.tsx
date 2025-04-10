@@ -25,6 +25,7 @@ import {
   setUserNickname,
   setUserProfileImage,
 } from '@/store/slices/userSlice'
+import { SimpleMain } from '@/styles/styles'
 import { ButtonVariant } from '@/types/ui'
 
 import { ProfileSelector } from '../components/ProfileSelector'
@@ -142,20 +143,22 @@ export function CreateProfilePage({ leader }: { leader: boolean }) {
       label={t('createProfile.confirm')}
       onClick={handleSubmit(onSubmit)}
       buttonVariant={nickname ? ButtonVariant.next : ButtonVariant.disabled}>
-      <ProfileSelector
-        selectedId={profileImage}
-        onSelect={(id) => setValue('profileImage', id)}
-        blockList={blockList}
-      />
-      <InputBox
-        id="nickname"
-        label={t('createProfile.nickname.label')}
-        {...register('nickname', {
-          required: t('createProfile.nickname.error.required'),
-        })}
-        placeholder={t('createProfile.nickname.placeholder')}
-        error={errors.nickname}
-      />
+      <SimpleMain>
+        <ProfileSelector
+          selectedId={profileImage}
+          onSelect={(id) => setValue('profileImage', id)}
+          blockList={blockList}
+        />
+        <InputBox
+          id="nickname"
+          label={t('createProfile.nickname.label')}
+          {...register('nickname', {
+            required: t('createProfile.nickname.error.required'),
+          })}
+          placeholder={t('createProfile.nickname.placeholder')}
+          error={errors.nickname}
+        />
+      </SimpleMain>
     </TitleHeaderLayout>
   )
 }

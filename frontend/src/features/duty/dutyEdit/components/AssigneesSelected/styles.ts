@@ -19,4 +19,5 @@ export const ProfileContainer = styled.div`
   gap: 4px;
   width: 46px;
   height: 100%;
+  align-items: start;
 `
