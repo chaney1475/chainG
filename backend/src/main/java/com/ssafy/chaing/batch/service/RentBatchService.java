@@ -120,6 +120,7 @@ public class RentBatchService {
         if (result.isSuccess()) {
             payment.updateStatus(PaymentStatus.PAID);
             log.info("✅ 집주인 송금 성공 → Payment ID = {}", payment.getId());
+            registerNextMonthPayment(contract);
         } else {
             payment.updateStatus(PaymentStatus.RETRY_PENDING);
             registerRetryPayment(payment);
@@ -224,6 +225,7 @@ public class RentBatchService {
             payment.updateStatus(PaymentStatus.FAILED);
             paymentRepository.save(payment);
             log.warn("❌ Payment ID {} → 최대 재시도 횟수 도달", payment.getId());
+            registerNextMonthPayment(payment.getContract());
             return;
         }
 
