@@ -111,7 +111,7 @@ export function HomePage() {
       case ContractStatus.isContractApproved:
         return (
           <Description>
-            계약서 승인이 진행 중입니다. {confirmedCount} /
+            서약서 승인이 진행 중입니다. {confirmedCount} /
             {group.maxParticipants}
           </Description>
         )

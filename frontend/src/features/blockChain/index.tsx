@@ -35,7 +35,7 @@ export function BlockChainPage() {
             </li>
             <li>
               <Description>
-                계약서 내역 ⇒{' '}
+                서약서 내역 ⇒{' '}
                 <code>0x400c8826333fc9d23586De637c8E30274363aB9D</code>
               </Description>
             </li>
