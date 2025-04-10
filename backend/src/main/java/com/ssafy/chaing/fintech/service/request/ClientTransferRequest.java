@@ -36,8 +36,11 @@ public class ClientTransferRequest {
     public ClientTransferRequest(HeaderWithUserKeyDTO header, TransferCommand body) {
         FeeType type = body.getFeeType();
 
-        String depositTransactionSummary = "(수시입출금) : 입금(이체)";
-        String withdrawalTransactionSummary = "(수시입출금) : 출금(이체)";
+        String depositTransactionSummary = " : 입금";
+        String withdrawalTransactionSummary = " : 출금";
+        if (body.getUserId() == null) {
+            withdrawalTransactionSummary = " : 납부";
+        }
 
         String feeTypeMemo = null;
         if (type.equals(FeeType.UTILITY)) {
@@ -50,12 +53,22 @@ public class ClientTransferRequest {
             depositTransactionSummary = feeTypeMemo + depositTransactionSummary;
             withdrawalTransactionSummary = feeTypeMemo + withdrawalTransactionSummary;
         }
+
         this.header = header;
         this.depositAccountNo = body.getToAccountNo();
         this.depositTransactionSummary = depositTransactionSummary;
         this.transactionBalance = String.valueOf(body.getAmount());
         this.withdrawalAccountNo = body.getFromAccountNo();
         this.withdrawalTransactionSummary = withdrawalTransactionSummary;
+    }
 
+    public void setNameIntoSummary(FeeType type, String name) {
+        if (type.equals(FeeType.RENT)) {
+            this.depositTransactionSummary = "월세 (" + name + ") : 입금";
+            this.withdrawalTransactionSummary = "월세 (" + name + ") : 출금";
+        } else {
+            this.depositTransactionSummary = "공과금 (" + name + ") : 입금";
+            this.withdrawalTransactionSummary = "공과금 (" + name + ") : 출금";
+        }
     }
 }

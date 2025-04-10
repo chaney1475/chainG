@@ -147,6 +147,12 @@ public class FintechServiceImpl implements FintechService {
                     requestHeader, command
             );
 
+            if (command.getUserId() != null) {
+                UserEntity user = userRepository.findById(command.getUserId())
+                        .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+                request.setNameIntoSummary(command.getFeeType(), user.getName());
+            }
+
             ResponseEntity<FintechBaseResponse<List<ClientResponseRec>>> responseEntity =
                     restTemplate.exchange(
                             config.getBaseUrl() + "/demandDeposit/updateDemandDepositAccountTransfer",
@@ -282,6 +288,12 @@ public class FintechServiceImpl implements FintechService {
             ClientTransferRequest request = new ClientTransferRequest(
                     requestHeader, command
             );
+
+            if (command.getUserId() != null) {
+                UserEntity user = userRepository.findById(command.getUserId())
+                        .orElseThrow(() -> new BadRequestException(ExceptionCode.USER_NOT_FOUND));
+                request.setNameIntoSummary(command.getFeeType(), user.getName());
+            }
 
             ResponseEntity<FintechBaseResponse<List<ClientResponseRec>>> responseEntity =
                     restTemplate.exchange(
