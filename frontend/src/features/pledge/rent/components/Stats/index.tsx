@@ -4,14 +4,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useAppSelector } from '@/hooks/useAppSelector'
-import {
-  BankLabel,
-  DisabledLabel,
-  Label,
-  ShowCenterBox,
-  SlimContainer,
-  TextCenterContainer,
-} from '@/styles/styles'
+import { BankLabel, ShowCenterBox, TextCenterContainer } from '@/styles/styles'
 import { BudgetStatus } from '@/types/budget'
 import { formatMoney } from '@/utils/format'
 
@@ -32,7 +25,6 @@ export function Stats() {
   const rentInfo = useAppSelector((state) => state.pledge.rent)
   const contractInfo = useAppSelector((state) => state.contract.contract)
   const groupSize = useAppSelector((state) => state.group.group.members.length)
-  const user = useAppSelector((state) => state.user.user)
   const paymentCurrent = useAppSelector((state) => state.pledge.paymentCurrent)
 
   const month = Number(

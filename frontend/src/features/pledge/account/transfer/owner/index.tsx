@@ -3,12 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { registerLocale } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
 import styled from '@emotion/styled'
-import { format } from 'date-fns'
 import ko from 'date-fns/locale/ko'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -17,16 +15,8 @@ import { getMySummary } from '@/apis/user'
 import { Modal, TitleHeaderLayout } from '@/components'
 import { useAppSelector } from '@/hooks'
 import { setSummary } from '@/store/slices/userSlice'
-import {
-  DefaultLabel,
-  Label,
-  RegularLabel,
-  ShowBox,
-  ShowCenterBox,
-} from '@/styles/styles'
-import { ButtonVariant } from '@/types/ui'
+import { DefaultLabel, Label, ShowCenterBox } from '@/styles/styles'
 import { formatMoney } from '@/utils/format'
-import { formatTime } from '@/utils/formatTime'
 
 const Container = styled.div`
   display: flex;
@@ -34,11 +24,6 @@ const Container = styled.div`
   gap: 8px;
   padding: 16px 0;
 `
-
-interface DepositForm {
-  myAccountNo: string
-  balance: string
-}
 
 registerLocale('ko', ko)
 export function TransferToOwnerPage() {
@@ -49,24 +34,6 @@ export function TransferToOwnerPage() {
   const dispatch = useDispatch()
 
   const summary = useAppSelector((state) => state.user.summary)
-  const livingAccountNo = useAppSelector(
-    (state) => state.livingBudget.livingAccountNo,
-  )
-  const userName = useAppSelector((state) => state.user.user.nickname)
-
-  const {
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<DepositForm>({
-    defaultValues: {
-      myAccountNo: summary.myAccountNo,
-      balance: '',
-    },
-  })
-
-  const balance = watch('balance')
 
   const [next, setNext] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -77,8 +44,6 @@ export function TransferToOwnerPage() {
   useEffect(() => {
     if (summary.id === 0) {
       fetchSummary()
-    } else if (summary.myAccountNo) {
-      setValue('myAccountNo', summary.myAccountNo)
     }
   }, [summary])
 
@@ -136,7 +101,7 @@ export function TransferToOwnerPage() {
         title={t('payment.transfer.owner.success.title')}
         description={t('payment.transfer.owner.success.description', {
           month,
-          balance,
+          balance: formatMoney(rent.totalAmount),
         })}
         confirmText={t('confirm')}
         onConfirm={() => {

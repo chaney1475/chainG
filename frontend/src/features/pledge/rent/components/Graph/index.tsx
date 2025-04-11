@@ -111,6 +111,7 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
         }
       })
 
+    const [x, y] = arc.centroid(arcs[0])
     // 퍼센트 레이블
     svg
       .selectAll('text.label')
@@ -118,14 +119,14 @@ export const Graph = ({ data, width = 250, height = 250 }: DonutChartProps) => {
       .enter()
       .append('text')
       .attr('class', 'label')
-      .attr('opacity', 0) // 초기 투명도 0
+      .attr('opacity', 0)
       .transition()
       .duration(800)
-      .attr('opacity', 1) // 최종 투명도 1
-      .attr(
-        'transform',
-        (d: d3.PieArcDatum<DataItem>) => `translate(${arc.centroid(d)})`,
-      )
+      .attr('opacity', 1)
+      .attr('transform', (d: d3.PieArcDatum<DataItem>) => {
+        const [x, y] = arc.centroid(d)
+        return `translate(${x - 22}, ${y - 22})`
+      })
       .text((d: d3.PieArcDatum<DataItem>) => {
         if (Math.round((d.data.amount / total) * 100) > 0) {
           return `${Math.round((d.data.amount / total) * 100)}%`

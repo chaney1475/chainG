@@ -19,7 +19,7 @@ export const formatHourMinuteTime = (time: string) => {
   const hh = Number(time.split(':')[0])
   const kstHour = (hh + 9) % 24
   const a = kstHour < 12 ? '오전' : '오후'
-  return `${a} ${String(kstHour % 24)}시`
+  return `${a} ${String(kstHour % 12)}시`
 }
 
 export const formatDuration = (startDate: string, endDate: string) => {

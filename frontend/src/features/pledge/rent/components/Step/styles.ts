@@ -37,19 +37,23 @@ export const StepItem = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 100px;
   }
+`
+export const BarContainerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
 `
 
 export const BarContainer = styled.div`
   display: flex;
-  position: relative;
   align-items: center;
+  width: 100%;
   justify-content: space-between;
-  height: 14px;
   min-width: 50%;
   padding: 0 14px;
-  width: 70%;
+  height: 10px;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.color.secondary};
 `
@@ -58,7 +62,6 @@ export const StatusIcon = styled.div<{ variant: BudgetStatus }>`
   width: 14px;
   height: 14px;
   border-radius: 50%;
-
   ${({ variant, theme }) => {
     switch (variant) {
       case 'complete':
@@ -96,6 +99,7 @@ export const StatusContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 14px;
   gap: 4px;
 
   > div {
@@ -107,26 +111,31 @@ export const StatusContainer = styled.div`
 // 상단 월 라벨 영역
 export const MonthLabelsContainer = styled.div`
   display: flex;
-  flex-direction: row-reverse;
   justify-content: space-between;
   width: 100%;
-  margin: 0 10px 0 30px;
+  height: 0;
+  position: absolute;
+  bottom: 24px;
+  padding: 0 12px;
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+  }
 `
-
 export const MonthLabel = styled.div`
-  position: relative;
-  height: auto;
-  overflow: visible;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
 `
 
 export const MonthText = styled.div`
-  ${({ theme }) => theme.typography.styles.navigator};
+  font-size: 8px;
   color: ${({ theme }) => theme.color.text.low};
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
+  text-align: center;
   white-space: nowrap;
 `
 
@@ -146,6 +155,6 @@ export const BottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
 `

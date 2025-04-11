@@ -93,7 +93,7 @@ export function TransferToRentPage() {
         title={t('payment.transfer.rent.success.title')}
         description={t('payment.transfer.rent.success.description', {
           userName,
-          balance: userAmount,
+          balance: formatMoney(Number(userAmount)),
         })}
         confirmText={t('confirm')}
         onConfirm={() => {

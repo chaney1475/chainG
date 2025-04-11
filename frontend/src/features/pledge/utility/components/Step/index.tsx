@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { UserItem } from '@/components/UserItem'
@@ -11,6 +11,7 @@ import { User } from '@/types/user'
 import { BoxContainer } from '../../../styles'
 import {
   BarContainer,
+  BarContainerWrapper,
   BottomContainer,
   ContentContainer,
   MonthContainer,
@@ -43,6 +44,7 @@ export function Step() {
 
   const [userList, setUserList] = useState<UserList[]>([])
 
+  const currentMonth = String(new Date().getUTCMonth() + 1).padStart(2, '0')
   useEffect(() => {
     if (!utilityInfo || !group) return
 
@@ -80,32 +82,36 @@ export function Step() {
     setUserList(newUserList)
   }, [utilityInfo, group])
 
+  const filteredWeekList = useMemo(
+    () =>
+      utilityInfo?.weekList
+        .map((item) => ({
+          mm: item.month.split('-')[1].padStart(2, '0'),
+          ...item,
+        }))
+        .sort((a, b) => {
+          if (a.mm === b.mm) {
+            return Number(a.week) - Number(b.week)
+          }
+          return Number(a.mm) - Number(b.mm)
+        })
+        .map((item) => {
+          return {
+            ...item,
+            mm: item.mm == currentMonth ? '' : `${item.mm}월`,
+            date: item.mm == currentMonth ? `${item.mm}월` : `${item.mm}월`,
+          }
+        }),
+    [utilityInfo],
+  )
   return (
     <>
       <BoxContainer>
         <ContentContainer>
           <TopDescription>전체 납부 현황</TopDescription>
           <BottomContainer>
-            <MonthContainer>
-              <MonthLabelsContainer>
-                {utilityInfo?.weekList.map((item) => (
-                  <MonthLabel key={item.week}>
-                    <MonthText>
-                      {item.month.slice(5)}-{item.week}
-                    </MonthText>
-                  </MonthLabel>
-                ))}
-                {Array.from({
-                  length: 6 - (utilityInfo?.weekList.length || 0),
-                }).map((_, index) => (
-                  <MonthLabel key={index}>
-                    <MonthText>&ensp;&ensp;</MonthText>
-                  </MonthLabel>
-                ))}
-              </MonthLabelsContainer>
-            </MonthContainer>
             <StepContainer>
-              {userList.map((item) => (
+              {userList.map((item, index) => (
                 <StepItem key={item.user.id}>
                   <UserItem
                     user={item.user}
@@ -113,27 +119,26 @@ export function Step() {
                     size="small"
                     showName={true}
                   />
-                  <BarContainer>
-                    <StatusBarContainer>
+                  <BarContainerWrapper>
+                    {index === 0 && (
+                      <MonthLabelsContainer>
+                        {filteredWeekList?.map((item) => (
+                          <MonthLabel key={item.week}>
+                            <MonthText>{item.mm}</MonthText>
+                            <MonthText>{item.week}주</MonthText>
+                          </MonthLabel>
+                        ))}
+                      </MonthLabelsContainer>
+                    )}
+                    <BarContainer>
                       {item.week.map((week) => (
                         <StatusContainer key={week.week}>
-                          <StatusIcon
-                            variant={week.finalStatus}
-                            key={week.week}
-                          />
+                          <StatusIcon variant={week.finalStatus} />
                           <div>{t(`pledge.status.${week.finalStatus}`)}</div>
                         </StatusContainer>
                       ))}
-                      {Array.from({ length: 6 - item.week.length }).map(
-                        (_, index) => (
-                          <StatusIcon
-                            variant={'none'}
-                            key={index}
-                          />
-                        ),
-                      )}
-                    </StatusBarContainer>
-                  </BarContainer>
+                    </BarContainer>
+                  </BarContainerWrapper>
                 </StepItem>
               ))}
             </StepContainer>

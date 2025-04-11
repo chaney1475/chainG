@@ -598,7 +598,7 @@
         },
         "success": {
           "title": "집주인 계좌로 월세 보내기 완료",
-          "description": "{{month}}의 월세 미납금 {{balance}}원을 집주인 계좌로 보냈어요"
+          "description": "{{month}}의 월세 미납금 {{balance}}을 집주인 계좌로 보냈어요"
         }
       },
       "rent": {
@@ -618,7 +618,7 @@
         },
         "success": {
           "title": "월세 / 공과금 계좌로 돈 보내기 완료",
-          "description": "{{userName}}님이 {{balance}}원을 월세 / 공과금 계좌로 보냈어요"
+          "description": "{{userName}}님이 {{balance}}을 월세 / 공과금 계좌로 보냈어요"
         }
       }
     }

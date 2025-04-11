@@ -37,18 +37,23 @@ export const StepItem = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 100px;
   }
+`
+export const BarContainerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
 `
 
 export const BarContainer = styled.div`
   display: flex;
-  position: relative;
   align-items: center;
+  width: 100%;
   justify-content: space-between;
-  height: 14px;
   min-width: 50%;
-  width: 70%;
+  padding: 0 14px;
+  height: 10px;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.color.secondary};
 `
@@ -57,7 +62,6 @@ export const StatusIcon = styled.div<{ variant: BudgetStatus }>`
   width: 14px;
   height: 14px;
   border-radius: 50%;
-
   ${({ variant, theme }) => {
     switch (variant) {
       case 'complete':
@@ -95,6 +99,7 @@ export const StatusContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 14px;
   gap: 4px;
 
   > div {
@@ -106,26 +111,30 @@ export const StatusContainer = styled.div`
 // 상단 월 라벨 영역
 export const MonthLabelsContainer = styled.div`
   display: flex;
-  flex-direction: row-reverse;
   justify-content: space-between;
   width: 100%;
-  margin: 0 10px 0 30px;
-`
-
-export const MonthLabel = styled.div`
-  position: relative;
-  height: auto;
-  overflow: visible;
-  text-align: center;
-`
-
-export const MonthText = styled.div`
-  ${({ theme }) => theme.typography.styles.navigator};
-  color: ${({ theme }) => theme.color.text.low};
+  height: 0;
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  bottom: 24px;
+  padding: 0 14px 0 12px;
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+  }
+`
+export const MonthLabel = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+`
+export const MonthText = styled.div`
+  font-size: 8px;
+  color: ${({ theme }) => theme.color.text.low};
+  font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
+  text-align: center;
   white-space: nowrap;
 `
 
@@ -136,6 +145,7 @@ export const MonthContainer = styled.div`
   justify-content: flex-end;
   margin-left: auto;
   min-width: 50%;
+  padding: 0 14px;
   width: 70%;
   min-height: 10px;
 `
@@ -144,6 +154,6 @@ export const BottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
 `
