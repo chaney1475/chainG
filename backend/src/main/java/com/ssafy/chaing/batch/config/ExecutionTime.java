@@ -35,22 +35,26 @@ public class ExecutionTime {
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        // baseDate 초기화: 오늘 날짜의 baseDayOfMonth, 지정된 시간
-        ZonedDateTime baseDate = now.withDayOfMonth(baseDayOfMonth)
+        ZonedDateTime targetDateTime = now.withDayOfMonth(1)
                 .withHour(hour).withMinute(minute).withSecond(0).withNano(0);
 
-        // ✅ 오늘 baseDay이고, 아직 시간 안 지났으면 오늘
-        if (now.toLocalDate().equals(baseDate.toLocalDate()) && now.isBefore(baseDate)) {
-            return baseDate.plusDays(dayOffset);
+        // day 설정을 안전하게 (존재하지 않는 날짜 방지)
+        int maxDayOfMonth = targetDateTime.getMonth().length(targetDateTime.toLocalDate().isLeapYear());
+        int safeDay = Math.min(baseDayOfMonth, maxDayOfMonth);
+
+        targetDateTime = targetDateTime.withDayOfMonth(safeDay);
+
+        // 이미 해당 날짜/시간이 지났다면 → 다음 달로
+        if (now.isAfter(targetDateTime)) {
+            targetDateTime = targetDateTime.plusMonths(1);
+            maxDayOfMonth = targetDateTime.getMonth().length(targetDateTime.toLocalDate().isLeapYear());
+            safeDay = Math.min(baseDayOfMonth, maxDayOfMonth);
+            targetDateTime = targetDateTime.withDayOfMonth(safeDay);
         }
 
-        // ✅ 오늘보다 이전 날짜거나, 오늘인데 시간 지났으면 → 다음 달
-        if (now.isAfter(baseDate)) {
-            baseDate = baseDate.plusMonths(1).withDayOfMonth(baseDayOfMonth);
-        }
-
-        return baseDate.plusDays(dayOffset);
+        return targetDateTime.plusDays(dayOffset);
     }
+
 
     public ZonedDateTime calculateFromNow() {
         if (fixedTime != null) {

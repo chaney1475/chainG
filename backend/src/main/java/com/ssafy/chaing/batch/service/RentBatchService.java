@@ -50,7 +50,7 @@ public class RentBatchService {
         ZonedDateTime collectExecution = collectTime.calculate(contract.getDueDate());
         ZonedDateTime ownerExecution = payTime.calculate(contract.getDueDate());
 
-        PaymentEntity payment = paymentService.createPayment(contract, collectExecution);
+        PaymentEntity payment = paymentService.createPayment(contract, ownerExecution);
 
         // ✅ 여기서 이벤트만 발행
         paymentEventPublisher.publish(new PaymentCreatedEvent(
