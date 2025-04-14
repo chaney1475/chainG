@@ -659,7 +659,7 @@ public class PaymentServiceImpl implements PaymentService {
                             Long userEntityId = userPayment.getContractMember().getUser().getId();
                             if (userPayment.getStatus() == PaymentStatus.COLLECTED) {
                                 paidUserIds.add(userEntityId);
-                            } else if (userPayment.getStatus() == PaymentStatus.STARTED) {
+                            } else {
                                 debtUserIds.add(userEntityId);
                             }
                         }
