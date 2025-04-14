@@ -41,39 +41,7 @@ export function Step() {
 
   const [userList, setUserList] = useState<UserList[]>([])
   const currentYear = String(new Date().getFullYear())
-  useEffect(() => {
-    if (!rentInfo || !group) return
 
-    const date = new Date().getDate()
-    const dutDate = rentInfo.dueDate || 0
-    const exceedDueDate: boolean = dutDate < date
-
-    const newUserList: UserList[] = group.map((item) => ({
-      user: item,
-      month: [],
-    }))
-
-    rentInfo.monthList.slice(0, 6).forEach((item) => {
-      item.paidUserIds?.forEach((paidUser) => {
-        newUserList
-          .find((user) => user.user.id === paidUser)
-          ?.month.push({
-            month: Number(item.month.slice(5)),
-            finalStatus: 'complete',
-          })
-      })
-      item.debtUserIds.forEach((debtUser) => {
-        newUserList
-          .find((user) => user.user.id === debtUser)
-          ?.month.push({
-            month: Number(item.month.slice(5)),
-            finalStatus: exceedDueDate ? 'debt' : 'expected',
-          })
-      })
-    })
-
-    setUserList(newUserList)
-  }, [rentInfo, group])
   const filteredMonthList = useMemo(
     () =>
       rentInfo?.monthList
@@ -100,6 +68,40 @@ export function Step() {
         }),
     [rentInfo],
   )
+
+  useEffect(() => {
+    if (!rentInfo || !group || !filteredMonthList) return
+
+    const date = new Date().getDate()
+    const dutDate = rentInfo.dueDate || 0
+    const exceedDueDate: boolean = dutDate < date
+
+    const newUserList: UserList[] = group.map((item) => ({
+      user: item,
+      month: [],
+    }))
+
+    filteredMonthList.slice(0, 6).forEach((item) => {
+      item.paidUserIds?.forEach((paidUser) => {
+        newUserList
+          .find((user) => user.user.id === paidUser)
+          ?.month.push({
+            month: Number(item.month.slice(5)),
+            finalStatus: 'complete',
+          })
+      })
+      item.debtUserIds.forEach((debtUser) => {
+        newUserList
+          .find((user) => user.user.id === debtUser)
+          ?.month.push({
+            month: Number(item.month.slice(5)),
+            finalStatus: exceedDueDate ? 'debt' : 'expected',
+          })
+      })
+    })
+
+    setUserList(newUserList)
+  }, [rentInfo, group, filteredMonthList])
   return (
     <>
       <BoxContainer>
@@ -118,10 +120,10 @@ export function Step() {
                   <BarContainerWrapper>
                     {index === 0 && (
                       <MonthLabelsContainer>
-                        {filteredMonthList?.map((item) => (
-                          <MonthLabel key={item.month}>
-                            <MonthText>{item.yyyy}</MonthText>
-                            <MonthText>{item.mm}월</MonthText>
+                        {filteredMonthList?.map((filteredItem) => (
+                          <MonthLabel key={filteredItem.month}>
+                            <MonthText>{filteredItem.yyyy}</MonthText>
+                            <MonthText>{filteredItem.mm}월</MonthText>
                           </MonthLabel>
                         ))}
                       </MonthLabelsContainer>
