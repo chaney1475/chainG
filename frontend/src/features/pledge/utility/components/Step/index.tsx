@@ -45,8 +45,30 @@ export function Step() {
   const [userList, setUserList] = useState<UserList[]>([])
 
   const currentMonth = String(new Date().getUTCMonth() + 1).padStart(2, '0')
+
+  const filteredWeekList = useMemo(
+    () =>
+      utilityInfo?.weekList
+        .map((item) => ({
+          mm: item.month.split('-')[1].padStart(2, '0'),
+          ...item,
+        }))
+        .sort((a, b) => {
+          if (a.mm === b.mm) {
+            return Number(a.week) - Number(b.week)
+          }
+          return Number(a.mm) - Number(b.mm)
+        })
+        .map((item) => {
+          return {
+            ...item,
+            mm: `${Number(item.mm)}월`,
+          }
+        }),
+    [utilityInfo],
+  )
   useEffect(() => {
-    if (!utilityInfo || !group) return
+    if (!utilityInfo || !group || !filteredWeekList) return
 
     const dayOfWeek = new Date().getDay()
 
@@ -58,7 +80,7 @@ export function Step() {
       week: [],
     }))
 
-    utilityInfo.weekList.slice(0, 6).forEach((item) => {
+    filteredWeekList.slice(0, 6).forEach((item) => {
       item.paidUserIds?.forEach((paidUser) => {
         newUserList
           .find((user) => user.user.id === paidUser)
@@ -80,30 +102,8 @@ export function Step() {
     })
 
     setUserList(newUserList)
-  }, [utilityInfo, group])
+  }, [utilityInfo, filteredWeekList, group])
 
-  const filteredWeekList = useMemo(
-    () =>
-      utilityInfo?.weekList
-        .map((item) => ({
-          mm: item.month.split('-')[1].padStart(2, '0'),
-          ...item,
-        }))
-        .sort((a, b) => {
-          if (a.mm === b.mm) {
-            return Number(a.week) - Number(b.week)
-          }
-          return Number(a.mm) - Number(b.mm)
-        })
-        .map((item) => {
-          return {
-            ...item,
-            mm: item.mm == currentMonth ? '' : `${item.mm}월`,
-            date: item.mm == currentMonth ? `${item.mm}월` : `${item.mm}월`,
-          }
-        }),
-    [utilityInfo],
-  )
   return (
     <>
       <BoxContainer>

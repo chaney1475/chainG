@@ -123,7 +123,7 @@ export function Step() {
                         {filteredMonthList?.map((filteredItem) => (
                           <MonthLabel key={filteredItem.month}>
                             <MonthText>{filteredItem.yyyy}</MonthText>
-                            <MonthText>{filteredItem.mm}월</MonthText>
+                            <MonthText>{Number(filteredItem.mm)}월</MonthText>
                           </MonthLabel>
                         ))}
                       </MonthLabelsContainer>
