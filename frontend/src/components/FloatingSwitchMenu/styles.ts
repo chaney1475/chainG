@@ -3,14 +3,13 @@ import styled from '@emotion/styled'
 export const Container = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
   position: absolute;
   bottom: 5.3125rem;
   left: 0;
   right: 0;
   margin: auto;
   z-index: 1000;
-  padding: 0 20px;
+  overflow: hidden;
 `
 
 export const SwitchContainer = styled.div<{ steps: number }>`
@@ -42,8 +41,8 @@ export const SwitchText = styled.span<{ selected: boolean }>`
 
 export const SwitchButton = styled.div<{ step: number }>`
   position: absolute;
-  left: ${({ step }) => `calc(${4 + step * 80}px)`};
-  width: 80px;
+  left: ${({ step }) => `calc(${3 + step * 82}px)`};
+  width: 84px;
   height: 2.25rem;
   background-color: ${({ theme }) => theme.color.primary};
   border-radius: 1.5rem;
