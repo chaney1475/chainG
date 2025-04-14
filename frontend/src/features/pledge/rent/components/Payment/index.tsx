@@ -1,16 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux'
-
-import { useRouter } from 'next/navigation'
+import React from 'react'
 
 import { createTransferPDF } from '@/apis/payment'
 import { ConfirmButton, Image } from '@/components'
-import { ButtonContainer } from '@/components/AccountHistoryViewer/styles'
 import { useAppSelector } from '@/hooks/useAppSelector'
-import { TitleContainer } from '@/styles/styles'
 import { formatMoney } from '@/utils/format'
 
 import { BoxContainer } from '../../../styles'
