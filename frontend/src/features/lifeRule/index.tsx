@@ -4,8 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
-import { useRouter } from 'next/navigation'
-
 import {
   createLifeRule,
   getLifeRule,
@@ -13,12 +11,10 @@ import {
 } from '@/apis/lifeRule'
 import { AnimatedImage, ConfirmButton, Modal, NavLayout } from '@/components'
 import { TopHeader } from '@/features/lifeRule/components/TopHeader'
-import UpdateModal from '@/features/lifeRule/components/UpdateModal'
 import { useAppSelector } from '@/hooks'
 import { setLifeRules, setNotApprovedIds } from '@/store/slices/lifeRuleSlice'
-import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { RootState } from '@/store/store'
-import { Container, Title } from '@/styles/styles'
+import { Title } from '@/styles/styles'
 import { ImageVariant } from '@/types/ui'
 
 import { LifeRuleList } from './components/LifeRuleList'
@@ -27,7 +23,6 @@ import { Description, EmptyContainer, FullMain, TitleContainer } from './styles'
 
 export function LifeRulePage() {
   const { t } = useTranslation()
-  const router = useRouter()
   const dispatch = useDispatch()
   const lifeRuleList = useAppSelector(
     (state: RootState) => state.lifeRule.lifeRules,

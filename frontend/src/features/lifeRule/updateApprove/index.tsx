@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 
@@ -36,9 +36,6 @@ export function LifeRuleUpdateApprovePage() {
   const dispatch = useDispatch()
   const router = useRouter()
   const groupId = useAppSelector((state) => state.group.group.id)
-  const updateLifeRules = useAppSelector(
-    (state) => state.lifeRule.updateLifeRules,
-  )
   const user = useAppSelector((state) => state.user.user)
   const notApprovedId: number[] = useAppSelector(
     (state) => state.lifeRule.notApprovedIds,
@@ -92,9 +89,11 @@ export function LifeRuleUpdateApprovePage() {
     await handleApprovalUpdate(approveType === 'approve')
     setIsModalOpen(false)
   }
-
+  const fechtedData = useRef(false)
   useEffect(() => {
     const initializeData = async () => {
+      if (fechtedData.current) return
+      fechtedData.current = true
       try {
         // 기존 생활규칙 목록 가져오기
         const lifeRuleResponse = await getLifeRule()
@@ -104,14 +103,13 @@ export function LifeRuleUpdateApprovePage() {
             ...rule,
             actionType: 'DEFAULT' as LifeRuleUpdateVariant, // 명시적으로 타입 설정
           }))
-
           // 변경 요청된 생활규칙 목록 가져오기
           const updateResponse = await getUpdateLifeRule()
           if (updateResponse.success) {
             dispatch(setUpdateLifeRules(updateResponse.data))
+
             // 기존 규칙과 업데이트된 규칙 병합
             const mergedRules: UpdateLifeRule[] = [...baseRules]
-
             // 업데이트된 규칙들 처리
             updateResponse.data.forEach((updateRule) => {
               const existingIndex = mergedRules.findIndex(
@@ -119,6 +117,7 @@ export function LifeRuleUpdateApprovePage() {
               )
               if (existingIndex !== -1) {
                 // 기존 규칙 업데이트
+
                 mergedRules[existingIndex] = {
                   ...updateRule,
                   id: updateRule.id || mergedRules[existingIndex].id,
@@ -133,7 +132,7 @@ export function LifeRuleUpdateApprovePage() {
                 mergedRules.push({
                   ...updateRule,
                   id: updateRule.id || maxId + 1,
-                  actionType: updateRule.actionType || 'DEFAULT', // actionType을 정확히 설정
+                  actionType: updateRule.actionType || 'CREATE',
                 })
               }
             })
@@ -146,6 +145,7 @@ export function LifeRuleUpdateApprovePage() {
       } catch (error) {
         console.error('Error initializing data:', error)
       }
+      fechtedData.current = false
     }
 
     initializeData()
@@ -163,10 +163,6 @@ export function LifeRuleUpdateApprovePage() {
             <LifeRuleUpdateApproveListItem
               key={item.id}
               lifeRule={item}
-              variant={
-                updateLifeRules.find((updateRule) => updateRule.id === item.id)
-                  ?.actionType || 'DEFAULT'
-              }
             />
           ))}
         </LifeRuleUpdateList>

@@ -5,7 +5,7 @@ export interface LifeRule {
 }
 
 export interface UpdateLifeRule {
-  id?: number
+  id?: number | null
   content: string
   category: string
   actionType: string

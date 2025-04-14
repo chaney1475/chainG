@@ -3,7 +3,6 @@
 import React from 'react'
 
 import { Image } from '@/components'
-import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
 import { LifeRuleUpdateVariant, UpdateLifeRule } from '@/types/lifeRule'
 
 import {
@@ -16,17 +15,15 @@ import {
 
 interface LifeRuleUpdateApproveListItemProps {
   lifeRule: UpdateLifeRule
-  variant: LifeRuleUpdateVariant | string
 }
 
 export const LifeRuleUpdateApproveListItem = ({
   lifeRule,
-  variant,
 }: LifeRuleUpdateApproveListItemProps) => {
   // const { t } = useTranslation()
 
   const getStatusIcon = () => {
-    switch (variant) {
+    switch (lifeRule.actionType) {
       case 'UPDATE':
         return '/icons/button-modify.svg'
       case 'CREATE':
@@ -39,7 +36,7 @@ export const LifeRuleUpdateApproveListItem = ({
   }
 
   const getStatusText = () => {
-    switch (variant) {
+    switch (lifeRule.actionType) {
       case 'UPDATE':
         return '수정'
       case 'CREATE':
@@ -52,7 +49,7 @@ export const LifeRuleUpdateApproveListItem = ({
   }
 
   return (
-    <ItemContainer variant={variant as LifeRuleUpdateVariant}>
+    <ItemContainer variant={lifeRule.actionType as LifeRuleUpdateVariant}>
       <CatrgoryIcon>
         <Image
           src={`/images/lifeRule/life-rule-${lifeRule.category.trim()}-inactive.svg`}
@@ -61,7 +58,6 @@ export const LifeRuleUpdateApproveListItem = ({
           height={46}
         />
       </CatrgoryIcon>
-
       <Content>
         <ContentContainer>{lifeRule.content}</ContentContainer>
         {getStatusIcon() && (

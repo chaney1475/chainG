@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -12,11 +12,10 @@ import { Image } from '@/components'
 import { Modal } from '@/components/'
 import { ConfirmButton } from '@/components/ConfirmButton'
 import { TopHeader } from '@/components/TopHeader'
-import { lifeRuleList } from '@/constants/lifeRuleList'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setHomeOverviewLifeRuleApproved } from '@/store/slices/userSlice'
 import { Container } from '@/styles/styles'
-import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
+import { LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 import { LifeRuleUpdateListItem } from '../components/LifeRuleUpdateListItem'
 import { ConfirmContainer, FullMain, LifeRuleUpdateList } from './styles'
@@ -26,8 +25,8 @@ type FormValues = {
     id: number
     variant: LifeRuleUpdateVariant
     actionType: LifeRuleUpdateVariant
+    category: string
     content: string
-    rule: LifeRule
   }>
 }
 
@@ -45,9 +44,8 @@ export function LifeRuleUpdatePage() {
         id: rule.id,
         variant: 'DEFAULT',
         actionType: 'DEFAULT',
-        category: 'OTHER',
+        category: rule.category,
         content: rule.content,
-        rule,
       })),
     },
   })
@@ -65,21 +63,6 @@ export function LifeRuleUpdatePage() {
     {},
   )
 
-  useEffect(() => {
-    if (lifeRules?.length > 0) {
-      methods.setValue(
-        'items',
-        lifeRules.map((rule: LifeRule) => ({
-          id: rule.id,
-          rule,
-          variant: 'DEFAULT',
-          actionType: 'DEFAULT',
-          content: rule.content,
-        })),
-      )
-    }
-  }, [lifeRules, methods])
-
   const handleVariantChange = (
     id: string | number,
     newVariant: LifeRuleUpdateVariant,
@@ -96,14 +79,13 @@ export function LifeRuleUpdatePage() {
       }
 
       const currentItem = items[itemIndex]
-      const updatedContent =
-        newVariant === 'UPDATE' ? currentItem.rule.content : currentItem.content
 
       update(itemIndex, {
         ...currentItem,
         variant: newVariant,
         actionType: newVariant,
         content: content,
+        category: currentItem.category,
       })
 
       setIsUpdateMode(true)
@@ -113,31 +95,12 @@ export function LifeRuleUpdatePage() {
     }
   }
 
-  // 디버깅을 위한 items 변경 감지
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      const debugUpdates = items.map((item) => ({
-        id: Number(item.id),
-        content: item.content.trim(),
-        category: item.rule.category,
-        actionType: item.actionType,
-        variant: item.variant,
-      }))
-    }
-  }, [items])
-
   const handleCreateNew = () => {
-    const newRule = {
-      id: Date.now(),
-      content: '',
-      category: 'OTHER',
-    }
-
     append({
       id: Date.now(), // 현재시간으로 생성해버리기
-      rule: newRule,
       variant: 'CREATE',
       actionType: 'CREATE',
+      category: 'OTHER',
       content: '',
     })
 
@@ -162,6 +125,7 @@ export function LifeRuleUpdatePage() {
         update(itemIndex, {
           ...currentItem,
           content,
+          category: currentItem.category,
           variant: 'DEFAULT',
           actionType:
             currentItem.actionType === 'CREATE' ? 'CREATE' : 'DEFAULT',
@@ -208,17 +172,20 @@ export function LifeRuleUpdatePage() {
 
     const filteredUpdates = items
       .filter((update) => !(update.actionType == 'DEFAULT'))
-      .filter((update) => !(update.id > 1000 && update.actionType == 'DELETE'))
+      .filter(
+        (update) =>
+          !(Number(update.id) > 1000 && update.actionType == 'DELETE'),
+      )
       .map((item) => ({
-        id: Number(item.id),
+        id: Number(item.id) > 1000 ? null : Number(item.id),
         content: item.content.trim(),
-        category: item.rule.category,
-        actionType: item.id > 1000 ? 'CREATE' : item.actionType,
+        category: item.category,
+        actionType: Number(item.id) > 1000 ? 'CREATE' : item.actionType,
       }))
       .filter(
         (update) => !(update.actionType == 'CREATE' && update.content == ''),
       )
-
+    console.log('filteredUpdates', filteredUpdates)
     // const filteredUpdates = updates.filter((update) => update.id < 1000)
     const response = await updateLifeRule({ updates: filteredUpdates })
 
@@ -240,7 +207,7 @@ export function LifeRuleUpdatePage() {
               return (
                 <LifeRuleUpdateListItem
                   key={field.fieldId}
-                  lifeRule={item.rule}
+                  lifeRule={item}
                   variant={item.variant}
                   content={
                     localContent !== undefined ? localContent : item.content
