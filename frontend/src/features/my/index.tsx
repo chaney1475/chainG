@@ -8,18 +8,12 @@ import { useRouter } from 'next/navigation'
 
 import { logout } from '@/apis/auth'
 import { getMySummary } from '@/apis/user'
-import { ConfirmButton } from '@/components'
 import { BottomNavigation } from '@/components/BottomNavigation'
 import { TopHeader } from '@/components/TopHeader'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { setSummary } from '@/store/slices/userSlice'
 import { resetStore } from '@/store/store'
-import {
-  PaddingContainer,
-  ShowCenterBox,
-  SimpleMain,
-  SlimContainer,
-} from '@/styles/styles'
+import { SimpleMain } from '@/styles/styles'
 
 import { Account, Profile } from './components'
 import { Container } from './styles'

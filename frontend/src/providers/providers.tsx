@@ -1,19 +1,30 @@
 'use client'
 
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { Provider } from 'react-redux'
 
 import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
 
 import ErrorModal from '@/components/ErrorModal'
-import { Main } from '@/features/home/HomePage/styles'
 import { store } from '@/store/store'
 
 import { EmotionProvider } from './emotionProvider'
 import { I18nProvider } from './i18nProvider'
 
 function LoadingFallback() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(
+        (registration) => {
+          console.log('ServiceWorker 등록 성공:', registration)
+        },
+        (err) => {
+          console.error('ServiceWorker 등록 실패:', err)
+        },
+      )
+    }
+  }, [])
   return (
     <div
       style={{

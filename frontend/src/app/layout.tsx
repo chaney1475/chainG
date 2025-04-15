@@ -13,7 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <head />
+      <head>
+        <link
+          rel="manifest"
+          href="/manifest.webmanifest"
+        />
+      </head>
       <body className={fontVariables}>
         <ClientProvider>{children}</ClientProvider>
       </body>
