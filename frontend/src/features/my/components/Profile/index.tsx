@@ -11,7 +11,6 @@ import { ErrorModalButtonTypes } from '@/constants/errors'
 import { useAppSelector } from '@/hooks/useAppSelector'
 import { useInstallPrompt } from '@/hooks/useInstallPrompt'
 import { setErrorModal } from '@/store/slices/errorModalSlice'
-import { ButtonVariant } from '@/types/ui'
 
 import {
   BottomContainer,
@@ -109,13 +108,6 @@ export function Profile() {
         }}
         label="블록체인 가이드 바로가기"
         variant="slimPrev"
-      />
-      <ConfirmButton
-        onClick={handleClick}
-        label="Cha:nG 앱 설치하기"
-        variant={
-          !isSupported ? ButtonVariant.slimDisabled : ButtonVariant.slimNext
-        }
       />
     </Container>
   )

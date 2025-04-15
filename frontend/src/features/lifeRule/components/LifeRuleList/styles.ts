@@ -9,4 +9,5 @@ export const Container = styled.div`
   width: 100%;
   gap: 12px;
   background-color: ${({ theme }) => theme.color.background.white};
+  padding: 6px;
 `

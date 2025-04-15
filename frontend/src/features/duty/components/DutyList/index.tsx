@@ -2,10 +2,7 @@
 
 import React from 'react'
 
-import { useRouter } from 'next/navigation'
-
-import { AnimatedImage, ConfirmButton } from '@/components'
-import { Image } from '@/components'
+import { AnimatedImage } from '@/components'
 import {
   Description,
   EmptyContainer,
@@ -33,7 +30,6 @@ export function DutyList({
   userList,
   onSelectDuty,
 }: DutyListProps) {
-  const router = useRouter()
   return (
     <Container>
       {dutyList[selectedWeek].length > 0 &&
