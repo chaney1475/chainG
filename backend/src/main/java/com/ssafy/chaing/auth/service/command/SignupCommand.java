@@ -9,5 +9,4 @@ public class SignupCommand {
     private String emailAddress;
     private String password;
     private String name;
-    private String nickname;
 }

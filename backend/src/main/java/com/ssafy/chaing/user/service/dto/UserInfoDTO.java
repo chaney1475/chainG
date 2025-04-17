@@ -1,4 +1,4 @@
-package com.ssafy.chaing.auth.service.dto;
+package com.ssafy.chaing.user.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

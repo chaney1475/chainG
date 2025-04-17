@@ -1,0 +1,67 @@
+package com.ssafy.chaing.rule.domain;
+
+import com.ssafy.chaing.group.domain.GroupUserEntity;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.time.ZonedDateTime;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity(name = "life_rule_change_request")
+public class LifeRuleChangeRequestEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "life_rule_id", nullable = false)
+    private LifeRuleEntity lifeRule;  // 변경 대상 생활 룰
+
+    @OneToMany(mappedBy = "changeRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LifeRuleChangeItemEntity> changeItems;  // 변경된 항목들
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requested_by", nullable = false)
+    private GroupUserEntity requestedBy;  // 변경 요청한 사용자
+
+    @Column(name = "requested_at", nullable = false)
+    private ZonedDateTime requestedAt;  // 변경 요청 시간
+
+    @Column(name = "approval_count", nullable = false)
+    private int approvalCount = 1;  // 처음 생성 시 요청자가 포함되어 있으므로 기본값 1
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ChangeRequestStatus status = ChangeRequestStatus.PENDING;  // 초기값은 PENDING
+
+
+    public void approve(int totalGroupMembers) {
+        this.approvalCount++;
+        if (this.approvalCount >= totalGroupMembers) {
+            this.status = ChangeRequestStatus.APPROVED;
+        }
+    }
+
+    public void reject() {
+        this.status = ChangeRequestStatus.REJECTED;
+    }
+}
