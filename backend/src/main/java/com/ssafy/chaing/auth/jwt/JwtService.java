@@ -64,6 +64,17 @@ public class JwtService {
         }
         return null;
     }
+
+    public void removeRefreshTokenCookie(HttpServletResponse response) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setAttribute("SameSite", "None");
+        refreshTokenCookie.setMaxAge(0); // 쿠키 즉시 만료
+
+        response.addCookie(refreshTokenCookie);
+    }
 }
 
 
