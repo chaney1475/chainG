@@ -1,4 +1,4 @@
-export default {
+export const colors = {
   primary: '#5583e7',
   secondary: '#f1f3f6',
   text: {
@@ -9,4 +9,7 @@ export default {
     confirm: '#3bce6e',
   },
   border: '#d9d9d9',
+  update: '#ffc107',
+  create: '#3bce6e',
+  delete: '#ff9494',
 }

@@ -1,27 +1,40 @@
-import { dutyCategoryList } from "@/constants/dutyList"
-
 export interface Duty {
   id: number
   title: string
+  category: string
   dutyTime: string
-  dayOfWeek: string
+  dayOfWeek: DayKey
   useTime: boolean
   assignees: number[]
-  category: string
 }
 
+export type DutyRequest = Omit<Duty, 'id'>
+
 export interface DutyWeekList {
-  sunday: Duty[]
   monday: Duty[]
   tuesday: Duty[]
   wednesday: Duty[]
   thursday: Duty[]
   friday: Duty[]
   saturday: Duty[]
+  sunday: Duty[]
 }
 
 export interface DutyCategory {
   id: string
   src: string
 }
+
+export type DayKey =
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+  | 'sunday'
+// 요일 타입 정의
+
+export type SelectorVariant = 'select' | 'sunday' | 'saturday' | 'default'
+
 

@@ -3,15 +3,22 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { useRouter } from 'next/navigation'
 
-import { signUp } from '@/apis/auth'
+import { registerFCMToken, signUp } from '@/apis/auth'
+import { getFCMToken, onForegroundMessage } from '@/app/firebase'
 import { InputBox, TitleHeaderLayout } from '@/components'
-import { clearSignUp, setSignUpPassword } from '@/store/slices/authSlice'
-import { RootState } from '@/store/store'
-import { Form } from '@/styles/styles'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import {
+  clearSignUp,
+  setAccessToken,
+  setFCMToken,
+  setSignUpPassword,
+} from '@/store/slices/authSlice'
+import { setUser } from '@/store/slices/userSlice'
+import { ButtonVariant, ValidationItem } from '@/types/ui'
 
 interface SignupForm {
   password: string
@@ -28,91 +35,138 @@ export function SignUpPasswordPage() {
     watch,
     formState: { errors },
   } = useForm<SignupForm>()
-  const signUpRequest = useSelector(
-    (state: RootState) => state.auth.signUpRequest,
-  )
+
+  const signUpRequest = useAppSelector((state) => state.auth.signUpRequest)
+  const FCMToken = useAppSelector((state) => state.auth.FCMToken)
+  const user = useAppSelector((state) => state.user.user)
 
   const password = watch('password')
+  const confirmPassword = watch('confirmPassword')
 
-  const [validations, setValidations] = useState([
-    { isValid: false, message: '영문 포함' },
-    { isValid: false, message: '숫자 포함' },
-    { isValid: false, message: '8~20자 이내' },
-  ])
+  useEffect(() => {
+    if (user?.id) {
+      router.push('/onboarding')
+    }
+  }, [user, router])
+
+  const [validations, setValidations] = useState<{
+    [key: string]: ValidationItem
+  }>({
+    requiredAlphabet: {
+      isValid: false,
+      message: t('signUp.password.error.requiredAlphabet'),
+    },
+    requiredNumber: {
+      isValid: false,
+      message: t('signUp.password.error.requiredNumber'),
+    },
+    length: {
+      isValid: false,
+      message: t('signUp.password.error.length'),
+    },
+  })
+
+  const [sameValidations, setSameValidations] = useState<{
+    [key: string]: ValidationItem
+  }>({
+    same: {
+      isValid: true,
+      message: t('signUp.confirmPassword.error.match'),
+    },
+  })
+
+  const isValidPassword =
+    Object.values(validations).every((v) => v.isValid) &&
+    password.length >= 8 &&
+    password.length <= 20 &&
+    password === confirmPassword
 
   useEffect(() => {
     if (password) {
-      setValidations([
-        { isValid: /[a-zA-Z]/.test(password), message: '영문 포함' },
-        { isValid: /[0-9]/.test(password), message: '숫자 포함' },
-        {
-          isValid: password.length >= 8 && password.length <= 20,
-          message: '8~20자 이내',
-        },
-      ])
+      const newValidations = { ...validations }
+      newValidations.requiredAlphabet.isValid = /[a-zA-Z]/.test(password)
+      newValidations.requiredNumber.isValid = /[0-9]/.test(password)
+      newValidations.length.isValid =
+        password.length >= 8 && password.length <= 20
+      setValidations(newValidations)
+
+      const newSameValidations = { ...sameValidations }
+      newSameValidations.same.isValid = password === confirmPassword
+      setSameValidations(newSameValidations)
     }
-  }, [password])
+  }, [password, confirmPassword])
+
+  const initFCM = async () => {
+    if (FCMToken) return
+    const token = await getFCMToken()
+
+    if (token) {
+      await dispatchFCMToken(token)
+    }
+  }
+
+  const dispatchFCMToken = async (token: string) => {
+    const response = await registerFCMToken({ fcmToken: token })
+    if (!response) return
+
+    dispatch(setFCMToken(token))
+    onForegroundMessage()
+  }
 
   useEffect(() => {
     if (signUpRequest?.password) {
       const handleSignUp = async () => {
-        try {
-          console.log('signUpRequest', signUpRequest)
-          const response = await signUp(signUpRequest)
-          console.log('회원가입 성공:', response)
-          dispatch(clearSignUp())
-          if (response) {
-            router.push('/')
-          }
-        } catch (error) {
-          console.error('회원가입 실패:', error)
+        const response = await signUp(signUpRequest)
+        await dispatch(clearSignUp())
+        if (response) {
+          const token = response.headers['authorization']
+          await dispatch(setAccessToken(token))
+          await dispatch(setUser(response.data.data))
         }
       }
-
       handleSignUp()
     }
   }, [signUpRequest?.password, dispatch])
 
   const onSubmit = async (data: SignupForm) => {
-    dispatch(setSignUpPassword(data.password))
+    if (isValidPassword) {
+      dispatch(setSignUpPassword(data.password))
+    }
   }
 
   return (
     <TitleHeaderLayout
       header={t('signUp.password.title')}
-      onClick={() => {
-        const form = document.querySelector('form')
-        if (form) {
-          form.requestSubmit()
-        }
-      }}>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <InputBox
-          label={t('signUp.password.label')}
-          id="password"
-          type="password"
-          error={errors.password}
-          validations={validations}
-          {...register('password', {
-            required: t('signUp.password.error.required'),
-            minLength: {
-              value: 8,
-              message: t('signUp.password.error.minLength'),
-            },
-          })}
-        />
-        <InputBox
-          label={t('signUp.confirmPassword.label')}
-          id="confirmPassword"
-          type="password"
-          error={errors.confirmPassword}
-          {...register('confirmPassword', {
-            required: '비밀번호를 다시 입력해주세요',
-            validate: (value) =>
-              value === watch('password') || '비밀번호가 일치하지 않습니다',
-          })}
-        />
-      </Form>
+      onClick={handleSubmit(onSubmit)}
+      buttonVariant={
+        isValidPassword ? ButtonVariant.next : ButtonVariant.disabled
+      }
+      gap="20px">
+      <InputBox
+        label={t('signUp.password.label')}
+        id="password"
+        type="password"
+        placeholder={t('signUp.password.placeholder')}
+        error={errors.password}
+        validations={validations}
+        {...register('password', {
+          required: t('signUp.password.error.required'),
+        })}
+      />
+      <InputBox
+        label={t('signUp.confirmPassword.label')}
+        id="confirmPassword"
+        type="password"
+        placeholder={t('signUp.confirmPassword.placeholder')}
+        validations={sameValidations}
+        {...register('confirmPassword', {
+          required: t('signUp.confirmPassword.error.required'),
+          validate: (value) =>
+            value === watch('password') ||
+            t('signUp.confirmPassword.error.match'),
+        })}
+        error={errors.confirmPassword}
+      />
     </TitleHeaderLayout>
   )
 }

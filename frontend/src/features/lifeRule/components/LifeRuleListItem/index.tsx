@@ -1,11 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
-import Image from 'next/image'
-
-import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
+// import { useState } from 'react'
+// import { useTranslation } from 'react-i18next'
+import { Image } from '@/components'
 import { LifeRule } from '@/types/lifeRule'
 
 import { CatrgoryIcon, Container, Content } from './styles'
@@ -14,19 +11,14 @@ interface LifeRuleListItemProps {
   lifeRule: LifeRule
 }
 
-export const LifeRuleListItem = ({ lifeRule }: LifeRuleListItemProps) => {
-  //const [showButton, setShowButton] = useState(false)
-
-  const { t } = useTranslation()
+// 여긴 생활룰 첫화면 해결 완료
+export function LifeRuleListItem({ lifeRule }: LifeRuleListItemProps) {
+  //const { t } = useTranslation()
   return (
     <Container>
       <CatrgoryIcon>
         <Image
-          src={
-            lifeRuleCategoryList.find(
-              (category) => category.id === lifeRule.category,
-            )?.src ?? '/images/lifeRule/life-rule-category-clean.svg  '
-          }
+          src={`/images/lifeRule/life-rule-${lifeRule.category.trim()}-active.svg`}
           alt={lifeRule.category}
           width={46}
           height={46}
@@ -34,6 +26,5 @@ export const LifeRuleListItem = ({ lifeRule }: LifeRuleListItemProps) => {
       </CatrgoryIcon>
       <Content>{lifeRule.content}</Content>
     </Container>
-    //{showButton && <div>테스트용</div>}
   )
 }

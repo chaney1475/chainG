@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
 
 export const Container = styled.div`
   display: flex;
@@ -7,8 +6,7 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  min-height: 100vh;
   width: 100%;
-  gap: 8px;
   background-color: ${({ theme }) => theme.color.background.white};
+  padding: 0 20px 20px 20px;
 `

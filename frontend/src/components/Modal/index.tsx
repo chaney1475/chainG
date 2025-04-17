@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
-import { useTranslation } from 'react-i18next'
-
 import * as Dialog from '@radix-ui/react-dialog'
 
-import { ConfirmButton } from '../ConfirmButton'
+import { ModalConfirmButton } from '@/components'
+import { Image } from '@/components'
+
 import {
   ButtonWrapper,
+  ImageContainer,
   contentStyle,
   descStyle,
   overlayStyle,
@@ -16,20 +17,27 @@ interface ModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
+  onCancel?: () => void
   title?: string
   description?: string
   confirmText?: string
+  children?: React.ReactNode
+  image?: string
+  disablePrev?: boolean
 }
 
-export default function Modal({
+export function Modal({
   open,
   onOpenChange,
   onConfirm,
   title = '당번 삭제',
-  description = '계약서를 임시저장할까요?\n계약서의 내용을 그룹원들이 서로 확인할 수 있어요.',
+  description = '서약서를 임시저장할까요?\n서약서의 내용을 그룹원들이 서로 확인할 수 있어요.',
   confirmText = '확인',
+  children,
+  disablePrev = false,
+  image,
+  onCancel,
 }: ModalProps) {
-  const { t } = useTranslation()
   return (
     <Dialog.Root
       open={open}
@@ -38,19 +46,37 @@ export default function Modal({
         <Dialog.Overlay css={overlayStyle} />
         <Dialog.Content css={contentStyle}>
           <Dialog.Title css={titleStyle}>{title}</Dialog.Title>
+          {image && (
+            <ImageContainer>
+              <Image
+                src={image}
+                alt="modal"
+                width={80}
+                height={80}
+              />
+            </ImageContainer>
+          )}
           <Dialog.Description css={descStyle}>
             {description.split('\n').map((line, idx) => (
-              <p key={idx}>{line}</p>
+              <span
+                key={idx}
+                style={{ display: 'block' }}>
+                {line}
+              </span>
             ))}
           </Dialog.Description>
+          {children}
           <ButtonWrapper>
-            <Dialog.Close asChild>
-              <ConfirmButton
-                label={t('cancel')}
-                variant={'prev'}
-              />
-            </Dialog.Close>
-            <ConfirmButton
+            {!disablePrev && (
+              <Dialog.Close asChild>
+                <ModalConfirmButton
+                  label={'cancel'}
+                  variant={'prev'}
+                  onClick={onCancel ?? (() => {})}
+                />
+              </Dialog.Close>
+            )}
+            <ModalConfirmButton
               label={confirmText}
               variant={'next'}
               onClick={onConfirm}

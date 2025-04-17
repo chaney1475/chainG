@@ -1,8 +1,9 @@
 'use client'
 
+import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { ButtonVariant } from '@/types/button'
+import { ButtonVariant } from '@/types/ui'
 
 import { StyledButton } from './styles'
 
@@ -12,17 +13,31 @@ interface ConfirmButtonProps {
   variant?: ButtonVariant
 }
 
-export const ConfirmButton = ({
-  label = 'next',
-  onClick,
-  variant = 'next',
-}: ConfirmButtonProps) => {
-  const { t } = useTranslation()
-  return (
-    <StyledButton
-      variant={variant}
-      onClick={onClick}>
-      {t(label)}
-    </StyledButton>
-  )
-}
+export const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
+  ({ label = 'next', onClick, variant = ButtonVariant.next }, ref) => {
+    const { t } = useTranslation()
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (e.key === 'Enter' && label !== 'disabled') {
+        e.preventDefault()
+        onClick?.()
+      }
+    }
+
+    return (
+      <StyledButton
+        ref={ref}
+        type="button"
+        variant={variant}
+        onClick={onClick}
+        disabled={label === 'disabled'}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        autoFocus>
+        {t(label)}
+      </StyledButton>
+    )
+  },
+)
+
+ConfirmButton.displayName = 'ConfirmButton'

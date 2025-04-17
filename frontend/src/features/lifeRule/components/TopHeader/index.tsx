@@ -2,40 +2,41 @@
 
 import { memo } from 'react'
 
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-import { Container, HeaderButton } from './styles'
+import { Image } from '@/components'
+
+import { Container, HeaderButton, Title } from './styles'
 
 interface TopHeaderProps {
-  title: string
+  isUpdated: boolean
+  handleOpenModal: () => void
 }
 
-export const TopHeader = memo(function TopHeader({ title }: TopHeaderProps) {
+export const TopHeader = memo(function TopHeader({
+  isUpdated,
+  handleOpenModal,
+}: TopHeaderProps) {
   const router = useRouter()
 
   const handleUpdateClick = () => {
-    router.push('/lifeRule/update') // "생활규칙 수정" 페이지로 이동
+    if (isUpdated) {
+      handleOpenModal()
+    } else {
+      router.push('/lifeRule/update')
+    }
   }
 
   return (
-    <Container>
-      <HeaderButton onClick={() => router.back()}>
-        <Image
-          src="/icons/arrow-left.svg"
-          alt="뒤로 가기"
-          width={24}
-          height={24}
-        />
-      </HeaderButton>
-      <div>{title}</div>
+    <div
+      onClick={handleUpdateClick}
+      style={{ cursor: isUpdated ? 'not-allowed' : 'pointer' }}>
       <Image
-        onClick={handleUpdateClick}
-        src="/icons/update.svg"
+        src="/icons/modify.svg"
         alt="수정"
-        width={24}
-        height={24}
+        width={30}
+        height={30}
       />
-    </Container>
+    </div>
   )
 })

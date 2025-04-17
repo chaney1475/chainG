@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getMessaging, getToken, onMessage } from 'firebase/messaging'
+import { getMessaging, onMessage } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAshxoFkNNan2sz0i09FXs9uBg7w0gBV_k',
@@ -13,22 +13,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 const messaging = getMessaging(app)
-
-export const getFcmToken = async () => {
-  try {
-    const currentToken = await getToken(messaging, {
-      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-    })
-    if (currentToken) {
-      console.log('FCM 토큰:', currentToken)
-      // 서버에 저장하거나 활용
-    } else {
-      console.warn('FCM 토큰 없음, 권한 확인 필요')
-    }
-  } catch (err) {
-    console.error('토큰 받기 실패:', err)
-  }
-}
 
 export const onForegroundMessage = () => {
   onMessage(messaging, (payload) => {

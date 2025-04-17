@@ -1,33 +1,25 @@
 import styled from '@emotion/styled'
-import Link from 'next/link'
-
-export const Container = styled.div`
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  border: 1px solid red;
-  width: 100%;
-  background-color: ${({ theme }) => theme.color.background.white};
-`
 
 export const FullMain = styled.div`
-  padding: 1.25rem;
   display: flex;
-  flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  gap: 60px;
+  gap: 8px;
   width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.color.secondary};
+  overflow-y: auto;
 `
-
-export const Navigator = styled.div`
+export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  border: 1px solid;
-  height: 75px;
-  gap: 60px;
+  flex: 1;
+  justify-content: space-between;
+  height: 100dvh;
   width: 100%;
+  @media (min-width: 768px) {
+    width: 50%;
+    justify-content: center;
+    margin: 0 auto;
+  }
 `

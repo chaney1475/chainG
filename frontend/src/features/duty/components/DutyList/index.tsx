@@ -1,50 +1,63 @@
 'use client'
 
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 
-import { useRouter } from 'next/navigation'
-
-import { dutyList } from '@/constants/dutyList'
+import { AnimatedImage } from '@/components'
+import {
+  Description,
+  EmptyContainer,
+  PaddingContainer,
+  Title,
+  TitleContainer,
+} from '@/styles/styles'
+import { DayKey, Duty, DutyWeekList } from '@/types/duty'
+import { ImageVariant } from '@/types/ui'
+import { User } from '@/types/user'
 
 import { DutyListItem } from '../DutyListItem'
 import { Container } from './styles'
 
-// 내 하위에 있는 style을 쓰겠다
-
-interface LoginForm {
-  emailAddress: string
-  password: string
+interface DutyListProps {
+  dutyList: DutyWeekList
+  selectedWeek: DayKey
+  userList: User[]
+  onSelectDuty: (duty: Duty) => void
 }
 
-export function DutyList() {
-  const { t } = useTranslation()
-  const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginForm>()
-
-  const onSubmit = async (data: LoginForm): Promise<void> => {
-    try {
-      // TODO: 실제 로그인 API 호출 구현
-      console.log('로그인 데이터:', data)
-      router.push('/')
-    } catch (error) {
-      console.error('로그인 실패:', error)
-    }
-  }
-
+export function DutyList({
+  dutyList,
+  selectedWeek,
+  userList,
+  onSelectDuty,
+}: DutyListProps) {
   return (
     <Container>
-      {dutyList.monday.map((duty) => (
-        <DutyListItem
-          key={duty.id}
-          duty={duty}
-        />
-      ))}
+      {dutyList[selectedWeek].length > 0 &&
+        dutyList[selectedWeek].map((duty) => (
+          <DutyListItem
+            key={duty.id}
+            duty={duty}
+            userList={userList}
+            onSelectDuty={onSelectDuty}
+          />
+        ))}
+      {dutyList[selectedWeek].length == 0 && (
+        <PaddingContainer>
+          <EmptyContainer>
+            <AnimatedImage
+              src="/images/duty/duty-no.svg"
+              alt="당번이 없습니다"
+              width={80}
+              height={80}
+              variant={ImageVariant.bounce}
+            />
+            <TitleContainer>
+              <Title>당번이 없습니다</Title>
+            </TitleContainer>
+            <Description>친구들과 대화를 통해 당번을 만들어보세요!</Description>
+          </EmptyContainer>
+        </PaddingContainer>
+      )}
     </Container>
   )
 }

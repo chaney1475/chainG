@@ -1,9 +1,11 @@
 'use client'
 
-import { forwardRef, memo } from 'react'
+import { forwardRef, memo, useEffect, useState } from 'react'
 import { FieldError } from 'react-hook-form'
 
-import Image from 'next/image'
+import { Image } from '@/components'
+import { ValidationItem } from '@/types/ui'
+import { formatMoney, parseMoney } from '@/utils/format'
 
 import {
   InputContainer,
@@ -13,11 +15,6 @@ import {
   ValidationMessage,
   ValidationWrapper,
 } from './styles'
-
-interface ValidationItem {
-  isValid: boolean
-  message: string
-}
 
 interface InputBoxProps {
   id: string
@@ -30,7 +27,8 @@ interface InputBoxProps {
   className?: string
   disabled?: boolean
   required?: boolean
-  validations?: ValidationItem[]
+  validations?: { [key: string]: ValidationItem }
+  name?: string
 }
 
 const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
@@ -44,12 +42,65 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
       disabled,
       required,
       validations,
+      type,
+      value,
+      onChange,
+      name,
       ...props
     },
     ref,
   ) => {
     const isError = !!error
     const message = error?.message
+    const [displayValue, setDisplayValue] = useState(value || '')
+    const [isFocused, setIsFocused] = useState(false)
+
+    useEffect(() => {
+      if (type === 'money' && value) {
+        if (isFocused) {
+          setDisplayValue(parseMoney(value))
+        } else {
+          setDisplayValue(formatMoney(value))
+        }
+      } else {
+        setDisplayValue(value || '')
+      }
+    }, [value, type, isFocused])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (type === 'money') {
+        const numericValue = parseMoney(e.target.value)
+        setDisplayValue(numericValue)
+
+        if (onChange) {
+          const event = {
+            ...e,
+            target: {
+              ...e.target,
+              value: numericValue,
+            },
+          }
+          onChange(event)
+        }
+      } else {
+        setDisplayValue(e.target.value)
+        onChange?.(e)
+      }
+    }
+
+    const handleFocus = () => {
+      setIsFocused(true)
+      if (type === 'money' && value) {
+        setDisplayValue(parseMoney(value))
+      }
+    }
+
+    const handleBlur = () => {
+      setIsFocused(false)
+      if (type === 'money' && value) {
+        setDisplayValue(formatMoney(value))
+      }
+    }
 
     return (
       <InputContainer className={className}>
@@ -64,17 +115,23 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
           ref={ref}
           disabled={disabled}
           required={required}
-          {...props}
+          value={displayValue}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          type={type}
           placeholder={placeholder}
           aria-invalid={isError}
           aria-describedby={message ? `${id}-error` : undefined}
+          name={name}
+          {...props}
         />
         {!isError && validations && (
           <ValidationWrapper>
-            {validations.map((validation, index) => (
-              <ValidationContainer key={index}>
+            {Object.entries(validations || {}).map(([key, validation]) => (
+              <ValidationContainer key={key}>
                 <Image
-                  src={`/icons/validation-${validation.isValid ? 'true' : 'false'}.svg`}
+                  src={`/icons/button-${validation.isValid ? 'valid' : 'invalid'}.svg`}
                   alt={
                     validation.isValid ? '유효성 검사 통과' : '유효성 검사 실패'
                   }
@@ -103,5 +160,7 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
     )
   },
 )
+
+InputBoxBase.displayName = 'InputBoxBase'
 
 export const InputBox = memo(InputBoxBase)

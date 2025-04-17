@@ -1,84 +1,128 @@
 'use client'
 
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import React from 'react'
 
-import Image from 'next/image'
-
-import { lifeRuleCategoryList } from '@/constants/lifeRuleList'
+import { IconButton, Image } from '@/components'
 import { LifeRule, LifeRuleUpdateVariant } from '@/types/lifeRule'
 
 import { InputBox } from '../InputBox'
-import { CatrgoryIcon, Container, Content, ItemContainer } from './styles'
+import {
+  ActionButtons,
+  CatrgoryIcon,
+  Content,
+  CreateButton,
+  DeleteButton,
+  ItemContainer,
+  UpdateButton,
+} from './styles'
 
 interface LifeRuleUpdateListItemProps {
   lifeRule: LifeRule
   variant: LifeRuleUpdateVariant
-  setVariant: (variant: LifeRuleUpdateVariant) => void
+  actionType: LifeRuleUpdateVariant
+  content: string
+  setVariant: (variant: LifeRuleUpdateVariant, content: string) => void
+  onContentChange: (content: string) => void
+  onAddItem: (index: number) => void
+  onUpdateConfirm: () => void
+  index: number
 }
 
-const DeleteButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <div>
-      <button onClick={onClick}>취소</button>
-    </div>
-  )
-}
-
-const UpdateButton = ({
-  showButton,
+const ActionButton = ({
+  type,
   onClick,
 }: {
-  showButton: boolean
+  type: 'update' | 'delete'
   onClick: () => void
 }) => {
-  return showButton ? (
-    <div onClick={onClick}> 확인</div>
-  ) : (
-    <div onClick={onClick}>(수정)(삭제) </div>
+  return (
+    <IconButton
+      onClick={onClick}
+      src={`/icons/button-${type == 'delete' ? 'delete' : 'modify'}.svg`}
+      alt={type}
+    />
   )
 }
+
+//ActionButton.displayName = 'ActionButton'
 
 export const LifeRuleUpdateListItem = ({
   lifeRule,
   variant,
+  content,
   setVariant,
-}: LifeRuleUpdateListItemProps) => {
-  const [showButton, setShowButton] = useState(false)
+  onContentChange,
+  onAddItem,
+  onUpdateConfirm,
+  index,
+}: Omit<LifeRuleUpdateListItemProps, 'actionType'>) => {
+  //const { t } = useTranslation()
 
-  const { t } = useTranslation()
+  const renderContent = () => {
+    switch (variant) {
+      case 'DELETE':
+        return (
+          <>
+            <p>{content}</p>
+            <DeleteButton onClick={() => setVariant('DEFAULT', content)}>
+              취소
+            </DeleteButton>
+          </>
+        )
+      case 'UPDATE':
+        return (
+          <>
+            <InputBox
+              id={`update-${lifeRule.id}`}
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              placeholder="수정할 내용을 입력하세요"
+            />
+            <UpdateButton onClick={onUpdateConfirm}>확인</UpdateButton>
+          </>
+        )
+      case 'CREATE':
+        return (
+          <>
+            <InputBox
+              id={`create-${lifeRule.id}`}
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              placeholder="내용을 입력하세요"
+            />
+            <CreateButton onClick={() => onAddItem(index)}>추가</CreateButton>
+          </>
+        )
+      default:
+        return (
+          <>
+            <p>{content}</p>
+            <ActionButtons>
+              <ActionButton
+                type="update"
+                onClick={() => setVariant('UPDATE', content)}
+              />
+              <ActionButton
+                type="delete"
+                onClick={() => setVariant('DELETE', content)}
+              />
+            </ActionButtons>
+          </>
+        )
+    }
+  }
+
   return (
     <ItemContainer variant={variant}>
       <CatrgoryIcon>
-        {variant}
         <Image
-          src={
-            lifeRuleCategoryList.find(
-              (category) => category.id === lifeRule.category,
-            )?.src ?? '/images/lifeRule/life-rule-category-clean.svg  '
-          }
+          src={`/images/lifeRule/life-rule-${lifeRule.category.trim()}-inactive.svg`}
           alt={lifeRule.category}
           width={46}
           height={46}
         />
       </CatrgoryIcon>
-
-      {variant === 'DELETE' ? (
-        <Content>
-          <Content onClick={() => setShowButton(!showButton)}>
-            {lifeRule.content}
-          </Content>
-          <DeleteButton onClick={() => setVariant('DEFAULT')} />
-        </Content>
-      ) : (
-        <Content>
-          <InputBox id={lifeRule.id.toString()} />
-          <UpdateButton
-            showButton={showButton}
-            onClick={() => setShowButton(!showButton)}
-          />
-        </Content>
-      )}
+      <Content>{renderContent()}</Content>
     </ItemContainer>
   )
 }

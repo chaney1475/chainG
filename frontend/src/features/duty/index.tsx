@@ -1,51 +1,95 @@
 'use client'
 
-import React from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
 
-import { useRouter } from 'next/navigation'
-
-import { ConfirmButton, InputBox, TopHeader } from '@/components'
-import { Container, Form, Main } from '@/styles/styles'
+import { getDuties } from '@/apis/duty'
+import { BottomNavigation, BottomSheet, TopHeader } from '@/components'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { setDutyWeekList } from '@/store/slices/dutySlice'
+import { clearCompleteDayOfWeek } from '@/store/slices/dutySlice'
+import { SimpleMain } from '@/styles/styles'
+import { Duty } from '@/types/duty'
 
 import { DutyList } from './components/DutyList'
-// 공용 컴포넌트 쓰겠다. -> from ~~
-import { FullMain, Navigator } from './styles'
-
-// 내 하위에 있는 style을 쓰겠다
-
-interface LoginForm {
-  emailAddress: string
-  password: string
-}
+import { EditOrDeleteDuty } from './components/EditOrDeleteDuty'
+import { WeekList } from './components/WeekList'
+import useSelectWeek from './hooks/useSelectWeek'
+import { Container } from './styles'
 
 export function DutyPage() {
   const { t } = useTranslation()
-  const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginForm>()
+  const group = useAppSelector((state) => state.group.group) // 그룹정보 받아오는 커스텀 훅
+  const dutyWeekList = useAppSelector((state) => state.duty.dutyWeekList)
+  const dispatch = useDispatch()
+  const userList = group.members
 
-  const onSubmit = async (data: LoginForm): Promise<void> => {
-    try {
-      // TODO: 실제 로그인 API 호출 구현
-      console.log('로그인 데이터:', data)
-      router.push('/')
-    } catch (error) {
-      console.error('로그인 실패:', error)
-    }
+  const completeDayOfWeek = useAppSelector(
+    (state) => state.duty.completeDayOfWeek,
+  )
+  const { selectedWeek, setSelectedWeek } = useSelectWeek()
+
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState<boolean>(false)
+  const [selectedDuty, setSelectedDuty] = useState<Duty | null>(null)
+
+  const calculateMaxSnapPoint = () => {
+    const windowHeight = window.innerHeight // 화면 높이
+    return Math.min((0.3 * 740) / windowHeight, 0.9) // 최대 90%를 넘지 않도록 제한
   }
+
+  const handleSelectDuty = (duty: Duty) => {
+    setSelectedDuty(duty)
+    setIsBottomSheetOpen(true)
+  }
+
+  useEffect(() => {
+    if (completeDayOfWeek) {
+      setSelectedWeek(completeDayOfWeek)
+      dispatch(clearCompleteDayOfWeek())
+    }
+  }, [completeDayOfWeek, dispatch, setSelectedWeek])
+
+  useEffect(() => {
+    const fetchDuties = async () => {
+      const response = await getDuties(group.id) // dutyList
+      if (response.success) {
+        dispatch(setDutyWeekList(response.data))
+      }
+    }
+    fetchDuties()
+  }, [])
 
   return (
     <Container>
       <TopHeader title={t('duty.title')} />
-      <FullMain>
-        <DutyList />
-      </FullMain>
-      <Navigator></Navigator>
+      <SimpleMain>
+        <WeekList
+          dutyList={dutyWeekList}
+          selectedWeek={selectedWeek}
+          setSelectedWeek={setSelectedWeek}
+        />
+        <DutyList
+          dutyList={dutyWeekList}
+          selectedWeek={selectedWeek}
+          userList={userList}
+          onSelectDuty={handleSelectDuty}
+        />
+        <BottomSheet
+          open={isBottomSheetOpen}
+          onOpenChange={setIsBottomSheetOpen}
+          snapPoints={{
+            MIN: 0.1,
+            MID: calculateMaxSnapPoint(),
+            MAX: calculateMaxSnapPoint(),
+          }}>
+          <EditOrDeleteDuty
+            selectedDuty={selectedDuty}
+            setOpen={setIsBottomSheetOpen}
+          />
+        </BottomSheet>
+      </SimpleMain>
+      <BottomNavigation />
     </Container>
   )
 }

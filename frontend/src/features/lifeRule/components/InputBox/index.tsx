@@ -3,7 +3,7 @@
 import { forwardRef, memo } from 'react'
 import { FieldError } from 'react-hook-form'
 
-import Image from 'next/image'
+import { Image } from '@/components'
 
 import {
   InputContainer,
@@ -103,5 +103,7 @@ const InputBoxBase = forwardRef<HTMLInputElement, InputBoxProps>(
     )
   },
 )
+
+InputBoxBase.displayName = 'InputBoxBase'
 
 export const InputBox = memo(InputBoxBase)

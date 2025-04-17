@@ -1,46 +1,52 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { Modal, UserItem } from '@/components'
+import { CenterContainer, DefaultLabel, SlimContainer } from '@/styles/styles'
+import { User } from '@/types/user'
 
-import { dutyCategoryList } from '@/constants/dutyList'
-import { Duty } from '@/types/duty'
-
-import { Container, Name, ProfileContainer } from './styles'
+import { Container } from './styles'
 
 interface AssigneesProps {
   assignees: number[]
+  userList: User[]
 }
 
-export const Assignees = ({ assignees }: AssigneesProps) => {
-  const router = useRouter()
-  const { t } = useTranslation()
-
-  const profileList = [
-    {
-      src: '/images/profile/user1.png',
-      name: '펭펭이이오',
-    },
-    {
-      src: '/images/profile/user1.png',
-      name: '펭펭이이오',
-    },
-  ]
+export const Assignees = ({ assignees, userList }: AssigneesProps) => {
+  const assigneeIdSet = new Set(assignees)
+  const assigneesList = userList.filter((item) => assigneeIdSet.has(item.id))
+  const [open, setOpen] = useState(false)
   return (
     <Container>
-      {profileList.map((profile) => (
-        <ProfileContainer>
-          <Image
-            src={profile.src}
-            alt={profile.name}
-            width={32}
-            height={32}
+      <div onClick={() => setOpen(true)}>
+        {assigneesList.slice(0, 1).map((item) => (
+          <UserItem
+            key={item.id}
+            user={item}
           />
-          <Name>{profile.name}</Name>
-        </ProfileContainer>
-      ))}
+        ))}
+        {assigneesList.length > 1 && (
+          <DefaultLabel>{`+${assigneesList.length - 1}`}</DefaultLabel>
+        )}
+      </div>
+      <Modal
+        open={open}
+        title="당번들"
+        description="당번들을 확인할 수 있습니다."
+        onOpenChange={setOpen}
+        onConfirm={() => setOpen(false)}>
+        <SlimContainer>
+          {assigneesList.map((item) => (
+            <CenterContainer key={item.id}>
+              <UserItem
+                user={item}
+                variant="bar"
+              />
+            </CenterContainer>
+          ))}
+        </SlimContainer>
+      </Modal>
     </Container>
   )
 }

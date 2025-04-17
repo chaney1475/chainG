@@ -11,11 +11,17 @@ const firebaseConfig = {
   measurementId: 'G-R74J9NZ52L',
 }
 
-// VAPID 키를 환경 변수에서 가져옵니다
-const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+const vapidKey =
+  process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY ??
+  'BGJgredDif8ty9AQYNopTGMzWaox7j2hxz5SXbcU3ylm6dTUJR1nSxv7pIddFkTETZJV_32yoMLJPtu4JlJCW7k'
 
 let app: any = null
 let messaging: any = null
+
+export const initFCM = async () => {
+  await getFCMToken()
+  onForegroundMessage()
+}
 
 const initFirebase = () => {
   if (typeof window === 'undefined') return null
@@ -26,7 +32,7 @@ const initFirebase = () => {
   return { app, messaging }
 }
 
-export const getFcmToken = async () => {
+export const getFCMToken = async () => {
   if (typeof window === 'undefined') return null
 
   try {
@@ -36,10 +42,8 @@ export const getFcmToken = async () => {
     const token = await getToken(messaging, {
       vapidKey: vapidKey,
     })
-    console.log('FCM Token:', token)
     return token
   } catch (error) {
-    console.error('FCM 토큰 가져오기 실패:', error)
     return null
   }
 }
@@ -51,6 +55,6 @@ export const onForegroundMessage = () => {
   if (!messaging) return
 
   onMessage(messaging, (payload) => {
-    console.log('포그라운드 메시지 수신:', payload)
+    console.log('포그라운드 메시지 수신:', payload?.notification)
   })
 }

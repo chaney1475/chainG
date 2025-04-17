@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+
+// import { useTranslation } from 'react-i18next'
 
 import { LifeRule } from '@/types/lifeRule'
 
@@ -13,7 +14,8 @@ interface LifeRuleListProps {
 }
 
 export function LifeRuleList({ lifeRuleList }: LifeRuleListProps) {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
+
   return (
     <Container>
       {lifeRuleList.map((lifeRule) => (

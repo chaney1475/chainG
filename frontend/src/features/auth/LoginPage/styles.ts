@@ -45,7 +45,9 @@ export const SubmitButton = styled.button`
 
 export const SignupLinkContainer = styled.div`
   text-align: center;
-  margin-top: 1.5rem;
+  display: flex;
+  padding: 0 0.5rem;
+  justify-content: end;
   color: ${({ theme }) => theme.color.text.low};
   font-family: ${({ theme }) => theme.typography.fonts.paperlogyRegular};
 `

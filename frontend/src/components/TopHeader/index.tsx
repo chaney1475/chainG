@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 
 import { IconButton } from '../IconButton'
-import { Container, HeaderButton } from './styles'
+import { Container, HeaderButton, HeaderTitle } from './styles'
 
 interface TopHeaderProps {
   title: string
@@ -26,7 +26,7 @@ export const TopHeader = memo(function TopHeader({
         alt={t('icon.back')}
         onClick={() => router.back()}
       />
-      {title}
+      <HeaderTitle>{title}</HeaderTitle>
       {headerRightButton ?? <HeaderButton />}
     </Container>
   )
