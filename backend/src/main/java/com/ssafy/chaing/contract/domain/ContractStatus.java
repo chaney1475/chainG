@@ -1,5 +1,5 @@
 package com.ssafy.chaing.contract.domain;
 
 public enum ContractStatus {
-    PENDING, CONFIRMED
+    DRAFT, PENDING, CONFIRMED, REVIEW_REQUIRED,
 }
