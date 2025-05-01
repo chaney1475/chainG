@@ -78,6 +78,7 @@ public enum ExceptionCode {
 
     GPT_REQUEST_FAILED("GPT_REQUEST_FAILED", "GPT 응답 처리 중 오류가 발생했습니다."),
 
+    PAY_NOT_COLLECTED("PAY_NOT_COLLECTED", "아직 금액이 모아지지 않았습니다."),
     ALREADY_PAID("ALREADY_PAID", "이미 지불한 내역입니다.");
 
     private final String code;
