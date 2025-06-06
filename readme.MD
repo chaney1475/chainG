@@ -10,7 +10,7 @@
 
 ## 📄 사용자 매뉴얼
 <img src="https://i.imgur.com/pikrKay.png"/>
-[![사용자 매뉴얼 미리보기](https://i.imgur.com/pikrKay.png)](https://github.com/chaney1475/chainG/blob/dev/exec/a302_%EC%82%AC%EC%9A%A9%EC%9E%90_%EB%A9%94%EB%89%B4%EC%96%BC.pdf)
+[전체 PDF 보기](https://github.com/chaney1475/chainG/blob/dev/exec/a302_%EC%82%AC%EC%9A%A9%EC%9E%90_%EB%A9%94%EB%89%B4%EC%96%BC.pdf)
 
 ## 🔗 특화 기술 - 블록체인
 <img src="https://i.imgur.com/2a15mbG.jpeg" />
