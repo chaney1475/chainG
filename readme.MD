@@ -14,6 +14,12 @@
 ## 🔗🫙 ERD
 <img src="https://i.imgur.com/UJ6ab8K.png"/>
 
+<details>
+  <summary>📄 사용자 매뉴얼 보기</summary>
+
+  [![사용자 매뉴얼 미리보기](assets/manual-preview.png)](https://github.com/chaney1475/chainG/blob/dev/exec/a302_%EC%82%AC%EC%9A%A9%EC%9E%90_%EB%A9%94%EB%89%B4%EC%96%BC.pdf)
+
+</details>
 
 ## 🧑‍💻Members
 <div align="center">
