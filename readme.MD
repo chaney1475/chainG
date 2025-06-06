@@ -31,12 +31,12 @@
   </thead>
   <tbody>
     <tr>
-    <td align="center"><a href="https://lab.ssafy.com/ehfql6363">김동열</a>👑BE</td>
-    <td align="center"><a href="https://lab.ssafy.com/jemilykoo">구정은</a>FE</td>
-    <td align="center"><a href="https://lab.ssafy.com/lll123kong">이미림</a>FE</td>
-    <td align="center"><a href="https://lab.ssafy.com/gusto917">김현래</a>FE</td>
+    <td align="center"><a href="https://github.com/ehfql6363">김동열</a>👑BE</td>
+    <td align="center"><a href="https://github.com/ehfql6363">구정은</a>FE</td>
+    <td align="center"><a href="https://github.com/12ing">이미림</a>FE</td>
+    <td align="center"><a href="https://github.com/hyeon-ztl">김현래</a>FE</td>
     <td align="center"><a href="https://github.com/chaney1475">서채연</a>BE</td>
-    <td align="center"><a href="https://lab.ssafy.com/skydh507">이동현</a>BE</td>
+    <td align="center"><a href="https://github.com/HyungLee507">이동현</a>BE</td>
   </tr>
     </tbody>
 </table>
@@ -137,11 +137,11 @@
 **📌 [STORY] 계약 정보 블록체인 저장**
 
 - [x]  Web3j를 활용한 계약 정보 추가 (BE)
-- [ ]  PolygonScan 트랜잭션 해시 조회 기능 구현 (BE)
+- [x]  PolygonScan 트랜잭션 해시 조회 기능 구현 (BE)
 
 **📌 [STORY] 계약 정보 PDF 다운로드 (고도화 기능)**
 
-- [ ]  계약 정보 + 트랜잭션 해시를 포함한 PDF 문서 생성 기능 개발 (BE)
+- [x]  계약 정보 + 트랜잭션 해시를 포함한 PDF 문서 생성 기능 개발 (BE)
 
 ---
 
@@ -149,25 +149,24 @@
 
 **📌 [STORY] 공동 지출 관리 기능 개발**
 
-- [ ]  공동 계좌 생성 및 등록 기능 구현 (BE)
-- [ ]  공동 생활비 계좌 내역 조회 기능 구현 (BE)
-- [ ]  사용자별 지출 비율 및 정산 기능 개발 (BE)
+- [x]  공동 계좌 생성 및 등록 기능 구현 (BE)
+- [x]  공동 생활비 계좌 내역 조회 기능 구현 (BE)
+- [x]  사용자별 지출 비율 및 정산 기능 개발 (BE)
 
 **📌 [STORY] 생활 규칙 및 역할 관리**
 
-- [ ]  생활 규칙 생성 및 승인 기능 개발 (BE)
-- [ ]  역할 분배 (청소 등) 자동 배정 기능 개발 (BE)
-- [ ]  홈 화면에서 당일 역할 체크 및 미체크 시 알림 기능 개발 (FE)
+- [x]  생활 규칙 생성 및 승인 기능 개발 (BE)
+- [x]  역할 분배 (청소 등) 자동 배정 기능 개발 (BE)
+- [x]  홈 화면에서 당일 역할 체크 및 미체크 시 알림 기능 개발 (FE)
 
 ---
 
 ### ✅ **푸시 알림 기능 개발**
 
-- [ ]  계약서 제출 후 승인 요청 알림 (BE)
-- [ ]  공금 사용 내역 알림 (BE)
-- [ ]  정산 납부일 알림 (BE)
-- [ ]  역할 수행 미완료 시 리마인드 알림 (BE)
-- [ ]  생활 규칙 변경 승인 요청 알림 (BE)
+- [x]  계약서 제출 후 승인 요청 알림 (BE)
+- [x]  공금 사용 내역 알림 (BE)
+- [x]  정산 납부일 알림 (BE)
+- [x]  생활 규칙 변경 승인 요청 알림 (BE)
 
 ---
 
