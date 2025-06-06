@@ -12,7 +12,7 @@
 <img src="https://i.imgur.com/2a15mbG.jpeg" />
 
 ## 🔗🫙 ERD
-<img src="https://i.imgur.com/a/rQPFG6T.jpeg"/>
+<img src="https://imgur.com/a/zk2hSfl"/>
 
 
 ## 🧑‍💻Members
